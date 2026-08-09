@@ -1,7 +1,8 @@
 # Root-in — Habit Maker / Routine Tracker — Projektplan
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
-> Zuletzt aktualisiert: 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): Fortschritts-Trend bündelt im Jahr-Bereich auf Wochen-/Monatsmittel, Balkendiagramm-Achsen aufgeräumt, Tests für Tab-Navigation und Heute-Randfälle. **184 Tests grün** (+2 übersprungen), `flutter analyze` sauber, am Emulator deutsch **und persisch** angesehen (dabei ein RTL-Fehler gefunden und behoben). Damit sind die beiden ältesten offenen Fragen aus Abschnitt 12 geschlossen.
+> Zuletzt aktualisiert: 2026-08-07 (dritter Eintrag des Tages) — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub.** Die App läuft im Browser (Drift auf WebAssembly, vier Plattform-Weichen an **einer** Stelle), das Projekt ist jetzt ein Git-Repository, und eine GitHub-Action baut und veröffentlicht bei jedem Push auf `main`. ⚠️ **Im Browser noch nicht ausgeführt** — auf dieser Maschine fehlt Chrome; Einzelheiten in Phase 26.7. Offen bleiben die Schritte des Nutzers: Repository anlegen, pushen, Pages einschalten.
+> Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): Fortschritts-Trend bündelt im Jahr-Bereich auf Wochen-/Monatsmittel, Balkendiagramm-Achsen aufgeräumt, Tests für Tab-Navigation und Heute-Randfälle. **184 Tests grün** (+2 übersprungen), `flutter analyze` sauber, am Emulator deutsch **und persisch** angesehen (dabei ein RTL-Fehler gefunden und behoben). Damit sind die beiden ältesten offenen Fragen aus Abschnitt 12 geschlossen.
 > Zuvor 2026-08-02 — Phasen 25, 24, 23 und 22 gebaut (Datenerhalt beim Update, beliebiges Datum nachtragen, eindringlichere Erinnerungen, Rubrik „موارد دیگر" aus GitHub). Die am 2026-08-01 gebauten Phasen 18–21.2 sind auf Abschnitt 10.2 eingedampft.
 > **Was jetzt noch offen ist:** der Gerätedurchgang aus Phase 21.3, die Veröffentlichung (Phase 15, führt der Nutzer selbst durch), Phase 12 (iOS) — und die Inhalte, die der Nutzer selbst ins Repository legt.
 
@@ -29,8 +30,9 @@
     - [Phase 15 — Veröffentlichung im Google Play Store](#phase-15--veröffentlichung-im-google-play-store-android-) 🔄 (wartet auf Google)
     - [Phase 13 — Diagramm-Feinschliff & Tests](#phase-13--diagramm-feinschliff--tests-) ✅ (2026-08-07)
     - **Neu am 2026-08-07:** [Phase 26 — Web-Version (PWA) und Veröffentlichung über GitHub](#phase-26--web-version-pwa-und-veröffentlichung-über-github-) 🔄
-      - [26.1 Lauffähig im Browser](#261-lauffähig-im-browser-) · [26.2 Repository & .gitignore](#262-repository--gitignore-) · [26.3 Automatischer Bau & Veröffentlichung](#263-automatischer-bau--veröffentlichung-ci-cd-)
+      - [26.1 Lauffähig im Browser](#261-lauffähig-im-browser-) · [26.2 Repository & .gitignore](#262-repository--gitignore-) · [26.3 Automatischer Bau & Veröffentlichung](#263-automatischer-bau--veröffentlichung-cicd-)
       - [26.4 Was „Code-Schutz" im Web wirklich heißt](#264-was-code-schutz-im-web-wirklich-heißt-) · [26.5 Geheimnisse & Umgebungsvariablen](#265-geheimnisse--umgebungsvariablen-) · [26.6 Versionierung](#266-versionierung-)
+      - [26.7 Was noch offen ist](#267-was-noch-offen-ist-) ⬜ — **Code fertig, im Browser noch nicht ausgeführt**
     - [Phase 12 — iOS-Portierung](#phase-12--ios-portierung--feinschliff-) ⬜
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
 12. [Offene Fragen](#12-offene-fragen)
@@ -422,41 +424,61 @@ Vollständige Vorlage und Pflege-Anleitung: `store/others_index_beispiel.json` u
 | Sicherung importieren | `core/services/backup_service.dart` | anderer Weg (Browser-Download/Upload) |
 | Bild teilen | `core/services/share_service.dart` | `path_provider` fehlt |
 
-#### 26.1 Lauffähig im Browser 🔄
-- [ ] **Drift auf WebAssembly**: `sqlite3.wasm` und `drift_worker.js` nach `web/`, `DriftWebOptions` in `database.dart`. Die Daten liegen dann in OPFS bzw. IndexedDB — **im Browser des Geräts**, weiterhin ohne Server (Abschnitt 3 bleibt gültig).
-- [ ] **Vier Plattform-Weichen** über `core/utils/platform_support.dart` — die eine Stelle, die schon `isMobilePlatform` kennt. Kein `kIsWeb` verstreut im Code.
-- [ ] **Ehrlich abschalten statt still scheitern:** Wo eine Funktion im Web fehlt, verschwindet sie aus der Oberfläche oder sagt, dass sie hier nicht geht — ein Knopf, der nichts tut, ist schlimmer als kein Knopf.
-- [ ] **PWA-Feinschliff**: `manifest.json` mit richtigem Namen/Farben, iOS-Meta-Tags (Safari liest `apple-mobile-web-app-*`, nicht das Manifest), Symbole.
+#### 26.1 Lauffähig im Browser ✅
+- [x] **Drift auf WebAssembly**: `DriftWebOptions` in `database.dart`; `sqlite3.wasm` und `drift_worker.js` liegen in `web/`. Drift wählt im Browser selbst zwischen OPFS und IndexedDB — beides bleibt **auf dem Gerät**, Abschnitt 3 gilt unverändert.
+- [x] ⚠️ **`dart run drift_dev make-worker` ist kaputt** (drift 2.34.2 gegen drift_dev 2.34.0: *„The getter 'allSchemaEntities' isn't defined"*). Die fertigen Dateien liegen der drift-Veröffentlichung bei; `tool/fetch_web_db_assets.sh` holt sie und liest die **Version aus `pubspec.lock`**, damit Worker und Bibliothek nicht auseinanderlaufen.
+- [x] **Plattform-Weichen als Fähigkeiten benannt**, nicht als Plattformen: `supportsReminders`, `supportsHomeScreenWidgets`, `supportsOrientationLock` in `core/utils/platform_support.dart`. **`kIsWeb` steht damit an genau einer Stelle im ganzen Projekt.**
+- [x] **Zwei Dienste sind plattformfrei geworden, statt eine Weiche zu bekommen.** `share_plus` nimmt mit `XFile.fromData` die Bytes direkt und legt selbst eine temporäre Datei an; `downloadFallbackEnabled` macht daraus im Browser einen Download. Damit fielen `dart:io` **und** `path_provider` aus `backup_service.dart` und `share_service.dart` heraus — auf allen drei Plattformen jetzt derselbe Weg statt drei Sonderfällen. `path_provider` ist als direkte Abhängigkeit entfallen.
+- [x] **Sicherung einlesen** über einen bedingten Import (`core/services/file_pick/`): mobil `flutter_file_dialog` + `dart:io`, im Browser ein `<input type="file">` mit `FileReader`. Der Rückgabewert ist der **Inhalt**, kein Pfad — so bleibt `BackupService` frei von Plattform-Wissen und weiter testbar.
+- [x] ⚠️ **`oncancel` nicht vergessen:** Bricht der Nutzer den Datei-Dialog im Browser ab, feuert `onchange` nie. Ohne das zusätzliche Ereignis bliebe das Future **für immer** offen und die App zeigte einen Ladezustand ohne Ende.
+- [x] **Ehrlich abschalten statt still scheitern:** Ohne Erinnerungen verschwinden die Rubrik in den Einstellungen, der Tagesstand-Schalter und der Erinnerungs-Schalter im Gewohnheits-Formular ganz. Eine **gespeicherte Uhrzeit bleibt in der Datenbank unangetastet** — wer dieselbe Sicherung später auf Android einspielt, findet seine Erinnerungen wieder (derselbe Gedanke wie Phase 25).
+- [x] **PWA-Feinschliff**: `manifest.json` und `index.html` tragen Namen, Beschreibung und Markenfarbe statt der Flutter-Vorlage („A new Flutter project", Flutter-Blau). Dazu die iOS-Meta-Tags — **Safari liest fürs Ablegen auf dem Home-Bildschirm nicht das Manifest**, ohne sie öffnete die Verknüpfung eine gewöhnliche Browser-Seite mit Adressleiste.
 
-#### 26.2 Repository & .gitignore 🔄
-- [ ] `git init`, erster Commit, Verbindung zu GitHub.
-- [ ] **Zwei Zweige**: `main` (Entwicklung, Quellcode) und `gh-pages` (nur das gebaute Ergebnis, von der Automatik geschrieben — **nie von Hand**). Damit sind Quelle und Bauergebnis getrennt, wie im Auftrag verlangt.
-- [ ] `.gitignore` prüfen und um Web-Artefakte ergänzen. Der bestehende Stand deckt `build/`, `.dart_tool/`, `key.properties` und `*.jks` schon ab.
-- [ ] ⚠️ **Vor dem ersten Commit prüfen, was mitgeht** — der Ordner `meine/` und `store/` enthalten Material, das nicht zwingend öffentlich sein muss.
+#### 26.2 Repository & .gitignore ✅
+- [x] `git init` auf `main`, erster Commit (**348 Dateien**). Das Verbinden mit GitHub und der erste Push bleiben beim Nutzer — das ist der Schritt, der Code nach außen gibt.
+- [x] **Kein `gh-pages`-Zweig.** Ursprünglich so geplant, beim Bauen verworfen: GitHub Pages nimmt heute ein **Artefakt** direkt aus der Automatik entgegen (`upload-pages-artifact`/`deploy-pages`). Ein zweiter Zweig würde das gebaute Ergebnis doch wieder in die Versionsgeschichte schreiben — genau das, was der Auftrag ausschließt. Quelle und Ergebnis sind so **strenger** getrennt als mit dem Zweig.
+- [x] `.gitignore` um Web-Artefakte, `.env` und zwei Fundstücke ergänzt (siehe unten).
+- [x] ⚠️ **Die Kontrolle vor dem ersten Commit hat sich gelohnt** — zwei Dinge wären mitgegangen:
+  - `meine/` (Screenshots, Design-Specs, Logo-Quelle) — Arbeitsmaterial, kein Quellcode.
+  - `.claude/settings.local.json` — maschinenlokale Einstellungen mit **hunderten absoluten Pfaden unter `/Users/<name>/`**. In einem öffentlichen Repository wäre die Ordnerstruktur des Rechners für jeden lesbar.
+- [x] Geprüft, dass `key.properties`, `*.jks`, `build/` und die beiden Web-Datenbank-Dateien **nicht** im Commit stehen.
 
-#### 26.3 Automatischer Bau & Veröffentlichung (CI/CD) 🔄
-- [ ] GitHub-Actions-Arbeitsablauf: bei jedem Push auf `main` → `flutter build web --release` → Veröffentlichung auf GitHub Pages.
-- [ ] `--base-href` muss zum Pfad des Repositories passen, sonst lädt die Seite unter der GitHub-Adresse nichts nach.
-- [ ] Kein Bau auf dem Mac des Nutzers nötig; der Zweig `gh-pages` entsteht nur in der Automatik.
+#### 26.3 Automatischer Bau & Veröffentlichung (CI/CD) ✅
+- [x] `.github/workflows/deploy-web.yml`: Push auf `main` → `flutter pub get` → **`analyze` + `test`** → `tool/build_web.sh` → GitHub Pages. Die Prüfung steht bewusst **vor** der Veröffentlichung: Eine Fassung mit roten Tests soll gar nicht erst online gehen.
+- [x] `--base-href` kommt aus `github.event.repository.name` statt fest eingetragen — ein umbenanntes Repository bricht den Bau damit nicht. ⚠️ Ohne den richtigen Wert bleibt die Seite unter der GitHub-Adresse **weiß**, weil sie ihre Dateien eine Ebene zu hoch sucht.
+- [x] **`tool/build_web.sh` ist die einzige Stelle der Bau-Schalter** — die Automatik ruft dasselbe Skript auf, das der Nutzer lokal benutzt. Zwei Listen von Flags wären früher oder später auseinandergelaufen, und der veröffentlichte Bau wäre ein anderer als der geprüfte.
+- [x] `concurrency: cancel-in-progress` — ein Push während eines laufenden Baus bricht den alten ab, statt zwei Veröffentlichungen um dieselbe Seite streiten zu lassen.
 
-#### 26.4 Was „Code-Schutz" im Web wirklich heißt 🔄
-- [ ] `--no-source-maps` (ohne sie gibt es keinen lesbaren Dart-Code im Browser), `-O4`, `--csp`.
-- [ ] **`--obfuscate` gibt es für Web nicht.** Der Schalter gilt für die native Übersetzung (Android/iOS). Für Web erzeugt `dart2js` bereits minimierten JavaScript-Code mit unkenntlichen Namen — mehr geht nicht.
-- [ ] **Die Grenze, schriftlich:** Alles, was der Browser ausführt, muss der Browser lesen können. Wer will, findet den Bau unter `main.dart.js` und kann ihn analysieren. **Es gibt keinen Weg, das zu verhindern** — auch nicht mit WebAssembly (dort ist es nur unbequemer).
-- [ ] Daraus folgt die einzige echte Regel: **Was geheim bleiben muss, darf nicht in die App.** Es gehört auf einen Server, der es nie herausgibt.
+#### 26.4 Was „Code-Schutz" im Web wirklich heißt ✅
+- [x] `--no-source-maps`, `-O4`, `--csp` stehen im Bau-Skript, jede Zeile mit dem Grund daneben. Am gebauten Ergebnis nachgeprüft: **keine `.map`-Datei** in `build/web`.
+- [x] **`--obfuscate` gibt es für Web nicht** — der Schalter gilt der nativen Übersetzung (Android/iOS). `dart2js` liefert bereits minimierten Code mit unkenntlichen Namen; mehr ist nicht vorgesehen.
+- [x] **Die Grenze, schriftlich:** Alles, was der Browser ausführt, muss der Browser lesen können. `main.dart.js` lässt sich herunterladen und analysieren — **das ist nicht verhinderbar**, auch nicht mit WebAssembly (dort ist es nur unbequemer). Wer die Web-Fassung veröffentlicht, gibt die Logik der Oberfläche aus der Hand. Das ist der Preis dafür, ohne App Store auf das iPhone zu kommen.
+- [x] Daraus die einzige belastbare Regel, die auch in `app_config.dart` steht: **Was geheim bleiben muss, darf nicht in die App.** Es gehört hinter einen Server, der es nie herausgibt.
 
-#### 26.5 Geheimnisse & Umgebungsvariablen 🔄
-- [ ] `--dart-define` / `--dart-define-from-file` + `String.fromEnvironment`, Werte aus GitHub-Secrets.
-- [ ] ⚠️ **Ein `--dart-define` ist keine Verschlüsselung.** Der Wert landet im Bundle und ist dort auffindbar. Er hält Werte aus dem Repository heraus — mehr nicht.
-- [ ] **Root-in hat heute keine geheimen Schlüssel** (kein Backend, keine Konten, Werbung stillgelegt). Das Gerüst entsteht trotzdem, damit ein späterer Server-Anteil nicht improvisiert werden muss.
+#### 26.5 Geheimnisse & Umgebungsvariablen ✅
+- [x] `core/constants/app_config.dart` als **eine** Stelle für Werte, die beim Bauen hereinkommen (`String.fromEnvironment`), plus `.env.example` als Vorlage für `--dart-define-from-file`. Die echte `.env` ist ausgeschlossen.
+- [x] ⚠️ **Ein `--dart-define` ist keine Verschlüsselung.** Der Wert wird einkompiliert und ist im Bundle auffindbar. Er hält Werte aus dem Repository heraus und lässt sie je Umgebung tauschen — mehr nicht. Die Warnung steht dort, wo jemand den ersten Schlüssel eintragen würde.
+- [x] **Root-in hat heute keine Geheimnisse** (kein Backend, keine Konten, Werbung seit Phase 20 stillgelegt). Das Gerüst steht trotzdem, damit ein späterer Server-Anteil nicht improvisiert wird.
 
-#### 26.6 Versionierung 🔄
-- [ ] Versionsname aus `pubspec.yaml`, Baunummer aus der Lauf-Nummer der Automatik — dieselbe Quelle wie beim Android-Bau.
-- [ ] Die laufende Version soll in der App sichtbar sein, damit „bei mir sieht es anders aus" beantwortbar wird.
+#### 26.6 Versionierung ✅
+- [x] Versionsname aus `pubspec.yaml` gelesen (nicht im Skript wiederholt), Baunummer aus `GITHUB_RUN_NUMBER`, lokal `0`.
+- [x] Beides zusätzlich als `--dart-define`: `--build-name`/`--build-number` landen im Web nur in `version.json` und wären für den Dart-Code unsichtbar.
+- [x] Die Version steht am Fuß der Einstellungen. Bei einer Web-Fassung, die sich beim nächsten Laden **unbemerkt** aktualisiert, ist sie der einzige verlässliche Anhaltspunkt für „welchen Stand siehst du gerade?".
+
+#### 26.7 Was noch offen ist ⬜
+**Der Code ist fertig; was fehlt, sind Schritte außerhalb dieses Rechners und eine Prüfung, die hier nicht möglich war.**
+
+- [ ] ⚠️ **Im Browser noch nicht ausgeführt.** Geprüft sind: `flutter analyze` sauber, **184 Tests grün**, `flutter build web --release` läuft, der Android-Bau läuft weiterhin, `sqlite3.wasm` und `drift_worker.js` werden ausgeliefert, keine Source-Maps im Ergebnis. **Nicht geprüft ist der Start im Browser** — auf dieser Maschine ist kein Chrome installiert (Flutter braucht ihn für `-d chrome`), und ein Bildschirmfoto von Safari scheitert an der fehlenden Berechtigung zur Bildschirmaufnahme. Der erste echte Aufruf ist damit der erste Test. **Der wahrscheinlichste Stolperstein ist die Datenbank** — sie ist der einzige Teil, der im Browser einen völlig anderen Weg geht.
+- [ ] **Der Nutzer legt das GitHub-Repository an und pusht** (Anleitung folgt im Chat). Das ist bewusst nicht automatisiert: Es ist der Schritt, der den Code nach außen gibt.
+- [ ] **GitHub Pages einschalten** (Settings → Pages → Source: *GitHub Actions*). Ohne das läuft der Arbeitsablauf und veröffentlicht nichts.
+- [ ] ⚠️ **GitHub Pages kann die Kopfzeilen `Cross-Origin-Opener-Policy`/`Embedder-Policy` nicht setzen.** Drift nutzt dann nicht die schnellste Speicherart (OPFS mit gemeinsamem Speicher), sondern fällt auf eine andere zurück. **Die Daten bleiben erhalten** — es ist eine Frage der Geschwindigkeit, kein Datenverlust. Wer das ändern will, braucht einen Hoster, der eigene Kopfzeilen erlaubt.
+- [ ] **Auf einem echten iPhone durchgehen**: Seite in Safari öffnen → „Zum Home-Bildschirm" → startet sie ohne Adressleiste? Bleiben die Daten nach dem Schließen erhalten? Funktionieren Teilen und Sicherung?
 
 #### Offene Fragen dieser Phase
-- Erinnerungen im Web: Web-Push wäre technisch möglich, braucht aber einen Server — das widerspricht Abschnitt 3. Vorerst entfallen sie im Browser.
-- Repository öffentlich oder privat? GitHub Pages aus einem privaten Repository ist ein kostenpflichtiges Merkmal. Öffentlich hieße: **der Quellcode ist einsehbar** — das ist eine Entscheidung des Nutzers, keine technische.
+- **Repository öffentlich oder privat?** GitHub Pages aus einem **privaten** Repository ist ein kostenpflichtiges Merkmal. Öffentlich heißt: der Quellcode ist für jeden lesbar. ⚠️ Das ist die eigentliche Entscheidung hinter dem Wunsch „niemand soll meinen Code nachbauen können" — und sie ist keine technische, sondern eine des Nutzers. Anmerkung: Auch bei einem **privaten** Repository bleibt die veröffentlichte Web-Fassung analysierbar (siehe 26.4); privat schützt die Quelle, nicht das Ergebnis.
+- **Erinnerungen im Web:** Web-Push wäre technisch möglich, bräuchte aber einen Server — das widerspricht Abschnitt 3. Vorerst entfallen sie im Browser. Damit ist die Web-Fassung ausdrücklich **nicht gleichwertig** zur Android-App; sie ist der Zugang, nicht der Ersatz.
+- **Browser-Speicher kann geleert werden.** Anders als eine installierte App liegen die Daten im Speicher der Website. Löscht der Nutzer die Website-Daten, sind sie weg. Die Sicherung (Export/Import) ist im Web deshalb **wichtiger** als auf Android — offen ist, ob die App im Browser aktiv darauf hinweisen soll.
+- **Zwei Fassungen, zwei Datenbestände.** Wer Root-in auf Android **und** im Browser benutzt, hat zwei getrennte Bestände; abgeglichen wird nur über Export/Import von Hand. Ein Abgleich bräuchte einen Server.
 
 ---
 
@@ -531,6 +553,14 @@ Nach grünen Tests wurde die Phase am Emulator mit dem vollen Bestand aus `lib/m
   - **Geometrie wird gemessen, nicht behauptet.** Der Test zur X-Beschriftung prüft die tatsächliche Breite des gerenderten Labels gegen die Spaltenbreite. „Das Label ist da" hätte auch der überlappende Zustand bestanden.
   - **Der Emulator-Durchgang fand trotz 183 grüner Tests einen echten Fehler:** Der neue Hinweis lag auf Persisch auf der Y-Beschriftung, weil `TextAlign.end` richtungsabhängig ist, die Achse aber in jeder Sprache physisch links liegt. **Bei fl_chart ist „links" nie „start"** — die Bibliothek kennt keine Textrichtung. Lehre 8 hat sich damit zum wiederholten Mal bestätigt.
 
+- **2026-08-07 (Phase 26)** — Web-Fassung als PWA, veröffentlicht über GitHub. Tragende Entscheidungen:
+  - **Die Grenze wurde vorab benannt, nicht hinterher.** Der Auftrag verlangte „niemand soll den Code nachbauen können". Im Web ist das unerreichbar, und eine Zusage, die nicht hält, wäre schlimmer als eine klare Absage. Der Plan sagt es im Kopf der Phase, das Bau-Skript sagt es an jedem Schalter, `app_config.dart` sagt es dort, wo jemand den ersten Schlüssel eintragen würde. **Geliefert ist das Erreichbare; behauptet wird nichts darüber hinaus.**
+  - **Plattform-Weichen heißen nach Fähigkeiten, nicht nach Plattformen.** `supportsReminders` statt `!kIsWeb`. Der Aufrufer will wissen, ob es Erinnerungen gibt — nicht, wo er läuft. Ergebnis: `kIsWeb` steht an **einer** Stelle im ganzen Projekt.
+  - **Die beste Weiche ist keine Weiche.** Sicherung und Bild-Teilen bekamen keinen Web-Sonderfall, sondern verloren ihren Plattform-Anteil ganz: `share_plus` nimmt mit `XFile.fromData` die Bytes direkt. `dart:io` und `path_provider` fielen dabei aus zwei Dateien heraus, und alle drei Plattformen gehen jetzt denselben Weg. **Der Web-Auftrag hat den mobilen Code vereinfacht, nicht verkompliziert.**
+  - **Kein `gh-pages`-Zweig, obwohl so geplant.** GitHub Pages nimmt heute ein Artefakt direkt aus der Automatik; ein zweiter Zweig hätte das Bauergebnis doch wieder in die Versionsgeschichte geschrieben — genau das, was vermieden werden sollte.
+  - **Ein Bau-Skript, das beide benutzen.** Automatik und Nutzer rufen dasselbe `tool/build_web.sh`. Zwei Listen von Flags laufen auseinander, und dann ist der veröffentlichte Bau nicht der geprüfte.
+  - **Die Kontrolle vor dem ersten Commit hat zwei Dinge gefunden**, die mitgegangen wären: das Arbeitsmaterial in `meine/` und `.claude/settings.local.json` mit hunderten absoluten Pfaden unter `/Users/<name>/`. Bei einem ersten Commit lohnt der Blick in die Dateiliste — danach steht alles dauerhaft in der Geschichte.
+
 ### 11.2 Dauerhafte Lehren & Fallstricke
 1. **iCloud bricht Code-Signing.** Das Flutter-SDK lag auf iCloud Drive; `taskgated` killte die Binaries sporadisch (`SIGKILL`, per Crash-Report belegt). Das war die Wurzel von „Dart compiler exited unexpectedly", `ShaderCompilerException` und den native-asset-Fehlern — **nicht** Arbeitsspeicher. SDKs nach `~/development/`, Projekte nach `~/Projects/`. Bei Build-Abstürzen zuerst `~/Library/Logs/DiagnosticReports/` lesen.
 2. **PATH in der Bash-Tool-Shell ist eingefroren.** Flutter/Dart immer mit vollem Pfad aufrufen: `"$HOME/development/flutter/bin/flutter"`.
@@ -557,6 +587,9 @@ Nach grünen Tests wurde die Phase am Emulator mit dem vollen Bestand aus `lib/m
 23. **`Duration(days: n)` ist keine Datumsarithmetik — auch nicht im Test.** Über eine Sommerzeit-Umstellung hinweg landet `start.add(const Duration(days: 91))` um 01:00 Uhr statt um Mitternacht und trifft damit **keinen** Schlüssel einer nach Tagen indizierten Map. Der Testfall zu Phase 13 fiel genau darauf herein. Im App-Code galt die Regel seit Phase 2 (`addDays`); in Tests gilt sie genauso.
 24. **fl_chart beschriftet immer zusätzlich den Achsenrand.** `interval` steuert nur die Zwischenschritte; `maxY` bekommt in jedem Fall ein Label. Wer genau bestimmte Werte an der Achse haben will, filtert in `getTitlesWidget` und verlässt sich nicht auf das Intervall (Phase 13). `interval` darf außerdem nie 0 sein.
 25. **Rund um ein Diagramm ist „links" nie „start".** fl_chart kennt keine Textrichtung und zeichnet die Y-Achse immer physisch links; die Diagramme bleiben auf Persisch bewusst links-läufig (Phase 18). Beschriftungen daneben deshalb mit `Alignment.centerRight`/`TextAlign.right` setzen, **nicht** mit den richtungsabhängigen Varianten — sonst landet der Text auf Persisch auf der Achse (am Gerät gefunden, Phase 13).
+26. **Im Web gibt es keinen Code-Schutz, nur Code-Unlesbarkeit.** `--obfuscate` wirkt nicht für Web-Bauten; `dart2js` minimiert, mehr nicht. Was der Browser ausführt, kann der Browser lesen — auch bei WebAssembly. Ein `--dart-define` ist keine Verschlüsselung, sondern nur ein Weg, den Wert aus dem Repository zu halten. **Was geheim bleiben muss, gehört hinter einen Server** (Phase 26.4/26.5).
+27. **Ein Browser-Datei-Dialog meldet den Abbruch nicht über `change`.** Bricht der Nutzer ab, feuert nur `cancel` — ohne dieses Ereignis bleibt das Future für immer offen und die Oberfläche hängt in einem Ladezustand ohne Ende (Phase 26.1).
+28. **`--base-href` entscheidet auf GitHub Pages über weiß oder App.** Die Seite liegt unter `/<repository>/`, nicht im Wurzelverzeichnis; mit dem Standardwert sucht sie ihre Dateien eine Ebene zu hoch und zeigt nichts an — ohne Fehlermeldung (Phase 26.3).
 
 ## 12. Offene Fragen
 - ~~Balkendiagramm: Y-Achse doppelt beschriftet, X-Beschriftungen überlappen~~ · ~~Fortschritts-Trend im Jahr unlesbar~~ — **beide mit Phase 13 am 2026-08-07 erledigt.**

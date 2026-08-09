@@ -1,7 +1,7 @@
 # Root-in — Projekt-Map (Ordner- & Datei-Übersicht)
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
-> Zuletzt aktualisiert: 2026-08-07 (zweiter Eintrag des Tages) — **Phase 26 begonnen: Web-Fassung (PWA) und Veröffentlichung über GitHub.** Neu geplant sind `web/` (jetzt im Umfang, nicht mehr ungenutztes Gerüst) und `.github/workflows/`; die betroffenen Dienste sind in der Ausgangslage von PLAN.md Phase 26 tabellarisch aufgeführt.
+> Zuletzt aktualisiert: 2026-08-07 (dritter Eintrag des Tages) — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub.** Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist jetzt ein Git-Repository. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
 > Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): keine neuen Dateien, geändert sind `core/widgets/chart_card.dart`, die drei ARB-Dateien und drei Test-Dateien.
 > Zuvor 2026-08-02 — Phasen 25, 24, 23 und 22 gebaut; der Abschnitt „Geplante Dateien" ist entfallen.
 
@@ -84,18 +84,24 @@
 │                                          9 Provider-Infos, Drawables, Texte; values/strings.xml hält
 │                                          zusätzlich 🕯️ `admob_app_id`
 ├── ios/                             ✅ iOS-Plattformcode (Standard-Gerüst; Bundle-ID noch com.example.rootIn)
-├── web/                             🚧 Web-Fassung (PLAN.md Phase 26) — seit 2026-08-07 IM UMFANG, nicht mehr
+├── web/                             ✅ Web-Fassung (PLAN.md Phase 26) — seit 2026-08-07 IM UMFANG, nicht mehr
 │   │                                    ungenutztes Gerüst. Sie ist der Ersatzweg auf das iPhone
-│   ├── index.html                   🚧 Einstiegsseite + iOS-Meta-Tags (Safari liest apple-mobile-web-app-*,
-│   │                                    NICHT manifest.json — ohne sie kein App-Look nach „Zum Home-Bildschirm")
-│   ├── manifest.json                🚧 PWA-Manifest (Name, Farben, Symbole)
-│   ├── sqlite3.wasm                 🚧 SQLite als WebAssembly — OHNE diese Datei wirft driftDatabase() im
-│   │                                    Browser und die App startet gar nicht
-│   ├── drift_worker.js              🚧 Drifts Web-Worker (aus `dart run drift_dev make-worker`)
+│   ├── index.html                   ✅ Einstiegsseite, Markenfarbe schon vor dem ersten Frame + iOS-Meta-Tags.
+│   │                                    ⚠️ Safari liest fürs Ablegen apple-mobile-web-app-*, NICHT
+│   │                                    manifest.json — ohne sie öffnet die Verknüpfung eine Browser-Seite
+│   │                                    mit Adressleiste statt einer App
+│   ├── manifest.json                ✅ PWA-Manifest (Root-in, Markengrün #2E7D5B, Symbole)
+│   ├── sqlite3.wasm                 ⚙️ NICHT versioniert — tool/fetch_web_db_assets.sh holt sie. Ohne diese
+│   │                                    Datei wirft driftDatabase() im Browser, die App startet gar nicht
+│   ├── drift_worker.js              ⚙️ NICHT versioniert — dieselbe Quelle, Version aus pubspec.lock
 │   ├── favicon.png, icons/          ✅ Symbole (Standard-Gerüst)
-│   └── .gitignore                   🚧 Hält die beiden erzeugten Web-Artefakte aus der Versionierung
-├── .github/workflows/               🚧 Automatik (PLAN.md Phase 26.3)
-│   └── deploy-web.yml               🚧 Push auf main → flutter build web → GitHub Pages
+│   └── .gitignore                   ✅ Hält die beiden erzeugten Dateien aus der Versionierung
+├── tool/                            ✅ Bau-Skripte (siehe Abschnitt „Web-Fassung & Automatik")
+├── .github/workflows/deploy-web.yml ✅ Push auf main → analyze + test → build_web.sh → GitHub Pages
+├── .env.example                     ✅ Vorlage für --dart-define-from-file (die echte .env ist ausgeschlossen)
+├── .git/                            ✅ Seit 2026-08-07 ein Git-Repository (Zweig `main`, erster Commit
+│                                        mit 348 Dateien). ⚠️ NICHT im Repository: meine/,
+│                                        .claude/settings.local.json, key.properties, *.jks, build/, .env
 └── macos/, linux/, windows/         ✅ Desktop-Gerüst (ungenutzt, nicht im Fokus)
 ```
 
@@ -176,6 +182,11 @@ lib/
 │   │   ├── dashboard_defaults.dart           ✅ Standard-Widget-Listen je Seite (benannte const-Listen — stabile
 │   │   │                                         Family-Schlüssel, siehe Kommentar in der Datei)
 │   │   ├── contact_info.dart                 ✅ Kontaktziel für „Kontakt uns"
+│   │   ├── app_config.dart                   ✅ Werte, die beim BAUEN hereinkommen (String.fromEnvironment):
+│   │   │                                         versionName, buildNumber, fullVersion (Phase 26.5/26.6).
+│   │   │                                         ⚠️ Trägt die Warnung, dass ein --dart-define KEINE
+│   │   │                                         Verschlüsselung ist — der Wert steht im Bundle. Sie steht
+│   │   │                                         dort, wo jemand den ersten Schlüssel eintragen würde
 │   │   ├── app_links.dart                    ✅ Einzige Quelle des Play-Store-Links (Phase 19), abgeleitet aus
 │   │   │                                         `appPackageName`. Drei Leser: QR-Code auf der Karte,
 │   │   │                                         Share-Begleittext, „App teilen" in den Einstellungen
@@ -186,9 +197,13 @@ lib/
 │   │   ├── date_utils.dart                   ✅ dateOnly, addDays (DST-sicher), weekStartOf
 │   │   ├── streak_calculator.dart            ✅ Reine Streak-Logik inkl. 1-Frei-Tag/Woche (unit-getestet)
 │   │   ├── achievement_evaluator.dart        ✅ Reine Freischalt-Logik (unit-getestet)
-│   │   └── platform_support.dart             ✅ isMobilePlatform — eine Plattform-Abfrage für alle
-│   │                                             (Querformat-Sperre der Übersicht). 🕯️ isStorePlatform ist mit
-│   │                                             Phase 20 auskommentiert (hatte nur Werbung/Kauf als Leser)
+│   │   └── platform_support.dart             ✅ **Die einzige Stelle im Projekt, an der `kIsWeb` steht.**
+│   │                                             isMobilePlatform + seit Phase 26.1 drei nach FÄHIGKEIT
+│   │                                             benannte Abfragen: supportsReminders,
+│   │                                             supportsHomeScreenWidgets, supportsOrientationLock.
+│   │                                             Bewusst nicht nach Plattform benannt — der Aufrufer will
+│   │                                             wissen „gibt es hier Erinnerungen?", nicht „wo laufe ich?".
+│   │                                             🕯️ isStorePlatform ist mit Phase 20 auskommentiert
 │   ├── services/
 │   │   ├── time_service.dart                 ✅ Aktuelles Datum (HTTP-Date-Header + Offline-Fallback)
 │   │   ├── settings_service.dart             ✅ Persistiert ThemeMode, AppThemeVariant, AppLanguage, AscentSource,
@@ -198,11 +213,25 @@ lib/
 │   │   │                                         resolvedLocaleProvider (Texte ohne BuildContext)
 │   │   ├── profile_service.dart              ✅ Persistiert UserProfile (Name)
 │   │   ├── share_service.dart                ✅ Einzige Stelle für share_plus: shareApp (Text) und
-│   │   │                                         shareProgressImage (Screenshot → Temp-Datei → Share-Sheet).
-│   │   │                                         Beide Texte tragen seit Phase 19 den Store-Link aus
-│   │   │                                         app_links.dart — dort ist er anklickbar, auf dem Bild nicht
-│   │   ├── backup_service.dart               ✅ Sicherung schreiben (→ Share-Sheet) und einlesen
-│   │   │                                         (flutter_file_dialog); Serialisierung in backup_data.dart
+│   │   │                                         shareProgressImage (Bytes → Share-Sheet). Beide Texte tragen
+│   │   │                                         seit Phase 19 den Store-Link aus app_links.dart.
+│   │   │                                         Seit Phase 26.1 OHNE dart:io/path_provider: XFile.fromData
+│   │   │                                         übergibt die Bytes direkt, share_plus legt selbst eine
+│   │   │                                         Temp-Datei an. Dadurch auf allen drei Plattformen ein Weg.
+│   │   │                                         ⚠️ fileNameOverrides ist Pflicht — XFile.fromData reicht
+│   │   │                                         `name` außerhalb des Webs nicht durch
+│   │   ├── backup_service.dart               ✅ Sicherung schreiben und einlesen; Serialisierung in
+│   │   │                                         backup_data.dart. Ebenfalls seit Phase 26.1 plattformfrei:
+│   │   │                                         Export über XFile.fromData mit downloadFallbackEnabled
+│   │   │                                         (im Browser = Download), Import über file_pick/
+│   │   ├── file_pick/                        ✅ Datei auswählen und deren INHALT liefern (nicht den Pfad —
+│   │   │   │                                     im Browser gibt es keine Pfade). Bedingter Import, damit in
+│   │   │   │                                     keinem Bau Code der anderen Plattform steckt (Phase 26.1)
+│   │   │   ├── pick_text_file.dart               Weiche: export io … if (dart.library.js_interop) web
+│   │   │   ├── pick_text_file_io.dart            Android/iOS: flutter_file_dialog + dart:io
+│   │   │   └── pick_text_file_web.dart           Browser: <input type="file"> + FileReader.
+│   │   │                                         ⚠️ `oncancel` ist Pflicht: Bricht der Nutzer ab, feuert
+│   │   │                                         `onchange` NIE — das Future bliebe für immer offen
 │   │   ├── repo_content_service.dart         ✅ **Einziger** Weg an Repository-Inhalte (Anleitung + „موارد دیگر").
 │   │   │                                         Lädt jeden Pfad unter `content/` als Text und legt
 │   │   │                                         sie in shared_preferences ab → offline lesbar. Zeigt erst den
@@ -553,7 +582,41 @@ build/app/outputs/flutter-apk/app-debug.apk       ⚙️ Nur zum lokalen Prüfen
 
 ## Web-Fassung & Automatik
 
-🚧 **In Arbeit (PLAN.md Phase 26).** Dieser Abschnitt wird beim Abschluss der Phase gefüllt: welche Dateien in `web/` und `.github/workflows/` liegen, welche davon **erzeugt** und deshalb nicht versioniert sind, und welche App-Funktionen im Browser bewusst fehlen.
+✅ **Gebaut in PLAN.md Phase 26.** Die Web-Fassung ist der Zugang zum iPhone, solange es keine App-Store-Veröffentlichung gibt.
+
+```
+tool/                                ✅ Skripte — von Hand UND von der Automatik aufgerufen
+├── fetch_web_db_assets.sh           ✅ Holt sqlite3.wasm + drift_worker.js aus der drift-
+│                                        Veröffentlichung. Liest die Version aus pubspec.lock, damit
+│                                        Worker und Bibliothek nicht auseinanderlaufen.
+│                                        ⚠️ `dart run drift_dev make-worker` ist mit drift 2.34.2 /
+│                                        drift_dev 2.34.0 KAPUTT — nicht erneut versuchen
+└── build_web.sh                     ✅ **Einzige Stelle der Bau-Schalter**: --no-source-maps, -O4, --csp,
+                                         --base-href, Version aus pubspec.yaml, Baunummer aus
+                                         GITHUB_RUN_NUMBER. Die Automatik ruft DIESES Skript auf —
+                                         zwei Flag-Listen liefen sonst auseinander
+
+.github/workflows/deploy-web.yml     ✅ Push auf main → pub get → analyze → test → build_web.sh →
+                                         GitHub Pages. Prüfung VOR Veröffentlichung; base-href aus dem
+                                         Repository-Namen; concurrency bricht ältere Läufe ab.
+                                         ⚠️ KEIN gh-pages-Zweig: Pages nimmt das Artefakt direkt
+                                         entgegen, damit landet das Bauergebnis nie in der Geschichte
+
+.env.example                         ✅ Vorlage für --dart-define-from-file. Die echte `.env` ist
+                                         ausgeschlossen. ⚠️ Definierte Werte landen IM BUNDLE und sind
+                                         dort auffindbar — kein Ersatz für einen Server
+```
+
+**Code-Anteil der Web-Fassung** (die Dateien selbst stehen oben in ihren Abschnitten):
+
+| Was | Wo | Kern |
+|---|---|---|
+| Plattform-Weichen | `core/utils/platform_support.dart` | `supportsReminders`, `supportsHomeScreenWidgets`, `supportsOrientationLock`. **`kIsWeb` steht NUR hier** |
+| Datenbank im Browser | `data/local/database.dart` | `DriftWebOptions` — ohne den Parameter wirft `driftDatabase()` im Web |
+| Sicherung einlesen | `core/services/file_pick/` | Bedingter Import: mobil Dateipfad, im Browser `<input type="file">` |
+| Werte vom Bau | `core/constants/app_config.dart` | `String.fromEnvironment` + die Warnung, was das **nicht** leistet |
+
+**Was im Browser bewusst fehlt** (PLAN.md Phase 26.1): Erinnerungen und Tagesstand-Meldung, Startbildschirm-Widgets, die Querformat-Sperre der Übersicht. Die zugehörigen Bedienelemente verschwinden dort ganz — ein Schalter, der nichts bewirkt, ist schlimmer als kein Schalter. Eine gespeicherte Erinnerungs-Uhrzeit bleibt in der Datenbank **unangetastet**, damit dieselbe Sicherung auf Android wieder vollständig ist.
 
 ## Inhalts-Repository (GitHub)
 
