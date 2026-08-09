@@ -1,0 +1,6 @@
+# Bauartefakte, keine Quellen (siehe PLAN.md Phase 26.2): Beide Dateien holt
+# `tool/fetch_web_db_assets.sh` aus der drift-Veröffentlichung — lokal und in
+# der Automatik. Wer sie einchecken würde, hätte eine 700-KB-Binärdatei in der
+# Versionsgeschichte, die bei jedem drift-Update erneut darin landet.
+sqlite3.wasm
+drift_worker.js

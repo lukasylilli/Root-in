@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Fläche der Farbkachel (siehe PLAN.md Phase 10.6d). Bewusst **weiß**: der
+  Provider färbt sie per `setColorFilter` in der Akzentfarbe der Gewohnheit
+  ein (SRC_ATOP auf Weiß ergibt genau die Farbe). Ein farbiges Drawable
+  ließe sich so nicht sauber umtönen.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#FFFFFFFF" />
+    <corners android:radius="22dp" />
+</shape>

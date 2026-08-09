@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "folders": [
+    {
+      "id": "news",
+      "title": "📣 خبرها",
+      "folder_path": "news",
+      "order": 1,
+      "files": [
+        { "title": "شروع دورهٔ تابستان", "file_path": "news/2026-08-start.md" },
+        { "title": "تغییر ساعت کلاس", "file_path": "news/2026-08-zeit.md" }
+      ]
+    },
+    {
+      "id": "tips",
+      "title": "💡 نکته‌های یادگیری",
+      "folder_path": "tips",
+      "order": 2,
+      "files": [
+        { "title": "چطور واژه را فراموش نکنیم", "file_path": "tips/woerter.md" }
+      ]
+    },
+    {
+      "id": "archive",
+      "title": "🗂 بایگانی",
+      "folder_path": "archive",
+      "order": 10,
+      "files": []
+    }
+  ]
+}

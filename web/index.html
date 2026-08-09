@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <!--
+    Wird beim Bauen durch `flutter build web --base-href /<repo>/` ersetzt.
+    Auf GitHub Pages liegt die App NICHT im Wurzelverzeichnis der Domain,
+    sondern unter /<repository-name>/ — ohne den passenden Wert sucht die
+    Seite ihre Dateien eine Ebene zu hoch und bleibt weiß.
+    Siehe .github/workflows/deploy-web.yml und PLAN.md Phase 26.3.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Gewohnheiten und Routinen aufbauen und verfolgen — mit Schwerpunkt Sprachenlernen.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#2E7D5B">
+
+  <!--
+    iOS: Safari liest fürs Ablegen auf dem Home-Bildschirm diese Meta-Tags und
+    NICHT manifest.json (PLAN.md Phase 26.1). Ohne sie öffnet die abgelegte
+    Verknüpfung eine ganz normale Browser-Seite mit Adressleiste — genau der
+    Unterschied, der über „fühlt sich wie eine App an" entscheidet.
+  -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Root-in">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Root-in</title>
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    /*
+      Der Hintergrund gehört gesetzt, bevor Flutter den ersten Frame malt —
+      sonst blitzt beim Start eine weiße Fläche auf, die auf einem dunklen
+      Gerät als Fehler gelesen wird.
+    */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #2E7D5B;
+      overscroll-behavior: none;
+    }
+  </style>
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+# Konfiguration für `flutter gen-l10n` (siehe PLAN.md Phase 11).
+# Deutsch ist die Vorlage-Sprache: neue Strings werden zuerst hier ergänzt,
+# `app_en.arb` zieht nach. Fehlt eine englische Übersetzung, meldet es der
+# Generator und fällt auf den deutschen Text zurück.
+arb-dir: lib/l10n
+template-arb-file: app_de.arb
+output-dir: lib/l10n/gen
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+
+# Nicht-nullbarer Getter: `AppLocalizations.of(context)` liefert direkt die
+# Instanz, kein `!` an jeder Aufrufstelle.
+nullable-getter: false

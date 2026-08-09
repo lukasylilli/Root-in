@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Piktogramm oben links auf der Farbkachel (Widget-Spec SCREEN_16:
+     freistehendes weißes Glyph, keine Kachel dahinter). Bewusst ein
+     neutrales Häkchen-Symbol: die App speichert je Gewohnheit zwar einen
+     `iconKey`, ein Mapping auf Android-Vektoren gäbe es aber nur doppelt
+     gepflegt — siehe Offene Fragen. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M22,5.2l-1.4,-1.4 -9.2,9.2 -3.9,-3.9 -1.4,1.4 5.3,5.3zM19,12c0,3.9 -3.1,7 -7,7s-7,-3.1 -7,-7 3.1,-7 7,-7c1.4,0 2.6,0.4 3.7,1.1l1.4,-1.4C16.6,3.6 14.4,3 12,3c-5,0 -9,4 -9,9s4,9 9,9 9,-4 9,-9z" />
+</vector>

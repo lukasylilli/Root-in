@@ -1,0 +1,246 @@
+# Root-in — Datenschutzerklärung / Privacy Policy
+
+---
+
+## Deutsch
+
+**Verantwortlich:** Saleh Aliramezani, Dornbirn, Österreich
+**Kontakt:** alirzsaleh@gmail.com · Telegram: https://t.me/LukasAlmani
+**Stand:** August 2026
+
+### Kurzfassung
+
+Root-in speichert deine Gewohnheiten, Erledigungen, Statistiken und dein Profil
+**ausschließlich auf deinem Gerät**. Es gibt keine Benutzerkonten, keinen
+Server und keine Registrierung. Wir können deine Daten nicht einsehen.
+
+Die App enthält **keine Werbung** und **keine In-App-Käufe**. Es wird **keine
+Werbe-ID** und keine andere Kennung deines Geräts erhoben.
+
+Deine Inhalte verlassen dein Gerät nur, wenn **du selbst** einen Export
+auslöst. Darüber hinaus ruft die App zwei Internetadressen auf — für die
+Datumsprüfung und für die Anleitungs-Texte (Punkte 2 und 3). Dabei werden
+keine persönlichen Daten übermittelt.
+
+### 1. Daten, die auf deinem Gerät bleiben
+
+Die App legt lokal in einer Datenbank auf deinem Gerät ab:
+
+- Gewohnheiten, Kategorien und deren Einstellungen (inkl. Erinnerungszeiten)
+- Abgehakte Tage, Dauer-/Mengenangaben, daraus berechnete Serien und Punkte
+- Deinen im Profil eingetragenen Namen
+- App-Einstellungen (Sprache, Darstellungsmodus, Farbschema, Layouts)
+
+Diese Daten werden **nicht** an uns oder an Dritte übertragen. Sie werden
+gelöscht, wenn du die App deinstallierst oder die App-Daten löschst.
+
+### 2. Datumsprüfung im Internet
+
+Um zu verhindern, dass Serien („Streaks") durch ein manuelles Verstellen der
+Geräteuhr verfälscht werden, ruft die App gelegentlich die Startseite von
+Google auf und liest daraus **ausschließlich das Datum aus dem HTTP-Header**.
+Dabei werden keine persönlichen Daten übermittelt und keine Inhalte
+gespeichert. Ohne Internetverbindung nutzt die App die lokale Gerätezeit.
+
+### 3. Anleitungs-Texte aus dem Internet
+
+Die Texte der Rubrik „Root-in Anleitung" liegen nicht in der App, sondern in
+einem öffentlichen GitHub-Repository; die App lädt sie dort als reine
+Textdateien und legt sie auf deinem Gerät ab, damit sie auch offline lesbar
+sind. Übertragen wird dabei nur, was jeder Web-Abruf mit sich bringt (u. a.
+deine IP-Adresse gegenüber GitHub). Es werden **keine** Daten über dich, deine
+Gewohnheiten oder deine Nutzung gesendet. Anbieter ist GitHub, Inc.; es gilt
+deren Datenschutzerklärung: https://docs.github.com/site-policy
+
+### 4. Sicherung und Export
+
+Du kannst deine Daten selbst als Datei exportieren. Wohin diese Datei geht,
+entscheidest **allein du** über die Teilen-Funktion deines Geräts. Dasselbe
+gilt für das Bild deines Fortschritts, das du über „Fortschritt teilen"
+erzeugst. Es findet keine automatische Übertragung und keine Cloud-Sicherung
+durch uns statt.
+
+### 5. Automatische Sicherung durch Android
+
+Root-in nutzt Googles automatische App-Sicherung („Auto Backup"), die auf
+Android-Geräten standardmäßig aktiv ist. Dabei kopiert **das Betriebssystem**
+deine App-Daten verschlüsselt in deinen eigenen Google-Drive-Speicher, damit
+sie bei einem Gerätewechsel oder einer Neuinstallation zurückkommen. Diese
+Sicherung gehört **dir**, nicht uns: Wir haben keinen Zugriff darauf, und sie
+zählt nicht auf dein Drive-Kontingent. Abschalten kannst du sie in den
+Android-Einstellungen unter *Google → Sicherung*.
+
+Ein reines App-**Update** löscht ohnehin keine Daten — dafür braucht es diese
+Sicherung nicht.
+
+### 6. Benachrichtigungen
+
+Erinnerungen werden lokal auf deinem Gerät geplant und ausgelöst. Es werden
+keine Push-Nachrichten über einen Server versendet.
+
+### 7. Berechtigungen
+
+- **Benachrichtigungen** — für Gewohnheits-Erinnerungen
+- **Internet** — für die Datumsprüfung und die Anleitungs-Texte (Punkte 2, 3)
+- **Start nach Neustart** — um geplante Erinnerungen nach einem Neustart des
+  Geräts wiederherzustellen
+
+Eine Berechtigung für die **Werbe-ID** fordert die App nicht an.
+
+### 8. Kinder
+
+Die App richtet sich nicht gezielt an Kinder unter 13 Jahren. Wir erheben
+wissentlich keine personenbezogenen Daten von Kindern.
+
+### 9. Deine Rechte
+
+Da wir keine personenbezogenen Daten auf eigenen Systemen speichern, können
+wir dir keine Daten herausgeben oder löschen — es gibt schlicht keine. Deine
+Daten liegen vollständig in deiner Hand: Du löschst sie, indem du die App
+deinstallierst oder die App-Daten in den Android-Einstellungen löschst.
+
+### 10. Änderungen
+
+Bei Änderungen dieser Erklärung aktualisieren wir das oben genannte Datum.
+
+### 11. Kontakt
+
+alirzsaleh@gmail.com · https://t.me/LukasAlmani
+
+---
+
+## English
+
+**Controller:** Saleh Aliramezani, Dornbirn, Austria
+**Contact:** alirzsaleh@gmail.com · Telegram: https://t.me/LukasAlmani
+**Last updated:** August 2026
+
+### Summary
+
+Root-in stores your habits, completions, statistics and profile **exclusively
+on your device**. There are no user accounts, no server and no sign-up. We
+cannot see your data.
+
+The app contains **no advertising** and **no in-app purchases**. **No
+Advertising ID** and no other device identifier is collected.
+
+Your content leaves your device only when **you** trigger an export. Beyond
+that, the app contacts two internet addresses — for the date check and for the
+guide texts (sections 2 and 3). No personal data is transmitted in the process.
+
+### 1. Data that stays on your device
+
+The app stores locally, in a database on your device:
+
+- Habits, categories and their settings (including reminder times)
+- Completed days, duration/quantity entries, and the streaks and points
+  derived from them
+- The name you enter in your profile
+- App settings (language, appearance mode, colour scheme, layouts)
+
+This data is **not** transmitted to us or to any third party. It is deleted
+when you uninstall the app or clear its data.
+
+### 2. Online date check
+
+To prevent streaks from being falsified by manually changing the device clock,
+the app occasionally contacts Google's homepage and reads **only the date from
+the HTTP header**. No personal data is transmitted and no content is stored.
+Without an internet connection the app uses the local device time.
+
+### 3. Guide texts from the internet
+
+The texts in the "Root-in guide" section are not bundled with the app but live
+in a public GitHub repository; the app downloads them as plain text files and
+stores them on your device so they remain readable offline. The only data
+transmitted is what any web request entails (your IP address towards GitHub,
+among others). **No** data about you, your habits or your usage is sent. The
+provider is GitHub, Inc.; their privacy statement applies:
+https://docs.github.com/site-policy
+
+### 4. Backup and export
+
+You can export your data as a file yourself. Where that file goes is decided
+**by you alone**, via your device's share function. The same applies to the
+progress image you create via "Share progress". There is no automatic transfer
+and no cloud backup on our side.
+
+### 5. Automatic backup by Android
+
+Root-in uses Google's automatic app backup ("Auto Backup"), which is enabled
+by default on Android devices. **The operating system** copies your app data,
+encrypted, into your own Google Drive storage so that it returns after a
+device change or a reinstall. That backup belongs to **you**, not to us: we
+have no access to it, and it does not count against your Drive quota. You can
+turn it off in your Android settings under *Google → Backup*.
+
+A plain app **update** does not delete any data — that does not depend on this
+backup.
+
+### 6. Notifications
+
+Reminders are scheduled and triggered locally on your device. No push messages
+are sent through any server.
+
+### 7. Permissions
+
+- **Notifications** — for habit reminders
+- **Internet** — for the date check and the guide texts (sections 2, 3)
+- **Run at startup** — to restore scheduled reminders after a device restart
+
+The app does not request the **Advertising ID** permission.
+
+### 8. Children
+
+The app is not directed at children under 13. We do not knowingly collect
+personal data from children.
+
+### 9. Your rights
+
+Because we store no personal data on our own systems, we cannot hand over or
+delete any data — there simply is none. Your data is entirely in your hands:
+delete it by uninstalling the app or clearing its data in the Android
+settings.
+
+### 10. Changes
+
+If this policy changes, we will update the date shown above.
+
+### 11. Contact
+
+alirzsaleh@gmail.com · https://t.me/LukasAlmani
+
+<!--
+=====================================================================
+INTERNE NOTIZ — NICHT TEIL DER VERÖFFENTLICHTEN ERKLÄRUNG.
+Steht bewusst als HTML-Kommentar am Dateiende: Markdown-Renderer
+(GitHub, Gist) blenden ihn aus, das ganze Dokument lässt sich also
+gefahrlos komplett kopieren.
+
+**Stand 2026-08-01 (PLAN.md Phase 20).** Inhaltlich abgeleitet aus dem
+tatsächlichen Verhalten der App, nicht aus einer Vorlage. Vor der
+Veröffentlichung bitte lesen und prüfen — dies ist keine Rechtsberatung.
+
+**Muss unter einer öffentlich erreichbaren URL liegen** (Pflichtfeld in der
+Play Console). Kostenlose Wege: GitHub Pages, GitHub Gist, Notion (öffentlich
+geteilt), eigene Website.
+
+⚠️ **Der veröffentlichte Gist aktualisiert sich NICHT von selbst.** Diese
+Fassung muss dort von Hand nachgezogen werden:
+https://gist.github.com/lukasylilli/673c36972d69819d975ffb82a592cca2
+
+Änderungen dieser Fassung gegenüber Juli 2026:
+- Abschnitte „Werbung (Google AdMob)" und „In-App-Kauf (Google Play Billing)"
+  **entfallen** — die App erscheint mit Phase 20 ohne Werbung und ohne Kauf,
+  Manifest und Pakete sind entsprechend auskommentiert.
+- Berechtigung „Werbe-ID" gestrichen (steht nicht mehr im Manifest).
+- **Neu:** Abschnitt zu den Anleitungs-Texten aus dem GitHub-Repository
+  (Phase 17.1) — der zweite Netzzugriff der App war bis dahin nicht erwähnt.
+- Teilen-Abschnitt nennt zusätzlich das Fortschritts-Bild (Phase 19).
+- Datensicherheitsformular der Play Console entsprechend: **keine Daten
+  erhoben**, **Werbung: Nein**.
+- **Nachtrag 2026-08-02 (Phase 25):** Abschnitt zur automatischen
+  Android-Sicherung ergänzt, Folgeabschnitte neu nummeriert. Anlass:
+  `android:allowBackup` steht jetzt ausdrücklich im Manifest.
+=====================================================================
+-->

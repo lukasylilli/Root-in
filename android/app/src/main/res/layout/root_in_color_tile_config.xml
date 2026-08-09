@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Auswahl beim Platzieren einer Farbkachel (siehe PLAN.md Phase 10.6d).
+  Bewusst schlicht: eine Liste der Gewohnheiten, ein Tipp genügt.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A0A0C"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:text="@string/widget_color_tile_config_title"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/config_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/widget_color_tile_config_empty"
+        android:textColor="#8E8E93"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/config_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="#2A2A2C"
+        android:dividerHeight="1dp" />
+</LinearLayout>

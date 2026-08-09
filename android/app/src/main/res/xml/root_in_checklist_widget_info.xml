@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wochen-Checklisten-Widget (siehe PLAN.md Phase 10.6c, Widget-Spec-
+     Familie "checklist"): breites Format fuer sieben Tageskreise. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialLayout="@layout/root_in_chart_widget"
+    android:minWidth="250dp"
+    android:minHeight="60dp"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen" />

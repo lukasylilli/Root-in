@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Texte der Home-Screen-Widgets (siehe PLAN.md Phase 10/10.7). Die App
+     ist derzeit durchgehend deutsch; die Lokalisierung folgt in Phase 11. -->
+<resources>
+    <string name="widget_name">Root-in Fortschritt</string>
+    <string name="widget_description">Zeigt deinen heutigen Fortschritt.</string>
+    <string name="widget_title">Heute</string>
+    <string name="widget_placeholder_percent">–</string>
+    <string name="widget_placeholder_subtitle">Noch keine Daten</string>
+    <string name="widget_chart_description">Dein gewähltes Diagramm</string>
+    <string name="widget_chart_placeholder">Öffne die App, um Daten zu laden</string>
+
+    <string name="widget_matrixgrid_label">Root-in Matrix-Grid</string>
+    <string name="widget_categorybar_label">Root-in Typ (Balken)</string>
+    <string name="widget_categorypie_label">Root-in Typ (Kreis)</string>
+    <string name="widget_progresstrend_label">Root-in Fortschritts-Trend</string>
+    <string name="widget_monthlybar_label">Root-in Monatsübersicht</string>
+    <string name="widget_ring_label">Root-in Tagesring</string>
+    <string name="widget_checklist_label">Root-in Wochen-Checkliste</string>
+
+    <!-- Farbkachel (siehe PLAN.md Phase 10.6d). -->
+    <string name="widget_color_tile_label">Root-in Gewohnheits-Kachel</string>
+    <string name="widget_color_tile_log">Abhaken</string>
+    <string name="widget_color_tile_streak">%1$d 🔥</string>
+    <string name="widget_color_tile_unconfigured">Gewohnheit wählen</string>
+    <string name="widget_color_tile_config_title">Welche Gewohnheit?</string>
+    <string name="widget_color_tile_config_empty">Noch keine Gewohnheiten. Lege zuerst in der App eine an.</string>
+
+    <!-- PHASE 20 (2026-08-01): Werbung deaktiviert — zum Wiederaktivieren diesen Block einkommentieren.
+         AdMob-App-ID der echten AdMob-App (siehe PLAN.md Phase 14). Die
+         zugehörige Banner-Ad-Unit-ID steht in
+         lib/core/constants/ad_config.dart — beide gehören zusammen. Ein
+         falscher oder fehlender Wert lässt die App beim Start abstürzen.
+         Test-Anzeigen kommen NICHT über diesen Wert, sondern über die
+         Ad-Unit-Weiche in AdConfig (Debug-Builds).
+         ⚠️ Zusammen mit der AdMob-meta-data im AndroidManifest einkommentieren.
+    <string name="admob_app_id" translatable="false">ca-app-pub-7806974290921501~9284147977</string>
+    -->
+</resources>

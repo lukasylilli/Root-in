@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Layout eines Diagramm-Widgets (siehe PLAN.md Phase 10.7). Zeigt nur das
+  von der App gerenderte Diagramm-Bild; solange keines vorliegt, erscheint
+  ein Hinweistext. Alle fünf Diagramm-Widgets teilen sich dieses Layout —
+  sie unterscheiden sich nur im Datenschlüssel (siehe ChartWidgetProvider).
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    android:background="@drawable/root_in_widget_background">
+
+    <ImageView
+        android:id="@+id/chart_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/widget_chart_description"
+        android:scaleType="fitCenter"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/chart_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/widget_chart_placeholder"
+        android:textColor="#B9C3E0"
+        android:textSize="12sp" />
+</FrameLayout>

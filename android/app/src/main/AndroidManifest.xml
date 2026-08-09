@@ -1,0 +1,245 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Für geplante Erinnerungen (flutter_local_notifications, siehe
+         PLAN.md Phase 7): Reboot-Reschedule benötigt RECEIVE_BOOT_COMPLETED,
+         POST_NOTIFICATIONS wird von der Plugin-eigenen Manifest-Datei
+         bereits mitgebracht. -->
+    <!-- Nötig für zwei Dinge, die es beide schon gibt: die Datums-Prüfung über
+         den HTTP-Date-Header (core/services/time_service.dart) und das Laden
+         der Anleitungs-Texte von GitHub (Phase 17.1). Bis 2026-07-30 stand die
+         Berechtigung NUR in den Debug-/Profile-Manifesten (die Flutter selbst
+         anlegt) — im Release-Build lief die Datums-Prüfung deshalb immer in
+         den Offline-Fallback. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- PHASE 20 (2026-08-01): Werbung deaktiviert — zum Wiederaktivieren diesen Block einkommentieren.
+         Werbung & In-App-Kauf (siehe PLAN.md Phase 14). Beide Berechtigungen
+         bringen die jeweiligen Bibliotheken zwar selbst mit; hier standen sie
+         ausdrücklich, weil sie in der Play-Console-Datensicherheitserklärung
+         angegeben werden müssen:
+         - AD_ID: Werbe-ID des Geräts, ab targetSdk 33 nötig für AdMob.
+         - BILLING: Kaufabwicklung über Google Play.
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <uses-permission android:name="com.android.vending.BILLING"/>
+    -->
+    <!-- PHASE 25 (2026-08-02): Datenerhalt ausdrücklich geregelt.
+
+         `allowBackup` steht hier bewusst, obwohl `true` ohnehin der Standard
+         ist — als **Entscheidung**, nicht als Zufall:
+
+         - Ein App-**Update** löscht ohnehin nichts. Die Datenbank liegt über
+           drift_flutter in getApplicationDocumentsDirectory(), die
+           Einstellungen in shared_preferences; beides sind App-Daten, die
+           Android beim Update unangetastet lässt.
+         - Googles automatische Sicherung deckt den Fall ab, den das NICHT
+           abdeckt: **Gerätewechsel und Neuinstallation**. Für eine App ohne
+           Konto und ohne Server ist das der einzige Weg, wie ein Nutzer
+           seinen Verlauf auf ein neues Telefon mitnimmt, ohne vorher von
+           Hand zu exportieren.
+         - Ohne Rules-Datei sichert Android alles (Datenbank + Prefs) — genau
+           das ist gewollt. Eine Ausnahmeliste gäbe es nur zu pflegen.
+
+         ⚠️ Eine zurückgespielte Sicherung kann aus einer **älteren**
+         App-Version stammen. Dass die Migration das trägt, prüft
+         test/unit/database_migration_test.dart. -->
+    <application
+        android:label="root_in"
+        android:name="${applicationName}"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher">
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+        <!-- Für den Snooze-Button auf der Erinnerung. -->
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
+        <!-- Fortschritts-Widget (siehe PLAN.md Phase 10). exported=true ist
+             nötig, damit der Launcher das Widget anbieten kann. -->
+        <receiver
+            android:name=".RootInWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/root_in_widget_info" />
+        </receiver>
+        <!-- Fünf eigenständige Diagramm-Widgets (siehe PLAN.md Phase 10.7):
+             jedes erscheint einzeln in der Widget-Auswahl des Launchers. -->
+        <receiver
+            android:name=".MatrixGridWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_matrixgrid_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/root_in_chart_widget_matrixgrid_info" />
+        </receiver>
+        <receiver
+            android:name=".CategoryBarWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_categorybar_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/root_in_chart_widget_categorybar_info" />
+        </receiver>
+        <receiver
+            android:name=".CategoryPieWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_categorypie_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/root_in_chart_widget_categorypie_info" />
+        </receiver>
+        <receiver
+            android:name=".ProgressTrendWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_progresstrend_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/root_in_chart_widget_progresstrend_info" />
+        </receiver>
+        <receiver
+            android:name=".MonthlyBarWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_monthlybar_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/root_in_chart_widget_monthlybar_info" />
+        </receiver>
+        <!-- Widget-Familien aus der Widget-Spec (siehe PLAN.md Phase 10.6c):
+             Tagesring + Wochen-Checkliste. -->
+        <receiver
+            android:name=".RingWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_ring_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/root_in_ring_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".ChecklistWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_checklist_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/root_in_checklist_widget_info" />
+        </receiver>
+        <!-- Farbkachel mit interaktivem Log-Button (siehe PLAN.md Phase
+             10.6d). Anders als die übrigen Widgets hat sie eine
+             Konfigurations-Activity: beim Platzieren wird gewählt, welche
+             Gewohnheit die Kachel zeigt. -->
+        <receiver
+            android:name=".ColorTileWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_color_tile_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/root_in_color_tile_widget_info" />
+        </receiver>
+        <activity
+            android:name=".ColorTileConfigActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.DeviceDefault.Dialog.NoActionBar">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <!-- Nimmt den Tipp auf den Log-Button entgegen und startet dafür den
+             Dart-Background-Callback (home_widget-Interactivity). -->
+        <receiver
+            android:name="es.antonborri.home_widget.HomeWidgetBackgroundReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="es.antonborri.home_widget.action.BACKGROUND" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="es.antonborri.home_widget.HomeWidgetBackgroundService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- PHASE 20 (2026-08-01): Werbung deaktiviert — zum Wiederaktivieren diesen Block einkommentieren.
+             AdMob verlangt die App-ID im Manifest; fehlt sie, bricht das SDK
+             beim Start ab. Der Wert steht in res/values/strings.xml, damit er
+             nur an einer Stelle gepflegt wird (siehe PLAN.md Phase 14).
+             ⚠️ Zusammen mit `admob_app_id` dort einkommentieren.
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
+        -->
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Benötigt für url_launcher (z. B. "Kontakt uns"-Link), siehe
+             https://pub.dev/packages/url_launcher#android -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https"/>
+        </intent>
+    </queries>
+</manifest>

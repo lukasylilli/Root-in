@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Layout des Fortschritts-Widgets (siehe PLAN.md Phase 10). Zeigt den
+  heutigen Fortschritt kompakt an; die Werte füllt RootInWidgetProvider aus
+  den Daten, die die App über HomeWidget.saveWidgetData hinterlegt. Die
+  Diagramm-Widgets nutzen ein eigenes Layout (root_in_chart_widget.xml).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="12dp"
+    android:background="@drawable/root_in_widget_background">
+
+    <TextView
+        android:id="@+id/widget_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/widget_title"
+        android:textColor="#B9C3E0"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/widget_percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="@string/widget_placeholder_percent"
+        android:textColor="#FFFFFF"
+        android:textSize="32sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/widget_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="@string/widget_placeholder_subtitle"
+        android:textColor="#B9C3E0"
+        android:textSize="12sp" />
+</LinearLayout>

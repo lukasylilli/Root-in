@@ -1,0 +1,72 @@
+# Baut die Web-Fassung von Root-in und veröffentlicht sie auf GitHub Pages
+# (PLAN.md Phase 26.3).
+#
+# Trennung von Quelle und Ergebnis, wie im Auftrag verlangt:
+# Im Zweig `main` liegt **nur** Quellcode. Das gebaute Ergebnis wird nie
+# eingecheckt — es geht als Pages-Artefakt direkt an die Veröffentlichung.
+# Damit kann `build/web` gar nicht erst in der Versionsgeschichte landen.
+name: Web bauen und veröffentlichen
+
+on:
+  push:
+    branches: [main]
+  # Erlaubt einen Lauf von Hand, ohne dass etwas gepusht werden muss.
+  workflow_dispatch:
+
+# Rechte des automatischen Tokens: nur so viel wie nötig.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Ein Push während eines laufenden Baus bricht den alten ab, statt zwei
+# Veröffentlichungen um dieselbe Seite streiten zu lassen.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Abhängigkeiten holen
+        run: flutter pub get
+
+      # Erst prüfen, dann veröffentlichen: Eine Fassung mit roten Tests soll
+      # nicht online gehen. Das Flag überspringt das Bauen der Test-Assets
+      # (siehe PLAN.md Abschnitt 11, Lehre zum Shader-Compile).
+      - name: Analyse
+        run: flutter analyze
+
+      - name: Tests
+        run: flutter test --no-test-assets
+
+      # `--base-href` MUSS auf GitHub Pages der Repository-Name sein, sonst
+      # sucht die Seite ihre Dateien im Wurzelverzeichnis der Domain.
+      # `github.event.repository.name` liefert ihn, ohne ihn hier fest
+      # einzutragen — ein umbenanntes Repository bricht den Bau damit nicht.
+      - name: Web bauen
+        run: ./tool/build_web.sh "/${{ github.event.repository.name }}/"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

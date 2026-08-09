@@ -1,0 +1,23 @@
+# Vorlage für android/key.properties (siehe PLAN.md Phase 15.1).
+#
+# Diese Datei hier ist NUR die Vorlage und darf im Repository liegen.
+# Kopieren nach `android/key.properties`, echte Werte eintragen — diese Kopie
+# enthält dann Passwörter und ist über .gitignore ausgeschlossen.
+#
+# Den Schlüssel selbst erzeugen mit:
+#   keytool -genkey -v -keystore ~/development/keys/root-in-upload.jks \
+#     -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+#
+# ⚠️ Die .jks-Datei gehört NICHT in den Projektordner und NICHT unter
+# ~/Desktop oder ~/Documents (iCloud-Sync bricht Code-Signing, siehe
+# PLAN.md Grundregel).
+#
+# Geht sie verloren, ist die App dank Play App Signing zwar nicht verloren
+# (Google verwahrt den eigentlichen Signaturschlüssel; der hier erzeugte ist
+# nur der Upload-Schlüssel und lässt sich über den Play-Support zurücksetzen)
+# — der Reset dauert aber mehrere Tage. Also: Datei UND Passwort sichern.
+
+storePassword=DEIN_KEYSTORE_PASSWORT
+keyPassword=DEIN_SCHLUESSEL_PASSWORT
+keyAlias=upload
+storeFile=/Users/lukasaliramezani/development/keys/root-in-upload.jks

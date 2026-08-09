@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hintergrund des Home-Screen-Widgets: abgerundete Karte im dunklen
+     Farbton der Berg-Szene (siehe PLAN.md Phase 10). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#161E3C" />
+    <corners android:radius="20dp" />
+</shape>

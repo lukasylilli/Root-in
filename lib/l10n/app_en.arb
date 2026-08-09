@@ -1,0 +1,443 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Root-in",
+
+  "navHome": "Home",
+  "navToday": "Today",
+  "navView": "View",
+  "navSettings": "Settings",
+
+  "pageAccountTitle": "Account",
+  "pageCategoriesTitle": "Categories",
+  "pageRemindersTitle": "Reminders",
+
+  "tabWeek": "Week",
+  "tabOverview": "Overview",
+  "tabMonth": "Month",
+  "tabYear": "Year",
+  "weekTabTitle": "This week",
+  "monthTabTitle": "This month",
+  "yearTabTitle": "Last 12 months",
+
+  "statProgress": "Progress",
+  "statPoints": "Points",
+  "statDone": "Done",
+  "statCompletions": "Completions",
+  "statLongestStreak": "Longest streak",
+
+  "actionCancel": "Cancel",
+  "actionSave": "Save",
+  "actionAdd": "Add",
+  "actionCreate": "Create",
+  "actionEdit": "Edit",
+  "actionDelete": "Delete",
+  "actionRename": "Rename",
+
+  "errorGeneric": "Error: {error}",
+  "@errorGeneric": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "todayEmpty": "No habits yet. Add one with +.",
+  "dateToday": "Today",
+  "dateYesterday": "Yesterday",
+  "datePreviousDay": "Previous day",
+  "dateNextDay": "Next day",
+  "dateBackToToday": "Today",
+
+  "habitFormChooseTemplate": "Choose a template",
+  "habitFormEditTitle": "Edit habit",
+  "habitFormCustomTitle": "Custom habit",
+  "fieldName": "Name",
+  "fieldCategory": "Category",
+  "categoryNew": "+ New category",
+  "dialogNewCategoryTitle": "New category",
+  "dialogRenameCategoryTitle": "Rename category",
+  "goalCheckbox": "Check off",
+  "goalDuration": "Duration",
+  "goalTargetMinutes": "Goal (minutes):",
+  "habitDeleteAction": "Delete habit",
+  "habitDeleteTitle": "Delete habit?",
+  "habitDeleteBody": "“{name}” will be permanently deleted, including all of its completions.",
+  "@habitDeleteBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "categoriesEmpty": "No categories yet. Add one with +.",
+  "categoryStillInUse": "{count, plural, one{“{name}” is still used by one habit — recategorise it first.} other{“{name}” is still used by {count} habits — recategorise those first.}}",
+  "@categoryStillInUse": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "categoriesAddDefaults": "Add default categories",
+  "categoriesAddDefaultsSubtitle": "Add the seven skills from the Root-in guide.",
+  "categoriesDefaultsAdded": "{count, plural, one{One category added.} other{{count} categories added.}}",
+  "@categoriesDefaultsAdded": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "categoriesDefaultsComplete": "All default categories are already there.",
+
+  "categoryGrammar": "Grammar",
+  "categoryVocabulary": "Vocabulary",
+  "categoryMemorization": "Memorization",
+  "categoryReading": "Reading",
+  "categoryWriting": "Writing",
+  "categorySpeaking": "Speaking",
+  "categoryListening": "Listening",
+
+  "reminderDaily": "Daily reminder",
+  "reminderOff": "Off",
+  "reminderNone": "No reminder",
+  "reminderChangeTime": "Change time",
+  "reminderAt": "At {time}",
+  "@reminderAt": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "reminderDailyAt": "Daily at {time}",
+  "@reminderDailyAt": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "remindersEmpty": "No habits yet. Create one first to set a reminder time for it here.",
+
+  "settingsAppearance": "Appearance",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeSystem": "System",
+  "settingsColor": "Colour",
+  "colorGreen": "Green",
+  "colorBlue": "Blue",
+  "colorPurple": "Purple",
+  "colorOrange": "Orange",
+  "settingsLanguage": "Language",
+  "languageSystem": "System",
+  "languagePersian": "فارسی",
+  "languageGerman": "German",
+  "languageEnglish": "English",
+  "settingsAscentSource": "Feed mountain animation with",
+  "settingsAccountTitle": "Account info",
+  "settingsAccountSubtitle": "Profile, lifetime statistics, achievements",
+  "settingsCategoriesSubtitle": "Create, rename, delete",
+  "settingsRemindersSubtitle": "All habit reminder times at a glance",
+  "settingsShareApp": "Share app",
+  "settingsExport": "Export backup",
+  "settingsExportSubtitle": "An update deletes nothing. A backup helps if you lose your device or reinstall.",
+  "settingsImport": "Import backup",
+  "settingsImportSubtitle": "Replaces all current data",
+  "settingsContact": "Contact us",
+  "settingsGuide": "Root-in guide",
+  "guidePlanning": "Study planning",
+  "guidePlanningSubtitle": "Split weeks, goals and breaks sensibly",
+  "guideResources": "Study resources",
+  "guideResourcesSubtitle": "What you learn with — books, apps, channels",
+  "guideMethod": "Study method",
+  "guideMethodSubtitle": "How to study so that it sticks",
+  "guideLinks": "Essential links",
+  "guideLinksSubtitle": "Collected addresses for further reading",
+  "guideLoading": "Loading guide …",
+  "guideOfflineTitle": "No internet",
+  "guideOfflineBody": "This guide has never been downloaded and needs a connection once. After that it is available offline as well.",
+  "guideRetry": "Try again",
+  "othersTitle": "More topics",
+  "othersSubtitle": "Posts and collections from Root-in",
+  "othersEntryCount": "{count, plural, =0{No posts yet} one{1 post} other{{count} posts}}",
+  "@othersEntryCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "othersBrokenTitle": "Content unreadable",
+  "othersBrokenBody": "The index of this section is currently broken. Please try again later.",
+  "guideComingSoonTitle": "Content coming soon",
+  "guideComingSoonBody": "This guide is being written right now. As soon as it is ready, you will find it right here.",
+
+  "settingsAds": "Ads",
+  "removeAdsTitle": "Remove ads",
+  "removeAdsSubtitle": "{price} · one-time purchase, keeps forever",
+  "@removeAdsSubtitle": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "removeAdsUnavailable": "Not available right now — Google Play can't be reached.",
+  "removeAdsPurchasedTitle": "Ads are removed",
+  "removeAdsPurchasedSubtitle": "Thanks for your support!",
+  "removeAdsThanks": "Ads removed. Thanks for your support!",
+  "removeAdsRestore": "Restore purchases",
+  "removeAdsRestoreSubtitle": "Already bought? Get it back on a new device.",
+  "removeAdsFailed": "Purchase failed: {error}",
+  "@removeAdsFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "backupRestoreTitle": "Restore backup?",
+  "backupRestoreBody": "The backup contains {habits} habits and {completions} completions.\n\nAll current data in the app will be replaced.",
+  "@backupRestoreBody": {
+    "placeholders": {
+      "habits": { "type": "int" },
+      "completions": { "type": "int" }
+    }
+  },
+  "backupRestoreConfirm": "Restore",
+  "backupRestored": "Backup restored.",
+  "backupExportFailed": "Export failed: {error}",
+  "@backupExportFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "backupImportFailed": "Import failed: {error}",
+  "@backupImportFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "backupInvalidJson": "The file is not valid JSON.",
+  "backupInvalidFormat": "Not a valid Root-in backup.",
+  "backupCorrupted": "Corrupted backup: expected a list.",
+  "backupTooNew": "This backup comes from a newer app version (format {fileVersion}, supported is {supportedVersion}).",
+  "@backupTooNew": {
+    "placeholders": {
+      "fileVersion": { "type": "int" },
+      "supportedVersion": { "type": "int" }
+    }
+  },
+  "backupShareText": "Root-in data backup from {date}",
+  "@backupShareText": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+
+  "accountProfile": "Profile",
+  "accountTotalStats": "Overall statistics",
+  "accountAchievements": "Achievements",
+  "shareProgress": "Share progress",
+  "shareInProgress": "Sharing…",
+  "shareCardDownloadTitle": "Get Root-in",
+  "shareCardDownloadHint": "Scan the QR code — Root-in on Google Play.",
+  "shareOptionsTitle": "What goes on the card?",
+  "shareOptionOverview": "Overview of the last 4 weeks",
+  "shareAppText": "I use Root-in to track my habits — check it out: {link}",
+  "@shareAppText": {
+    "placeholders": {
+      "link": { "type": "String" }
+    }
+  },
+  "shareProgressText": "My progress in Root-in — get it here: {link}",
+  "@shareProgressText": {
+    "placeholders": {
+      "link": { "type": "String" }
+    }
+  },
+
+  "dashboardCustomize": "Customise",
+  "dashboardDone": "Done",
+  "dashboardRemove": "Remove",
+  "dashboardEmpty": "No widgets selected.",
+  "widgetMatrixGrid": "Matrix grid",
+  "widgetCategoryBar": "Habit type (bars)",
+  "widgetCategoryPie": "Habit type (pie)",
+  "widgetProgressTrend": "Progress trend",
+  "widgetMonthlyBar": "Monthly overview",
+
+  "chartNoData": "No data for this period yet.",
+
+  "chartTrendWeeklyAverage": "Weekly average",
+  "chartTrendMonthlyAverage": "Monthly average",
+
+  "overviewWeekLabel": "Week {number}",
+  "@overviewWeekLabel": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "overviewActivity": "Activity",
+  "overviewTotalGoal": "Total goal",
+  "overviewGoalPerWeek": "{count}× per week",
+  "@overviewGoalPerWeek": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "overviewGoalInPeriod": "{done} of {target} in {weeks} weeks",
+  "@overviewGoalInPeriod": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "target": { "type": "int" },
+      "weeks": { "type": "int" }
+    }
+  },
+  "overviewHabits": "Habits",
+  "overviewCategories": "Categories",
+  "overviewColDone": "Done",
+  "overviewColOpen": "Left",
+  "overviewColPercent": "Percent",
+  "overviewColProgress": "Progress",
+  "overviewColStreak": "Streak",
+  "overviewColBest": "Best",
+  "overviewEmpty": "No habits yet.",
+  "overviewFullscreen": "Full screen",
+  "overviewFullscreenExit": "Exit full screen",
+
+  "monthShortJan": "Jan",
+  "monthShortFeb": "Feb",
+  "monthShortMar": "Mar",
+  "monthShortApr": "Apr",
+  "monthShortMay": "May",
+  "monthShortJun": "Jun",
+  "monthShortJul": "Jul",
+  "monthShortAug": "Aug",
+  "monthShortSep": "Sep",
+  "monthShortOct": "Oct",
+  "monthShortNov": "Nov",
+  "monthShortDec": "Dec",
+
+  "weekdayInitialMonday": "M",
+  "weekdayInitialTuesday": "T",
+  "weekdayInitialWednesday": "W",
+  "weekdayInitialThursday": "T",
+  "weekdayInitialFriday": "F",
+  "weekdayInitialSaturday": "S",
+  "weekdayInitialSunday": "S",
+
+  "ascentSourceToday": "Progress today",
+  "ascentSourceWeek": "Progress this week",
+  "ascentSourceMonth": "Progress this month",
+  "ascentSourceYear": "Progress this year",
+  "ascentShortToday": "today",
+  "ascentShortWeek": "this week",
+  "ascentShortMonth": "this month",
+  "ascentShortYear": "this year",
+  "ascentSummitReached": "Summit reached!",
+  "ascentToNextCamp": "{remaining} % to camp {camp} %",
+  "@ascentToNextCamp": {
+    "placeholders": {
+      "remaining": { "type": "int" },
+      "camp": { "type": "int" }
+    }
+  },
+
+  "achievementStreak3Title": "Good start",
+  "achievementStreak7Title": "One week in",
+  "achievementStreak14Title": "Two weeks strong",
+  "achievementStreak30Title": "A month of routine",
+  "achievementStreak100Title": "Unstoppable",
+  "achievementPoints100Title": "First points",
+  "achievementPoints500Title": "Point collector",
+  "achievementPoints1000Title": "Point pro",
+  "achievementPoints5000Title": "Point master",
+  "achievementCategories3Title": "Versatile",
+  "achievementCategories5Title": "All-rounder",
+  "achievementStreakDescription": "{count}-day streak in a row",
+  "@achievementStreakDescription": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "achievementPointsDescription": "{count} points collected",
+  "@achievementPointsDescription": {
+    "placeholders": {
+      "count": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "achievementCategoriesDescription": "Active in {count} different categories",
+  "@achievementCategoriesDescription": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingStart": "Let's go",
+  "onboardingWelcomeTitle": "Welcome to Root-in",
+  "onboardingWelcomeBody": "Root-in helps you build habits and stick with them — step by step, with no account needed. All your data stays on this device.",
+  "onboardingHabitsTitle": "Create and check off",
+  "onboardingHabitsBody": "Create habits from a template or from scratch; each belongs to a category you manage yourself. On “Today” you check off what's done — or log minutes if you set a duration goal.",
+  "onboardingProgressTitle": "See your progress",
+  "onboardingProgressBody": "Percentages and points appear on every page, and under “View” you also get them by week, month and year. You may skip one day per week without losing your streak.",
+  "onboardingRemindersTitle": "Reminders and widgets",
+  "onboardingRemindersBody": "Give each habit a time for Root-in to remind you. On your home screen you can place charts, the daily ring or a colour tile — the tile checks a habit off right there, without opening the app.",
+
+  "templateYoutube": "YouTube",
+  "templateCoursebook": "Coursebook",
+  "templateWorkbook": "Workbook",
+  "templateWords10Min": "Words 10 min daily",
+  "templateWords1Hour": "Words 1 hour",
+  "templateGrammar": "Active grammar",
+  "templateWriting": "Writing",
+  "templateReading": "Reading",
+  "templateSpeaking": "Speaking",
+  "templateListening": "Listening",
+  "templateMemorizing": "Memorising",
+
+  "notificationStreakAtRisk": "{count, plural, one{Your one-day streak ends at midnight.} other{Your {count}-day streak ends at midnight.}}",
+  "@notificationStreakAtRisk": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "notificationStatusChannelName": "Daily status",
+  "notificationStatusChannelDescription": "Keeps showing what is still open today",
+  "notificationStatusTitle": "Today: {done} of {total} done",
+  "@notificationStatusTitle": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "notificationStatusBody": "{count, plural, one{One habit is still open.} other{{count} habits are still open.}}",
+  "@notificationStatusBody": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "settingsStatusNotification": "Daily status in the bar",
+  "settingsStatusNotificationSubtitle": "Stays visible while something is open today.",
+  "notificationChannelName": "Reminders",
+  "notificationChannelDescription": "Daily habit reminders",
+  "notificationSnoozeAction": "10 min later",
+  "notificationTitle": "Time for: {habit}",
+  "@notificationTitle": {
+    "placeholders": {
+      "habit": { "type": "String" }
+    }
+  },
+  "notificationBody": "Don't forget your habit today.",
+  "notificationSnoozedBody": "Reminder postponed by {minutes} minutes.",
+  "@notificationSnoozedBody": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+
+  "homeWidgetSubtitle": "{done}/{total} done",
+  "homeWidgetOpen": "{count, plural, one{1 left} other{{count} left}}",
+  "@homeWidgetOpen": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "homeWidgetAllDone": "All done today",
+  "@homeWidgetSubtitle": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  }
+}

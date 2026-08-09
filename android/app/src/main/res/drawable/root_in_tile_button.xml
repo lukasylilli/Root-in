@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Log-Button der Farbkachel: halbtransparentes Weiß auf der Akzentfarbe
+     (Widget-Spec SCREEN_16, Token `button_overlay` = #FFFFFF33). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#33FFFFFF" />
+</shape>

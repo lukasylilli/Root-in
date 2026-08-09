@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Farbkachel-Widget (siehe PLAN.md Phase 10.6d). `android:configure` ist der
+  Kern: beim Platzieren fragt Android, welche Gewohnheit die Kachel zeigen
+  soll — nur so lassen sich mehrere Kacheln für verschiedene Gewohnheiten
+  nebeneinander legen (Widget-Spec SCREEN_16).
+
+  `updatePeriodMillis="0"`: die Kachel wird ereignisgesteuert aktualisiert
+  (App-Änderung oder Tipp auf den Log-Button), ein Zeitintervall würde sie
+  nur unnötig neu zeichnen.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="com.rootin.app.ColorTileConfigActivity"
+    android:initialLayout="@layout/root_in_color_tile_widget"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />

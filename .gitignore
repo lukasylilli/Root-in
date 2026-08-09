@@ -1,0 +1,84 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Aus den ARB-Dateien erzeugte Lokalisierung (siehe l10n.yaml) — wird bei
+# jedem Build neu generiert, gehört nicht in die Versionierung.
+/lib/l10n/gen/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Release-Signatur (siehe PLAN.md Phase 15.1): key.properties enthält
+# Passwörter, .jks/.keystore sind der Schlüssel selbst — beides darf niemals
+# in die Versionierung. Die Vorlage android/key.properties.example bleibt drin.
+/android/key.properties
+*.jks
+*.keystore
+
+# --- Web-Fassung (PLAN.md Phase 26.2) ---
+# Die beiden Datenbank-Dateien im Web-Ordner sind BAUARTEFAKTE, keine
+# Quellen: `tool/fetch_web_db_assets.sh` holt sie aus der drift-
+# Veröffentlichung. Eingecheckt lägen 1 MB Binärdaten in der Geschichte —
+# bei jedem drift-Update erneut. (Steht zusätzlich in web/.gitignore, damit
+# es dort sichtbar ist, wo die Dateien auftauchen.)
+/web/sqlite3.wasm
+/web/drift_worker.js
+
+# Werte, die beim Bauen hereingereicht werden (--dart-define-from-file).
+# Die Vorlage `.env.example` bleibt versioniert, die echte Datei nie.
+.env
+.env.*
+!.env.example
+
+# --- Nicht zur Veröffentlichung bestimmt ---
+# Claude-Code-Einstellungen dieser Maschine. `.local.json` ist per Konvention
+# maschinenspezifisch und enthält hier hunderte absolute Pfade unter
+# /Users/<name>/ — in einem öffentlichen Repository wäre das die
+# Ordnerstruktur des Rechners für jeden lesbar.
+.claude/settings.local.json
+
+# Referenzmaterial des Nutzers (Screenshots, Design-Specs, Logo-Quelle).
+# ⚠️ Bewusste Entscheidung, siehe PLAN.md Phase 26.2: Der Ordner gehört zur
+# Arbeitsumgebung, nicht zum Quellcode — und in einem öffentlichen
+# Repository wäre er für jeden sichtbar.
+/meine/

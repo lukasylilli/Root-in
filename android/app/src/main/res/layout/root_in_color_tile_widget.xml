@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Farbkachel-Widget (siehe PLAN.md Phase 10.6d; Widget-Spec SCREEN_16):
+  vollflächig in der Akzentfarbe der Gewohnheit, Log-Button oben rechts,
+  unten Streak und Name.
+
+  Die Fläche ist ein ImageView mit weißem, abgerundetem Drawable, das der
+  Provider per `setColorFilter` einfärbt — RemoteViews kann ein Drawable
+  nicht gleichzeitig runden und tönen, und eine reine
+  `setBackgroundColor`-Fläche hätte keine runden Ecken.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/tile_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/root_in_tile_background" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/tile_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_tile_habit" />
+
+        <!-- Interaktiver Log-Button: halbtransparentes Weiß auf der
+             Akzentfarbe, wie in der Spec. -->
+        <FrameLayout
+            android:id="@+id/tile_log_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/root_in_tile_button"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/tile_log_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/widget_color_tile_log"
+                android:src="@drawable/ic_tile_plus" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tile_streak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/tile_name"
+            android:layout_alignParentStart="true"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tile_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+</FrameLayout>
