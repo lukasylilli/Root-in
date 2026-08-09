@@ -620,7 +620,9 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 
 ## Inhalts-Repository (GitHub)
 
-**Liegt außerhalb dieses Projekts** und wird vom Nutzer gepflegt — Änderungen dort wirken **ohne App-Update**:
+⚠️ **Seit Phase 26.2 ist das DASSELBE Repository wie der Quellcode.** Bis dahin lag unter `lukasylilli/Root-in` ausschließlich der Ordner `content/`. Beim Anlegen des lokalen Git-Repositories fiel auf: Ein Push des Quellcodes hätte diese Dateien überschrieben — und die **bereits veröffentlichte Android-App** lädt sie zur Laufzeit von genau dieser Adresse. Beide Historien wurden deshalb zusammengeführt; `content/` liegt jetzt im Projekt und wird mitversioniert.
+
+**Die Inhalte wirken weiterhin ohne App-Update** — sie werden zur Laufzeit geladen, nicht mitgeliefert. Neu ist nur, dass sie auch lokal im Projekt liegen und über denselben Push aktualisiert werden:
 
 ```
 github.com/lukasylilli/Root-in  (öffentlich, Branch main)
