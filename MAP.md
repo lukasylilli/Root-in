@@ -642,6 +642,10 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 .github/workflows/deploy-web.yml     ✅ Push auf main → pub get → analyze → test → build_web.sh →
                                          GitHub Pages. Prüfung VOR Veröffentlichung; base-href aus dem
                                          Repository-Namen; concurrency bricht ältere Läufe ab.
+                                         ⚠️ Der Testschritt läuft OHNE `--no-test-assets`. Das Flag ist
+                                         eine lokale Abkürzung; im CI (frischer Checkout = wie nach
+                                         `flutter clean`) lässt es 11 Widget-Tests falsch scheitern.
+                                         Genau daran ist Lauf 1 gescheitert — siehe PLAN.md Lehre 29.
                                          ⚠️ KEIN gh-pages-Zweig: Pages nimmt das Artefakt direkt
                                          entgegen, damit landet das Bauergebnis nie in der Geschichte
 

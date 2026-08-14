@@ -40,13 +40,19 @@ jobs:
         run: flutter pub get
 
       # Erst prüfen, dann veröffentlichen: Eine Fassung mit roten Tests soll
-      # nicht online gehen. Das Flag überspringt das Bauen der Test-Assets
-      # (siehe PLAN.md Abschnitt 11, Lehre zum Shader-Compile).
+      # nicht online gehen.
       - name: Analyse
         run: flutter analyze
 
+      # ⚠️ HIER KEIN `--no-test-assets`. Das Flag spart lokal Zeit, weil die
+      # Test-Assets schon gebaut sind. Ein CI-Lauf beginnt aber immer mit
+      # einem frischen Checkout — das entspricht `flutter clean`, und dann
+      # fehlen die Assets komplett: 11 Widget-Tests scheitern an
+      # `Asset 'shaders/ink_sparkle.frag' not found`. Das sind KEINE echten
+      # Fehler, aber sie halten die Veröffentlichung auf.
+      # Genau daran ist Lauf 1 gescheitert (PLAN.md Abschnitt 11, Lehre 29).
       - name: Tests
-        run: flutter test --no-test-assets
+        run: flutter test
 
       # `--base-href` MUSS auf GitHub Pages der Repository-Name sein, sonst
       # sucht die Seite ihre Dateien im Wurzelverzeichnis der Domain.
