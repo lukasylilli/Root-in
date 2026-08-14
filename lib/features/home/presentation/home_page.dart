@@ -9,6 +9,7 @@ import '../../../core/widgets/dashboard/dashboard_section.dart';
 import '../../../core/widgets/dashboard/dashboard_widget_type.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/progress_summary_header.dart';
+import '../../../core/widgets/web_storage_hint.dart';
 import '../../../data/repositories/habit_repository.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../account/presentation/share_progress_sheet.dart';
@@ -25,8 +26,28 @@ const List<DashboardWidgetType> _homeAvailableWidgets = [
   DashboardWidgetType.progressTrend,
 ];
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
+
+  @override
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    // Der Speicher-Hinweis der Web-Fassung (PLAN.md Phase 26.8). Er hängt
+    // an der Home-Seite und nicht am Onboarding, weil er auch Nutzer
+    // erreichen muss, die die Web-Fassung schon benutzen — die Erklärung
+    // steht bei `SettingsService.loadWebStorageHintSeen`.
+    //
+    // Nach dem ersten Frame: Vorher gibt es keinen Navigator, der einen
+    // Dialog aufnehmen könnte.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) maybeShowWebStorageHint(context, ref);
+    });
+  }
 
   /// Zeitraum, aus dem die Berg-Animation ihren Prozentwert zieht — je
   /// nachdem, welche Kennzahl der Nutzer gewählt hat (siehe PLAN.md
@@ -42,7 +63,7 @@ class HomePage extends ConsumerWidget {
   };
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final progress = ref.watch(todayProgressProvider);
     final today = ref.watch(todayProvider).value;
     final ascentSource = ref.watch(ascentSourceProvider);

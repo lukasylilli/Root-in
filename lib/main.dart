@@ -14,6 +14,7 @@ import 'core/l10n/app_language.dart';
 import 'core/services/home_widget_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/settings_service.dart';
+import 'core/services/web_storage/request_persistent_storage.dart';
 import 'core/utils/platform_support.dart';
 import 'data/repositories/habit_repository.dart';
 import 'l10n/gen/app_localizations.dart';
@@ -42,6 +43,13 @@ Future<void> main() async {
   if (supportsHomeScreenWidgets) {
     await HomeWidget.registerInteractivityCallback(colorTileInteractionCallback);
   }
+
+  // Im Browser darum bitten, den Speicher dieser Seite dauerhaft zu behalten
+  // (PLAN.md Phase 26.8). Steht **vor** dem ersten Datenbank-Zugriff: Die
+  // Bitte gilt dem ganzen Ursprung, und manche Browser fragen dafür beim
+  // Nutzer nach — die Antwort soll vorliegen, bevor die App Daten anlegt.
+  // Auf Android/iOS kehrt der Aufruf sofort mit `false` zurück.
+  await requestPersistentStorage();
 
   // Expliziter Container statt `ProviderScope`: die Standard-Kategorien
   // müssen in der gewählten Sprache stehen, bevor die erste Seite baut (siehe

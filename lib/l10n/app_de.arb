@@ -264,6 +264,18 @@
   "widgetProgressTrend": "Fortschritts-Trend",
   "widgetMonthlyBar": "Monatsübersicht",
 
+  "webStorageHintTitle": "Zum Home-Bildschirm hinzufügen",
+  "@webStorageHintTitle": {
+    "description": "Titel des einmaligen Hinweises, den NUR die Web-Fassung beim ersten Start zeigt (PLAN.md Phase 26.8)"
+  },
+  "webStorageHintBody": "Deine Daten liegen im Speicher dieser Website — nicht auf einem Server. Safari löscht den Speicher einer Website, die du sieben Tage nicht öffnest. Legst du Root-in auf dem Home-Bildschirm ab, gilt diese Regel nicht mehr.",
+  "@webStorageHintBody": {
+    "description": "Erklärt die Sieben-Tage-Regel von Safari und warum das Ablegen auf dem Home-Bildschirm die Daten schützt"
+  },
+  "webStorageHintSteps": "In Safari: Teilen-Symbol antippen, dann „Zum Home-Bildschirm“.",
+  "webStorageHintBackup": "Mach zusätzlich ab und zu eine Sicherung — in den Einstellungen unter „Sicherung exportieren“.",
+  "webStorageHintUnderstood": "Verstanden",
+
   "chartNoData": "Noch keine Daten für diesen Zeitraum.",
 
   "chartTrendWeeklyAverage": "Wochenmittel",

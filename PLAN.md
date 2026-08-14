@@ -1,7 +1,7 @@
 # Root-in — Habit Maker / Routine Tracker — Projektplan
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
-> Zuletzt aktualisiert: 2026-08-07 (dritter Eintrag des Tages) — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub.** Die App läuft im Browser (Drift auf WebAssembly, vier Plattform-Weichen an **einer** Stelle), das Projekt ist jetzt ein Git-Repository, und eine GitHub-Action baut und veröffentlicht bei jedem Push auf `main`. ⚠️ **Im Browser noch nicht ausgeführt** — auf dieser Maschine fehlt Chrome; Einzelheiten in Phase 26.7. Offen bleiben die Schritte des Nutzers: Repository anlegen, pushen, Pages einschalten.
+> Zuletzt aktualisiert: 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8 (Daten im Browser sichern). Die App läuft im Browser (Drift auf WebAssembly, vier Plattform-Weichen an **einer** Stelle), das Projekt ist ein Git-Repository, eine GitHub-Action baut und veröffentlicht bei jedem Push auf `main`, und die Web-Fassung erklärt beim ersten Start, warum sie auf den Home-Bildschirm gehört. **188 Tests grün**, `flutter analyze` sauber, Web- und Android-Bau laufen. ⚠️ **Im Browser noch nicht ausgeführt** — auf dieser Maschine fehlt Chrome; Einzelheiten in Phase 26.7. Offen bleiben die Schritte des Nutzers: pushen und Pages einschalten.
 > Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): Fortschritts-Trend bündelt im Jahr-Bereich auf Wochen-/Monatsmittel, Balkendiagramm-Achsen aufgeräumt, Tests für Tab-Navigation und Heute-Randfälle. **184 Tests grün** (+2 übersprungen), `flutter analyze` sauber, am Emulator deutsch **und persisch** angesehen (dabei ein RTL-Fehler gefunden und behoben). Damit sind die beiden ältesten offenen Fragen aus Abschnitt 12 geschlossen.
 > Zuvor 2026-08-02 — Phasen 25, 24, 23 und 22 gebaut (Datenerhalt beim Update, beliebiges Datum nachtragen, eindringlichere Erinnerungen, Rubrik „موارد دیگر" aus GitHub). Die am 2026-08-01 gebauten Phasen 18–21.2 sind auf Abschnitt 10.2 eingedampft.
 > **Was jetzt noch offen ist:** der Gerätedurchgang aus Phase 21.3, die Veröffentlichung (Phase 15, führt der Nutzer selbst durch), Phase 12 (iOS) — und die Inhalte, die der Nutzer selbst ins Repository legt.
@@ -32,6 +32,7 @@
     - **Neu am 2026-08-07:** [Phase 26 — Web-Version (PWA) und Veröffentlichung über GitHub](#phase-26--web-version-pwa-und-veröffentlichung-über-github-) 🔄
       - [26.1 Lauffähig im Browser](#261-lauffähig-im-browser-) · [26.2 Repository & .gitignore](#262-repository--gitignore-) · [26.3 Automatischer Bau & Veröffentlichung](#263-automatischer-bau--veröffentlichung-cicd-)
       - [26.4 Was „Code-Schutz" im Web wirklich heißt](#264-was-code-schutz-im-web-wirklich-heißt-) · [26.5 Geheimnisse & Umgebungsvariablen](#265-geheimnisse--umgebungsvariablen-) · [26.6 Versionierung](#266-versionierung-)
+      - [26.8 Daten im Browser sichern](#268-daten-im-browser-sichern-) ✅ — wo die Daten liegen, Safaris Sieben-Tage-Regel, einmaliger Hinweis
       - [26.7 Was noch offen ist](#267-was-noch-offen-ist-) ⬜ — **Code fertig, im Browser noch nicht ausgeführt**
     - [Phase 12 — iOS-Portierung](#phase-12--ios-portierung--feinschliff-) ⬜
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
@@ -474,7 +475,31 @@ Vollständige Vorlage und Pflege-Anleitung: `store/others_index_beispiel.json` u
 - [x] **Folge für die Adresse:** Die Web-Fassung landet unter `lukasylilli.github.io/Root-in/`, also genau dem `--base-href /Root-in/`, das bereits geprüft ist. Ein zweites Repository für den Quellcode hätte die Anleitungs-Adressen ungültig gemacht — und die ließen sich nur mit einem **App-Update** nachziehen (siehe Phase 17.3: Umbenennungen kosten eine App-Version).
 - [ ] **GitHub Pages einschalten** (Settings → Pages → Source: *GitHub Actions*). Ohne das läuft der Arbeitsablauf und veröffentlicht nichts.
 - [ ] ⚠️ **GitHub Pages kann die Kopfzeilen `Cross-Origin-Opener-Policy`/`Embedder-Policy` nicht setzen.** Drift nutzt dann nicht die schnellste Speicherart (OPFS mit gemeinsamem Speicher), sondern fällt auf eine andere zurück. **Die Daten bleiben erhalten** — es ist eine Frage der Geschwindigkeit, kein Datenverlust. Wer das ändern will, braucht einen Hoster, der eigene Kopfzeilen erlaubt.
-- [ ] **Auf einem echten iPhone durchgehen**: Seite in Safari öffnen → „Zum Home-Bildschirm" → startet sie ohne Adressleiste? Bleiben die Daten nach dem Schließen erhalten? Funktionieren Teilen und Sicherung?
+- [ ] **Auf einem echten iPhone durchgehen**: Seite in Safari öffnen → **erscheint der Speicher-Hinweis aus 26.8 genau einmal?** → „Zum Home-Bildschirm" → startet sie ohne Adressleiste? Bleiben die Daten nach dem Schließen erhalten? Funktionieren Teilen und Sicherung?
+
+#### 26.8 Daten im Browser sichern ✅
+**Vom Nutzer am 2026-08-07 beauftragt**, nachdem er gefragt hatte, wo die Daten der Web-Fassung eigentlich liegen. Die Antwort hat eine Lücke aufgedeckt, die vorher niemand auf dem Zettel hatte.
+
+**Wo die Daten liegen** — es sind zwei getrennte Orte, und beide überstehen Schließen und Neuöffnen:
+
+| Was | Wo im Browser | Beispiele |
+|---|---|---|
+| Einzelwerte | `localStorage` (über `shared_preferences`) | Profilname, Sprache, Theme + Farbe, Erststart-Merker, Dashboard-Layout, gespeicherte Anleitungs-Texte |
+| Die Datenbank | OPFS **oder** IndexedDB (Drift wählt selbst) | Gewohnheiten, Kategorien, alle Erledigungen |
+
+**Die Serie wird nirgends gespeichert** — sie entsteht bei jedem Aufruf neu aus den Erledigungen (`StreakCalculator`, seit Phase 1). Solange die Erledigungen da sind, stimmt sie. Das gilt im Browser genauso wie auf Android.
+
+⚠️ **Die Lücke: Safari löscht den Speicher einer Website nach sieben Tagen ohne Besuch.** Für eine Seite, die auf dem **Home-Bildschirm** abgelegt wurde, gilt diese Regel nicht. Damit ist das Ablegen im Browser **keine Frage der Bequemlichkeit, sondern die Bedingung dafür, dass der Verlauf erhalten bleibt** — und das stand vorher nirgends. Ein Nutzer, der die Adresse nur als Lesezeichen behält, hätte nach zwei Wochen Urlaub einen leeren Bestand vorgefunden, ohne je gewarnt worden zu sein.
+
+- [x] **Um dauerhaften Speicher bitten** (`core/services/web_storage/`): `navigator.storage.persist()` beim Start, über denselben bedingten Import wie das Datei-Auswählen. Steht **vor** dem ersten Datenbank-Zugriff — die Bitte gilt dem ganzen Ursprung, und manche Browser fragen dafür beim Nutzer nach. ⚠️ Es ist eine **Bitte, keine Garantie**: Browser entscheiden selbst, manche stellen die Frage nie. Eine zusätzliche Schicht, kein Ersatz für die Sicherung.
+- [x] **Einmaliger Hinweis in der Web-Fassung** (`core/widgets/web_storage_hint.dart`): warum Root-in auf den Home-Bildschirm gehört, wie das in Safari geht, und dass die Sicherung hier wichtiger ist als auf Android. Texte in allen drei Sprachen.
+- [x] **Bewusst ein Dialog, kein wegwischbarer Streifen.** Wer diesen Hinweis übersieht, verliert im ungünstigsten Fall seinen ganzen Bestand — dafür ist ein Streifen am Seitenrand zu leise.
+- [x] **Eigener Merker statt fünfter Onboarding-Seite.** Das Onboarding läuft nur bei einer frischen Installation. Wer die Web-Fassung schon benutzt, hat es hinter sich — und wäre genau der Nutzer, der den Hinweis nie sähe, obwohl seine Daten betroffen sind.
+- [x] **Erst merken, dann zeigen.** Andersherum sähe ein Nutzer, der den Dialog wegdreht statt ihn zu bestätigen, den Hinweis bei jedem Start erneut.
+- [x] **Neue Fähigkeit `usesBrowserStorage`** statt den Hinweis an `supportsHomeScreenWidgets` zu hängen. Beim Schreiben zuerst falsch gemacht: Die beiden Abfragen liefern im Browser dasselbe, meinen aber Verschiedenes — auf einem Desktop-Bau wäre der Safari-Hinweis erschienen, obwohl er dort unsinnig ist.
+- [x] Tests (`test/widget/web_storage_hint_test.dart`, 4 Fälle). ⚠️ Sie laufen auf der Dart-VM, also **nie im Browser** — prüfbar ist deshalb genau das Wichtigste: dass der Hinweis auf Android/iOS **nicht** erscheint und den Merker dort **nicht verbraucht**. Täte er es, hätte ein Nutzer, der die App zuerst auf Android startet, seinen Hinweis in der Web-Fassung stillschweigend verloren — die Sicherung wandert per Import zwischen beiden Fassungen.
+
+**Stand danach: 188 Tests grün**, `flutter analyze` sauber, Web- und Android-Bau laufen.
 
 #### Offene Fragen dieser Phase
 - **Repository öffentlich oder privat?** GitHub Pages aus einem **privaten** Repository ist ein kostenpflichtiges Merkmal. Öffentlich heißt: der Quellcode ist für jeden lesbar. ⚠️ Das ist die eigentliche Entscheidung hinter dem Wunsch „niemand soll meinen Code nachbauen können" — und sie ist keine technische, sondern eine des Nutzers. Anmerkung: Auch bei einem **privaten** Repository bleibt die veröffentlichte Web-Fassung analysierbar (siehe 26.4); privat schützt die Quelle, nicht das Ergebnis.

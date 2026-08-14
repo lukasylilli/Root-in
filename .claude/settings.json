@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(flutter *)",
+      "Bash(\"$HOME/development/flutter/bin/flutter\" *)",
+      "Bash(./tool/*)",
+      "Bash(tool/*)",
+
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git -c *)",
+      "Bash(git switch *)",
+      "Bash(git merge *)",
+      "Bash(git fetch *)",
+      "Bash(git init *)",
+      "Bash(git remote *)",
+
+      "Bash(\"$HOME/Library/Android/sdk/platform-tools/adb\" *)",
+
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(chmod *)",
+      "Bash(touch *)"
+    ]
+  }
+}

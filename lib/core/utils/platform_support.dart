@@ -47,6 +47,17 @@ bool get supportsReminders => !kIsWeb;
 /// Verknüpfung zur Seite; ein Widget kann eine Website nicht stellen.
 bool get supportsHomeScreenWidgets => isMobilePlatform;
 
+/// Ob die Daten im Speicher **des Browsers** liegen statt in einem
+/// App-Verzeichnis (PLAN.md Phase 26.8).
+///
+/// Der Unterschied ist keine Feinheit: Ein App-Verzeichnis löscht nur der
+/// Nutzer selbst. Den Speicher einer Website darf der Browser aufräumen —
+/// **Safari löscht ihn nach sieben Tagen ohne Besuch**, sofern die Seite
+/// nicht auf dem Home-Bildschirm liegt. Daran hängen der einmalige Hinweis
+/// (`core/widgets/web_storage_hint.dart`) und die Bitte um dauerhaften
+/// Speicher beim Start.
+bool get usesBrowserStorage => kIsWeb;
+
 /// Ob die App die Bildschirmausrichtung festlegen darf.
 ///
 /// Im Browser gehört die Ausrichtung dem Gerät, nicht der Seite — die

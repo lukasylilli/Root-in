@@ -23,6 +23,7 @@ class SettingsService {
   static const _onboardingSeenKey = 'onboarding_seen';
   static const _shareOverviewKey = 'share_include_overview';
   static const _statusNotificationKey = 'status_notification_enabled';
+  static const _webStorageHintKey = 'web_storage_hint_seen';
 
   ThemeMode loadThemeMode() {
     final stored = _prefs.getString(_themeModeKey);
@@ -54,6 +55,21 @@ class SettingsService {
 
   Future<void> saveOnboardingSeen() {
     return _prefs.setBool(_onboardingSeenKey, true);
+  }
+
+  /// Ob der Speicher-Hinweis der Web-Fassung schon quittiert wurde
+  /// (PLAN.md Phase 26.8).
+  ///
+  /// Bewusst ein **eigener** Merker statt eines fünften Onboarding-Schritts:
+  /// Das Onboarding läuft nur bei einer frischen Installation. Wer die
+  /// Web-Fassung schon benutzt, hat es längst hinter sich — und wäre damit
+  /// genau der Nutzer, der den Hinweis nie zu sehen bekäme, obwohl seine
+  /// Daten betroffen sind.
+  bool loadWebStorageHintSeen() =>
+      _prefs.getBool(_webStorageHintKey) ?? false;
+
+  Future<void> saveWebStorageHintSeen() {
+    return _prefs.setBool(_webStorageHintKey, true);
   }
 
   AppLanguage loadLanguage() {

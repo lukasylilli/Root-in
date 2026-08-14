@@ -255,6 +255,12 @@
   "widgetProgressTrend": "Progress trend",
   "widgetMonthlyBar": "Monthly overview",
 
+  "webStorageHintTitle": "Add to your home screen",
+  "webStorageHintBody": "Your data lives in this website's storage — not on a server. Safari deletes the storage of a website you haven't opened for seven days. Once Root-in sits on your home screen, that rule no longer applies.",
+  "webStorageHintSteps": "In Safari: tap the share icon, then “Add to Home Screen”.",
+  "webStorageHintBackup": "Also export a backup now and then — in Settings under “Export backup”.",
+  "webStorageHintUnderstood": "Got it",
+
   "chartNoData": "No data for this period yet.",
 
   "chartTrendWeeklyAverage": "Weekly average",

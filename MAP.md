@@ -1,7 +1,7 @@
 # Root-in — Projekt-Map (Ordner- & Datei-Übersicht)
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
-> Zuletzt aktualisiert: 2026-08-07 (dritter Eintrag des Tages) — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub.** Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist jetzt ein Git-Repository. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
+> Zuletzt aktualisiert: 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8. Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `core/services/web_storage/` (drei Dateien), `core/widgets/web_storage_hint.dart`, `test/widget/web_storage_hint_test.dart`, `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist ein Git-Repository — Quellcode und Inhalts-Repository sind darin zusammengeführt. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
 > Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): keine neuen Dateien, geändert sind `core/widgets/chart_card.dart`, die drei ARB-Dateien und drei Test-Dateien.
 > Zuvor 2026-08-02 — Phasen 25, 24, 23 und 22 gebaut; der Abschnitt „Geplante Dateien" ist entfallen.
 
@@ -132,9 +132,9 @@ lib/
 │                                                 Zurückkehren die Drift-Streams neu lesen lässt (sonst bliebe ein
 │                                                 Abhaken über die Widget-Kachel unsichtbar)
 ├── l10n/
-│   ├── app_de.arb                            ✅ Vorlage-Sprache, 254 Schlüssel. Neue Strings **hier zuerst**
+│   ├── app_de.arb                            ✅ Vorlage-Sprache, 259 Schlüssel. Neue Strings **hier zuerst**
 │   ├── app_en.arb                            ✅ Englische Fassung derselben Schlüssel
-│   ├── app_fa.arb                            ✅ Persisch (Phase 18) — alle 254 Schlüssel, Reihenfolge wie
+│   ├── app_fa.arb                            ✅ Persisch (Phase 18) — alle 259 Schlüssel, Reihenfolge wie
 │   │                                             app_de.arb. Fehlt einer, fällt gen-l10n STILL auf Deutsch
 │   │                                             zurück; `persian_ui_test.dart` prüft das stichprobenartig.
 │   │                                             ⚠️ Entwurf — der Nutzer geht ihn als Muttersprachler durch
@@ -198,9 +198,14 @@ lib/
 │   │   ├── streak_calculator.dart            ✅ Reine Streak-Logik inkl. 1-Frei-Tag/Woche (unit-getestet)
 │   │   ├── achievement_evaluator.dart        ✅ Reine Freischalt-Logik (unit-getestet)
 │   │   └── platform_support.dart             ✅ **Die einzige Stelle im Projekt, an der `kIsWeb` steht.**
-│   │                                             isMobilePlatform + seit Phase 26.1 drei nach FÄHIGKEIT
+│   │                                             isMobilePlatform + seit Phase 26 vier nach FÄHIGKEIT
 │   │                                             benannte Abfragen: supportsReminders,
-│   │                                             supportsHomeScreenWidgets, supportsOrientationLock.
+│   │                                             supportsHomeScreenWidgets, supportsOrientationLock,
+│   │                                             usesBrowserStorage (Phase 26.8).
+│   │                                             ⚠️ usesBrowserStorage NICHT durch
+│   │                                             supportsHomeScreenWidgets ersetzen: Im Browser liefern
+│   │                                             beide dasselbe, sie MEINEN aber Verschiedenes — auf einem
+│   │                                             Desktop-Bau erschiene sonst der Safari-Hinweis
 │   │                                             Bewusst nicht nach Plattform benannt — der Aufrufer will
 │   │                                             wissen „gibt es hier Erinnerungen?", nicht „wo laufe ich?".
 │   │                                             🕯️ isStorePlatform ist mit Phase 20 auskommentiert
@@ -232,6 +237,12 @@ lib/
 │   │   │   └── pick_text_file_web.dart           Browser: <input type="file"> + FileReader.
 │   │   │                                         ⚠️ `oncancel` ist Pflicht: Bricht der Nutzer ab, feuert
 │   │   │                                         `onchange` NIE — das Future bliebe für immer offen
+│   │   ├── web_storage/                      ✅ Bittet den Browser, den Speicher DAUERHAFT zu behalten
+│   │   │   │                                     (Phase 26.8). Dieselbe Bauart wie file_pick/.
+│   │   │   │                                     ⚠️ Eine Bitte, keine Garantie — der Browser entscheidet
+│   │   │   ├── request_persistent_storage.dart      Weiche (bedingter Export)
+│   │   │   ├── …_io.dart                            Android/iOS: sofort `false`, es gibt nichts zu erbitten
+│   │   │   └── …_web.dart                           navigator.storage.persisted() → persist()
 │   │   ├── repo_content_service.dart         ✅ **Einziger** Weg an Repository-Inhalte (Anleitung + „موارد دیگر").
 │   │   │                                         Lädt jeden Pfad unter `content/` als Text und legt
 │   │   │                                         sie in shared_preferences ab → offline lesbar. Zeigt erst den
@@ -270,6 +281,17 @@ lib/
 │       │                                         UND „موارد دیگر" nutzen sie — zwei Stylesheets wären zwei
 │       │                                         Stellen für jeden Design-Wechsel
 │       ├── app_button.dart                   ✅ Einzige Button-Komponente der App
+│       ├── web_storage_hint.dart             ✅ maybeShowWebStorageHint(...) — einmaliger Dialog NUR im
+│       │                                         Browser (Phase 26.8): warum Root-in auf den Home-Bildschirm
+│       │                                         gehört und warum die Sicherung hier wichtiger ist.
+│       │                                         ⚠️ Safari löscht den Speicher einer Website nach SIEBEN
+│       │                                         TAGEN ohne Besuch; für eine auf dem Home-Bildschirm
+│       │                                         abgelegte Seite gilt das nicht. Das Ablegen ist damit
+│       │                                         keine Bequemlichkeit, sondern Datenerhalt.
+│       │                                         Aufgerufen von der Home-Seite (nicht vom Onboarding —
+│       │                                         das läuft nur bei frischer Installation und erreichte
+│       │                                         bestehende Web-Nutzer nie). Eigener Prefs-Merker
+│       │                                         `web_storage_hint_seen`; erst merken, dann zeigen
 │       ├── text_prompt_dialog.dart           ✅ Einziger „Text eingeben"-Dialog (Kategorie anlegen/umbenennen)
 │       ├── stat_column.dart                  ✅ Einzige Label+Wert-Spalte
 │       ├── progress_ring.dart                ✅ Einziger Fortschritts-Ring; Werte+Tokens statt Provider →
@@ -615,6 +637,15 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 | Datenbank im Browser | `data/local/database.dart` | `DriftWebOptions` — ohne den Parameter wirft `driftDatabase()` im Web |
 | Sicherung einlesen | `core/services/file_pick/` | Bedingter Import: mobil Dateipfad, im Browser `<input type="file">` |
 | Werte vom Bau | `core/constants/app_config.dart` | `String.fromEnvironment` + die Warnung, was das **nicht** leistet |
+
+**Wo die Daten der Web-Fassung liegen** (PLAN.md Phase 26.8) — zwei getrennte Orte, beide überstehen Schließen und Neuöffnen:
+
+| Was | Wo im Browser | Beispiele |
+|---|---|---|
+| Einzelwerte | `localStorage` (über `shared_preferences`) | Profilname, Sprache, Theme + Farbe, Erststart-Merker, Dashboard-Layout, gespeicherte Anleitungs-Texte |
+| Die Datenbank | OPFS **oder** IndexedDB (Drift wählt selbst) | Gewohnheiten, Kategorien, alle Erledigungen |
+
+Die **Serie wird nirgends gespeichert** — sie entsteht bei jedem Aufruf neu aus den Erledigungen (`StreakCalculator`). ⚠️ Beide Orte gehören zu **einem Browser auf einem Gerät**: Ein zweites Gerät hat einen eigenen Bestand, und „Website-Daten löschen" räumt beides ab. Deshalb der Hinweis aus 26.8 und die Bitte um dauerhaften Speicher beim Start.
 
 **Was im Browser bewusst fehlt** (PLAN.md Phase 26.1): Erinnerungen und Tagesstand-Meldung, Startbildschirm-Widgets, die Querformat-Sperre der Übersicht. Die zugehörigen Bedienelemente verschwinden dort ganz — ein Schalter, der nichts bewirkt, ist schlimmer als kein Schalter. Eine gespeicherte Erinnerungs-Uhrzeit bleibt in der Datenbank **unangetastet**, damit dieselbe Sicherung auf Android wieder vollständig ist.
 
