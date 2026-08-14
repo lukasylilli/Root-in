@@ -634,6 +634,13 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        Worker und Bibliothek nicht auseinanderlaufen.
 │                                        ⚠️ `dart run drift_dev make-worker` ist mit drift 2.34.2 /
 │                                        drift_dev 2.34.0 KAPUTT — nicht erneut versuchen
+├── webtest.py                       ✅ Echter Browser-Durchgang der veröffentlichten Seite über
+│                                        safaridriver (PLAN.md 26.7). 8 Prüfungen bis hin zu
+│                                        „Daten überleben das Neuladen". Auch gegen einen lokalen
+│                                        Bau nutzbar: `python3 tool/webtest.py http://localhost:8765/`
+│                                        ⚠️ Einmalig nötig: `safaridriver --enable` (Mac-Passwort).
+│                                        ⚠️ Jede Sitzung startet mit LEEREM Profil — Persistenz nur
+│                                        innerhalb EINER Sitzung prüfbar, sonst misst man nichts
 └── build_web.sh                     ✅ **Einzige Stelle der Bau-Schalter**: --no-source-maps, -O4, --csp,
                                          --base-href, Version aus pubspec.yaml, Baunummer aus
                                          GITHUB_RUN_NUMBER. Die Automatik ruft DIESES Skript auf —

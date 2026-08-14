@@ -1,7 +1,8 @@
 # Root-in — Habit Maker / Routine Tracker — Projektplan
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
-> Zuletzt aktualisiert: 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8 (Daten im Browser sichern). Die App läuft im Browser (Drift auf WebAssembly, vier Plattform-Weichen an **einer** Stelle), das Projekt ist ein Git-Repository, eine GitHub-Action baut und veröffentlicht bei jedem Push auf `main`, und die Web-Fassung erklärt beim ersten Start, warum sie auf den Home-Bildschirm gehört. **188 Tests grün**, `flutter analyze` sauber, Web- und Android-Bau laufen. ⚠️ **Im Browser noch nicht ausgeführt** — auf dieser Maschine fehlt Chrome; Einzelheiten in Phase 26.7. Offen bleiben die Schritte des Nutzers: pushen und Pages einschalten.
+> Zuletzt aktualisiert: 2026-08-14 — **Phase 26 abgeschlossen: Root-in ist im Netz.** Live unter `https://lukasylilli.github.io/Root-in/`, veröffentlicht durch die Automatik, und **im echten Safari durchgegangen** (`tool/webtest.py`): App startet, Datenbank trägt, Daten überleben das Neuladen, alle sieben Standard-Kategorien da. Einzelheiten in 26.7.
+> Zuvor am selben Tag — **Phase 26 gebaut**, einschließlich 26.8 (Daten im Browser sichern). Die App läuft im Browser (Drift auf WebAssembly, vier Plattform-Weichen an **einer** Stelle), das Projekt ist ein Git-Repository, eine GitHub-Action baut und veröffentlicht bei jedem Push auf `main`, und die Web-Fassung erklärt beim ersten Start, warum sie auf den Home-Bildschirm gehört. **188 Tests grün**, `flutter analyze` sauber, Web- und Android-Bau laufen. ⚠️ **Im Browser noch nicht ausgeführt** — auf dieser Maschine fehlt Chrome; Einzelheiten in Phase 26.7. Offen bleiben die Schritte des Nutzers: pushen und Pages einschalten.
 > Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): Fortschritts-Trend bündelt im Jahr-Bereich auf Wochen-/Monatsmittel, Balkendiagramm-Achsen aufgeräumt, Tests für Tab-Navigation und Heute-Randfälle. **184 Tests grün** (+2 übersprungen), `flutter analyze` sauber, am Emulator deutsch **und persisch** angesehen (dabei ein RTL-Fehler gefunden und behoben). Damit sind die beiden ältesten offenen Fragen aus Abschnitt 12 geschlossen.
 > Zuvor 2026-08-02 — Phasen 25, 24, 23 und 22 gebaut (Datenerhalt beim Update, beliebiges Datum nachtragen, eindringlichere Erinnerungen, Rubrik „موارد دیگر" aus GitHub). Die am 2026-08-01 gebauten Phasen 18–21.2 sind auf Abschnitt 10.2 eingedampft.
 > **Was jetzt noch offen ist:** der Gerätedurchgang aus Phase 21.3, die Veröffentlichung (Phase 15, führt der Nutzer selbst durch), Phase 12 (iOS) — und die Inhalte, die der Nutzer selbst ins Repository legt.
@@ -34,7 +35,7 @@
       - [26.4 Was „Code-Schutz" im Web wirklich heißt](#264-was-code-schutz-im-web-wirklich-heißt-) · [26.5 Geheimnisse & Umgebungsvariablen](#265-geheimnisse--umgebungsvariablen-) · [26.6 Versionierung](#266-versionierung-)
       - [26.8 Daten im Browser sichern](#268-daten-im-browser-sichern-) ✅ — wo die Daten liegen, Safaris Sieben-Tage-Regel, einmaliger Hinweis
       - [26.9 Weniger Rückfragen beim Arbeiten](#269-weniger-rückfragen-beim-arbeiten-) ✅ — Freigabeliste, und warum „nie fragen" keine Liste sein kann
-      - [26.7 Was noch offen ist](#267-was-noch-offen-ist-) ⬜ — **Code fertig, im Browser noch nicht ausgeführt**
+      - [26.7 Veröffentlicht und am echten Browser geprüft](#267-veröffentlicht-und-am-echten-browser-geprüft-) ✅ — **live unter lukasylilli.github.io/Root-in/**
     - [Phase 12 — iOS-Portierung](#phase-12--ios-portierung--feinschliff-) ⬜
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
 12. [Offene Fragen](#12-offene-fragen)
@@ -467,14 +468,37 @@ Vollständige Vorlage und Pflege-Anleitung: `store/others_index_beispiel.json` u
 - [x] Beides zusätzlich als `--dart-define`: `--build-name`/`--build-number` landen im Web nur in `version.json` und wären für den Dart-Code unsichtbar.
 - [x] Die Version steht am Fuß der Einstellungen. Bei einer Web-Fassung, die sich beim nächsten Laden **unbemerkt** aktualisiert, ist sie der einzige verlässliche Anhaltspunkt für „welchen Stand siehst du gerade?".
 
-#### 26.7 Was noch offen ist ⬜
-**Der Code ist fertig; was fehlt, sind Schritte außerhalb dieses Rechners und eine Prüfung, die hier nicht möglich war.**
+#### 26.7 Veröffentlicht und am echten Browser geprüft ✅
+**Am 2026-08-14 veröffentlicht unter `lukasylilli.github.io/Root-in/` und dort tatsächlich durchgegangen** — nicht simuliert, nicht geschlossen aus grünen Tests.
 
-- [ ] ⚠️ **Im Browser noch nicht ausgeführt.** Geprüft sind: `flutter analyze` sauber, **184 Tests grün**, `flutter build web --release` läuft, der Android-Bau läuft weiterhin, `sqlite3.wasm` und `drift_worker.js` werden ausgeliefert, keine Source-Maps im Ergebnis. **Nicht geprüft ist der Start im Browser** — auf dieser Maschine ist kein Chrome installiert (Flutter braucht ihn für `-d chrome`), und ein Bildschirmfoto von Safari scheitert an der fehlenden Berechtigung zur Bildschirmaufnahme. Der erste echte Aufruf ist damit der erste Test. **Der wahrscheinlichste Stolperstein ist die Datenbank** — sie ist der einzige Teil, der im Browser einen völlig anderen Weg geht.
-- [ ] **Der Nutzer pusht** (Anleitung folgt im Chat). Bewusst nicht automatisiert: Es ist der Schritt, der den Code nach außen gibt.
+**Wie der echte Test möglich wurde:** Auf dieser Maschine ist kein Chrome installiert (Flutter braucht ihn für `-d chrome`), und `screencapture` scheitert an der fehlenden Berechtigung zur Bildschirmaufnahme. Der Weg führte stattdessen über **`safaridriver`**, das macOS mitbringt — einmalig freizuschalten mit `safaridriver --enable`. Der Durchgang steckt als `tool/webtest.py` im Projekt und ist damit **wiederholbar**, auch gegen einen lokalen Bau.
+
+Zwei Kniffe, ohne die es nicht ginge (beide stehen im Skript):
+1. **Flutter zeichnet auf eine Canvas** — es gibt keine anklickbaren DOM-Knoten. Ein Klick auf Flutters Barrierefreiheits-Schalter baut den Semantik-Baum als echte Elemente auf. Geklickt wird trotzdem mit einem **echten Zeiger-Ereignis** auf die Mitte des Elements: Ein `.click()` traf im Versuch den äußeren Container und tat nichts.
+2. ⚠️ **`safaridriver` gibt jeder Sitzung ein leeres Profil.** Der erste Persistenz-Test lief deshalb ins Leere — er begann jedes Mal bei null und „bewies" nur, dass ein frischer Browser frisch ist. Der Vergleich muss **innerhalb einer Sitzung** stattfinden: Zustand herstellen → neu laden → prüfen.
+
+**Ergebnis — alle acht Prüfungen bestanden:**
+
+| Geprüft | Ergebnis |
+|---|---|
+| App startet im Browser | ✅ nach ~3 s |
+| Oberfläche | ✅ persisch, rechtsläufig, dunkles Theme (folgt dem System) |
+| Erststart-Erklärung + Überspringen | ✅ |
+| **Speicher-Hinweis aus 26.8** | ✅ erscheint genau einmal, an der richtigen Stelle |
+| Einstellungen im Browser-Speicher | ✅ `flutter.onboarding_seen`, `flutter.web_storage_hint_seen` |
+| **Datenbank im Browser** | ✅ `root_in_db` in IndexedDB — Drift trägt |
+| Standard-Kategorien | ✅ alle **sieben** auf Persisch angelegt |
+| **Nach vollständigem Neuladen** | ✅ keine Erklärung mehr, Kategorien unverändert — **die Daten bleiben** |
+
+Zusätzlich gegen die ausgelieferten Dateien geprüft: `base href` = `/Root-in/` (der Wert, an dem eine weiße Seite hinge), `sqlite3.wasm` mit korrektem Typ `application/wasm` (ein falscher Typ verhindert das Laden von WebAssembly), **keine** Source-Map (404), und im Bundle steht `Root-in 1.0.0+2` — die Versionskette von `pubspec.yaml` über das Bau-Skript bis zur Lauf-Nummer der Automatik trägt also durch.
+
+**Nebenbefund, der 26.1 bestätigt:** Auf der Einstellungen-Seite fehlen Erinnerungen und Tagesstand-Schalter vollständig — genau wie vorgesehen. Kein Knopf, der nichts tut.
+
+⬜ **Was der Browser-Test NICHT abdeckt:** Getestet wurde Safari am Mac im Telefon-Format. **Das Ablegen auf dem Home-Bildschirm und Safaris Sieben-Tage-Regel lassen sich nur auf einem echten iPhone prüfen** — und genau daran hängt der Datenerhalt (26.8).
 - [x] ⚠️ **Beinahe-Datenverlust abgewendet: Das Repository gab es schon.** `lukasylilli/Root-in` existiert seit Phase 17.1 — öffentlich, Zweig `main`, Inhalt: **nur** der Ordner `content/` mit den zwölf Anleitungs-Texten. Genau diese Adresse fragt die **bereits veröffentlichte Android-App zur Laufzeit** ab. Ein `git push` des reinen Quellcodes wäre abgelehnt worden (fremde Historie); ein erzwungener Push hätte die zwölf Dateien gelöscht und die Anleitung in der ausgelieferten App auf „Inhalt folgt" gesetzt — **ohne dass es hier aufgefallen wäre**, denn lokal ändert sich nichts. Beide Historien sind deshalb zusammengeführt (`--allow-unrelated-histories`); `content/` liegt jetzt neben dem Quellcode und wird mitversioniert.
 - [x] **Folge für die Adresse:** Die Web-Fassung landet unter `lukasylilli.github.io/Root-in/`, also genau dem `--base-href /Root-in/`, das bereits geprüft ist. Ein zweites Repository für den Quellcode hätte die Anleitungs-Adressen ungültig gemacht — und die ließen sich nur mit einem **App-Update** nachziehen (siehe Phase 17.3: Umbenennungen kosten eine App-Version).
-- [ ] **GitHub Pages einschalten** (Settings → Pages → Source: *GitHub Actions*). Ohne das läuft der Arbeitsablauf und veröffentlicht nichts.
+- [x] **GitHub Pages eingeschaltet** (Source: *GitHub Actions*) — erledigt vom Nutzer.
+- [x] ⚠️ **Lauf 1 scheiterte, Lauf 2 lief durch.** Nicht am Code: Der Testschritt trug `--no-test-assets`, eine rein lokale Abkürzung (siehe Lehre 29). Lokal reproduziert, behoben, seither grün.
 - [ ] ⚠️ **GitHub Pages kann die Kopfzeilen `Cross-Origin-Opener-Policy`/`Embedder-Policy` nicht setzen.** Drift nutzt dann nicht die schnellste Speicherart (OPFS mit gemeinsamem Speicher), sondern fällt auf eine andere zurück. **Die Daten bleiben erhalten** — es ist eine Frage der Geschwindigkeit, kein Datenverlust. Wer das ändern will, braucht einen Hoster, der eigene Kopfzeilen erlaubt.
 - [ ] **Auf einem echten iPhone durchgehen**: Seite in Safari öffnen → **erscheint der Speicher-Hinweis aus 26.8 genau einmal?** → „Zum Home-Bildschirm" → startet sie ohne Adressleiste? Bleiben die Daten nach dem Schließen erhalten? Funktionieren Teilen und Sicherung?
 
