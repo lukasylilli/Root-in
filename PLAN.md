@@ -33,6 +33,7 @@
       - [26.1 Lauffähig im Browser](#261-lauffähig-im-browser-) · [26.2 Repository & .gitignore](#262-repository--gitignore-) · [26.3 Automatischer Bau & Veröffentlichung](#263-automatischer-bau--veröffentlichung-cicd-)
       - [26.4 Was „Code-Schutz" im Web wirklich heißt](#264-was-code-schutz-im-web-wirklich-heißt-) · [26.5 Geheimnisse & Umgebungsvariablen](#265-geheimnisse--umgebungsvariablen-) · [26.6 Versionierung](#266-versionierung-)
       - [26.8 Daten im Browser sichern](#268-daten-im-browser-sichern-) ✅ — wo die Daten liegen, Safaris Sieben-Tage-Regel, einmaliger Hinweis
+      - [26.9 Weniger Rückfragen beim Arbeiten](#269-weniger-rückfragen-beim-arbeiten-) ✅ — Freigabeliste, und warum „nie fragen" keine Liste sein kann
       - [26.7 Was noch offen ist](#267-was-noch-offen-ist-) ⬜ — **Code fertig, im Browser noch nicht ausgeführt**
     - [Phase 12 — iOS-Portierung](#phase-12--ios-portierung--feinschliff-) ⬜
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
@@ -500,6 +501,16 @@ Vollständige Vorlage und Pflege-Anleitung: `store/others_index_beispiel.json` u
 - [x] Tests (`test/widget/web_storage_hint_test.dart`, 4 Fälle). ⚠️ Sie laufen auf der Dart-VM, also **nie im Browser** — prüfbar ist deshalb genau das Wichtigste: dass der Hinweis auf Android/iOS **nicht** erscheint und den Merker dort **nicht verbraucht**. Täte er es, hätte ein Nutzer, der die App zuerst auf Android startet, seinen Hinweis in der Web-Fassung stillschweigend verloren — die Sicherung wandert per Import zwischen beiden Fassungen.
 
 **Stand danach: 188 Tests grün**, `flutter analyze` sauber, Web- und Android-Bau laufen.
+
+#### 26.9 Weniger Rückfragen beim Arbeiten ✅
+**Vom Nutzer am 2026-08-14 beauftragt** („soll automatisch gehen"). Betrifft nicht die App, sondern die Werkzeugumgebung — steht hier, weil `.claude/settings.json` mitversioniert wird und damit zum Projekt gehört.
+
+- [x] `.claude/settings.json` mit `defaultMode: acceptEdits` (Dateiänderungen ohne Rückfrage) und einer Freigabeliste für die Befehle dieses Projekts: alles rund um `flutter`, die aufbauenden `git`-Befehle, `adb`, die Skripte in `tool/`.
+- [x] **Ermittelt statt geraten:** 13 Sitzungsprotokolle, 1838 Bash-Aufrufe ausgewertet. Die beiden Spitzenreiter waren `flutter analyze` (243×) und `flutter test` (242×).
+- [x] ⚠️ **Eine erste, breitere Fassung wurde wieder zurückgenommen.** Sie enthielt Muster wie `for *`, `until *` und `awk *`. Die sehen eng aus, erlauben aber **jeden beliebigen Befehl** — eine Schleife kann alles ausführen. Eine Liste, die schmal aussieht und weit ist, ist schlechter als eine ehrlich weite: Man verlässt sich auf einen Schutz, den es nicht gibt.
+- [x] **Keine persönlichen Pfade in der Datei** — nur `$HOME`-Formen. Sie geht in ein öffentliches Repository; absolute Pfade verrieten den Benutzernamen und die Ordnerstruktur des Rechners (derselbe Fund wie bei `settings.local.json` in 26.2).
+
+**Die ehrliche Grenze, wie schon in 26.4:** „Nie wieder fragen" ist über eine Freigabeliste **nicht** zu haben, ohne beliebige Befehlsausführung freizugeben. Wer das wirklich will, nimmt den Modus-Umschalter — das ist eine bewusste Entscheidung, keine getarnte Liste. Der zweite Teil des Problems lag ohnehin auf der anderen Seite: **verkettete Befehle** (`… && … && …`) brauchen für *jedes* Glied eine Freigabe. Kürzere Einzelbefehle senken die Rückfragen mehr als jede Liste.
 
 #### Offene Fragen dieser Phase
 - **Repository öffentlich oder privat?** GitHub Pages aus einem **privaten** Repository ist ein kostenpflichtiges Merkmal. Öffentlich heißt: der Quellcode ist für jeden lesbar. ⚠️ Das ist die eigentliche Entscheidung hinter dem Wunsch „niemand soll meinen Code nachbauen können" — und sie ist keine technische, sondern eine des Nutzers. Anmerkung: Auch bei einem **privaten** Repository bleibt die veröffentlichte Web-Fassung analysierbar (siehe 26.4); privat schützt die Quelle, nicht das Ergebnis.

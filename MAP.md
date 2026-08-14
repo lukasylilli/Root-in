@@ -1,7 +1,7 @@
 # Root-in — Projekt-Map (Ordner- & Datei-Übersicht)
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
-> Zuletzt aktualisiert: 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8. Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `core/services/web_storage/` (drei Dateien), `core/widgets/web_storage_hint.dart`, `test/widget/web_storage_hint_test.dart`, `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist ein Git-Repository — Quellcode und Inhalts-Repository sind darin zusammengeführt. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
+> Zuletzt aktualisiert: 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8 und 26.9. Neu im Root-Baum: `content/` (aus dem früheren Inhalts-Repository), `.claude/settings.json`. Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `core/services/web_storage/` (drei Dateien), `core/widgets/web_storage_hint.dart`, `test/widget/web_storage_hint_test.dart`, `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist ein Git-Repository — Quellcode und Inhalts-Repository sind darin zusammengeführt. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
 > Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): keine neuen Dateien, geändert sind `core/widgets/chart_card.dart`, die drei ARB-Dateien und drei Test-Dateien.
 > Zuvor 2026-08-02 — Phasen 25, 24, 23 und 22 gebaut; der Abschnitt „Geplante Dateien" ist entfallen.
 
@@ -32,6 +32,9 @@
 ├── pubspec.yaml                     ✅ Paket-Definition & Dependencies (am Dateiende: flutter_launcher_icons)
 ├── pubspec.lock                     ✅ Gesperrte Dependency-Versionen
 ├── analysis_options.yaml            ✅ Lint-Regeln
+├── .metadata                        ⚙️ Von Flutter gepflegt (Projekt-Herkunft, migrierte Plattformen) —
+│                                        nie von Hand ändern
+├── Root-in.code-workspace           ✅ VS-Code-Arbeitsbereich
 ├── l10n.yaml                        ✅ gen-l10n: ARB in lib/l10n, Ausgabe lib/l10n/gen, Vorlage Deutsch
 ├── assets/icon/app_icon.png         ✅ EINZIGE Quelle des App-Symbols (1024×1024). Alle Android-Auflösungen +
 │                                        Adaptive Icon entstehen daraus per `dart run flutter_launcher_icons`.
@@ -96,12 +99,25 @@
 │   ├── drift_worker.js              ⚙️ NICHT versioniert — dieselbe Quelle, Version aus pubspec.lock
 │   ├── favicon.png, icons/          ✅ Symbole (Standard-Gerüst)
 │   └── .gitignore                   ✅ Hält die beiden erzeugten Dateien aus der Versionierung
+├── content/                         ✅ Die Anleitungs-Texte (Phase 17.1/22) — seit Phase 26.2 IM PROJEKT,
+│   └── de|en|fa/                        vorher ein eigenes GitHub-Repository. Sie werden zur Laufzeit
+│                                        geladen, wirken also weiterhin OHNE App-Update. Einzelheiten im
+│                                        Abschnitt „Inhalts-Repository (GitHub)"
 ├── tool/                            ✅ Bau-Skripte (siehe Abschnitt „Web-Fassung & Automatik")
 ├── .github/workflows/deploy-web.yml ✅ Push auf main → analyze + test → build_web.sh → GitHub Pages
 ├── .env.example                     ✅ Vorlage für --dart-define-from-file (die echte .env ist ausgeschlossen)
-├── .git/                            ✅ Seit 2026-08-07 ein Git-Repository (Zweig `main`, erster Commit
-│                                        mit 348 Dateien). ⚠️ NICHT im Repository: meine/,
-│                                        .claude/settings.local.json, key.properties, *.jks, build/, .env
+├── .claude/
+│   ├── settings.json                ✅ Freigabeliste für Claude Code (Phase 26.9): weniger Rückfragen bei
+│   │                                    flutter-/git-/adb-Befehlen, `defaultMode: acceptEdits`.
+│   │                                    ⚠️ Bewusst OHNE Muster wie `for *`/`awk *` — die sähen eng aus,
+│   │                                    erlauben aber jeden beliebigen Befehl. Wer gar keine Rückfrage
+│   │                                    will, nimmt den Modus-Umschalter, nicht eine getarnte Liste
+│   └── settings.local.json          ⛔ NICHT versioniert — maschinenlokal, enthält hunderte absolute
+│                                        Pfade unter /Users/<name>/
+├── .git/                            ✅ Seit 2026-08-07 ein Git-Repository (Zweig `main`; Quellcode und
+│                                        Inhalts-Repository zusammengeführt). ⚠️ NICHT im Repository:
+│                                        meine/, .claude/settings.local.json, key.properties, *.jks,
+│                                        build/, .env, web/sqlite3.wasm, web/drift_worker.js
 └── macos/, linux/, windows/         ✅ Desktop-Gerüst (ungenutzt, nicht im Fokus)
 ```
 
@@ -568,7 +584,12 @@ test/
 │   │                                     durch die App, fa als unterstützte Locale inkl. Notification) — Phase 18
 │   ├── reminders_page_test.dart     ✅ 3 Fälle (keine Erinnerung, Uhrzeit sichtbar, Abschalten cancelt)
 │   ├── home_progress_animation_test.dart ✅ 4 Fälle (Prozent + Quelle, Gipfel bei 100 %, nächstes Camp, Clamping)
-│   └── dashboard_section_test.dart  ✅ Anpassen-Modus: hinzufügen, entfernen, beides persistiert
+│   ├── dashboard_section_test.dart  ✅ Anpassen-Modus: hinzufügen, entfernen, beides persistiert
+│   └── web_storage_hint_test.dart   ✅ 4 Fälle (Phase 26.8). ⚠️ Laufen auf der Dart-VM, also NIE im
+│                                        Browser — prüfbar ist deshalb das Wichtigste: dass der Hinweis
+│                                        auf Android/iOS NICHT erscheint und den Merker dort NICHT
+│                                        verbraucht. Sonst verlöre ein Nutzer, der zuerst auf Android
+│                                        startet, den Hinweis in der Web-Fassung stillschweigend
 └── support/
     ├── test_database.dart           ✅ Isolierte In-Memory-Test-DB — nie die echte App-DB
     ├── test_time_service.dart       ✅ Festes Datum, kein Netzwerkzugriff in Tests
