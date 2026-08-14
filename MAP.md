@@ -1,6 +1,7 @@
 # Root-in — Projekt-Map (Ordner- & Datei-Übersicht)
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
+> ⚠️ **Offen (2026-08-14): vier Fehler in der veröffentlichten Web-Fassung** — siehe Abschnitt „Web-Fassung & Automatik" und PLAN.md 26.10.
 > Zuletzt aktualisiert: 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8 und 26.9. Neu im Root-Baum: `content/` (aus dem früheren Inhalts-Repository), `.claude/settings.json`. Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `core/services/web_storage/` (drei Dateien), `core/widgets/web_storage_hint.dart`, `test/widget/web_storage_hint_test.dart`, `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist ein Git-Repository — Quellcode und Inhalts-Repository sind darin zusammengeführt. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
 > Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): keine neuen Dateien, geändert sind `core/widgets/chart_card.dart`, die drei ARB-Dateien und drei Test-Dateien.
 > Zuvor 2026-08-02 — Phasen 25, 24, 23 und 22 gebaut; der Abschnitt „Geplante Dateien" ist entfallen.
@@ -97,7 +98,8 @@
 │   ├── sqlite3.wasm                 ⚙️ NICHT versioniert — tool/fetch_web_db_assets.sh holt sie. Ohne diese
 │   │                                    Datei wirft driftDatabase() im Browser, die App startet gar nicht
 │   ├── drift_worker.js              ⚙️ NICHT versioniert — dieselbe Quelle, Version aus pubspec.lock
-│   ├── favicon.png, icons/          ✅ Symbole (Standard-Gerüst)
+│   ├── favicon.png, icons/          ⚠️ OFFENER FEHLER (PLAN.md 26.10): Das App-Symbol der Web-Fassung
+│   │                                    stimmt nicht. Noch nicht untersucht
 │   └── .gitignore                   ✅ Hält die beiden erzeugten Dateien aus der Versionierung
 ├── content/                         ✅ Die Anleitungs-Texte (Phase 17.1/22) — seit Phase 26.2 IM PROJEKT,
 │   └── de|en|fa/                        vorher ein eigenes GitHub-Repository. Sie werden zur Laufzeit
@@ -669,6 +671,12 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 | Datenbank im Browser | `data/local/database.dart` | `DriftWebOptions` — ohne den Parameter wirft `driftDatabase()` im Web |
 | Sicherung einlesen | `core/services/file_pick/` | Bedingter Import: mobil Dateipfad, im Browser `<input type="file">` |
 | Werte vom Bau | `core/constants/app_config.dart` | `String.fromEnvironment` + die Warnung, was das **nicht** leistet |
+
+⚠️ **OFFENE FEHLER in der veröffentlichten Web-Fassung** (PLAN.md 26.10, gefunden 2026-08-14). Nur Beobachtungen — Ursache noch nicht gesucht:
+- App-Symbol der Web-Fassung stimmt nicht (`web/icons/`, `web/favicon.png`)
+- Seite „Heute" zeigt „kein Internetzugang"
+- Seite „Ansicht" zeigt „kein Internetzugang"
+- Alle fünf Seiten unter Einstellungen → Root-in Anleitung zeigen „kein Internetzugang"
 
 **Wo die Daten der Web-Fassung liegen** (PLAN.md Phase 26.8) — zwei getrennte Orte, beide überstehen Schließen und Neuöffnen:
 

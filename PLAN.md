@@ -1,7 +1,8 @@
 # Root-in — Habit Maker / Routine Tracker — Projektplan
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
-> Zuletzt aktualisiert: 2026-08-14 — **Phase 26 abgeschlossen: Root-in ist im Netz.** Live unter `https://lukasylilli.github.io/Root-in/`, veröffentlicht durch die Automatik, und **im echten Safari durchgegangen** (`tool/webtest.py`): App startet, Datenbank trägt, Daten überleben das Neuladen, alle sieben Standard-Kategorien da. Einzelheiten in 26.7.
+> ⚠️ **Aktuell offen (2026-08-14): vier Fehler in der veröffentlichten Web-Fassung** — App-Symbol, „Heute", „Ansicht" und die fünf Anleitungs-Seiten. Aufgelistet in [26.10](#2610-gefundene-fehler-in-der-web-fassung--offen); Ursachensuche steht noch aus.
+> Zuletzt aktualisiert: 2026-08-14 — **Phase 26: Root-in ist im Netz.** Live unter `https://lukasylilli.github.io/Root-in/`, veröffentlicht durch die Automatik, und **im echten Safari durchgegangen** (`tool/webtest.py`): App startet, Datenbank trägt, Daten überleben das Neuladen, alle sieben Standard-Kategorien da. Einzelheiten in 26.7.
 > Zuvor am selben Tag — **Phase 26 gebaut**, einschließlich 26.8 (Daten im Browser sichern). Die App läuft im Browser (Drift auf WebAssembly, vier Plattform-Weichen an **einer** Stelle), das Projekt ist ein Git-Repository, eine GitHub-Action baut und veröffentlicht bei jedem Push auf `main`, und die Web-Fassung erklärt beim ersten Start, warum sie auf den Home-Bildschirm gehört. **188 Tests grün**, `flutter analyze` sauber, Web- und Android-Bau laufen. ⚠️ **Im Browser noch nicht ausgeführt** — auf dieser Maschine fehlt Chrome; Einzelheiten in Phase 26.7. Offen bleiben die Schritte des Nutzers: pushen und Pages einschalten.
 > Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): Fortschritts-Trend bündelt im Jahr-Bereich auf Wochen-/Monatsmittel, Balkendiagramm-Achsen aufgeräumt, Tests für Tab-Navigation und Heute-Randfälle. **184 Tests grün** (+2 übersprungen), `flutter analyze` sauber, am Emulator deutsch **und persisch** angesehen (dabei ein RTL-Fehler gefunden und behoben). Damit sind die beiden ältesten offenen Fragen aus Abschnitt 12 geschlossen.
 > Zuvor 2026-08-02 — Phasen 25, 24, 23 und 22 gebaut (Datenerhalt beim Update, beliebiges Datum nachtragen, eindringlichere Erinnerungen, Rubrik „موارد دیگر" aus GitHub). Die am 2026-08-01 gebauten Phasen 18–21.2 sind auf Abschnitt 10.2 eingedampft.
@@ -36,6 +37,7 @@
       - [26.8 Daten im Browser sichern](#268-daten-im-browser-sichern-) ✅ — wo die Daten liegen, Safaris Sieben-Tage-Regel, einmaliger Hinweis
       - [26.9 Weniger Rückfragen beim Arbeiten](#269-weniger-rückfragen-beim-arbeiten-) ✅ — Freigabeliste, und warum „nie fragen" keine Liste sein kann
       - [26.7 Veröffentlicht und am echten Browser geprüft](#267-veröffentlicht-und-am-echten-browser-geprüft-) ✅ — **live unter lukasylilli.github.io/Root-in/**
+      - [26.10 Gefundene Fehler in der Web-Fassung](#2610-gefundene-fehler-in-der-web-fassung--offen) ⬜ **OFFEN — Symbol, „Heute", „Ansicht" und die fünf Anleitungs-Seiten**
     - [Phase 12 — iOS-Portierung](#phase-12--ios-portierung--feinschliff-) ⬜
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
 12. [Offene Fragen](#12-offene-fragen)
@@ -535,6 +537,16 @@ Zusätzlich gegen die ausgelieferten Dateien geprüft: `base href` = `/Root-in/`
 - [x] **Keine persönlichen Pfade in der Datei** — nur `$HOME`-Formen. Sie geht in ein öffentliches Repository; absolute Pfade verrieten den Benutzernamen und die Ordnerstruktur des Rechners (derselbe Fund wie bei `settings.local.json` in 26.2).
 
 **Die ehrliche Grenze, wie schon in 26.4:** „Nie wieder fragen" ist über eine Freigabeliste **nicht** zu haben, ohne beliebige Befehlsausführung freizugeben. Wer das wirklich will, nimmt den Modus-Umschalter — das ist eine bewusste Entscheidung, keine getarnte Liste. Der zweite Teil des Problems lag ohnehin auf der anderen Seite: **verkettete Befehle** (`… && … && …`) brauchen für *jedes* Glied eine Freigabe. Kürzere Einzelbefehle senken die Rückfragen mehr als jede Liste.
+
+#### 26.10 Gefundene Fehler in der Web-Fassung ⬜ OFFEN
+**Vom Nutzer am 2026-08-14 an der veröffentlichten Seite gefunden.** Hier stehen bewusst **nur die Beobachtungen** — Ursache und Behebung folgen in einem eigenen Schritt.
+
+- [ ] **App-Symbol der Web-Fassung stimmt nicht.**
+- [ ] **Seite „Heute" zeigt „kein Internetzugang".**
+- [ ] **Seite „Ansicht" zeigt „kein Internetzugang".**
+- [ ] **Alle fünf Seiten unter Einstellungen → Root-in Anleitung** (Lernplanung, Links, …) **zeigen „kein Internetzugang".**
+
+⬜ **Nächster Schritt:** Ursachen suchen und beheben. Bis dahin gilt die Web-Fassung als **nicht benutzbar veröffentlicht** — die Startseite und der Datenerhalt funktionieren (26.7), aber drei der vier Hauptseiten nicht.
 
 #### Offene Fragen dieser Phase
 - **Repository öffentlich oder privat?** GitHub Pages aus einem **privaten** Repository ist ein kostenpflichtiges Merkmal. Öffentlich heißt: der Quellcode ist für jeden lesbar. ⚠️ Das ist die eigentliche Entscheidung hinter dem Wunsch „niemand soll meinen Code nachbauen können" — und sie ist keine technische, sondern eine des Nutzers. Anmerkung: Auch bei einem **privaten** Repository bleibt die veröffentlichte Web-Fassung analysierbar (siehe 26.4); privat schützt die Quelle, nicht das Ergebnis.
