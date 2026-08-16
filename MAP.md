@@ -754,32 +754,38 @@ Die **Serie wird nirgends gespeichert** — sie entsteht bei jedem Aufruf neu au
 🚧 **Geplant in PLAN.md Phase 27** — noch nichts davon existiert. Dieser Abschnitt hält fest, **wo** die Teile hinkommen, damit sie nicht verstreut entstehen.
 
 ```
-supabase/schema.sql                  ✅ Tabellen `profiles` + `backups`, RLS je Vorgang, Trigger für
-                                         updated_at. Mehrfach ausführbar (SQL Editor).
+supabase/schema.sql                  ✅ Tabellen `profiles` (mit `username`) + `backups`, RLS je
+                                         Vorgang, Trigger für updated_at, Funktion
+                                         `username_available()`. Mehrfach ausführbar (SQL Editor).
                                          ⚠️ Bei `backups` ist user_id der PRIMÄRSCHLÜSSEL — eine
                                          Sicherung ist ein Stand, keine Historie
                                          ⚠️ updated_at setzt der SERVER, nicht die App: eine
                                          Geräteuhr kann falsch gestellt sein
+                                         ⚠️ Eindeutiger Index auf `lower(username)` — die App
+                                         normalisiert mit derselben Regel; weichen die beiden
+                                         Seiten ab, hält eine von ihnen die Eindeutigkeit nicht
+                                         ⚠️ E-Mail wird hier NICHT wiederholt (liegt in auth.users) —
+                                         eine zweite Kopie könnte veralten und auslaufen
 lib/core/constants/app_config.dart   ✅ supabaseUrl / supabaseAnonKey / hasSupabaseConfig (27.3)
 lib/core/utils/platform_support.dart ✅ supportsCloudSync — die einzige Fähigkeit dort, die NICHT
                                          an der Plattform hängt, sondern an der Konfiguration
 test/unit/cloud_config_test.dart     ✅ 4 Fälle: ohne Schlüssel keine Cloud (27.3)
-lib/core/services/username_credentials.dart ✅ Die EINZIGE Stelle, an der Benutzername und interne
-                                         Adresse zusammenhängen (27.5). Reines Dart, kein Paket —
-                                         der Teil, der still falsch sein kann, ist ohne Server prüfbar.
-                                         ⚠️ Normalisiert IMMER (klein, ohne Leerraum), sonst wären
-                                         „Ali" und „ali" zwei Konten. Domain `rootin.invalid`
-                                         (RFC 2606) als EINE Konstante — ein Wechsel verwaist alle
-                                         bestehenden Konten
-test/unit/username_credentials_test.dart ✅ 12 Fälle inkl. Hin- und Rückweg je gültigem Namen
-lib/core/services/auth_service.dart  🚧 Einzige Stelle für supabase_flutter; einziger Aufrufer von
-                                         username_credentials.dart (27.5)
+lib/core/services/username_rules.dart ✅ Die EINZIGE Stelle, die festlegt, was ein gültiger
+                                         Benutzername ist (27.5). Reines Dart, kein Paket.
+                                         ⚠️ Normalisiert IMMER (klein, ohne Leerraum) — sonst wären
+                                         „Ali" und „ali" zwei Namen und die Eindeutigkeit eine
+                                         Illusion. Sagt NICHTS darüber, ob ein Name frei ist
+test/unit/username_rules_test.dart   ✅ 8 Fälle
+lib/core/services/auth_service.dart  🚧 Einzige Stelle für supabase_flutter (27.5)
 lib/core/services/cloud_backup_service.dart 🚧 Bestand als Backup-JSON hoch/runter (27.7)
-lib/features/auth/presentation/      🚧 Anmelden + Registrieren (27.5) — KEIN „Passwort vergessen"
+lib/features/auth/presentation/      🚧 Registrieren (E-Mail + Passwort + Benutzername) und
+                                         Anmelden (E-Mail + Passwort) (27.5)
 test/support/fake_auth_service.dart  🚧 Anmeldung ohne Server (27.5)
 ```
 
-**Anmeldung: Benutzername + Passwort, ohne E-Mail** (Entscheidung des Nutzers, PLAN.md 27.0b). Supabase kann das nicht von sich aus — der Benutzername wird intern zu einer **künstlichen Adresse** (`ali` → `ali@<domain>`). Das macht Benutzernamen gratis eindeutig und spart jeden Mail-Versand. ⚠️ **Preis: ein vergessenes Passwort ist nicht wiederherstellbar.** Weil die App local-first bleibt, kostet das die Kopie auf dem Server, **nicht** die Daten auf dem Gerät — die Registrierung sagt das ausdrücklich.
+**Registrierung: echte E-Mail + Passwort + Benutzername** (Entscheidung des Nutzers, PLAN.md 27.0b — **geändert am 2026-08-16**, vorher war eine künstliche Adresse aus dem Benutzernamen geplant). E-Mail und Passwort verwaltet Supabase, der Benutzername ist der Name *in* der App. Angemeldet wird mit der **E-Mail**; ob später auch mit dem Benutzernamen, ist offen (es bräuchte eine Edge Function — eine öffentliche Zuordnung Name → Adresse würde fremde E-Mails verraten).
+
+⚠️ **Der eingebaute Mail-Versand von Supabase ist für echte Nutzer unbrauchbar:** 2 Nachrichten pro Stunde, nur an vorab freigegebene Adressen des eigenen Teams. Deshalb bleibt „Confirm email" vorerst AUS und **Passwort-Zurücksetzen gibt es erst mit eigenem SMTP** — dann aber rückwirkend für alle, deren Adresse schon gespeichert ist. Ein Knopf, der es vorher anbietet, darf nicht dastehen.
 
 **Die vier Regeln dieser Phase** (Begründungen in PLAN.md 27.0–27.4):
 

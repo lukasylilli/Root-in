@@ -22,14 +22,33 @@
 -- ---------------------------------------------------------------------------
 -- 1. Profil
 -- ---------------------------------------------------------------------------
--- Eine Zeile je Konto. Der Benutzername selbst liegt in `auth.users` (als
--- künstliche Adresse, siehe PLAN.md 27.0b) — hier steht der Anzeigename, den
--- der Nutzer auf der Konto-Seite ändern kann.
+-- Eine Zeile je Konto.
+--
+-- E-Mail und Passwort verwaltet Supabase in `auth.users` — sie werden hier
+-- BEWUSST NICHT wiederholt. Eine zweite Kopie der Adresse wäre eine zweite
+-- Stelle, die veralten kann, und ein zweiter Ort, an dem sie auslaufen kann.
+--
+-- Der Benutzername gehört uns: Er ist der Name IN der App, nicht die Kennung,
+-- mit der man sich anmeldet (PLAN.md 27.5).
 create table if not exists public.profiles (
   user_id      uuid primary key references auth.users (id) on delete cascade,
+  username     text,
   display_name text,
   updated_at   timestamptz not null default now()
 );
+
+-- Nachrüstbar auf einer Datenbank, die schon nach der alten Fassung angelegt
+-- wurde (Benutzername kam erst mit dem Wechsel auf echte E-Mails dazu).
+alter table public.profiles add column if not exists username text;
+
+-- ⚠️ EINDEUTIGKEIT AUF DEM KLEINGESCHRIEBENEN NAMEN, nicht auf dem rohen.
+-- Sonst wären „Ali" und „ali" zwei Konten, und die Zusage „der Name gehört
+-- genau einem Menschen" wäre keine. Die App normalisiert vorher genauso
+-- (`lib/core/services/username_rules.dart`) — beide Seiten müssen dieselbe
+-- Regel anwenden, sonst hält eine von beiden sie nicht ein.
+create unique index if not exists profiles_username_lower_key
+  on public.profiles (lower(username))
+  where username is not null;
 
 -- ---------------------------------------------------------------------------
 -- 2. Sicherung des Bestands
@@ -129,7 +148,40 @@ create trigger backups_touch_updated_at
   for each row execute function public.touch_updated_at();
 
 -- ---------------------------------------------------------------------------
--- 5. Konto löschen
+-- 5. Ist ein Benutzername noch frei?
+-- ---------------------------------------------------------------------------
+-- Reine Höflichkeit für die Registrierung: Der Fehler soll kommen, BEVOR der
+-- Nutzer auf „Registrieren" tippt — nicht danach, wenn das Konto schon
+-- angelegt ist.
+--
+-- ⚠️ DIE WAHRHEIT IST DER EINDEUTIGE INDEX OBEN, NICHT DIESE FUNKTION.
+-- Zwischen der Frage und dem Absenden kann jemand anders denselben Namen
+-- nehmen. Die App muss den Fehlschlag beim Schreiben also trotzdem behandeln;
+-- diese Funktion erspart ihn nur im Normalfall.
+--
+-- `security definer` ist nötig, weil RLS sonst nur die EIGENE Profilzeile
+-- sichtbar macht — eine Prüfung auf fremde Namen käme immer „frei" zurück.
+-- Zurück kommt ausschließlich ja/nein: keine Adresse, keine Kennung, kein
+-- fremdes Profil. Wer den anon-Schlüssel hat, kann damit ausprobieren, ob ein
+-- Name existiert — das ist bei jeder Registrierung dieser Welt so und der
+-- Preis dafür, dem Nutzer „Name schon vergeben" sagen zu können.
+create or replace function public.username_available(candidate text)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select not exists (
+    select 1 from public.profiles
+     where lower(username) = lower(trim(candidate))
+  );
+$$;
+
+revoke all on function public.username_available(text) from public;
+grant execute on function public.username_available(text) to anon, authenticated;
+
+-- ---------------------------------------------------------------------------
+-- 6. Konto löschen
 -- ---------------------------------------------------------------------------
 -- `on delete cascade` oben räumt Profil und Sicherung ab, sobald der Eintrag
 -- in `auth.users` verschwindet. Das Löschen des Kontos selbst kann der
@@ -140,7 +192,7 @@ create trigger backups_touch_updated_at
 -- loswird, ist ein Datenschutz-Problem.
 
 -- ---------------------------------------------------------------------------
--- 6. Gegenprobe (PLAN.md 27.4) — nach dem Anwenden ausführen
+-- 7. Gegenprobe (PLAN.md 27.4) — nach dem Anwenden ausführen
 -- ---------------------------------------------------------------------------
 -- Muss beide Tabellen mit rowsecurity = true zeigen. Steht dort false, ist
 -- die Tabelle offen, und der Rest dieser Datei ist wirkungslos.

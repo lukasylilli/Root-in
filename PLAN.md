@@ -226,21 +226,34 @@ Die Langfassungen sind eingedampft; was hier steht, braucht man beim Weiterbauen
 | Frage | Entscheidung |
 |---|---|
 | Pflicht oder freiwillig? | **freiwillig** — ohne Konto läuft die App unverändert weiter |
-| Anmeldung | **Benutzername + Passwort, ausdrücklich OHNE E-Mail** |
+| Registrierung | **echte E-Mail + Passwort + Benutzername** *(geändert am 2026-08-16, siehe unten)* |
 | Was wandert auf den Server? | **Profil und die Nutzerdaten** — Gewohnheiten, Tage/Erledigungen, Kategorien |
 | Richtung | **Sicherung, kein stiller Abgleich** (hochladen automatisch, herunterladen auf Nachfrage) |
 | Quellcode | **bleibt öffentlich auf GitHub — das Projekt ist Open Source** |
 
-⚠️ **Benutzername ohne E-Mail kann Supabase nicht von sich aus.** Passwort-Anmeldung hängt dort immer an einer E-Mail-Adresse oder Telefonnummer. Der übliche Weg — und der, den diese Phase geht — ist eine **künstliche Adresse aus dem Benutzernamen**: `ali` wird intern zu `ali@<fester-domain>`. Der Nutzer sieht sie nie.
+⚠️ **Am 2026-08-16 vom Nutzer geändert: echte E-Mail statt künstlicher Adresse.** Die vorherige Fassung dieses Plans baute den Benutzernamen intern zu einer Adresse um (`ali@rootin.invalid`), weil Supabase Passwort-Anmeldung ohne Adresse nicht kennt. Das ist hinfällig — jetzt gibt es drei echte Angaben:
 
-Das bringt zwei Dinge geschenkt und kostet eines:
-- ✅ **Eindeutigkeit des Benutzernamens ist gratis** — Supabase erzwingt eindeutige Adressen, also sind eindeutige künstliche Adressen eindeutige Benutzernamen. Keine zweite Prüfung nötig, keine Wettlaufsituation.
-- ✅ Kein Mail-Versand, also **keine Mail-Grenze** und kein SMTP-Dienst — genau die Hürde, die E-Mail-Anmeldung für 200 Schüler unhandlich gemacht hätte.
-- ⚠️ **Ein vergessenes Passwort ist nicht wiederherstellbar.** Es gibt keine Adresse, an die ein Link gehen könnte. Bei 200 Schülern passiert das sicher.
+| Angabe | Wofür | Wo sie liegt |
+|---|---|---|
+| **E-Mail** | Kennung gegenüber Supabase **und** der einzige Weg, ein Passwort zurückzusetzen | `auth.users` (von Supabase verwaltet) |
+| **Passwort** | Anmeldung | `auth.users`, gehasht — **wir sehen es nie** |
+| **Benutzername** | Name in der App; eindeutig, damit man einen Menschen ansprechen kann | `profiles.username` (unsere Tabelle) |
 
-**Warum der Preis tragbar ist — und was daraus folgt:** Weil die App *local-first* bleibt, verliert ein vergessenes Passwort **die Kopie auf dem Server, nicht die Daten auf dem Gerät**. Der Schaden ist begrenzt. Daraus folgen drei Pflichten, die in 27.5 stehen: Die Registrierung **sagt es ausdrücklich**, sie verweist auf die vorhandene Sicherung (Export/Import), und die Rubrik „Konto & Cloud" tut es ebenso.
+**Was der Wechsel bringt:** ✅ Ein vergessenes Passwort ist **wiederherstellbar** — genau der Punkt, der vorher der Preis war.
 
-⚠️ **Zwei Einstellungen im Supabase-Projekt sind dafür zwingend** (27.2): **„Confirm email" muss AUS sein** — sonst kann sich niemand anmelden, weil die Bestätigungsmail an eine Adresse ginge, die es nicht gibt. Und die **Mindestlänge des Passworts** wird dort gesetzt, nicht in der App.
+⚠️ **Was er kostet — und das ist kein Nebensatz:** Der eingebaute Mail-Versand von Supabase ist für echte Nutzer **unbrauchbar**. Nachgelesen am 2026-08-16 in der Supabase-Dokumentation, nicht geraten:
+
+> „Currently this value is set to **2 messages per hour**." · Der Dienst ist „best-effort only", ohne Zustell-Garantie, und verschickt nur an **vorab freigegebene Adressen des eigenen Teams**.
+
+**Für 200 Schüler heißt das: gar nicht.** Nicht „langsam" — die Nachrichten kämen bei fremden Adressen überhaupt nicht an. Wer echte E-Mails will, braucht **einen eigenen SMTP-Dienst** (27.2).
+
+**Der Weg, der beides möglich macht, ohne jetzt zu blockieren:**
+1. **Jetzt:** E-Mail wird bei der Registrierung erfasst, **„Confirm email" bleibt AUS**. Anmelden funktioniert sofort; es wird keine einzige Nachricht verschickt, also greift keine Grenze.
+2. **Sobald ein SMTP-Dienst eingerichtet ist:** Passwort-Zurücksetzen geht — **rückwirkend für alle**, die sich vorher registriert haben. Ihre Adressen liegen schon da.
+
+⚠️ **Die Kehrseite von „Confirm email AUS" gehört benannt:** Niemand prüft, ob die Adresse stimmt. Ein Tippfehler fällt erst auf, wenn das Zurücksetzen gebraucht wird — also im schlechtesten Moment. Gegenmaßnahme in 27.5: Die Adresse steht **sichtbar** in der Rubrik „Konto & Cloud" und ist dort änderbar.
+
+⚠️ **Mit echten E-Mails wird aus einer Kopie personenbezogene Datenverarbeitung.** Eine E-Mail-Adresse ist ein personenbezogenes Datum; Gewohnheiten und Erledigungen sind es im Zusammenhang mit ihr ebenfalls. Das verschärft 27.8 — die Datenschutzerklärung und das Play-Formular sind ab hier keine Formalie mehr.
 
 ⚠️ **Open Source verschärft eine Regel, statt sie zu lockern:** Jeder kann `supabase/schema.sql` lesen und damit **genau sehen, welche Zugriffsregeln ihn abwehren**. Das ist bei RLS vorgesehen und in Ordnung — aber es heißt, dass die Regeln wirklich stimmen müssen; auf Unkenntnis des Angreifers ist kein Verlass. Und es macht die Trennung der Schlüssel noch wichtiger: `anon` ist öffentlich, `service_role` darf **nirgends** im Repository auftauchen.
 
@@ -254,8 +267,9 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 
 #### 27.2 Supabase-Projekt anlegen *(führt der Nutzer durch, Anleitung auf Persisch)*
 - [ ] Konto auf supabase.com, neues Projekt. **Region bewusst wählen** (nahe an den Nutzern), Datenbank-Passwort in den Passwortmanager.
-- [ ] **Authentication → Providers → Email:** eingeschaltet lassen, aber ⚠️ **„Confirm email" AUS**. Ohne das kann sich niemand anmelden — die Bestätigung ginge an eine Adresse, die es nicht gibt (27.0b).
+- [ ] **Authentication → Providers → Email:** eingeschaltet lassen, aber ⚠️ **„Confirm email" AUS** — vorerst. Mit dem eingebauten Mail-Dienst käme die Bestätigung bei fremden Adressen **nie an**, und niemand könnte sich anmelden. Einschalten, sobald SMTP steht (siehe unten).
 - [ ] Mindestlänge des Passworts dort setzen (Vorschlag: 8).
+- [ ] ⬜ **Eigener SMTP-Dienst — nötig, sobald Passwort-Zurücksetzen funktionieren soll.** Nicht blockierend für den Bau, aber ohne ihn ist die E-Mail nur gespeichert, nicht nutzbar. Kostenlose Tarife gibt es (z. B. Resend, Brevo); ⚠️ deren Grenzen **am Tag der Einrichtung nachlesen**, nicht aus zweiter Hand übernehmen. Danach in *Authentication → Emails → SMTP Settings* eintragen und mit einer **echten fremden Adresse** testen — der eingebaute Dienst schickt nur an das eigene Team, ein Test an die eigene Adresse beweist also nichts.
 - [ ] Aus den Projekt-Einstellungen notieren: **Project URL** und **anon/public key**. ⚠️ Den **`service_role`-Schlüssel nicht** — er umgeht jede Zugriffsregel und darf weder in die App noch ins Repository. Das Repository ist öffentlich.
 - [x] **Grenzen des kostenlosen Tarifs nachgelesen** (`supabase.com/pricing`, 2026-08-16 — nicht aus dem Gedächtnis):
 
@@ -288,24 +302,25 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [ ] **Gegenprobe nach dem Anwenden — von außen, nicht im SQL-Editor.** ⚠️ Ein `select` dort läuft mit erhöhten Rechten und umgeht die Regeln; er beweist nichts. Zu prüfen ist mit dem `anon`-Schlüssel: ohne Anmeldung lesen (muss leer bleiben) und als Konto A die Zeilen von Konto B abfragen (muss leer bleiben). Das Ergebnis kommt hier in den Plan.
 - [ ] ⚠️ **Offen und nicht zu vergessen:** „Konto löschen" kann der `anon`-Schlüssel nicht auslösen — der Eintrag in `auth.users` braucht erhöhte Rechte (Edge Function). Solange es die nicht gibt, löscht die App nur Daten und meldet ab; der leere Auth-Eintrag bleibt. **Für 27.8 zu klären.**
 
-#### 27.5 Anmelden in der App *(Benutzername + Passwort)*
+#### 27.5 Anmelden in der App *(E-Mail + Passwort + Benutzername)*
 
-⚠️ **Zur Klarstellung, weil sie beim Lesen leicht verloren geht:** Der Nutzer gibt **Benutzername und Passwort** ein — sonst nichts. Es gibt kein Eingabefeld für eine E-Mail, es wird keine verschickt, und die interne Adresse sieht er nie. Mit denselben zwei Angaben kommt er **auf jedem Gerät** an sein Konto; das Konto liegt auf dem Server, nicht auf dem Gerät.
+**Registrierung: drei Felder.** E-Mail und Passwort gehen an Supabase, der Benutzername in unsere `profiles`-Tabelle. **Anmeldung: E-Mail + Passwort.**
 
-- [x] **`core/services/username_credentials.dart`** — die **einzige** Stelle, an der Benutzername und interne Adresse zusammenhängen. Bewusst reines Dart ohne Paket: Der Teil, der still falsch sein kann, ist dieser, und so ist er ohne Server prüfbar.
-- [x] **Normalisiert (klein, ohne Leerraum) bei Registrierung UND Anmeldung.** ⚠️ Ohne das wären „Ali" und „ali" zwei Konten, und der Nutzer stünde im falschen vor einem leeren Bestand. Ein eigener Testfall hält die Gleichheit fest.
-- [x] **Erlaubte Zeichen geprüft** (Kleinbuchstaben, Ziffern, `_`, `-`; 3–30 Zeichen; Rand alphanumerisch) — der Name wird Teil einer Adresse; ein `@` oder Leerzeichen ergäbe eine ungültige, und die Anmeldung scheiterte mit einer englischen Server-Meldung, die niemand deuten kann. Ablehnungsgründe kommen **sprachneutral** als `UsernameIssue` heraus.
-- [x] **Domain `rootin.invalid`** — per RFC 2606 dauerhaft reserviert und kann nie jemandem gehören. Eine echte Domain hätte das reale Risiko, dass eine Nachricht doch einmal bei einem Fremden landet. ⚠️ Steht als **eine** Konstante; ein späterer Wechsel **verwaist alle bestehenden Konten** — also vor dem ersten echten Nutzer prüfen, ob Supabase diese Endung annimmt (27.2).
-- [x] **Rückweg `usernameFrom()`** für die Anzeige: Supabase gibt nach der Anmeldung die Adresse zurück; ohne Rückweg stünde in der App `ali@rootin.invalid`.
-- [x] `test/unit/username_credentials_test.dart` — 12 Fälle, darunter der Hin- und Rückweg für jeden gültigen Namen.
-- [ ] **Ein** Dienst `core/services/auth_service.dart` als einzige Stelle für `supabase_flutter` — dieselbe Bauart wie `notification_service.dart`. Die Oberfläche kennt nur diesen Dienst; er ist der einzige Aufrufer von `username_credentials.dart`.
-- [ ] `features/auth/presentation/` — Anmelden und Registrieren, dazu ein Zustands-Provider (angemeldet / abgemeldet / lädt). **Kein „Passwort vergessen"** — es gibt keins (27.0b).
-- [ ] ⚠️ **Die Registrierung sagt die Grenze ausdrücklich:** ohne E-Mail kein Zurücksetzen; ein vergessenes Passwort kostet die Kopie auf dem Server, **nicht** die Daten auf dem Gerät; die Sicherung (Export) bleibt der Rettungsanker. Ein Satz, den man nicht übersehen kann — nicht im Kleingedruckten.
-- [ ] Rubrik **„Konto & Cloud"** in den Einstellungen: angemeldet als …, Abmelden, Stand der letzten Sicherung, Konto löschen. Sie **verschwindet ganz**, wenn `supportsCloudSync` falsch ist — „ehrlich abschalten statt still scheitern" (26.1).
+⬜ **Eine Frage ist noch offen und wird bewusst nicht geraten:** Soll man sich später auch **mit dem Benutzernamen statt der E-Mail** anmelden können? Das ist nicht gratis — Supabase meldet immer mit der Adresse an, also bräuchte es eine öffentliche Zuordnung Benutzername → E-Mail (**verrät fremde Adressen**, nicht akzeptabel) oder eine serverseitige Funktion, die die Anmeldung übernimmt (Edge Function, eigener Bauschritt). Bis das entschieden ist: **Anmeldung über die E-Mail**, der Benutzername ist der Name *in* der App.
+
+- [x] **`core/services/username_rules.dart`** *(hieß bis zum Wechsel `username_credentials.dart`)* — Normalisierung und Prüfung des Benutzernamens, reines Dart ohne Paket. Die Umrechnung in eine künstliche Adresse ist **ersatzlos entfallen**; sie war der Kern der alten Entscheidung und wäre jetzt toter Code, der jemanden in die Irre führt.
+- [x] **Normalisiert (klein, ohne Leerraum), und zwar immer.** ⚠️ Ohne das wären „Ali" und „ali" zwei verschiedene Benutzernamen — und weil der Name eindeutig sein soll, wäre die Eindeutigkeit eine Illusion. Ein eigener Testfall hält es fest.
+- [x] **Erlaubte Zeichen geprüft** (Kleinbuchstaben, Ziffern, `_`, `-`; 3–30 Zeichen; Rand alphanumerisch). Ablehnungsgründe kommen **sprachneutral** als `UsernameIssue` heraus — die App spricht drei Sprachen, der Dienst keine.
+- [x] `test/unit/username_rules_test.dart`.
+- [ ] **Ein** Dienst `core/services/auth_service.dart` als einzige Stelle für `supabase_flutter` — dieselbe Bauart wie `notification_service.dart`. Die Oberfläche kennt nur diesen Dienst.
+- [ ] `features/auth/presentation/` — Registrieren (drei Felder), Anmelden (zwei), Zustands-Provider (angemeldet / abgemeldet / lädt).
+- [ ] ⚠️ **Reihenfolge bei der Registrierung, und was schiefgehen kann:** Erst `signUp(email, password)`, **dann** die Profilzeile mit dem Benutzernamen. Ist der Name schon vergeben, existiert das Konto bereits, die Profilzeile aber nicht — **kein kaputter Zustand, aber einer, der behandelt werden muss**: Die Oberfläche fragt nach einem anderen Namen und schreibt die Zeile nach. Ein Konto ohne Profilzeile darf die App nicht zum Absturz bringen.
+- [ ] **Verfügbarkeit vorab prüfen** über die Funktion `username_available()` aus `schema.sql` — reine Höflichkeit, damit der Fehler vor dem Absenden kommt. ⚠️ **Die Wahrheit ist die Eindeutigkeits-Regel der Datenbank, nicht diese Abfrage**: Zwischen Prüfung und Absenden kann ein anderer denselben Namen nehmen.
+- [ ] **„Passwort vergessen" ist vorgesehen**, funktioniert aber erst mit eigenem SMTP (27.2). ⚠️ Solange es das nicht gibt, darf der Knopf **nicht** dastehen und ins Leere greifen — dieselbe Regel wie bei den Erinnerungen im Browser (26.1).
+- [ ] Rubrik **„Konto & Cloud"** in den Einstellungen: angemeldet als … (Benutzername), **die hinterlegte E-Mail sichtbar und änderbar** (Gegenmaßnahme zum Tippfehler, 27.0b), Abmelden, Stand der letzten Sicherung, Konto löschen. Verschwindet ganz, wenn `supportsCloudSync` falsch ist.
 - [ ] Texte in **allen drei** ARB-Dateien, danach `flutter gen-l10n` (Lehre 20).
-- [ ] ⚠️ **Fehlermeldungen sprachneutral herausreichen** (Grund-Code statt Text, Muster wie `backup_data.dart`): Supabase meldet auf Englisch, die App spricht drei Sprachen. Mindestens zu unterscheiden: Name schon vergeben · Name oder Passwort falsch · kein Netz · Passwort zu kurz.
-- [ ] Tests mit einem gefälschten Auth-Dienst (`test/support/fake_auth_service.dart`), dazu **reine Funktionstests für die Umrechnung** (Normalisierung, ungültige Zeichen) — die braucht keinen Server und ist der Teil, der still falsch sein kann.
-- [ ] ⚠️ **Kein Test spricht mit dem echten Server** — Tests müssen ohne Netz und ohne Schlüssel laufen.
+- [ ] ⚠️ **Fehlermeldungen sprachneutral herausreichen** (Grund-Code statt Text): Supabase meldet auf Englisch. Zu unterscheiden sind mindestens: E-Mail schon registriert · Benutzername vergeben · E-Mail oder Passwort falsch · Passwort zu kurz · E-Mail-Format ungültig · kein Netz.
+- [ ] Tests mit `test/support/fake_auth_service.dart`. ⚠️ **Kein Test spricht mit dem echten Server** — Tests müssen ohne Netz und ohne Schlüssel laufen.
 
 #### 27.6 Profil in der Cloud
 - [ ] Beim Anmelden Profil laden; beim Ändern hochladen. Lokal bleibt `profile_service.dart` die Quelle für die Anzeige — der Server ist die Kopie.
@@ -319,9 +334,13 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [ ] ⚠️ **Die Grenze aussprechen:** Das ist eine **Sicherung**, kein Abgleich. Wer auf zwei Geräten gleichzeitig arbeitet, hat zwei Bestände; die Wiederherstellung überschreibt. Ein echter Abgleich braucht Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase, keine Fußnote.
 
 #### 27.8 Datenschutz nachziehen *(blockiert Phase 15)*
-- [ ] `store/PRIVACY_POLICY.md` überarbeiten: welche Daten, wo gespeichert, wie lange, wie löschbar. **Und den Gist neu speichern** — er zieht nicht von selbst nach (⚠️ dieser Punkt steht seit Phase 20 offen).
-- [ ] **Konto löschen** muss möglich sein — nicht nur abmelden. Ein Konto, das man nicht loswird, ist in mehreren Rechtsordnungen ein Problem und in jedem Fall unhöflich.
-- [ ] Play-Datensicherheitsformular neu ausfüllen: **nicht mehr „keine Daten erhoben"**.
+
+⚠️ **Mit der Entscheidung für echte E-Mails wiegt dieser Abschnitt schwerer als geplant.** Eine E-Mail-Adresse ist ein personenbezogenes Datum; damit werden auch Gewohnheiten und Erledigungen personenbezogen, weil sie einer identifizierbaren Person zugeordnet sind. Das ist keine Formalie mehr.
+
+- [ ] `store/PRIVACY_POLICY.md` überarbeiten: **welche** Daten (E-Mail, Benutzername, Gewohnheiten, Erledigungen), **wo** gespeichert (Supabase, gewählte Region), **wie lange**, **wie löschbar**, und dass ein Konto **freiwillig** ist. **Und den Gist neu speichern** — er zieht nicht von selbst nach (⚠️ steht seit Phase 20 offen).
+- [ ] **Konto löschen** muss möglich sein — nicht nur abmelden. ⚠️ Der `anon`-Schlüssel kann den Eintrag in `auth.users` **nicht** entfernen (27.4); dafür braucht es eine Edge Function. Bis dahin löscht die App Profil und Sicherung und meldet ab — **das ist noch kein vollständiges Löschen** und darf in der Datenschutzerklärung nicht als solches beschrieben werden.
+- [ ] Play-Datensicherheitsformular neu ausfüllen: **nicht mehr „keine Daten erhoben"**. Zu deklarieren sind mindestens E-Mail-Adresse und App-Aktivität, jeweils mit Zweck und Übertragung.
+- [ ] Die Datenschutz-Aussage in der **Erststart-Erklärung** prüfen — dort steht heute wörtlich, dass alle Daten auf dem Gerät bleiben. Das stimmt weiterhin für alle **ohne** Konto; der Satz muss diese Bedingung nennen.
 - [ ] Abschnitt 3 dieses Plans und die Datenschutz-Aussage im Onboarding prüfen — dort steht heute wörtlich, dass alles auf dem Gerät bleibt.
 
 #### 27.9 Prüfen
@@ -336,7 +355,9 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 | Server im Zielland nicht erreichbar | Anmeldung und Sicherung scheitern | App bleibt ohne Server voll benutzbar (27.7); Scheitern ist folgenlos |
 | Kostenloses Projekt pausiert nach **1 Woche ohne Zugriff** | Sicherungen laufen ins Leere | Nach der Verteilung kein Thema (tägliche Nutzung); **während der Bauzeit einplanen**. Alter der Sicherung sichtbar machen |
 | Kein tägliches Server-Backup im freien Tarif | Serverdaten könnten verloren gehen | tragbar, **weil** das Gerät die Quelle der Wahrheit bleibt — der Bestand wandert wieder hoch |
-| **Passwort vergessen** | Kopie auf dem Server unerreichbar (Daten auf dem Gerät bleiben) | Grenze bei der Registrierung ausdrücklich nennen, auf Export/Import verweisen (27.5) |
+| **Kein eigener SMTP-Dienst** | Passwort-Zurücksetzen unmöglich; eingebauter Versand schafft **2 Nachrichten/Stunde** und nur an eigene Team-Adressen | E-Mail jetzt schon erfassen, „Confirm email" aus; SMTP nachrüsten — wirkt rückwirkend für alle (27.0b/27.2) |
+| **Tippfehler in der E-Mail** (weil unbestätigt) | fällt erst beim Zurücksetzen auf, also im schlechtesten Moment | Adresse sichtbar und änderbar in „Konto & Cloud" (27.5) |
+| **E-Mail = personenbezogenes Datum** | Datenschutzerklärung und Play-Formular werden falsch | 27.8 ist Bedingung für Phase 15, nicht Nacharbeit |
 | RLS vergessen oder falsch | **fremde Daten für jeden lesbar** | RLS im selben Schritt wie die Tabelle, Gegenprobe in 27.4 |
 | `service_role`-Schlüssel gerät in die App | vollständiger Datenbank-Zugriff für jeden | Schlüssel nie ins Repository; im Bundle nach ihm suchen |
 | Zwei Geräte, ein Konto | ein Bestand überschreibt den anderen | Sicherung statt Abgleich, Wiederherstellung nur auf Nachfrage |
