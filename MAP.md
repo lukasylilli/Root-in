@@ -776,7 +776,18 @@ lib/core/services/username_rules.dart ✅ Die EINZIGE Stelle, die festlegt, was 
                                          „Ali" und „ali" zwei Namen und die Eindeutigkeit eine
                                          Illusion. Sagt NICHTS darüber, ob ein Name frei ist
 test/unit/username_rules_test.dart   ✅ 8 Fälle
-lib/core/services/auth_service.dart  🚧 Einzige Stelle für supabase_flutter (27.5)
+lib/core/services/auth_service.dart  ✅ Einzige Stelle für supabase_flutter (27.5). Registrieren,
+                                         Anmelden (mit E-Mail), Abmelden, Benutzernamen belegen/laden.
+                                         Gibt IMMER ein AuthResult zurück statt zu werfen — eine
+                                         fehlgeschlagene Anmeldung ist ein erwarteter Verlauf.
+                                         ⚠️ Fehler werden über den `code` zugeordnet, NIE über die
+                                         englische Meldung: Der Text ändert sich ohne Ankündigung,
+                                         und eine gebrochene Zuordnung fällt nicht auf — die App
+                                         läuft weiter, nur die Auskunft wird nutzlos
+                                         ⚠️ Ohne Schlüssel meldet jeder Aufruf notConfigured; es
+                                         wird nichts gestartet und nichts gesendet
+test/unit/auth_issue_test.dart       ✅ 7 Fälle: Code-Zuordnung, unbekannter Code, Verhalten ohne
+                                         Konfiguration
 lib/core/services/cloud_backup_service.dart 🚧 Bestand als Backup-JSON hoch/runter (27.7)
 lib/features/auth/presentation/      🚧 Registrieren (E-Mail + Passwort + Benutzername) und
                                          Anmelden (E-Mail + Passwort) (27.5)

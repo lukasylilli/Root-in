@@ -94,6 +94,13 @@ dependencies:
   # `core/services/file_pick/pick_text_file_web.dart`, das im mobilen Bau
   # per bedingtem Import gar nicht erst übersetzt wird.
   web: ^1.1.1
+  # Nutzerkonten und Cloud-Sicherung (PLAN.md Phase 27). Einzige Stelle, die
+  # dieses Paket kennt: `core/services/auth_service.dart`.
+  #
+  # ⚠️ Ohne SUPABASE_URL/SUPABASE_ANON_KEY wird es NICHT gestartet — die App
+  # verhält sich dann exakt wie vor Phase 27 (siehe `supportsCloudSync`).
+  # Das Paket ist damit zwar im Bundle, aber ohne Wirkung.
+  supabase_flutter: ^2.17.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
