@@ -2,6 +2,7 @@
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
 > ✅ **2026-08-14: Die vier Web-Fehler sind behoben, veröffentlicht und an der veröffentlichten Seite nachgeprüft** (17/17 Browser-Prüfungen grün, Commit `bec572a`). Offen bleibt nur das App-Symbol auf einem echten iPhone. Siehe PLAN.md 26.11.
+> ⚠️ **2026-08-16: „Knöpfe im Erststart reagieren nicht" (iPhone/Safari) — gemeldet, ausgemessen, nicht reproduzierbar, beim Nutzer von selbst wieder in Ordnung.** Kein Code geändert. Alle Messwerte und die Vorgehensweise bei einer Wiederholung stehen in PLAN.md 26.12.
 > Zuletzt aktualisiert: 2026-08-14 (nachmittags) — **Phase 26.11: die vier gemeldeten Web-Fehler behoben.** `dart:io` ist aus `lib/` verschwunden (`time_service.dart` und `repo_content_service.dart` nehmen jetzt `package:http` — die Attrappe von `dart:io` warf im Browser und legte drei der vier Hauptseiten lahm, PLAN.md 26.10). Neu: `test/unit/no_dart_io_in_lib_test.dart` (Wächter über die Regel), Fähigkeit `canReadForeignResponseHeaders` in `platform_support.dart`, direkte Abhängigkeiten `http` + `http_parser`, Web-Symbole aus `assets/icon/app_icon.png` erzeugt (`flutter_launcher_icons` mit `web:`).
 > Zuvor 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8 und 26.9. Neu im Root-Baum: `content/` (aus dem früheren Inhalts-Repository), `.claude/settings.json`. Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `core/services/web_storage/` (drei Dateien), `core/widgets/web_storage_hint.dart`, `test/widget/web_storage_hint_test.dart`, `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist ein Git-Repository — Quellcode und Inhalts-Repository sind darin zusammengeführt. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
 > Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): keine neuen Dateien, geändert sind `core/widgets/chart_card.dart`, die drei ARB-Dateien und drei Test-Dateien.
@@ -717,6 +718,15 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 **Nachgewiesen, nicht behauptet:** `tool/webtest.py` deckt jetzt alle vier Reiter und eine Anleitungs-Seite ab. Am **alten** Stand fielen genau die vier Prüfungen durch, die den gemeldeten Fehlern entsprechen; am reparierten Bau und **an der veröffentlichten Seite** sind alle 17 grün.
 
 ⬜ **Noch offen:** App-Symbol auf einem echten iPhone ansehen (Safari am Mac kann das Ablegen auf dem Home-Bildschirm nicht prüfen).
+
+**Prüfstand iOS-Simulator** (seit 2026-08-16, PLAN.md 26.12) — die Web-Fassung in **echtem iOS-Safari** ansehen, ohne iPhone:
+```
+xcrun simctl list devices available          # verfügbare Geräte
+xcrun simctl boot <UDID> && open -a Simulator
+xcrun simctl openurl booted "<URL>"          # Seite in Handy-Safari öffnen
+xcrun simctl io booted screenshot --type=png <datei>
+```
+⚠️ **Tippen geht damit NICHT** — `simctl` kennt keine Eingabe, und die Bedienungshilfen sind für `osascript` gesperrt. Zwei Auswege haben sich bewährt: Messwerte per JavaScript **auf die Seite schreiben** und fotografieren, oder eine Kopie des Baus servieren, in deren `index.html` ein Skript den Tipp selbst auslöst.
 
 **Wo die Daten der Web-Fassung liegen** (PLAN.md Phase 26.8) — zwei getrennte Orte, beide überstehen Schließen und Neuöffnen:
 

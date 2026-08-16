@@ -593,6 +593,32 @@ Zusätzlich gegen die ausgelieferten Dateien geprüft: `base href` = `/Root-in/`
 ⬜ **Was noch offen ist:**
 - [ ] **Auf einem echten iPhone nachsehen**, ob das App-Symbol beim Ablegen auf dem Home-Bildschirm stimmt. Der Durchgang prüft Safari **am Mac**; das Ablegen selbst kann er nicht — dieselbe Grenze wie in 26.7 und 26.8, und sie gilt weiter.
 
+#### 26.12 Tote Knöpfe im Erststart — gemeldet, nicht reproduzierbar, von selbst verschwunden ⚠️
+**Vom Nutzer am 2026-08-16 gemeldet**, wenige Stunden nach der Veröffentlichung von 26.11: Auf dem iPhone (Safari) reagierten die Knöpfe der Erststart-Erklärung nicht — **kein Blättern, nicht einmal ein Aufleuchten beim Antippen**. Wischen zwischen den Seiten funktionierte. Beim Nachfassen war der Fehler weg: „الان امتحان کردم اصلا درست شد" — es geht wieder, ohne dass etwas geändert wurde.
+
+⚠️ **Der Eintrag steht hier trotzdem, und zwar mit allen Messwerten** — nicht als gelöstes Problem, sondern als Vorsprung für den Fall, dass es wiederkommt. Ein Fehler, der von selbst verschwindet, ist nicht behoben; er ist unbeobachtet.
+
+**Was untersucht und ausgeschlossen wurde** (iOS-Simulator, iPhone 17, iOS 26.5, echtes Safari — `xcrun simctl` + Bildschirmfotos):
+
+| Verdacht | Messung | Ergebnis |
+|---|---|---|
+| Knopf liegt unter Safaris unterer Leiste | Drei frische Ladevorgänge fotografiert | ❌ Knopf vollständig sichtbar, mit Abstand |
+| Seite scrollt, Koordinaten verschoben | `scrollHeight` 714 = `innerHeight` 714, `scrollY` 0 | ❌ Seite scrollt gar nicht |
+| Sichtfeld versetzt oder gezoomt | `visualViewport`: Höhe 714, offsetTop 0, scale 1 | ❌ deckungsgleich |
+| Gezeichnete Fläche ≠ Trefferfläche | `flutter-view` 402×714 @0,0 bei `innerHeight` 714 | ❌ deckungsgleich |
+| Safari fängt die Berührung ab (`touch-action`) | `body: none` (von Flutter gesetzt) | ❌ Browser-Gesten sind aus |
+| Flutter trifft den Knopf nicht | **Künstlicher Zeiger-Tipp auf die Knopfmitte (201, 673)** | ❌ Seite blättert weiter — Trefferprüfung ist in Ordnung |
+| Schutzabstände fehlen (Home-Indikator) | `env(safe-area-inset-bottom)` = 0px in Safari | ⚠️ in der abgelegten Fassung wäre er ≠ 0 — ungeprüft |
+
+**Die wahrscheinlichste Erklärung — unbewiesen:** Der Fehler trat **im Aktualisierungsfenster des Service Workers** auf. Eine PWA lädt die neue Fassung im Hintergrund; bis sie übernimmt, kann eine gemischte Fassung im Speicher stehen. Dazu passt, dass die Meldung unmittelbar auf die Veröffentlichung folgte, dass beide Zugänge (Safari und Home-Bildschirm) betroffen waren — sie teilen sich denselben Speicher — und dass es ohne Zutun wieder ging.
+
+⬜ **Falls es wiederkommt, zuerst diese drei Dinge:**
+1. **Welche Version steht am Fuß der Einstellungen?** Genau dafür ist sie da (26.6). Weicht sie vom letzten Automatik-Lauf ab, ist es der Zwischenspeicher — und nichts am Code.
+2. **In einem privaten Tab öffnen.** Der umgeht Service Worker und Speicher vollständig; geht es dort, ist die Ursache eingekreist.
+3. **Nicht am Code raten.** Diese Runde hat gezeigt, wie weit man mit Messungen kommt, ohne eine Zeile zu ändern — und dass drei plausible Erklärungen der Reihe nach falsch waren.
+
+⚠️ **Werkzeug-Gewinn dieser Runde:** Der iOS-Simulator ist als Prüfstand erschlossen (`xcrun simctl boot` / `openurl` / `io booted screenshot`). Damit lässt sich die Web-Fassung erstmals in **echtem iOS-Safari** ansehen, nicht nur in Safari am Mac. **Tippen geht dort nicht** — dafür fehlt die Berechtigung für die Bedienungshilfen, und `simctl` kennt keine Eingabe. Was geht: Messwerte auf die Seite schreiben lassen und fotografieren, und einen Tipp per Skript in der Seite selbst auslösen.
+
 #### Offene Fragen dieser Phase
 - **Repository öffentlich oder privat?** GitHub Pages aus einem **privaten** Repository ist ein kostenpflichtiges Merkmal. Öffentlich heißt: der Quellcode ist für jeden lesbar. ⚠️ Das ist die eigentliche Entscheidung hinter dem Wunsch „niemand soll meinen Code nachbauen können" — und sie ist keine technische, sondern eine des Nutzers. Anmerkung: Auch bei einem **privaten** Repository bleibt die veröffentlichte Web-Fassung analysierbar (siehe 26.4); privat schützt die Quelle, nicht das Ergebnis.
 - **Erinnerungen im Web:** Web-Push wäre technisch möglich, bräuchte aber einen Server — das widerspricht Abschnitt 3. Vorerst entfallen sie im Browser. Damit ist die Web-Fassung ausdrücklich **nicht gleichwertig** zur Android-App; sie ist der Zugang, nicht der Ersatz.
@@ -723,6 +749,7 @@ Nach grünen Tests wurde die Phase am Emulator mit dem vollen Bestand aus `lib/m
 30. **`dart:io` übersetzt für den Browser und wirft dann zur Laufzeit.** Für Web-Bauten liefert das SDK eine Attrappe der Bibliothek: Der Import ist gültig, `flutter analyze` schweigt, `flutter build web` läuft durch — und der erste Aufruf wirft `UnsupportedError`. Besonders tückisch bei `HttpClient`: **schon `HttpClient()` wirft**, weil das Feld `userAgent` beim Erzeugen `Platform.version` liest. Wer die Zeile — wie üblich — vor das `try` stellt, hat seinen sorgfältig gebauten Offline-Fallback wirkungslos gemacht. Genau daran waren drei der vier Hauptseiten der veröffentlichten Web-Fassung unbenutzbar (Phase 26.10). **Kein `dart:io` in `lib/`**, außer in Dateien, die ein bedingter Import auswählt (`*_io.dart`) — `test/unit/no_dart_io_in_lib_test.dart` hält die Regel fest. Für Netzzugriffe `package:http`.
 31. **„Im Browser getestet" sagt nichts über den Umfang.** Der Durchgang aus Phase 26.7 bestand acht Prüfungen und übersah drei kaputte Seiten — er hatte **keinen einzigen Reiter angetippt**. Ein Gerätelauf beweist nur, was er anfasst; was er nicht anfasst, ist ungeprüft, nicht in Ordnung. Beim Schreiben eines solchen Durchgangs deshalb zuerst aufzählen, welche Seiten es gibt, und dann jede besuchen — nicht dort aufhören, wo es gerade gut aussieht.
 32. **Ein Oberflächen-Test muss am kaputten Stand rot werden — sonst prüft er nichts.** Beim Erweitern des Browser-Durchgangs (26.11) meldeten vier Fassungen nacheinander „bestanden", ohne die Anleitungs-Seite je gesehen zu haben: Ein Wisch scrollte nicht (Flutter zieht Listen im Desktop-Browser nicht), ein Tipp fand sein Element und öffnete trotzdem nichts, eine Abfrage suchte einen Text, den der Semantik-Baum gar nicht führt (reine Texte fehlen dort oft, Knöpfe nie), und eine feste Wartezeit reichte über das Netz nicht. Gemeinsamer Nenner: **Prüfungen auf eine Abwesenheit** („zeigt NICHT ‚Kein Internet'") werden grün, wenn gar nichts da ist. Deshalb erstens jede Abwesenheits-Prüfung an eine positive Zustandsprüfung koppeln („wir sind wirklich auf dieser Seite, UND …"), und zweitens **den neuen Test einmal gegen den kaputten Stand laufen lassen**. Rot am kaputten Stand ist der einzige Beleg, dass Grün am reparierten etwas bedeutet.
+33. **Ein Fehler, der von selbst verschwindet, ist nicht behoben — er ist unbeobachtet.** Bei der Meldung „Knöpfe im Erststart reagieren nicht" (26.12) waren nacheinander drei plausible Erklärungen falsch: Verdeckung durch Safaris Leiste, verschobene Koordinaten durch eine scrollende Seite, abgefangene Berührungen. Alle drei ließen sich **messen** statt vermuten — und alle drei waren widerlegt, bevor eine Zeile Code angefasst wurde. Dann ging es beim Nutzer wieder, ohne Änderung. Richtig ist dann: **nichts auf Verdacht ändern**, aber die Messwerte vollständig aufschreiben. Ein spekulativer „Fix" hätte hier eine echte Layout-Änderung für alle Plattformen bedeutet — gegen eine Ursache, die es womöglich nie gab. Bei einer PWA gehört das Aktualisierungsfenster des Service Workers immer zu den ersten Verdächtigen: Bis die neue Fassung übernimmt, kann eine gemischte im Speicher stehen, und **beide Zugänge (Browser und Home-Bildschirm) teilen sich diesen Speicher**.
 
 ## 12. Offene Fragen
 - ~~Balkendiagramm: Y-Achse doppelt beschriftet, X-Beschriftungen überlappen~~ · ~~Fortschritts-Trend im Jahr unlesbar~~ — **beide mit Phase 13 am 2026-08-07 erledigt.**
