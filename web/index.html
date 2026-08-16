@@ -13,7 +13,16 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Gewohnheiten und Routinen aufbauen und verfolgen — mit Schwerpunkt Sprachenlernen.">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <!--
+    ⚠️ OHNE `viewport-fit=cover` — bewusst, seit PLAN.md 26.13. Zusammen mit
+    einer durchscheinenden Statusleiste (siehe unten) zieht sich die Seite
+    unter Statusleiste und Home-Indikator. Flutter im Web wertet die
+    iOS-Schutzabstände aber NICHT aus: Es zeichnet ab Bildpunkt 0, während
+    die Berührungen aus dem Bereich darunter gemeldet werden. Ergebnis in der
+    auf dem Home-Bildschirm abgelegten Fassung: Man muss ein Stück ÜBER einen
+    Knopf tippen, damit er reagiert — der Nutzer hat es genau so gefunden.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#2E7D5B">
 
   <!--
@@ -21,10 +30,17 @@
     NICHT manifest.json (PLAN.md Phase 26.1). Ohne sie öffnet die abgelegte
     Verknüpfung eine ganz normale Browser-Seite mit Adressleiste — genau der
     Unterschied, der über „fühlt sich wie eine App an" entscheidet.
+
+    ⚠️ `default` statt `black-translucent` (PLAN.md 26.13): `black-translucent`
+    schiebt die Seite UNTER die Statusleiste. Das sieht großzügiger aus und
+    kostet die Bedienbarkeit — siehe die Begründung beim viewport oben. Mit
+    `default` beginnt die Seite unter der Statusleiste, und gezeichnete wie
+    berührte Fläche liegen wieder übereinander. iOS färbt den Streifen dabei
+    nach `theme-color`, die Marke bleibt also sichtbar.
   -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Root-in">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 

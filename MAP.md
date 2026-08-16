@@ -2,7 +2,7 @@
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
 > ✅ **2026-08-14: Die vier Web-Fehler sind behoben, veröffentlicht und an der veröffentlichten Seite nachgeprüft** (17/17 Browser-Prüfungen grün, Commit `bec572a`). Offen bleibt nur das App-Symbol auf einem echten iPhone. Siehe PLAN.md 26.11.
-> ⚠️ **2026-08-16: „Knöpfe im Erststart reagieren nicht" (iPhone/Safari) — gemeldet, ausgemessen, nicht reproduzierbar, beim Nutzer von selbst wieder in Ordnung.** Kein Code geändert. Alle Messwerte und die Vorgehensweise bei einer Wiederholung stehen in PLAN.md 26.12.
+> ⚠️ **2026-08-16: Knöpfe reagieren erst, wenn man ÜBER sie tippt — aber nur in der auf dem Home-Bildschirm abgelegten Fassung** (PLAN.md 26.12/26.13). Ursache: `viewport-fit=cover` + `black-translucent` ziehen die Seite unter die Statusleiste, und Flutter wertet im Web die iOS-Schutzabstände nicht aus. Beide Angaben in `web/index.html` sind entfernt bzw. auf `default` gesetzt. ⬜ **Bestätigung durch den Nutzer steht aus** — das Ablegen lässt sich hier nicht nachstellen.
 > Zuletzt aktualisiert: 2026-08-14 (nachmittags) — **Phase 26.11: die vier gemeldeten Web-Fehler behoben.** `dart:io` ist aus `lib/` verschwunden (`time_service.dart` und `repo_content_service.dart` nehmen jetzt `package:http` — die Attrappe von `dart:io` warf im Browser und legte drei der vier Hauptseiten lahm, PLAN.md 26.10). Neu: `test/unit/no_dart_io_in_lib_test.dart` (Wächter über die Regel), Fähigkeit `canReadForeignResponseHeaders` in `platform_support.dart`, direkte Abhängigkeiten `http` + `http_parser`, Web-Symbole aus `assets/icon/app_icon.png` erzeugt (`flutter_launcher_icons` mit `web:`).
 > Zuvor 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8 und 26.9. Neu im Root-Baum: `content/` (aus dem früheren Inhalts-Repository), `.claude/settings.json`. Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `core/services/web_storage/` (drei Dateien), `core/widgets/web_storage_hint.dart`, `test/widget/web_storage_hint_test.dart`, `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist ein Git-Repository — Quellcode und Inhalts-Repository sind darin zusammengeführt. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
 > Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): keine neuen Dateien, geändert sind `core/widgets/chart_card.dart`, die drei ARB-Dateien und drei Test-Dateien.
@@ -97,6 +97,12 @@
 │   │                                    ⚠️ Safari liest fürs Ablegen apple-mobile-web-app-*, NICHT
 │   │                                    manifest.json — ohne sie öffnet die Verknüpfung eine Browser-Seite
 │   │                                    mit Adressleiste statt einer App
+│   │                                    ⚠️ KEIN `viewport-fit=cover`, Statusleiste `default` statt
+│   │                                    `black-translucent` (Phase 26.13). Beides wirkt NUR in der
+│   │                                    abgelegten Fassung und zieht die Seite unter die Statusleiste;
+│   │                                    Flutter wertet im Web die Schutzabstände nicht aus, dann liegen
+│   │                                    gezeichnete und berührte Fläche auseinander. Nicht „zur
+│   │                                    Verschönerung" zurückdrehen — siehe PLAN.md Lehre 34
 │   ├── manifest.json                ✅ PWA-Manifest (Root-in, Markengrün #2E7D5B, Symbole)
 │   ├── sqlite3.wasm                 ⚙️ NICHT versioniert — tool/fetch_web_db_assets.sh holt sie. Ohne diese
 │   │                                    Datei wirft driftDatabase() im Browser, die App startet gar nicht
