@@ -257,7 +257,20 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [ ] **Authentication → Providers → Email:** eingeschaltet lassen, aber ⚠️ **„Confirm email" AUS**. Ohne das kann sich niemand anmelden — die Bestätigung ginge an eine Adresse, die es nicht gibt (27.0b).
 - [ ] Mindestlänge des Passworts dort setzen (Vorschlag: 8).
 - [ ] Aus den Projekt-Einstellungen notieren: **Project URL** und **anon/public key**. ⚠️ Den **`service_role`-Schlüssel nicht** — er umgeht jede Zugriffsregel und darf weder in die App noch ins Repository. Das Repository ist öffentlich.
-- [ ] ⚠️ **Grenzen des kostenlosen Tarifs am Tag der Einrichtung nachlesen, nicht aus dem Gedächtnis annehmen** (sie ändern sich). Zwei Punkte gezielt: **Pausiert ein Projekt nach längerer Inaktivität?** · Speicher- und Nutzergrenzen. Das Ergebnis kommt hier in den Plan. *(Die Mail-Grenze entfällt mit der Entscheidung aus 27.0b.)*
+- [x] **Grenzen des kostenlosen Tarifs nachgelesen** (`supabase.com/pricing`, 2026-08-16 — nicht aus dem Gedächtnis):
+
+  | Grenze | Wert | Bei ~200 Schülern |
+  |---|---|---|
+  | Aktive Nutzer je Monat | **50 000** | 200 → 0,4 % ✅ |
+  | Datenbank | **500 MB** | ~40 MB ✅ (≈200 KB je Schüler nach einem Jahr) |
+  | Ausgehender Verkehr | **5 GB/Monat** | weit darunter ✅ |
+  | Dateispeicher | 1 GB | wird nicht genutzt ✅ |
+  | Aktive Projekte | 2 | eines nötig ✅ |
+
+  ➜ **Die Nutzerzahl ist kein Engpass** — Luft um den Faktor 250. Der Speicher trägt auch vier- bis fünfhundert Schüler.
+
+- [x] ⚠️ **Der eine Bund, der zählt: „Free projects are paused after 1 week of inactivity."** Nach der Verteilung an die Schüler nie ein Thema (tägliche Nutzung). **Während der Bauzeit sehr wohl** — liegt das Projekt ein paar Tage still, schläft es und muss von Hand geweckt werden. Ein fehlgeschlagener Sicherungs-Versuch in dieser Zeit ist **kein Fehler im Code**; das gehört gewusst, bevor jemand danach sucht.
+- [x] ⚠️ **Im kostenlosen Tarif sichert Supabase die Datenbank nicht täglich.** Für Root-in ist das tragbar, aber nur wegen der Grundentscheidung: **Die Daten liegen auf dem Gerät, der Server hält eine Kopie.** Geht der Server verloren, haben die Nutzer ihren Bestand weiterhin — er wandert beim nächsten Mal wieder hoch. Wäre der Server die Quelle der Wahrheit, wäre dieser Punkt ein Ausschlusskriterium.
 - [ ] ⚠️ **Erreichbarkeit im Zielland prüfen.** Die Nutzer sind überwiegend persischsprachig. Ist die Supabase-Adresse dort nicht erreichbar, ist das kein Grund gegen die Phase — aber ein zwingender Grund für 27.7 („die App bleibt ohne Server voll benutzbar").
 
 #### 27.3 Konfiguration im Code ✅ *(gebaut 2026-08-16)*
@@ -321,7 +334,8 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 | Risiko | Folge | Umgang |
 |---|---|---|
 | Server im Zielland nicht erreichbar | Anmeldung und Sicherung scheitern | App bleibt ohne Server voll benutzbar (27.7); Scheitern ist folgenlos |
-| Kostenloses Projekt pausiert bei Inaktivität | Sicherungen laufen ins Leere | Grenzen in 27.2 prüfen; Alter der Sicherung sichtbar machen |
+| Kostenloses Projekt pausiert nach **1 Woche ohne Zugriff** | Sicherungen laufen ins Leere | Nach der Verteilung kein Thema (tägliche Nutzung); **während der Bauzeit einplanen**. Alter der Sicherung sichtbar machen |
+| Kein tägliches Server-Backup im freien Tarif | Serverdaten könnten verloren gehen | tragbar, **weil** das Gerät die Quelle der Wahrheit bleibt — der Bestand wandert wieder hoch |
 | **Passwort vergessen** | Kopie auf dem Server unerreichbar (Daten auf dem Gerät bleiben) | Grenze bei der Registrierung ausdrücklich nennen, auf Export/Import verweisen (27.5) |
 | RLS vergessen oder falsch | **fremde Daten für jeden lesbar** | RLS im selben Schritt wie die Tabelle, Gegenprobe in 27.4 |
 | `service_role`-Schlüssel gerät in die App | vollständiger Datenbank-Zugriff für jeden | Schlüssel nie ins Repository; im Bundle nach ihm suchen |
