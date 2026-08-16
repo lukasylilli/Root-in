@@ -695,6 +695,13 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        Flutter-Liste im Desktop-Browser nicht, ohne dass etwas
 │                                        fehlschlägt); Zustände an KNÖPFEN ablesen, nicht an Texten —
 │                                        reine Texte stehen unzuverlässig im Semantik-Baum
+├── rls_check.sh                     ✅ Gegenprobe der Server-Zugriffsregeln von AUSSEN (Phase 27.4):
+│                                        13 Prüfungen mit zwei echten Testkonten, liest .env.
+│                                        ⚠️ Ein `select` im SQL-Editor beweist NICHTS — er läuft mit
+│                                        erhöhten Rechten und umgeht die Regeln. Nur ein Aufruf mit
+│                                        dem öffentlichen Schlüssel prüft, was ein Fremder sieht.
+│                                        ⚠️ Nach JEDER Änderung an supabase/schema.sql erneut laufen
+│                                        lassen — eine ungeprüfte Regel ist eine Hoffnung
 └── build_web.sh                     ✅ **Einzige Stelle der Bau-Schalter**: --no-source-maps, -O4, --csp,
                                          --base-href, Version aus pubspec.yaml, Baunummer aus
                                          GITHUB_RUN_NUMBER. Die Automatik ruft DIESES Skript auf —

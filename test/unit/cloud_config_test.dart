@@ -14,19 +14,25 @@ import 'package:root_in/core/utils/platform_support.dart';
 /// hier immer leer. Genau das macht diesen Test möglich — und genau deshalb
 /// darf kein Test jemals mit dem echten Server sprechen.
 void main() {
+  // Ein gewöhnlicher `flutter test`-Lauf bekommt keine `--dart-define`s, die
+  // Werte sind also leer. Wer sie doch mitgibt (`--dart-define-from-file=.env`),
+  // soll hier keinen verwirrenden Fehlschlag bekommen — die Aussage „ohne
+  // Schlüssel keine Cloud" ist dann schlicht nicht prüfbar.
+  final configured = AppConfig.hasSupabaseConfig;
+
   group('Ohne Supabase-Schlüssel', () {
     test('sind beide Konfigurationswerte leer', () {
       expect(AppConfig.supabaseUrl, isEmpty);
       expect(AppConfig.supabaseAnonKey, isEmpty);
-    });
+    }, skip: configured ? 'mit --dart-define gestartet' : null);
 
     test('meldet hasSupabaseConfig false', () {
       expect(AppConfig.hasSupabaseConfig, isFalse);
-    });
+    }, skip: configured ? 'mit --dart-define gestartet' : null);
 
     test('gibt es keine Cloud — supportsCloudSync ist false', () {
       expect(supportsCloudSync, isFalse);
-    });
+    }, skip: configured ? 'mit --dart-define gestartet' : null);
   });
 
   test('supportsCloudSync folgt der Konfiguration, nicht der Plattform', () {

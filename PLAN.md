@@ -309,7 +309,20 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] **Zwei voneinander unabhängige Schichten**, beide ausdrücklich im SQL: **Rechte** (wer darf die Tabelle überhaupt anfassen) und **RLS** (welche Zeilen). ⚠️ Die Rechte gehen **nur an `authenticated`, ausdrücklich nicht an `anon`** — wer nicht angemeldet ist, kommt gar nicht erst bis zu den Regeln. Selbst eine falsche Regel wäre damit für nicht angemeldete Zugriffe folgenlos.
 - [x] **RLS auf beiden Tabellen, im selben Block wie das Anlegen**, mit je einer Regel pro Vorgang (select/insert/update/delete) statt einer `for all`-Regel: So steht jede erlaubte Handlung ausdrücklich da, und ein späteres Weglassen fällt beim Lesen auf.
 - [x] **`updated_at` setzt der Server per Trigger**, nicht die App. Eine von der App gesetzte Zeit ist die Zeit einer möglicherweise falsch gestellten Geräteuhr — dieselbe Sorge, aus der `time_service.dart` entstand. „Zuletzt gesichert vor …" muss sich auf eine Uhr stützen, die der Nutzer nicht stellen kann.
-- [ ] **Gegenprobe nach dem Anwenden — von außen, nicht im SQL-Editor.** ⚠️ Ein `select` dort läuft mit erhöhten Rechten und umgeht die Regeln; er beweist nichts. Zu prüfen ist mit dem `anon`-Schlüssel: ohne Anmeldung lesen (muss leer bleiben) und als Konto A die Zeilen von Konto B abfragen (muss leer bleiben). Das Ergebnis kommt hier in den Plan.
+- [x] ✅ **Gegenprobe bestanden — von außen, mit echten Konten** (`tool/rls_check.sh`, 2026-08-16, **13 von 13**). ⚠️ Ein `select` im SQL-Editor beweist hier nichts: Er läuft mit erhöhten Rechten und umgeht die Regeln. Geprüft wurde mit dem öffentlichen Schlüssel, also genau so, wie ein Fremder es täte:
+
+  | Geprüft | Ergebnis |
+  |---|---|
+  | Ohne Anmeldung `profiles`/`backups` lesen | ✅ abgewiesen (HTTP 401) — die Rechte-Schicht greift |
+  | Registrierung liefert sofort ein Token | ✅ **belegt nebenbei: „Confirm email" ist aus** |
+  | A sieht ausschließlich die eigene Zeile | ✅ 0 fremde |
+  | A fragt gezielt nach B's Zeile | ✅ leer |
+  | A schreibt eine Sicherung auf **B's** Kennung | ✅ abgewiesen (HTTP 403) |
+  | A schreibt seine eigene | ✅ geht |
+  | B sieht A's Sicherung | ✅ nein |
+  | B nimmt A's Benutzernamen | ✅ abgewiesen (HTTP 409, eindeutiger Index) |
+
+- [x] **`tool/rls_check.sh` bleibt im Projekt** und liest die Zugangsdaten aus `.env`. ⚠️ **Nach jeder Änderung an `schema.sql` erneut laufen lassen** — eine Regel, die man nicht gegengeprüft hat, ist eine Hoffnung. Die zwei Testkonten liegen auf `@example.com` (per RFC 2606 reserviert, dort gibt es niemanden) und dürfen stehen bleiben.
 - [ ] ⚠️ **Offen und nicht zu vergessen:** „Konto löschen" kann der `anon`-Schlüssel nicht auslösen — der Eintrag in `auth.users` braucht erhöhte Rechte (Edge Function). Solange es die nicht gibt, löscht die App nur Daten und meldet ab; der leere Auth-Eintrag bleibt. **Für 27.8 zu klären.**
 
 #### 27.5 Anmelden in der App *(E-Mail + Passwort + Benutzername)*
