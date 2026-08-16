@@ -269,6 +269,15 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [ ] Konto auf supabase.com, neues Projekt. **Region bewusst wählen** (nahe an den Nutzern), Datenbank-Passwort in den Passwortmanager.
 - [ ] **Authentication → Providers → Email:** eingeschaltet lassen, aber ⚠️ **„Confirm email" AUS** — vorerst. Mit dem eingebauten Mail-Dienst käme die Bestätigung bei fremden Adressen **nie an**, und niemand könnte sich anmelden. Einschalten, sobald SMTP steht (siehe unten).
 - [ ] Mindestlänge des Passworts dort setzen (Vorschlag: 8).
+- [ ] **Drei Schalter der Data API** (beim Anlegen oder unter *Settings → API*):
+
+  | Schalter | Wert | Grund |
+  |---|---|---|
+  | Enable Data API | **AN** | Ohne sie erreicht die App keine einzige Tabelle — nur die Anmeldung liefe |
+  | Automatically expose new tables | **AUS** | Empfehlung von Supabase. ⚠️ Dann vergibt **`schema.sql` die Rechte selbst** (Abschnitt 3 dort) — genau deshalb stehen sie seit dem 2026-08-16 ausdrücklich drin und nicht implizit |
+  | Enable automatic RLS | **AN** | Sicherheitsnetz für eine später von Hand angelegte Tabelle. `schema.sql` schaltet RLS ohnehin ein |
+
+  ⚠️ **Der mittlere Schalter hat eine Lücke aufgedeckt:** Die erste Fassung von `schema.sql` verließ sich auf die automatische Freigabe. Steht der Schalter auf „aus", hätte die App „permission denied" gemeldet — und man hätte es dem SQL nicht angesehen. Jetzt trägt die Datei ihre Rechte selbst und funktioniert in **beiden** Einstellungen.
 - [ ] ⬜ **Eigener SMTP-Dienst — nötig, sobald Passwort-Zurücksetzen funktionieren soll.** Nicht blockierend für den Bau, aber ohne ihn ist die E-Mail nur gespeichert, nicht nutzbar. Kostenlose Tarife gibt es (z. B. Resend, Brevo); ⚠️ deren Grenzen **am Tag der Einrichtung nachlesen**, nicht aus zweiter Hand übernehmen. Danach in *Authentication → Emails → SMTP Settings* eintragen und mit einer **echten fremden Adresse** testen — der eingebaute Dienst schickt nur an das eigene Team, ein Test an die eigene Adresse beweist also nichts.
 - [ ] Aus den Projekt-Einstellungen notieren: **Project URL** und **anon/public key**. ⚠️ Den **`service_role`-Schlüssel nicht** — er umgeht jede Zugriffsregel und darf weder in die App noch ins Repository. Das Repository ist öffentlich.
 - [x] **Grenzen des kostenlosen Tarifs nachgelesen** (`supabase.com/pricing`, 2026-08-16 — nicht aus dem Gedächtnis):
@@ -297,6 +306,7 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 #### 27.4 Server-Schema und Zugriffsregeln 🔄
 - [x] **`supabase/schema.sql` liegt im Repository**, nicht nur in der Weboberfläche — sonst existiert die Server-Struktur an einer Stelle, die niemand versionieren, gegenlesen oder nach einem Unfall wiederherstellen kann. Mehrfach ausführbar.
 - [x] Zwei Tabellen: `profiles` (Anzeigename) und `backups`. ⚠️ Bei `backups` ist `user_id` der **Primärschlüssel**, nicht nur ein Verweis: Eine Sicherung ist ein **Stand**, keine Historie — sonst sammelten sich stillschweigend Kopien an und niemand wüsste, welche gilt.
+- [x] **Zwei voneinander unabhängige Schichten**, beide ausdrücklich im SQL: **Rechte** (wer darf die Tabelle überhaupt anfassen) und **RLS** (welche Zeilen). ⚠️ Die Rechte gehen **nur an `authenticated`, ausdrücklich nicht an `anon`** — wer nicht angemeldet ist, kommt gar nicht erst bis zu den Regeln. Selbst eine falsche Regel wäre damit für nicht angemeldete Zugriffe folgenlos.
 - [x] **RLS auf beiden Tabellen, im selben Block wie das Anlegen**, mit je einer Regel pro Vorgang (select/insert/update/delete) statt einer `for all`-Regel: So steht jede erlaubte Handlung ausdrücklich da, und ein späteres Weglassen fällt beim Lesen auf.
 - [x] **`updated_at` setzt der Server per Trigger**, nicht die App. Eine von der App gesetzte Zeit ist die Zeit einer möglicherweise falsch gestellten Geräteuhr — dieselbe Sorge, aus der `time_service.dart` entstand. „Zuletzt gesichert vor …" muss sich auf eine Uhr stützen, die der Nutzer nicht stellen kann.
 - [ ] **Gegenprobe nach dem Anwenden — von außen, nicht im SQL-Editor.** ⚠️ Ein `select` dort läuft mit erhöhten Rechten und umgeht die Regeln; er beweist nichts. Zu prüfen ist mit dem `anon`-Schlüssel: ohne Anmeldung lesen (muss leer bleiben) und als Konto A die Zeilen von Konto B abfragen (muss leer bleiben). Das Ergebnis kommt hier in den Plan.

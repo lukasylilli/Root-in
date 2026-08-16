@@ -14,10 +14,22 @@
 -- Auf Unkenntnis des Angreifers ist kein Verlass.
 --
 -- ⚠️ ZWEI SCHLÜSSEL, ZWEI WELTEN
---   anon / public  → steht in der App, ist auslesbar, DARF öffentlich sein.
---                    Für ihn gelten die Regeln unten.
+--   anon / publishable → steht in der App, ist auslesbar, DARF öffentlich
+--                    sein. Für ihn gelten die Regeln unten. (Neuere
+--                    Supabase-Oberflächen nennen ihn „Publishable key".)
 --   service_role   → umgeht JEDE Regel hier. Gehört ausschließlich in die
 --                    Supabase-Oberfläche. Niemals in App, Repository oder CI.
+--
+-- PROJEKT-EINSTELLUNGEN, DIE DAZU PASSEN MÜSSEN (PLAN.md 27.2):
+--   „Enable Data API"                 → AN. Ohne sie erreicht die App keine
+--                                       einzige Tabelle, nur die Anmeldung.
+--   „Automatically expose new tables" → AUS (Empfehlung von Supabase). Die
+--                                       Rechte vergibt diese Datei selbst,
+--                                       siehe Abschnitt 3.
+--   „Enable automatic RLS"            → AN. Reines Sicherheitsnetz: Diese
+--                                       Datei schaltet RLS ohnehin ein, aber
+--                                       eine später von Hand angelegte
+--                                       Tabelle wäre sonst ungeschützt.
 
 -- ---------------------------------------------------------------------------
 -- 1. Profil
@@ -74,19 +86,38 @@ create table if not exists public.backups (
 );
 
 -- ---------------------------------------------------------------------------
--- 3. Row Level Security
+-- 3. Zugriff: zwei voneinander unabhängige Schichten
 -- ---------------------------------------------------------------------------
--- ⚠️ OHNE DIESE ZEILEN IST JEDE TABELLE OBEN FÜR JEDEN LESBAR UND SCHREIBBAR.
--- Der anon-Schlüssel steht in der ausgelieferten App; er ist kein Schutz.
--- RLS ist der einzige Schutz. Deshalb steht es hier direkt hinter dem
--- Anlegen der Tabellen und nicht in einem späteren Schritt.
+-- SCHICHT 1 — WER DARF DIE TABELLE ÜBERHAUPT ANFASSEN (grants)
+--
+-- Die Rechte stehen hier ausdrücklich, statt sich auf die Projekt-Einstellung
+-- „Automatically expose new tables" zu verlassen. Supabase empfiehlt selbst,
+-- die auszuschalten — dann aber bekommt eine neue Tabelle KEINE Rechte, und
+-- die App liefe in „permission denied", ohne dass man es dem SQL ansieht.
+-- ⚠️ So funktioniert diese Datei in BEIDEN Einstellungen; sie hängt nicht an
+-- einem Schalter in einer Weboberfläche, den niemand versioniert.
+grant usage on schema public to authenticated;
+
+-- ⚠️ NUR `authenticated`, ausdrücklich NICHT `anon`.
+-- `anon` ist der Zustand vor der Anmeldung. Wer nicht angemeldet ist, hat in
+-- diesen Tabellen nichts zu suchen — auch keine leere Antwort. Das ist die
+-- zweite Verteidigungslinie: Selbst wenn unten eine Regel falsch wäre, käme
+-- ein nicht angemeldeter Aufruf gar nicht erst bis zu ihr.
+grant select, insert, update, delete on public.profiles to authenticated;
+grant select, insert, update, delete on public.backups  to authenticated;
+
+-- SCHICHT 2 — WELCHE ZEILEN (Row Level Security)
+--
+-- ⚠️ OHNE DIESE ZEILEN SIEHT JEDER ANGEMELDETE NUTZER DIE DATEN ALLER ANDEREN.
+-- Die Grants oben unterscheiden nur „angemeldet ja/nein"; dass jemand nur
+-- SEINE Zeilen sieht, macht allein RLS. Der anon-Schlüssel steht in der
+-- ausgelieferten App und ist kein Schutz.
 alter table public.profiles enable row level security;
 alter table public.backups  enable row level security;
 
 -- Eine Regel je Vorgang statt einer „for all"-Regel: So steht jede erlaubte
 -- Handlung ausdrücklich da, und ein späteres Weglassen fällt beim Lesen auf.
--- `auth.uid()` ist die Kennung aus dem mitgeschickten Token — ohne Anmeldung
--- ist sie null, und dann trifft keine Regel zu (die Tabelle bleibt leer).
+-- `auth.uid()` ist die Kennung aus dem mitgeschickten Token.
 
 drop policy if exists "profiles_select_own" on public.profiles;
 create policy "profiles_select_own" on public.profiles
@@ -200,6 +231,15 @@ grant execute on function public.username_available(text) to anon, authenticated
 --   select tablename, rowsecurity
 --     from pg_tables
 --    where schemaname = 'public';
+--
+-- Und die Rechte aus Abschnitt 3 — erwartet werden Zeilen für
+-- `authenticated`, aber KEINE für `anon`:
+--
+--   select grantee, table_name, privilege_type
+--     from information_schema.role_table_grants
+--    where table_schema = 'public'
+--      and grantee in ('anon', 'authenticated')
+--    order by grantee, table_name;
 --
 -- Die eigentliche Probe läuft aber NICHT hier, sondern von außen mit dem
 -- anon-Schlüssel: ohne Anmeldung lesen (muss leer bleiben) und als Konto A

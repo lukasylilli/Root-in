@@ -754,9 +754,15 @@ Die **Serie wird nirgends gespeichert** — sie entsteht bei jedem Aufruf neu au
 🚧 **Geplant in PLAN.md Phase 27** — noch nichts davon existiert. Dieser Abschnitt hält fest, **wo** die Teile hinkommen, damit sie nicht verstreut entstehen.
 
 ```
-supabase/schema.sql                  ✅ Tabellen `profiles` (mit `username`) + `backups`, RLS je
-                                         Vorgang, Trigger für updated_at, Funktion
-                                         `username_available()`. Mehrfach ausführbar (SQL Editor).
+supabase/schema.sql                  ✅ Tabellen `profiles` (mit `username`) + `backups`, ZWEI
+                                         Zugriffsschichten (Rechte + RLS je Vorgang), Trigger für
+                                         updated_at, Funktion `username_available()`.
+                                         Mehrfach ausführbar (SQL Editor).
+                                         ⚠️ Die Rechte stehen AUSDRÜCKLICH im SQL und gehen nur an
+                                         `authenticated`, nie an `anon`. Damit hängt die Datei nicht
+                                         am Schalter „Automatically expose new tables" — steht der
+                                         auf aus, bekäme die App sonst „permission denied", ohne
+                                         dass man es dem SQL ansieht
                                          ⚠️ Bei `backups` ist user_id der PRIMÄRSCHLÜSSEL — eine
                                          Sicherung ist ein Stand, keine Historie
                                          ⚠️ updated_at setzt der SERVER, nicht die App: eine
