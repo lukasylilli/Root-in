@@ -754,15 +754,24 @@ Die **Serie wird nirgends gespeichert** — sie entsteht bei jedem Aufruf neu au
 🚧 **Geplant in PLAN.md Phase 27** — noch nichts davon existiert. Dieser Abschnitt hält fest, **wo** die Teile hinkommen, damit sie nicht verstreut entstehen.
 
 ```
-supabase/schema.sql                  🚧 Tabellen, Zugriffsregeln (RLS) und Indizes des Servers.
-                                         ⚠️ Gehört INS REPOSITORY, nicht nur in die Weboberfläche —
-                                         sonst existiert die Server-Struktur an einer Stelle, die
-                                         niemand versionieren, prüfen oder wiederherstellen kann
-lib/core/services/auth_service.dart  🚧 Einzige Stelle für supabase_flutter (27.5)
+supabase/schema.sql                  ✅ Tabellen `profiles` + `backups`, RLS je Vorgang, Trigger für
+                                         updated_at. Mehrfach ausführbar (SQL Editor).
+                                         ⚠️ Bei `backups` ist user_id der PRIMÄRSCHLÜSSEL — eine
+                                         Sicherung ist ein Stand, keine Historie
+                                         ⚠️ updated_at setzt der SERVER, nicht die App: eine
+                                         Geräteuhr kann falsch gestellt sein
+lib/core/constants/app_config.dart   ✅ supabaseUrl / supabaseAnonKey / hasSupabaseConfig (27.3)
+lib/core/utils/platform_support.dart ✅ supportsCloudSync — die einzige Fähigkeit dort, die NICHT
+                                         an der Plattform hängt, sondern an der Konfiguration
+test/unit/cloud_config_test.dart     ✅ 4 Fälle: ohne Schlüssel keine Cloud (27.3)
+lib/core/services/auth_service.dart  🚧 Einzige Stelle für supabase_flutter; enthält als einzige
+                                         die Umrechnung Benutzername → künstliche Adresse (27.5)
 lib/core/services/cloud_backup_service.dart 🚧 Bestand als Backup-JSON hoch/runter (27.7)
-lib/features/auth/presentation/      🚧 Anmelden, Registrieren, Passwort vergessen (27.5)
+lib/features/auth/presentation/      🚧 Anmelden + Registrieren (27.5) — KEIN „Passwort vergessen"
 test/support/fake_auth_service.dart  🚧 Anmeldung ohne Server (27.5)
 ```
+
+**Anmeldung: Benutzername + Passwort, ohne E-Mail** (Entscheidung des Nutzers, PLAN.md 27.0b). Supabase kann das nicht von sich aus — der Benutzername wird intern zu einer **künstlichen Adresse** (`ali` → `ali@<domain>`). Das macht Benutzernamen gratis eindeutig und spart jeden Mail-Versand. ⚠️ **Preis: ein vergessenes Passwort ist nicht wiederherstellbar.** Weil die App local-first bleibt, kostet das die Kopie auf dem Server, **nicht** die Daten auf dem Gerät — die Registrierung sagt das ausdrücklich.
 
 **Die vier Regeln dieser Phase** (Begründungen in PLAN.md 27.0–27.4):
 

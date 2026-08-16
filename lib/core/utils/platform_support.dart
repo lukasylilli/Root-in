@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../constants/app_config.dart';
+
 // PHASE 20 (2026-08-01): Werbung deaktiviert — zum Wiederaktivieren diesen Block einkommentieren.
 // /// Ob auf dieser Plattform Werbung und In-App-Käufe überhaupt möglich sind.
 // ///
@@ -77,3 +79,20 @@ bool get supportsOrientationLock => isMobilePlatform;
 /// der Browser sehr wohl, sofern sie es erlauben — die Anleitungs-Texte von
 /// `raw.githubusercontent.com` kommen genau so an.
 bool get canReadForeignResponseHeaders => !kIsWeb;
+
+/// Ob es in diesem Bau ein Nutzerkonto und eine Cloud-Sicherung gibt
+/// (PLAN.md Phase 27).
+///
+/// Anders als die Abfragen darüber hängt diese **nicht an der Plattform**,
+/// sondern daran, ob beim Bauen ein Supabase-Projekt hereingereicht wurde.
+/// Sie steht trotzdem hier: Der Aufrufer stellt dieselbe Art von Frage
+/// („gibt es das hier?") und soll dafür nicht zwei Orte kennen müssen.
+///
+/// ⚠️ **Ohne Schlüssel verhält sich die App exakt wie vor Phase 27** — keine
+/// Anmelde-Seite, keine Rubrik „Konto & Cloud", kein einziger Netzaufruf zu
+/// Supabase. Das ist kein Nebeneffekt, sondern der Zweck: Tests laufen ohne
+/// Netz, ein lokaler Bau braucht keine Zugangsdaten, und fällt der Server
+/// weg, bleibt die App vollständig benutzbar. **Wer eine Cloud-Funktion
+/// baut, hängt sie an diese Abfrage** — sonst entsteht ein Knopf, der ins
+/// Leere greift (dieselbe Regel wie bei den Erinnerungen im Browser).
+bool get supportsCloudSync => AppConfig.hasSupabaseConfig;

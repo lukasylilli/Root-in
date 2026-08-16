@@ -221,23 +221,28 @@ Die Langfassungen sind eingedampft; was hier steht, braucht man beim Weiterbauen
 
 ⚠️ **Die Datenschutz-Anpassung ist nicht der letzte Schritt, sondern eine Bedingung der Veröffentlichung.** Ein Store-Eintrag mit „keine Daten erhoben" und einer App, die Daten hochlädt, ist eine Falschangabe gegenüber Google. **Phase 15 darf erst weitergehen, wenn 27.8 erledigt ist.**
 
-#### 27.0b Vier Entscheidungen, die dem Nutzer gehören
+#### 27.0b Die Entscheidungen des Nutzers ✅ *(getroffen 2026-08-16)*
 
-Sie bestimmen den Umfang aller folgenden Schritte. Meine Empfehlung steht jeweils dabei — entschieden wird vor 27.2.
+| Frage | Entscheidung |
+|---|---|
+| Pflicht oder freiwillig? | **freiwillig** — ohne Konto läuft die App unverändert weiter |
+| Anmeldung | **Benutzername + Passwort, ausdrücklich OHNE E-Mail** |
+| Was wandert auf den Server? | **Profil und die Nutzerdaten** — Gewohnheiten, Tage/Erledigungen, Kategorien |
+| Richtung | **Sicherung, kein stiller Abgleich** (hochladen automatisch, herunterladen auf Nachfrage) |
+| Quellcode | **bleibt öffentlich auf GitHub — das Projekt ist Open Source** |
 
-1. **Pflicht oder freiwillig?** ➜ **Empfehlung: freiwillig.** Ein Pflicht-Konto sperrt jeden bestehenden Nutzer aus, macht die App ohne Internet unbenutzbar und wirft das wichtigste Versprechen der App weg. Ohne Anmeldung läuft alles wie bisher; wer sich anmeldet, bekommt zusätzlich die Kopie auf dem Server.
-2. **Wie meldet man sich an?** Die Wahl entscheidet über Aufwand **und** darüber, ob ein Bestand auf einem zweiten Gerät wiederherstellbar ist:
+⚠️ **Benutzername ohne E-Mail kann Supabase nicht von sich aus.** Passwort-Anmeldung hängt dort immer an einer E-Mail-Adresse oder Telefonnummer. Der übliche Weg — und der, den diese Phase geht — ist eine **künstliche Adresse aus dem Benutzernamen**: `ali` wird intern zu `ali@<fester-domain>`. Der Nutzer sieht sie nie.
 
-   | Verfahren | Wiederherstellbar? | Kosten/Grenzen | Aufwand |
-   |---|---|---|---|
-   | **E-Mail + Passwort** | ✅ ja | ⚠️ Der eingebaute Mail-Versand von Supabase ist **stark begrenzt** (wenige Nachrichten pro Stunde) — für 200 Schüler braucht es einen eigenen SMTP-Dienst (kostenlose Tarife gibt es) | mittel |
-   | E-Mail-Code (Magic Link/OTP) | ✅ ja | dieselbe Mail-Grenze | mittel |
-   | **Anonym** (Supabase legt still ein Konto an) | ❌ **nein** — geht das Gerät verloren, ist der Bestand weg | keine | gering |
-   | Google-Anmeldung | ✅ ja | Einrichtung je Plattform; ⚠️ Erreichbarkeit im Zielland prüfen | hoch |
+Das bringt zwei Dinge geschenkt und kostet eines:
+- ✅ **Eindeutigkeit des Benutzernamens ist gratis** — Supabase erzwingt eindeutige Adressen, also sind eindeutige künstliche Adressen eindeutige Benutzernamen. Keine zweite Prüfung nötig, keine Wettlaufsituation.
+- ✅ Kein Mail-Versand, also **keine Mail-Grenze** und kein SMTP-Dienst — genau die Hürde, die E-Mail-Anmeldung für 200 Schüler unhandlich gemacht hätte.
+- ⚠️ **Ein vergessenes Passwort ist nicht wiederherstellbar.** Es gibt keine Adresse, an die ein Link gehen könnte. Bei 200 Schülern passiert das sicher.
 
-   ➜ **Empfehlung: E-Mail + Passwort**, mit eigenem SMTP-Dienst. „Anonym" klingt nach dem gewünschten „automatisch", liefert aber genau **nicht**, wofür der Server da ist: Wiederherstellung nach Geräteverlust.
-3. **Was wandert auf den Server?** ➜ **Empfehlung: in zwei Stufen.** Zuerst nur das **Profil** (27.6) — das ist der wörtliche Auftrag und ein kleiner, prüfbarer Schritt. Danach der **ganze Bestand als Sicherung** (27.7), wo der eigentliche Nutzen liegt.
-4. **Wie oft und in welche Richtung?** ➜ **Empfehlung: ausdrückliche Sicherung/Wiederherstellung, kein stiller Abgleich in beide Richtungen.** Zwei Geräte ohne Zusammenführungs-Logik löschen sich gegenseitig Daten — und „Datenerhalt geht vor" (Abschnitt 9) ist die älteste Regel dieses Projekts. Automatisch heißt hier: **hochladen** passiert von selbst, **herunterladen** fragt.
+**Warum der Preis tragbar ist — und was daraus folgt:** Weil die App *local-first* bleibt, verliert ein vergessenes Passwort **die Kopie auf dem Server, nicht die Daten auf dem Gerät**. Der Schaden ist begrenzt. Daraus folgen drei Pflichten, die in 27.5 stehen: Die Registrierung **sagt es ausdrücklich**, sie verweist auf die vorhandene Sicherung (Export/Import), und die Rubrik „Konto & Cloud" tut es ebenso.
+
+⚠️ **Zwei Einstellungen im Supabase-Projekt sind dafür zwingend** (27.2): **„Confirm email" muss AUS sein** — sonst kann sich niemand anmelden, weil die Bestätigungsmail an eine Adresse ginge, die es nicht gibt. Und die **Mindestlänge des Passworts** wird dort gesetzt, nicht in der App.
+
+⚠️ **Open Source verschärft eine Regel, statt sie zu lockern:** Jeder kann `supabase/schema.sql` lesen und damit **genau sehen, welche Zugriffsregeln ihn abwehren**. Das ist bei RLS vorgesehen und in Ordnung — aber es heißt, dass die Regeln wirklich stimmen müssen; auf Unkenntnis des Angreifers ist kein Verlass. Und es macht die Trennung der Schlüssel noch wichtiger: `anon` ist öffentlich, `service_role` darf **nirgends** im Repository auftauchen.
 
 #### 27.1 Ausgangslage — was schon da ist und trägt
 
@@ -249,31 +254,41 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 
 #### 27.2 Supabase-Projekt anlegen *(führt der Nutzer durch, Anleitung auf Persisch)*
 - [ ] Konto auf supabase.com, neues Projekt. **Region bewusst wählen** (nahe an den Nutzern), Datenbank-Passwort in den Passwortmanager.
-- [ ] Aus den Projekt-Einstellungen notieren: **Project URL** und **anon/public key**. ⚠️ Den **`service_role`-Schlüssel nicht** — er umgeht jede Zugriffsregel und darf weder in die App noch ins Repository.
-- [ ] ⚠️ **Grenzen des kostenlosen Tarifs am Tag der Einrichtung nachlesen, nicht aus dem Gedächtnis annehmen** (sie ändern sich). Drei Punkte gezielt prüfen: **Pausiert ein Projekt nach längerer Inaktivität?** · **Wie viele E-Mails pro Stunde** verschickt der eingebaute Mail-Dienst? · Speicher- und Nutzergrenzen. Das Ergebnis kommt hier in den Plan.
+- [ ] **Authentication → Providers → Email:** eingeschaltet lassen, aber ⚠️ **„Confirm email" AUS**. Ohne das kann sich niemand anmelden — die Bestätigung ginge an eine Adresse, die es nicht gibt (27.0b).
+- [ ] Mindestlänge des Passworts dort setzen (Vorschlag: 8).
+- [ ] Aus den Projekt-Einstellungen notieren: **Project URL** und **anon/public key**. ⚠️ Den **`service_role`-Schlüssel nicht** — er umgeht jede Zugriffsregel und darf weder in die App noch ins Repository. Das Repository ist öffentlich.
+- [ ] ⚠️ **Grenzen des kostenlosen Tarifs am Tag der Einrichtung nachlesen, nicht aus dem Gedächtnis annehmen** (sie ändern sich). Zwei Punkte gezielt: **Pausiert ein Projekt nach längerer Inaktivität?** · Speicher- und Nutzergrenzen. Das Ergebnis kommt hier in den Plan. *(Die Mail-Grenze entfällt mit der Entscheidung aus 27.0b.)*
 - [ ] ⚠️ **Erreichbarkeit im Zielland prüfen.** Die Nutzer sind überwiegend persischsprachig. Ist die Supabase-Adresse dort nicht erreichbar, ist das kein Grund gegen die Phase — aber ein zwingender Grund für 27.7 („die App bleibt ohne Server voll benutzbar").
 
-#### 27.3 Konfiguration im Code
-- [ ] `app_config.dart` um `supabaseUrl` und `supabaseAnonKey` erweitern (`String.fromEnvironment`, Standard leer), `.env.example` ergänzen, `tool/build_web.sh` und der Android-Bau reichen sie durch.
-- [ ] **Neue Fähigkeit `supportsCloudSync`** in `platform_support.dart`: `true` nur, wenn **beide** Werte gesetzt sind. ⚠️ Das ist mehr als Kosmetik: **Ein Bau ohne Schlüssel verhält sich exakt wie heute** — keine Anmeldung, kein Netzverkehr, keine Rubrik in den Einstellungen. Damit bleiben Tests, lokale Bauten und der Notfall („der Server ist weg") ohne Sonderbehandlung benutzbar.
-- [ ] ⚠️ **Der `anon`-Schlüssel ist kein Geheimnis** — er ist dafür gemacht, in Clients zu stehen, und **jeder kann ihn aus dem Bundle lesen** (Lehre 26). Der Schutz kommt **ausschließlich** aus den Zugriffsregeln der Datenbank (27.4). Diese Warnung gehört neben den Schlüssel in `app_config.dart`.
-- [ ] Die Schlüssel als **GitHub-Actions-Secrets** hinterlegen, damit die veröffentlichte Web-Fassung sie bekommt — nicht ins Repository.
+#### 27.3 Konfiguration im Code ✅ *(gebaut 2026-08-16)*
+- [x] `app_config.dart` um `supabaseUrl`, `supabaseAnonKey` und `hasSupabaseConfig` erweitert (`String.fromEnvironment`, Standard **leer**); `.env.example` ergänzt.
+- [x] **Neue Fähigkeit `supportsCloudSync`** in `platform_support.dart`. ⚠️ Sie hängt als einzige dort **nicht an der Plattform**, sondern an der Konfiguration — der Kommentar sagt das ausdrücklich, damit niemand sie später „vereinheitlicht".
+- [x] ⚠️ **Der `anon`-Schlüssel ist der eine erlaubte Sonderfall** zur Regel aus 26.5: Er ist dafür gemacht, in Clients zu stehen. Die Begründung steht jetzt in `app_config.dart` — direkt neben dem Schlüssel, zusammen mit der Gegenwarnung zu `service_role`.
+- [x] **`test/unit/cloud_config_test.dart`** hält die Zusage fest: ohne Schlüssel ist `supportsCloudSync` falsch. Sonst wäre „verhält sich wie vorher" eine Behauptung — und die App böte eine Anmeldung an, die nirgendwohin führt.
+- [ ] `tool/build_web.sh` und der Android-Bau reichen die Werte durch; als **GitHub-Actions-Secrets** hinterlegen. *(Erst nach 27.2 — vorher gibt es nichts durchzureichen.)*
 
-#### 27.4 Server-Schema und Zugriffsregeln
-- [ ] **Das Schema gehört ins Repository**, nicht nur in die Weboberfläche: `supabase/schema.sql` mit Tabellen, Regeln und Indizes. Sonst existiert die Server-Struktur nur an einer Stelle, die niemand versionieren, prüfen oder wiederherstellen kann.
-- [ ] Tabellen: `profiles` (Anzeigename, Zeitstempel) und — für 27.7 — `backups` (eine Zeile je Nutzer mit dem JSON-Stand, Schema-Version und Zeitstempel). Jede Zeile trägt `user_id` mit Verweis auf `auth.users`.
-- [ ] ⚠️ **Row Level Security auf JEDER Tabelle einschalten, im selben Schritt wie das Anlegen.** Eine Tabelle ohne RLS ist mit dem `anon`-Schlüssel **für jeden lesbar und schreibbar** — und der Schlüssel steht im Bundle. Regel je Tabelle: nur Zeilen mit `user_id = auth.uid()`.
-- [ ] **Gegenprobe, nicht Annahme:** Mit dem `anon`-Schlüssel **ohne Anmeldung** lesen versuchen (muss leer bleiben) und mit Konto A die Zeilen von Konto B abfragen (muss leer bleiben). Das Ergebnis kommt in den Plan.
+#### 27.4 Server-Schema und Zugriffsregeln 🔄
+- [x] **`supabase/schema.sql` liegt im Repository**, nicht nur in der Weboberfläche — sonst existiert die Server-Struktur an einer Stelle, die niemand versionieren, gegenlesen oder nach einem Unfall wiederherstellen kann. Mehrfach ausführbar.
+- [x] Zwei Tabellen: `profiles` (Anzeigename) und `backups`. ⚠️ Bei `backups` ist `user_id` der **Primärschlüssel**, nicht nur ein Verweis: Eine Sicherung ist ein **Stand**, keine Historie — sonst sammelten sich stillschweigend Kopien an und niemand wüsste, welche gilt.
+- [x] **RLS auf beiden Tabellen, im selben Block wie das Anlegen**, mit je einer Regel pro Vorgang (select/insert/update/delete) statt einer `for all`-Regel: So steht jede erlaubte Handlung ausdrücklich da, und ein späteres Weglassen fällt beim Lesen auf.
+- [x] **`updated_at` setzt der Server per Trigger**, nicht die App. Eine von der App gesetzte Zeit ist die Zeit einer möglicherweise falsch gestellten Geräteuhr — dieselbe Sorge, aus der `time_service.dart` entstand. „Zuletzt gesichert vor …" muss sich auf eine Uhr stützen, die der Nutzer nicht stellen kann.
+- [ ] **Gegenprobe nach dem Anwenden — von außen, nicht im SQL-Editor.** ⚠️ Ein `select` dort läuft mit erhöhten Rechten und umgeht die Regeln; er beweist nichts. Zu prüfen ist mit dem `anon`-Schlüssel: ohne Anmeldung lesen (muss leer bleiben) und als Konto A die Zeilen von Konto B abfragen (muss leer bleiben). Das Ergebnis kommt hier in den Plan.
+- [ ] ⚠️ **Offen und nicht zu vergessen:** „Konto löschen" kann der `anon`-Schlüssel nicht auslösen — der Eintrag in `auth.users` braucht erhöhte Rechte (Edge Function). Solange es die nicht gibt, löscht die App nur Daten und meldet ab; der leere Auth-Eintrag bleibt. **Für 27.8 zu klären.**
 
-#### 27.5 Anmelden in der App
+#### 27.5 Anmelden in der App *(Benutzername + Passwort)*
 - [ ] **Ein** Dienst `core/services/auth_service.dart` als einzige Stelle für `supabase_flutter` — dieselbe Bauart wie `notification_service.dart` oder `share_service.dart`. Die Oberfläche kennt nur diesen Dienst.
-- [ ] `features/auth/presentation/` — Anmelden/Registrieren/Passwort vergessen, dazu ein Zustands-Provider (angemeldet / abgemeldet / lädt).
-- [ ] Rubrik **„Konto & Cloud"** in den Einstellungen: angemeldet als …, Abmelden, Stand der letzten Sicherung. Sie **verschwindet ganz**, wenn `supportsCloudSync` falsch ist — „ehrlich abschalten statt still scheitern" (26.1).
+- [ ] **Die Umrechnung Benutzername → künstliche Adresse liegt genau hier, in einer Funktion**, und kommt nirgends sonst vor. Sie ist der einzige Ort, an dem beides zusammenhängt; verstreut wäre sie ein Fehler, der sich später nicht mehr einsammeln lässt.
+- [ ] **Benutzernamen normalisieren, bevor sie zur Adresse werden:** klein schreiben, Leerzeichen abschneiden. Sonst legen „Ali" und „ali" zwei Konten an, und der Nutzer sucht seinen Bestand im falschen.
+- [ ] **Erlaubte Zeichen prüfen** (Buchstaben, Ziffern, `_`, `-`, Mindestlänge) — der Name wird Teil einer Adresse; ein `@` oder Leerzeichen darin ergäbe eine ungültige und die Anmeldung scheiterte mit einer Meldung, die niemand versteht.
+- [ ] `features/auth/presentation/` — Anmelden und Registrieren, dazu ein Zustands-Provider (angemeldet / abgemeldet / lädt). **Kein „Passwort vergessen"** — es gibt keins (27.0b).
+- [ ] ⚠️ **Die Registrierung sagt die Grenze ausdrücklich:** ohne E-Mail kein Zurücksetzen; ein vergessenes Passwort kostet die Kopie auf dem Server, **nicht** die Daten auf dem Gerät; die Sicherung (Export) bleibt der Rettungsanker. Ein Satz, den man nicht übersehen kann — nicht im Kleingedruckten.
+- [ ] Rubrik **„Konto & Cloud"** in den Einstellungen: angemeldet als …, Abmelden, Stand der letzten Sicherung, Konto löschen. Sie **verschwindet ganz**, wenn `supportsCloudSync` falsch ist — „ehrlich abschalten statt still scheitern" (26.1).
 - [ ] Texte in **allen drei** ARB-Dateien, danach `flutter gen-l10n` (Lehre 20).
-- [ ] ⚠️ **Fehlermeldungen müssen sprachneutral herausgereicht werden** (Grund-Code statt Text, Muster wie `backup_data.dart`): Supabase meldet auf Englisch, die App spricht drei Sprachen.
-- [ ] Tests mit einem gefälschten Auth-Dienst (`test/support/fake_auth_service.dart`). ⚠️ **Kein Test spricht mit dem echten Server** — Tests müssen ohne Netz und ohne Schlüssel laufen.
+- [ ] ⚠️ **Fehlermeldungen sprachneutral herausreichen** (Grund-Code statt Text, Muster wie `backup_data.dart`): Supabase meldet auf Englisch, die App spricht drei Sprachen. Mindestens zu unterscheiden: Name schon vergeben · Name oder Passwort falsch · kein Netz · Passwort zu kurz.
+- [ ] Tests mit einem gefälschten Auth-Dienst (`test/support/fake_auth_service.dart`), dazu **reine Funktionstests für die Umrechnung** (Normalisierung, ungültige Zeichen) — die braucht keinen Server und ist der Teil, der still falsch sein kann.
+- [ ] ⚠️ **Kein Test spricht mit dem echten Server** — Tests müssen ohne Netz und ohne Schlüssel laufen.
 
-#### 27.6 Profil in der Cloud *(der wörtliche Auftrag)*
+#### 27.6 Profil in der Cloud
 - [ ] Beim Anmelden Profil laden; beim Ändern hochladen. Lokal bleibt `profile_service.dart` die Quelle für die Anzeige — der Server ist die Kopie.
 - [ ] ⚠️ **Regel für den ersten Zusammenstoß:** Es gibt schon einen lokalen Namen **und** vielleicht einen auf dem Server. Ohne ausdrückliche Regel gewinnt der Zufall. Festzulegen und hier zu notieren, **bevor** die erste Zeile geschrieben wird.
 
@@ -301,7 +316,7 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 |---|---|---|
 | Server im Zielland nicht erreichbar | Anmeldung und Sicherung scheitern | App bleibt ohne Server voll benutzbar (27.7); Scheitern ist folgenlos |
 | Kostenloses Projekt pausiert bei Inaktivität | Sicherungen laufen ins Leere | Grenzen in 27.2 prüfen; Alter der Sicherung sichtbar machen |
-| Mail-Versand begrenzt | Registrierung scheitert ab wenigen Nutzern | eigener SMTP-Dienst, vor der Verteilung an die Schüler testen |
+| **Passwort vergessen** | Kopie auf dem Server unerreichbar (Daten auf dem Gerät bleiben) | Grenze bei der Registrierung ausdrücklich nennen, auf Export/Import verweisen (27.5) |
 | RLS vergessen oder falsch | **fremde Daten für jeden lesbar** | RLS im selben Schritt wie die Tabelle, Gegenprobe in 27.4 |
 | `service_role`-Schlüssel gerät in die App | vollständiger Datenbank-Zugriff für jeden | Schlüssel nie ins Repository; im Bundle nach ihm suchen |
 | Zwei Geräte, ein Konto | ein Bestand überschreibt den anderen | Sicherung statt Abgleich, Wiederherstellung nur auf Nachfrage |
@@ -431,7 +446,7 @@ Die Fassung ist gebaut, veröffentlicht und geprüft (10.1/10.2). Offen bleiben:
 - **Zwei Fassungen, zwei Datenbestände.** Wer Root-in auf Android **und** im Browser benutzt, hat heute zwei getrennte Bestände. **Phase 27 kann das lösen** — aber nur als Sicherung/Wiederherstellung, nicht als stiller Abgleich (27.7).
 - **Erinnerungen im Web** entfallen (Web-Push bräuchte einen Server). ⚠️ Mit Phase 27 gibt es einen Server — die Entscheidung ist damit **wieder offen**, aber Push ist ein eigenes Thema und keine Nebensache.
 - **Sollen neue Beiträge in „موارد دیگر" gemeldet werden?** Möglich wäre ein stiller Vergleich beim App-Start (neue Einträge im `index.json` gegenüber dem gespeicherten Stand) und ein Punkt am Einstellungs-Eintrag — ohne Server, ohne Push.
-- **Repository öffentlich oder privat?** Pages aus einem privaten Repository kostet. ⚠️ Auch privat schützt die Quelle, nicht das Ergebnis (Lehre 26).
+- ~~Repository öffentlich oder privat?~~ — **entschieden 2026-08-16: öffentlich, das Projekt ist Open Source.** ⚠️ Folge für Phase 27: Die Zugriffsregeln des Servers sind für jeden lesbar, müssen also wirklich stimmen; der `service_role`-Schlüssel darf nirgends im Repository auftauchen.
 - **iOS-Bundle-Identifier ist weiterhin `com.example.rootIn`** — wird in Phase 12 entschieden.
 - **Sicherungskopie des Signaturschlüssels steht aus.** Die `.jks` existiert nur einmal auf diesem Mac. Datei **und** Passwort gehören in den Passwortmanager.
 - **Die persische Übersetzung ist ein Entwurf** — alle Schlüssel sind gefüllt, gelesen hat sie noch kein Muttersprachler. Korrekturen betreffen nur `lib/l10n/app_fa.arb`.
