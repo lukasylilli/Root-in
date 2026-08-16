@@ -764,8 +764,16 @@ lib/core/constants/app_config.dart   ✅ supabaseUrl / supabaseAnonKey / hasSupa
 lib/core/utils/platform_support.dart ✅ supportsCloudSync — die einzige Fähigkeit dort, die NICHT
                                          an der Plattform hängt, sondern an der Konfiguration
 test/unit/cloud_config_test.dart     ✅ 4 Fälle: ohne Schlüssel keine Cloud (27.3)
-lib/core/services/auth_service.dart  🚧 Einzige Stelle für supabase_flutter; enthält als einzige
-                                         die Umrechnung Benutzername → künstliche Adresse (27.5)
+lib/core/services/username_credentials.dart ✅ Die EINZIGE Stelle, an der Benutzername und interne
+                                         Adresse zusammenhängen (27.5). Reines Dart, kein Paket —
+                                         der Teil, der still falsch sein kann, ist ohne Server prüfbar.
+                                         ⚠️ Normalisiert IMMER (klein, ohne Leerraum), sonst wären
+                                         „Ali" und „ali" zwei Konten. Domain `rootin.invalid`
+                                         (RFC 2606) als EINE Konstante — ein Wechsel verwaist alle
+                                         bestehenden Konten
+test/unit/username_credentials_test.dart ✅ 12 Fälle inkl. Hin- und Rückweg je gültigem Namen
+lib/core/services/auth_service.dart  🚧 Einzige Stelle für supabase_flutter; einziger Aufrufer von
+                                         username_credentials.dart (27.5)
 lib/core/services/cloud_backup_service.dart 🚧 Bestand als Backup-JSON hoch/runter (27.7)
 lib/features/auth/presentation/      🚧 Anmelden + Registrieren (27.5) — KEIN „Passwort vergessen"
 test/support/fake_auth_service.dart  🚧 Anmeldung ohne Server (27.5)
