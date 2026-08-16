@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart';
 import 'package:root_in/core/services/repo_content_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,7 +17,7 @@ class _FakeServer {
 
   Future<RepoFetchResult> fetch(Uri url) async {
     calls.add(url);
-    if (responses.isEmpty) throw const SocketException('kein Netz');
+    if (responses.isEmpty) throw ClientException('kein Netz');
     return responses.removeAt(0);
   }
 }
@@ -57,7 +56,7 @@ void main() {
 
     expect(
       () => service.load('de/lernplanung.md'),
-      throwsA(isA<SocketException>()),
+      throwsA(isA<ClientException>()),
     );
   });
 
@@ -149,7 +148,7 @@ void main() {
 
     expect(
       () => service.load('others/fa/news/start.md'),
-      throwsA(isA<SocketException>()),
+      throwsA(isA<ClientException>()),
     );
   });
 }

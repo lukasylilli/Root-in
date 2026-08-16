@@ -28,8 +28,14 @@
   <meta name="apple-mobile-web-app-title" content="Root-in">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <!--
+    Favicon. Beide Größen bewusst angegeben: `flutter_launcher_icons` erzeugt
+    das Favicon mit 16 px, und darin verschwindet eine Strichzeichnung fast
+    (derselbe Grund wie beim Launcher-Symbol, PLAN.md 15.2b). Browser, die
+    unter mehreren Angaben wählen dürfen, nehmen so die lesbare Fassung.
+  -->
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/Icon-192.png"/>
 
   <title>Root-in</title>
   <link rel="manifest" href="manifest.json">

@@ -401,7 +401,7 @@ Vollständige Vorlage und Pflege-Anleitung: `store/others_index_beispiel.json` u
 #### Offene Schritte
 - [ ] **15.0** Play-Identitätsprüfung abwarten (läuft seit 2026-07-26). ~~AdMob-Zahlungsprofil, Bankverbindung, W-8BEN~~ → mit Phase 20 nicht mehr nötig für die Veröffentlichung.
 - [ ] **15.2** App in der Console anlegen, Store-Eintrag aus `store/PLAY_LISTING.md` füllen, Datenschutz-URL eintragen, Inhaltseinstufung + Zielgruppe, **Datensicherheit: keine Daten erhoben**, **Werbung: Nein**, **In-App-Käufe: Nein**. ⚠️ Vorher den Gist der Datenschutzerklärung auf den Stand von Phase 20 bringen.
-- [ ] **15.2b** *(nicht blockierend)* Launcher-Symbol nachschärfen — die Strichzeichnung hat nur 4,6 % Tintenanteil und verschmiert bei 48 px. Per Update jederzeit austauschbar.
+- [ ] **15.2b** *(nicht blockierend)* Launcher-Symbol nachschärfen — die Strichzeichnung hat nur 4,6 % Tintenanteil und verschmiert bei 48 px. Per Update jederzeit austauschbar. **Betrifft seit 26.11 auch das Web-Favicon** (16 px, dort bleibt fast nichts übrig); ein neues `assets/icon/app_icon.png` zieht beide Plattformen in einem Lauf nach.
 - [ ] **15.3** `flutter build appbundle --release` → Bundle in *Testen → Interner Test* hochladen.
 - [ ] **15.3b** **12-Tester-Regel**: 12 Tester müssen die App **installiert** haben, danach 14 zusammenhängende Tage. Kein Engpass (über 200 Schüler), aber die Uhr startet erst nach Googles Build-Freigabe. Realistisch 4–5 Wochen bis zur Produktion.
 - [ ] ~~15.4 Produkt `remove_ads`~~ · ~~15.5 Kauf-/Werbetest~~ · ~~15.7 AdMob verknüpfen~~ — entfallen mit Phase 20.
@@ -497,6 +497,8 @@ Zusätzlich gegen die ausgelieferten Dateien geprüft: `base href` = `/Root-in/`
 **Nebenbefund, der 26.1 bestätigt:** Auf der Einstellungen-Seite fehlen Erinnerungen und Tagesstand-Schalter vollständig — genau wie vorgesehen. Kein Knopf, der nichts tut.
 
 ⬜ **Was der Browser-Test NICHT abdeckt:** Getestet wurde Safari am Mac im Telefon-Format. **Das Ablegen auf dem Home-Bildschirm und Safaris Sieben-Tage-Regel lassen sich nur auf einem echten iPhone prüfen** — und genau daran hängt der Datenerhalt (26.8).
+
+⚠️ **Nachtrag vom selben Tag — dieser Abschnitt hat sich zu viel zugetraut.** Der Durchgang tippt **keinen einzigen der vier Reiter** an. Er prüft Start, Erststart, Speicher-Hinweis und Datenerhalt — und genau das steht oben auch. Trotzdem las sich „im echten Browser geprüft" wie eine Aussage über die ganze App, und **drei der vier Hauptseiten waren zu diesem Zeitpunkt unbenutzbar** (26.10). Die acht Häkchen oben bleiben gültig; sie decken nur weniger ab, als sie zu decken schienen. `tool/webtest.py` wird in 26.11 entsprechend erweitert.
 - [x] ⚠️ **Beinahe-Datenverlust abgewendet: Das Repository gab es schon.** `lukasylilli/Root-in` existiert seit Phase 17.1 — öffentlich, Zweig `main`, Inhalt: **nur** der Ordner `content/` mit den zwölf Anleitungs-Texten. Genau diese Adresse fragt die **bereits veröffentlichte Android-App zur Laufzeit** ab. Ein `git push` des reinen Quellcodes wäre abgelehnt worden (fremde Historie); ein erzwungener Push hätte die zwölf Dateien gelöscht und die Anleitung in der ausgelieferten App auf „Inhalt folgt" gesetzt — **ohne dass es hier aufgefallen wäre**, denn lokal ändert sich nichts. Beide Historien sind deshalb zusammengeführt (`--allow-unrelated-histories`); `content/` liegt jetzt neben dem Quellcode und wird mitversioniert.
 - [x] **Folge für die Adresse:** Die Web-Fassung landet unter `lukasylilli.github.io/Root-in/`, also genau dem `--base-href /Root-in/`, das bereits geprüft ist. Ein zweites Repository für den Quellcode hätte die Anleitungs-Adressen ungültig gemacht — und die ließen sich nur mit einem **App-Update** nachziehen (siehe Phase 17.3: Umbenennungen kosten eine App-Version).
 - [x] **GitHub Pages eingeschaltet** (Source: *GitHub Actions*) — erledigt vom Nutzer.
@@ -538,15 +540,57 @@ Zusätzlich gegen die ausgelieferten Dateien geprüft: `base href` = `/Root-in/`
 
 **Die ehrliche Grenze, wie schon in 26.4:** „Nie wieder fragen" ist über eine Freigabeliste **nicht** zu haben, ohne beliebige Befehlsausführung freizugeben. Wer das wirklich will, nimmt den Modus-Umschalter — das ist eine bewusste Entscheidung, keine getarnte Liste. Der zweite Teil des Problems lag ohnehin auf der anderen Seite: **verkettete Befehle** (`… && … && …`) brauchen für *jedes* Glied eine Freigabe. Kürzere Einzelbefehle senken die Rückfragen mehr als jede Liste.
 
-#### 26.10 Gefundene Fehler in der Web-Fassung ⬜ OFFEN
-**Vom Nutzer am 2026-08-14 an der veröffentlichten Seite gefunden.** Hier stehen bewusst **nur die Beobachtungen** — Ursache und Behebung folgen in einem eigenen Schritt.
+#### 26.10 Gefundene Fehler in der Web-Fassung ✅ Ursachen gefunden
+**Vom Nutzer am 2026-08-14 an der veröffentlichten Seite gefunden.** Vier Beobachtungen — **zwei** Ursachen. Die Behebung steht in 26.11.
 
-- [ ] **App-Symbol der Web-Fassung stimmt nicht.**
-- [ ] **Seite „Heute" zeigt „kein Internetzugang".**
-- [ ] **Seite „Ansicht" zeigt „kein Internetzugang".**
-- [ ] **Alle fünf Seiten unter Einstellungen → Root-in Anleitung** (Lernplanung, Links, …) **zeigen „kein Internetzugang".**
+| Beobachtung des Nutzers | Am Browser nachgemessen (2026-08-14) | Ursache |
+|---|---|---|
+| App-Symbol stimmt nicht | `icons/Icon-192.png` heruntergeladen: **das blaue „F" von Flutter** | Web-Symbole nie erzeugt |
+| Seite „Heute" zeigt „kein Internetzugang" | Seite ist **leer** — nur Titelzeile und Navigation, sonst ein Ladekreis ohne Ende | `dart:io` |
+| Seite „Ansicht" zeigt „kein Internetzugang" | Die vier Reiter stehen da, **kein Inhalt darunter** | `dart:io` |
+| Alle fünf Anleitungs-Seiten zeigen „kein Internetzugang" | Genau der Fehlerzustand `ContentLoadFailed` („اینترنت نیست") | `dart:io` |
 
-⬜ **Nächster Schritt:** Ursachen suchen und beheben. Bis dahin gilt die Web-Fassung als **nicht benutzbar veröffentlicht** — die Startseite und der Datenerhalt funktionieren (26.7), aber drei der vier Hauptseiten nicht.
+⚠️ **Die eigentliche Ursache: `dart:io` übersetzt für den Browser, funktioniert dort aber nicht.** Zwei Dienste holten ihre Daten mit `HttpClient` aus `dart:io` — `time_service.dart` (Datum) und `repo_content_service.dart` (Anleitungs-Texte). Für Web-Bauten liefert das SDK eine **Attrappe** dieser Bibliothek: Sie übersetzt anstandslos und wirft erst zur Laufzeit. Und zwar früher, als es aussieht — schon `HttpClient()` wirft, bevor eine Zeile Netzwerk läuft, weil das Feld `userAgent` beim Erzeugen `Platform.version` liest. In beiden Diensten stand `HttpClient()` **außerhalb** des `try`, das den Netzfehler auffangen sollte:
+
+- `TimeService.today()` warf statt zurückzufallen → `todayProvider` blieb im Fehler → `selectedDateProvider` blieb `null` → **Heute- und Ansicht-Seite warten seither auf ein Datum, das nie kommt.** Der Offline-Fallback auf die Geräteuhr, den es seit Phase 1 gibt, kam nie zum Zug: Der Fehler entstand eine Zeile zu früh.
+- `RepoContentService.load()` warf → die Seiten zeigen ihren ehrlichen Fehlerzustand: **„kein Internet" bei bester Verbindung.**
+
+⚠️ **Warum 26.7 das nicht gefunden hat, obwohl dort „im echten Browser geprüft" steht:** Der Durchgang prüfte Start, Erststart-Erklärung, Speicher-Hinweis, `localStorage`, IndexedDB und das Neuladen — **er hat nie einen der vier Reiter angetippt.** Acht bestandene Prüfungen, und trotzdem drei kaputte Seiten. Ein Durchgang, der nur die Startseite ansieht, prüft nur die Startseite; „im Browser getestet" ist keine Aussage über den Umfang (Lehre 31).
+
+⚠️ **Warum keine der eingebauten Prüfungen anschlug:** `flutter analyze` sieht nichts (der Import ist gültig), `flutter build web` sieht nichts (die Attrappe übersetzt), `flutter test` sieht nichts (Tests laufen auf der Dart-VM, wo `dart:io` echt ist). Diese Fehlerart ist **nur im Browser** sichtbar — oder durch eine Regel, die den Import verbietet (siehe 26.11).
+
+#### 26.11 Behoben: `dart:io` raus, Web-Symbole rein 🔄
+**Gebaut am 2026-08-14** als Antwort auf 26.10. Beide Ursachen sind behoben; **die Prüfung im echten Browser steht noch aus** (siehe unten) — bis dahin bleibt diese Nummer offen.
+
+- [x] **`package:http` statt `dart:io`** in beiden Diensten. Keine Weiche, kein bedingter Import: `http` geht auf allen drei Plattformen denselben Weg und nimmt im Browser `fetch`. Damit gilt wieder, was schon 26.1 leitete — **die beste Weiche ist keine Weiche**. `http` und `http_parser` (nur für `parseHttpDate`, das RFC-1123-Format kann `DateTime.parse` nicht) lagen ohnehin als transitive Abhängigkeiten im Baum; sie sind jetzt ausdrücklich eingetragen.
+- [x] **`dart:io` ist damit vollständig aus `lib/` verschwunden.** Die einzige verbliebene Stelle ist `pick_text_file_io.dart` — eine Datei, die der Compiler im Web-Bau gar nicht erst lädt.
+- [x] **Ein Test hält die Regel fest** (`test/unit/no_dart_io_in_lib_test.dart`): `dart:io` darf in `lib/` nur in Dateien stehen, die auf `_io.dart` enden. Das ist bewusst ein Test über **Quelltext**, kein Verhaltenstest — Verhalten lässt sich hier nicht prüfen, weil Tests auf der Dart-VM laufen, wo `dart:io` funktioniert. Genau deshalb hat der Fehler alle bestehenden Prüfungen passiert.
+- [x] ⚠️ **Die Uhr-Prüfung bleibt auch im Browser erhalten, aber über eine andere Adresse.** Sie liest die `Date`-Kopfzeile einer Antwort — im Browser gibt eine **fremde** Adresse ihre Kopfzeilen aber nur frei, soweit CORS es erlaubt, und `Date` steht nicht auf der Liste der ohne Zutun sichtbaren Werte. Gefragt wird deshalb die **eigene** Adresse (`Uri.base`); die gibt alles preis. Neue Fähigkeit `canReadForeignResponseHeaders` in `platform_support.dart` — `kIsWeb` steht weiterhin nur dort.
+- [x] **Mit Zeitstempel in der Adresse**, sonst dürfte der Browser eine gespeicherte Antwort ausliefern. Deren `Date` ist die Uhrzeit von damals — **ein alter Wert wäre hier schlimmer als gar keiner**: Er sähe geprüft aus und zeigte womöglich den Vortag.
+- [x] **Web-Symbole aus derselben einen Quelle** wie die Android-Symbole: `web: generate: true` in der `flutter_launcher_icons`-Rubrik, erzeugt aus `assets/icon/app_icon.png`. Von Hand erzeugte Dateien wären eine zweite Quelle gewesen, die beim nächsten Symbolwechsel zurückbleibt. `manifest.json` behält dabei Name, Beschreibung und Ausrichtung — das Werkzeug fasst nur `icons`, `background_color` und `theme_color` an.
+- [x] **Das Favicon ist 16 px groß und zeigt von einer Strichzeichnung fast nichts** (dieselbe Ursache wie 15.2b: 4,6 % Tintenanteil). Deshalb steht in `index.html` **zusätzlich** die 192-px-Fassung als `rel="icon"`; Browser, die wählen dürfen, nehmen die lesbare. Das Symbol auf dem Home-Bildschirm (`apple-touch-icon`, 192 px) war davon nie betroffen.
+- [x] **Stand nach dem Umbau: 189 Tests grün**, `flutter analyze` sauber, Web-Bau läuft.
+
+**Der Beweis: derselbe Durchgang gegen beide Stände.** `tool/webtest.py` ist um die Seiten erweitert, die es nie besucht hat — alle vier Reiter und eine Anleitungs-Seite. Entscheidend ist nicht, dass er grün wird, sondern **dass er auf dem kaputten Stand rot wird**: Ein Test, der den gemeldeten Fehler nicht sieht, beweist nichts über seine Behebung.
+
+| Prüfung | Lokaler Bau (repariert) | Veröffentlichte Seite (Stand 26.10) |
+|---|---|---|
+| Die acht Prüfungen aus 26.7 | ✅ | ✅ (waren nie das Problem) |
+| Heute zeigt Tagesring, Punkte, Erledigt-Zähler | ✅ | ❌ |
+| Ansicht zeigt den Zeitraum „Diese Woche" | ✅ | ❌ |
+| Anleitung ohne „Erneut versuchen"-Knopf | ✅ | ❌ |
+| Anleitungs-Text geladen und abgelegt | ✅ 6045 Zeichen | ❌ nichts abgelegt |
+
+**Vier Fallen, die dieser Durchgang selbst gestellt hat** — alle vier hätten ihn grün gemeldet, ohne etwas zu prüfen:
+
+- [x] ⚠️ **Ein Wisch scrollt eine Flutter-Liste im Desktop-Browser nicht.** Flutter erlaubt das Ziehen nur auf Berührungsgeräten; zwei Wische ließen die Koordinaten unverändert. Es schlägt nichts fehl — es passiert nur nichts, und der Fehler sieht aus wie „das Element gibt es nicht". Gescrollt wird jetzt mit einem **Rad**-Ereignis.
+- [x] ⚠️ **„Getippt" ist nicht „geöffnet".** Der Tipp fand ein passendes Element und meldete Erfolg — geöffnet hatte sich nichts. Die Adresszeile hilft hier **nicht**: Die Anleitung wird mit `context.push` geöffnet, die Adresse bleibt auf `#/settings`. Erkannt wird die Seite jetzt an einer UND-Verknüpfung: Thema sichtbar **und** Bottom-Navigation verschwunden.
+- [x] ⚠️ **Reine Texte stehen unzuverlässig im Semantik-Baum, Knöpfe immer.** Von einer vollen Seite Anleitung kommen dort nur rund 190 Zeichen an. Eine Prüfung auf die Überschrift „Kein Internet" meldete deshalb grün, während der Fehlerzustand deutlich sichtbar auf dem Bildschirm stand. Geprüft wird jetzt der **Knopf** „Erneut versuchen" (`role="button"`) — und zusätzlich der abgelegte Text im Browser-Speicher, der den geglückten Abruf unmittelbar belegt.
+- [x] ⚠️ **Eine feste Wartezeit reicht gegen `localhost`, aber nicht übers Netz.** Ein Lauf gegen die veröffentlichte Seite tippte auf eine Erklärung, die noch stand — danach maß jede Prüfung etwas anderes als gedacht. `boot()` wartet jetzt auf das erste Ergebnis statt auf die Uhr.
+
+⬜ **Was noch offen ist:**
+- [ ] **Veröffentlichen.** Der Push auf `main` löst die Automatik aus; bis dahin steht die kaputte Fassung online. Danach denselben Durchgang **gegen die veröffentlichte Seite** laufen lassen — dann muss er dort ebenfalls vollständig grün sein.
+- [ ] **Auf einem echten iPhone nachsehen**, ob das App-Symbol beim Ablegen auf dem Home-Bildschirm jetzt stimmt (der Durchgang prüft Safari am Mac, nicht das Ablegen).
 
 #### Offene Fragen dieser Phase
 - **Repository öffentlich oder privat?** GitHub Pages aus einem **privaten** Repository ist ein kostenpflichtiges Merkmal. Öffentlich heißt: der Quellcode ist für jeden lesbar. ⚠️ Das ist die eigentliche Entscheidung hinter dem Wunsch „niemand soll meinen Code nachbauen können" — und sie ist keine technische, sondern eine des Nutzers. Anmerkung: Auch bei einem **privaten** Repository bleibt die veröffentlichte Web-Fassung analysierbar (siehe 26.4); privat schützt die Quelle, nicht das Ergebnis.
@@ -635,6 +679,16 @@ Nach grünen Tests wurde die Phase am Emulator mit dem vollen Bestand aus `lib/m
   - **Ein Bau-Skript, das beide benutzen.** Automatik und Nutzer rufen dasselbe `tool/build_web.sh`. Zwei Listen von Flags laufen auseinander, und dann ist der veröffentlichte Bau nicht der geprüfte.
   - **Die Kontrolle vor dem ersten Commit hat zwei Dinge gefunden**, die mitgegangen wären: das Arbeitsmaterial in `meine/` und `.claude/settings.local.json` mit hunderten absoluten Pfaden unter `/Users/<name>/`. Bei einem ersten Commit lohnt der Blick in die Dateiliste — danach steht alles dauerhaft in der Geschichte.
 
+- **2026-08-14** — Phase 26.9 (Freigabeliste), dann 26.10/26.11: die vier vom Nutzer gemeldeten Fehler der veröffentlichten Web-Fassung untersucht und behoben. Tragende Entscheidungen und Erkenntnisse:
+  - **Vier Meldungen, zwei Ursachen — und die Meldung war nicht die Beobachtung.** Der Nutzer meldete für „Heute" und „Ansicht" ebenfalls „kein Internetzugang"; am Browser nachgemessen sind beide Seiten schlicht **leer** und warten ewig. Nicht dieselbe Anzeige, aber dieselbe Wurzel. **Erst messen, dann reparieren** — hätte man die Meldung wörtlich genommen, wäre die Suche bei der Netzwerkschicht der Anleitungs-Seiten stehen geblieben und der eigentliche Treffer (`todayProvider` im Fehler) verborgen geblieben.
+  - **`dart:io` ist im Browser eine Attrappe** (Lehre 30). Der Import übersetzt, `analyze` schweigt, der Bau läuft — es wirft erst zur Laufzeit, und bei `HttpClient` schon beim Erzeugen. Beide betroffenen Stellen hatten einen korrekten `try`-Block; er stand nur **eine Zeile zu spät**.
+  - **`package:http` statt einer Weiche.** Derselbe Gedanke wie in 26.1 bei Sicherung und Bild-Teilen: Der Web-Auftrag hat den Code nicht verzweigt, sondern vereinheitlicht — jetzt gehen alle drei Plattformen denselben Weg, und `dart:io` ist ganz aus `lib/` verschwunden.
+  - **Eine Regel, die kein Verhaltenstest prüfen kann, bekommt einen Quelltext-Test.** Tests laufen auf der Dart-VM, wo `dart:io` funktioniert — kein Testfall der Welt hätte diesen Fehler gefunden. Also prüft `no_dart_io_in_lib_test.dart` nicht Verhalten, sondern den Import selbst.
+  - **Die Uhr-Prüfung wurde im Browser nicht stillgelegt, sondern umgeleitet.** Fremde Kopfzeilen sind dort nicht lesbar, die eigenen schon — gefragt wird deshalb die eigene Adresse. Ein Verlauf soll überall gleich schwer zu fälschen sein; „im Web gibt es das halt nicht" wäre die bequeme, nicht die richtige Antwort gewesen.
+  - **Acht bestandene Browser-Prüfungen und drei kaputte Seiten** (Lehre 31). Der Durchgang aus 26.7 hatte keinen einzigen Reiter angetippt. Das ist die unangenehmste Erkenntnis dieser Runde: Der Satz „im echten Browser geprüft" stand im Plan und war wahr — er sagte nur nichts darüber, **was** geprüft wurde.
+  - **Web-Symbole aus derselben Quelle wie die Android-Symbole**, nicht von Hand erzeugt. Zwei Quellen für ein Symbol laufen beim ersten Wechsel auseinander, und niemand merkt es, weil das alte ja „irgendein" Symbol zeigt — genau der Zustand, den der Nutzer gemeldet hat.
+  - **Der erweiterte Browser-Durchgang wurde gegen den kaputten Stand gehalten, nicht nur gegen den reparierten** (Lehre 32). Das war die lehrreichste halbe Stunde des Tages: Vier Fassungen des Tests meldeten „bestanden", ohne die Seite je geöffnet zu haben. Ein Test, der nur am reparierten Stand läuft, misst die Reparatur nicht — er misst gar nichts, und man merkt es nie.
+
 ### 11.2 Dauerhafte Lehren & Fallstricke
 1. **iCloud bricht Code-Signing.** Das Flutter-SDK lag auf iCloud Drive; `taskgated` killte die Binaries sporadisch (`SIGKILL`, per Crash-Report belegt). Das war die Wurzel von „Dart compiler exited unexpectedly", `ShaderCompilerException` und den native-asset-Fehlern — **nicht** Arbeitsspeicher. SDKs nach `~/development/`, Projekte nach `~/Projects/`. Bei Build-Abstürzen zuerst `~/Library/Logs/DiagnosticReports/` lesen.
 2. **PATH in der Bash-Tool-Shell ist eingefroren.** Flutter/Dart immer mit vollem Pfad aufrufen: `"$HOME/development/flutter/bin/flutter"`.
@@ -665,6 +719,9 @@ Nach grünen Tests wurde die Phase am Emulator mit dem vollen Bestand aus `lib/m
 27. **Ein Browser-Datei-Dialog meldet den Abbruch nicht über `change`.** Bricht der Nutzer ab, feuert nur `cancel` — ohne dieses Ereignis bleibt das Future für immer offen und die Oberfläche hängt in einem Ladezustand ohne Ende (Phase 26.1).
 28. **`--base-href` entscheidet auf GitHub Pages über weiß oder App.** Die Seite liegt unter `/<repository>/`, nicht im Wurzelverzeichnis; mit dem Standardwert sucht sie ihre Dateien eine Ebene zu hoch und zeigt nichts an — ohne Fehlermeldung (Phase 26.3).
 29. **`--no-test-assets` gehört NICHT in die Automatik.** Das Flag ist eine lokale Abkürzung: Es überspringt das Bauen der Test-Assets, die auf dem Entwicklungsrechner ohnehin schon liegen. Ein CI-Lauf startet dagegen immer mit einem frischen Checkout — das entspricht `flutter clean`, und dann fehlen die Assets ganz: 11 Widget-Tests scheitern an `Asset 'shaders/ink_sparkle.frag' not found`. **Daran ist der allererste Veröffentlichungslauf gescheitert** (Phase 26). Bitter dabei: Der Kommentar im Arbeitsablauf berief sich auf genau die Lehre, die den Fehler beschreibt, und zog daraus den umgekehrten Schluss. Eine Lehre zu zitieren ist nicht dasselbe, wie sie anzuwenden.
+30. **`dart:io` übersetzt für den Browser und wirft dann zur Laufzeit.** Für Web-Bauten liefert das SDK eine Attrappe der Bibliothek: Der Import ist gültig, `flutter analyze` schweigt, `flutter build web` läuft durch — und der erste Aufruf wirft `UnsupportedError`. Besonders tückisch bei `HttpClient`: **schon `HttpClient()` wirft**, weil das Feld `userAgent` beim Erzeugen `Platform.version` liest. Wer die Zeile — wie üblich — vor das `try` stellt, hat seinen sorgfältig gebauten Offline-Fallback wirkungslos gemacht. Genau daran waren drei der vier Hauptseiten der veröffentlichten Web-Fassung unbenutzbar (Phase 26.10). **Kein `dart:io` in `lib/`**, außer in Dateien, die ein bedingter Import auswählt (`*_io.dart`) — `test/unit/no_dart_io_in_lib_test.dart` hält die Regel fest. Für Netzzugriffe `package:http`.
+31. **„Im Browser getestet" sagt nichts über den Umfang.** Der Durchgang aus Phase 26.7 bestand acht Prüfungen und übersah drei kaputte Seiten — er hatte **keinen einzigen Reiter angetippt**. Ein Gerätelauf beweist nur, was er anfasst; was er nicht anfasst, ist ungeprüft, nicht in Ordnung. Beim Schreiben eines solchen Durchgangs deshalb zuerst aufzählen, welche Seiten es gibt, und dann jede besuchen — nicht dort aufhören, wo es gerade gut aussieht.
+32. **Ein Oberflächen-Test muss am kaputten Stand rot werden — sonst prüft er nichts.** Beim Erweitern des Browser-Durchgangs (26.11) meldeten vier Fassungen nacheinander „bestanden", ohne die Anleitungs-Seite je gesehen zu haben: Ein Wisch scrollte nicht (Flutter zieht Listen im Desktop-Browser nicht), ein Tipp fand sein Element und öffnete trotzdem nichts, eine Abfrage suchte einen Text, den der Semantik-Baum gar nicht führt (reine Texte fehlen dort oft, Knöpfe nie), und eine feste Wartezeit reichte über das Netz nicht. Gemeinsamer Nenner: **Prüfungen auf eine Abwesenheit** („zeigt NICHT ‚Kein Internet'") werden grün, wenn gar nichts da ist. Deshalb erstens jede Abwesenheits-Prüfung an eine positive Zustandsprüfung koppeln („wir sind wirklich auf dieser Seite, UND …"), und zweitens **den neuen Test einmal gegen den kaputten Stand laufen lassen**. Rot am kaputten Stand ist der einzige Beleg, dass Grün am reparierten etwas bedeutet.
 
 ## 12. Offene Fragen
 - ~~Balkendiagramm: Y-Achse doppelt beschriftet, X-Beschriftungen überlappen~~ · ~~Fortschritts-Trend im Jahr unlesbar~~ — **beide mit Phase 13 am 2026-08-07 erledigt.**

@@ -64,6 +64,18 @@ dependencies:
   timezone: ^0.11.1
   flutter_file_dialog: ^3.3.1
   home_widget: ^0.9.3
+  # Mit Phase 26.11 dazugekommen — und zwar als BEHEBUNG, nicht als Zuwachs:
+  # Vorher holten `time_service.dart` und `repo_content_service.dart` ihre
+  # Daten mit `HttpClient` aus `dart:io`. Das ÜBERSETZT für den Browser
+  # anstandslos, wirft dort aber beim ersten Aufruf `UnsupportedError` —
+  # drei von vier Hauptseiten der Web-Fassung waren deshalb unbenutzbar.
+  # `http` geht auf allen drei Plattformen denselben Weg (im Browser über
+  # `fetch`), `dart:io` ist damit aus `lib/` verschwunden.
+  # Beide lagen ohnehin schon als transitive Abhängigkeiten im Baum.
+  http: ^1.6.0
+  # Nur für `parseHttpDate` (Uhr-Prüfung in `time_service.dart`): Das Format
+  # der `Date`-Kopfzeile ist RFC-1123, `DateTime.parse` kann es nicht.
+  http_parser: ^4.1.2
   # PHASE 20 (2026-08-01): Werbung deaktiviert — zum Wiederaktivieren diesen Block einkommentieren.
   # Bleiben die Pakete drin, baut Gradle SDK und Manifest-Anforderungen
   # (AD_ID, BILLING) weiterhin mit — die App wäre nur im Code werbefrei, im
@@ -105,6 +117,12 @@ dev_dependencies:
 # `adaptive_icon_background` ist weiß statt App-grün: die Vorlage ist ein JPEG
 # mit fest eingebranntem weißem Hintergrund, eine farbige Fläche würde als
 # weißer Kasten darauf erscheinen.
+#
+# `web: generate: true` kam mit Phase 26.11 dazu. Bis dahin lagen in `web/`
+# noch die Symbole der Flutter-Vorlage — das blaue „F" stand als App-Symbol
+# auf dem Home-Bildschirm. Der Weg über dieses Werkzeug statt von Hand
+# erzeugter Dateien hält es bei EINER Quelle: Ein neues `app_icon.png` zieht
+# Android und Web in einem Lauf nach.
 flutter_launcher_icons:
   image_path: "assets/icon/app_icon.png"
   android: true
@@ -112,6 +130,10 @@ flutter_launcher_icons:
   remove_alpha_ios: true
   adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/icon/app_icon.png"
+  web:
+    generate: true
+    background_color: "#2E7D5B"
+    theme_color: "#2E7D5B"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

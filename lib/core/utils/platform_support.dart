@@ -63,3 +63,17 @@ bool get usesBrowserStorage => kIsWeb;
 /// Im Browser gehört die Ausrichtung dem Gerät, nicht der Seite — die
 /// Übersicht kann dort kein Querformat erzwingen (PLAN.md Phase 16).
 bool get supportsOrientationLock => isMobilePlatform;
+
+/// Ob sich die Kopfzeilen einer **fremden** Adresse lesen lassen
+/// (PLAN.md Phase 26.11).
+///
+/// Auf Android/iOS ja — dort ist eine HTTP-Antwort einfach eine HTTP-Antwort.
+/// Im Browser gibt eine fremde Adresse nur das frei, was sie per CORS
+/// ausdrücklich erlaubt, und `Date` gehört **nicht** zu den ohne Zutun
+/// sichtbaren Kopfzeilen. Die Uhr-Prüfung fragt deshalb im Browser die
+/// **eigene** Adresse (siehe `core/services/time_service.dart`).
+///
+/// ⚠️ Betrifft nur die **Kopfzeilen**: Den *Inhalt* fremder Adressen liest
+/// der Browser sehr wohl, sofern sie es erlauben — die Anleitungs-Texte von
+/// `raw.githubusercontent.com` kommen genau so an.
+bool get canReadForeignResponseHeaders => !kIsWeb;

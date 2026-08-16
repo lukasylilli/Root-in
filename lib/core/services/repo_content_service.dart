@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'settings_service.dart';
@@ -10,8 +10,7 @@ import 'settings_service.dart';
 typedef RepoFetchResult = ({int status, String? body});
 
 /// Holt eine Adresse. Als Funktion herausgezogen, damit Tests den Netzzugriff
-/// ersetzen können, ohne dass ein HTTP-Paket dazukommt (dieselbe Bauart wie
-/// `time_service.dart`, das ebenfalls direkt `dart:io` nutzt).
+/// ersetzen können, ohne einen echten Server zu brauchen.
 typedef RepoFetcher = Future<RepoFetchResult> Function(Uri url);
 
 /// Lädt Textdateien aus dem öffentlichen Inhalts-Repository und legt sie
@@ -55,6 +54,12 @@ class RepoContentService {
   /// Länger warten lohnt nicht: Es gibt entweder einen gespeicherten Stand
   /// oder eine klare Fehlermeldung.
   static const Duration timeout = Duration(seconds: 8);
+
+  /// Die zwei Status-Werte, um die es hier geht. Früher kamen sie als
+  /// `HttpStatus.ok`/`HttpStatus.notFound` aus `dart:io` — das ist mit
+  /// Phase 26.11 aus `lib/` verschwunden (Lehre 30).
+  static const int statusOk = 200;
+  static const int statusNotFound = 404;
 
   /// Adresse einer Datei — [path] ist **relativ zu `content/`**, mit
   /// Dateiendung, z. B. `de/lernplanung.md` oder `others/fa/news/start.md`.
@@ -110,9 +115,9 @@ class RepoContentService {
     }
 
     final result = await _fetch(urlFor(path));
-    if (result.status == HttpStatus.notFound) return null;
-    if (result.status != HttpStatus.ok || result.body == null) {
-      throw HttpException('HTTP ${result.status}');
+    if (result.status == statusNotFound) return null;
+    if (result.status != statusOk || result.body == null) {
+      throw http.ClientException('HTTP ${result.status}', urlFor(path));
     }
 
     await _prefs.setString(key, result.body!);
@@ -127,7 +132,7 @@ class RepoContentService {
   ) async {
     try {
       final result = await _fetch(urlFor(path));
-      if (result.status != HttpStatus.ok) return;
+      if (result.status != statusOk) return;
 
       final body = result.body;
       // Nur bei echter Änderung melden — sonst löst jede Aktualisierung den
@@ -145,21 +150,20 @@ class RepoContentService {
   /// einem Fehlschlag wirklich neu lädt.
   Future<void> clearCache(String path) => _prefs.remove(_cacheKey(path));
 
+  /// ⚠️ **Kein `dart:io`** (PLAN.md Phase 26.11, Lehre 30): `HttpClient` warf
+  /// im Browser `UnsupportedError`, noch bevor eine Zeile Netzwerk lief. Alle
+  /// fünf Anleitungs-Seiten der veröffentlichten Web-Fassung zeigten deshalb
+  /// „Kein Internet" — bei bester Verbindung.
+  ///
+  /// Der Text wird ausdrücklich als UTF-8 gelesen: Ohne Angabe richtet sich
+  /// `http` nach dem Zeichensatz der Kopfzeile und fiele auf Latin-1 zurück,
+  /// wenn der Server keinen nennt. Die persischen Texte wären dann Kauderwelsch.
   static Future<RepoFetchResult> _download(Uri url) async {
-    final client = HttpClient();
-    try {
-      final request = await client.getUrl(url).timeout(timeout);
-      final response = await request.close().timeout(timeout);
-      if (response.statusCode != HttpStatus.ok) {
-        return (status: response.statusCode, body: null);
-      }
-      final body = await response.transform(utf8.decoder).join().timeout(
-        timeout,
-      );
-      return (status: HttpStatus.ok, body: body);
-    } finally {
-      client.close(force: true);
+    final response = await http.get(url).timeout(timeout);
+    if (response.statusCode != statusOk) {
+      return (status: response.statusCode, body: null);
     }
+    return (status: statusOk, body: utf8.decode(response.bodyBytes));
   }
 }
 

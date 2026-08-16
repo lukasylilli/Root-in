@@ -1,8 +1,9 @@
 # Root-in — Projekt-Map (Ordner- & Datei-Übersicht)
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
-> ⚠️ **Offen (2026-08-14): vier Fehler in der veröffentlichten Web-Fassung** — siehe Abschnitt „Web-Fassung & Automatik" und PLAN.md 26.10.
-> Zuletzt aktualisiert: 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8 und 26.9. Neu im Root-Baum: `content/` (aus dem früheren Inhalts-Repository), `.claude/settings.json`. Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `core/services/web_storage/` (drei Dateien), `core/widgets/web_storage_hint.dart`, `test/widget/web_storage_hint_test.dart`, `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist ein Git-Repository — Quellcode und Inhalts-Repository sind darin zusammengeführt. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
+> ⚠️ **Offen (2026-08-14): Die vier Web-Fehler sind behoben und im Browser nachgewiesen — aber noch NICHT veröffentlicht.** Online steht bis zum nächsten Push auf `main` weiterhin die kaputte Fassung. Siehe PLAN.md 26.11.
+> Zuletzt aktualisiert: 2026-08-14 (nachmittags) — **Phase 26.11: die vier gemeldeten Web-Fehler behoben.** `dart:io` ist aus `lib/` verschwunden (`time_service.dart` und `repo_content_service.dart` nehmen jetzt `package:http` — die Attrappe von `dart:io` warf im Browser und legte drei der vier Hauptseiten lahm, PLAN.md 26.10). Neu: `test/unit/no_dart_io_in_lib_test.dart` (Wächter über die Regel), Fähigkeit `canReadForeignResponseHeaders` in `platform_support.dart`, direkte Abhängigkeiten `http` + `http_parser`, Web-Symbole aus `assets/icon/app_icon.png` erzeugt (`flutter_launcher_icons` mit `web:`).
+> Zuvor 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8 und 26.9. Neu im Root-Baum: `content/` (aus dem früheren Inhalts-Repository), `.claude/settings.json`. Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `core/services/web_storage/` (drei Dateien), `core/widgets/web_storage_hint.dart`, `test/widget/web_storage_hint_test.dart`, `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist ein Git-Repository — Quellcode und Inhalts-Repository sind darin zusammengeführt. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
 > Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): keine neuen Dateien, geändert sind `core/widgets/chart_card.dart`, die drei ARB-Dateien und drei Test-Dateien.
 > Zuvor 2026-08-02 — Phasen 25, 24, 23 und 22 gebaut; der Abschnitt „Geplante Dateien" ist entfallen.
 
@@ -30,7 +31,8 @@
 ├── PLAN.md                          ✅ Gesamtplan/Roadmap der App
 ├── MAP.md                           ✅ Diese Datei — Struktur-Übersicht
 ├── README.md                        ✅ Standard-Flutter-README
-├── pubspec.yaml                     ✅ Paket-Definition & Dependencies (am Dateiende: flutter_launcher_icons)
+├── pubspec.yaml                     ✅ Paket-Definition & Dependencies (am Dateiende: flutter_launcher_icons —
+│                                        seit Phase 26.11 mit `web:`, erzeugt also auch die Web-Symbole)
 ├── pubspec.lock                     ✅ Gesperrte Dependency-Versionen
 ├── analysis_options.yaml            ✅ Lint-Regeln
 ├── .metadata                        ⚙️ Von Flutter gepflegt (Projekt-Herkunft, migrierte Plattformen) —
@@ -98,8 +100,12 @@
 │   ├── sqlite3.wasm                 ⚙️ NICHT versioniert — tool/fetch_web_db_assets.sh holt sie. Ohne diese
 │   │                                    Datei wirft driftDatabase() im Browser, die App startet gar nicht
 │   ├── drift_worker.js              ⚙️ NICHT versioniert — dieselbe Quelle, Version aus pubspec.lock
-│   ├── favicon.png, icons/          ⚠️ OFFENER FEHLER (PLAN.md 26.10): Das App-Symbol der Web-Fassung
-│   │                                    stimmt nicht. Noch nicht untersucht
+│   ├── favicon.png, icons/          ⚙️ Aus assets/icon/app_icon.png erzeugt (Phase 26.11) — dieselbe eine
+│   │                                    Quelle wie die Android-Symbole, `dart run flutter_launcher_icons`.
+│   │                                    Bis dahin lagen hier die Symbole der Flutter-Vorlage: das blaue
+│   │                                    „F" stand als App-Symbol auf dem Home-Bildschirm (PLAN.md 26.10).
+│   │                                    ⚠️ favicon.png ist 16 px — von der Strichzeichnung bleibt dort
+│   │                                    fast nichts. Deshalb nennt index.html zusätzlich Icon-192.png
 │   └── .gitignore                   ✅ Hält die beiden erzeugten Dateien aus der Versionierung
 ├── content/                         ✅ Die Anleitungs-Texte (Phase 17.1/22) — seit Phase 26.2 IM PROJEKT,
 │   └── de|en|fa/                        vorher ein eigenes GitHub-Repository. Sie werden zur Laufzeit
@@ -216,10 +222,13 @@ lib/
 │   │   ├── streak_calculator.dart            ✅ Reine Streak-Logik inkl. 1-Frei-Tag/Woche (unit-getestet)
 │   │   ├── achievement_evaluator.dart        ✅ Reine Freischalt-Logik (unit-getestet)
 │   │   └── platform_support.dart             ✅ **Die einzige Stelle im Projekt, an der `kIsWeb` steht.**
-│   │                                             isMobilePlatform + seit Phase 26 vier nach FÄHIGKEIT
+│   │                                             isMobilePlatform + seit Phase 26 fünf nach FÄHIGKEIT
 │   │                                             benannte Abfragen: supportsReminders,
 │   │                                             supportsHomeScreenWidgets, supportsOrientationLock,
-│   │                                             usesBrowserStorage (Phase 26.8).
+│   │                                             usesBrowserStorage (Phase 26.8),
+│   │                                             canReadForeignResponseHeaders (Phase 26.11 — im Browser
+│   │                                             gibt eine fremde Adresse ihre Kopfzeilen nur soweit frei,
+│   │                                             wie CORS es erlaubt, und `Date` gehört nicht dazu).
 │   │                                             ⚠️ usesBrowserStorage NICHT durch
 │   │                                             supportsHomeScreenWidgets ersetzen: Im Browser liefern
 │   │                                             beide dasselbe, sie MEINEN aber Verschiedenes — auf einem
@@ -228,7 +237,14 @@ lib/
 │   │                                             wissen „gibt es hier Erinnerungen?", nicht „wo laufe ich?".
 │   │                                             🕯️ isStorePlatform ist mit Phase 20 auskommentiert
 │   ├── services/
-│   │   ├── time_service.dart                 ✅ Aktuelles Datum (HTTP-Date-Header + Offline-Fallback)
+│   │   ├── time_service.dart                 ✅ Aktuelles Datum (HTTP-Date-Header + Offline-Fallback).
+│   │   │                                         Seit Phase 26.11 über `package:http` statt `dart:io` —
+│   │   │                                         letzteres warf im Browser schon beim `HttpClient()` und
+│   │   │                                         riss damit todayProvider und die Heute-/Ansicht-Seite
+│   │   │                                         mit sich (PLAN.md 26.10, Lehre 30).
+│   │   │                                         ⚠️ Im Browser wird die EIGENE Adresse gefragt (Uri.base
+│   │   │                                         + Zeitstempel gegen den Zwischenspeicher), weil fremde
+│   │   │                                         Kopfzeilen dort nicht lesbar sind
 │   │   ├── settings_service.dart             ✅ Persistiert ThemeMode, AppThemeVariant, AppLanguage, AscentSource,
 │   │   │                                         onboarding_seen, share_include_overview (Phase 19) und
 │   │   │                                         status_notification_enabled (Phase 23);
@@ -266,7 +282,10 @@ lib/
 │   │   │                                         sie in shared_preferences ab → offline lesbar. Zeigt erst den
 │   │   │                                         gespeicherten Stand und lädt daneben nach; meldet NUR bei
 │   │   │                                         geändertem Text (sonst Endlosschleife). 404 → „Inhalt folgt".
-│   │   │                                         Netzzugriff hinter GuideFetcher (in Tests ersetzbar), dart:io
+│   │   │                                         Netzzugriff hinter RepoFetcher (in Tests ersetzbar); seit
+│   │   │                                         Phase 26.11 `package:http` statt `dart:io` — letzteres warf
+│   │   │                                         im Browser, weshalb alle fünf Anleitungs-Seiten „kein
+│   │   │                                         Internet" zeigten (PLAN.md 26.10, Lehre 30)
 │   │   ├── home_widget_service.dart          ✅ Einzige Stelle für home_widget: Fortschritt schreiben, 7 PNGs
 │   │   │                                         rendern (5 Diagramme + Ring + Checkliste) und die Farbkachel-
 │   │   │                                         Werte setzen. Schlüssel müssen zu den Kotlin-Klassen passen.
@@ -533,7 +552,12 @@ test/
 │   ├── remove_ads_test.dart             🕯️ 8 Fälle (Phase 14), stillgelegt — plus EIN aktiver, mit `skip:`
 │   │                                        übersprungener Platzhalter: ohne `main()` meldet flutter test
 │   │                                        die Datei als Ladefehler
-│   └── app_theme_tokens_test.dart       ✅ 3 Fälle (Tokens je Variante+Helligkeit, heat(), Clamping)
+│   ├── app_theme_tokens_test.dart       ✅ 3 Fälle (Tokens je Variante+Helligkeit, heat(), Clamping)
+│   └── no_dart_io_in_lib_test.dart      ✅ 1 Fall (Phase 26.11): kein `dart:io` in lib/, außer in Dateien
+│                                            auf `_io.dart` (die lädt der Web-Bau nie).
+│                                            ⚠️ Prüft QUELLTEXT, nicht Verhalten — und das mit Absicht:
+│                                            Tests laufen auf der Dart-VM, wo `dart:io` funktioniert. Kein
+│                                            Verhaltenstest hätte den Fehler aus 26.10 finden können
 ├── widget/
 │   ├── matrix_grid_test.dart        ✅ 2 Fälle (eine Zelle je Tag; fitToWidth passt ein Jahr ohne Überlauf)
 │   ├── progress_ring_test.dart      ✅ 3 Fälle (Prozent, Clamping, centerLabel)
@@ -643,6 +667,14 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        ⚠️ Einmalig nötig: `safaridriver --enable` (Mac-Passwort).
 │                                        ⚠️ Jede Sitzung startet mit LEEREM Profil — Persistenz nur
 │                                        innerhalb EINER Sitzung prüfbar, sonst misst man nichts
+│                                        Seit Phase 26.11: **17 Prüfungen**, darunter alle vier Reiter
+│                                        und eine Anleitungs-Seite. Am kaputten Stand wird er rot —
+│                                        daran gemessen, nicht nur am reparierten (PLAN.md Lehre 32)
+│                                        ⚠️ Gescrollt wird mit einem RAD-Ereignis: Ein Wisch bewegt
+│                                        eine Flutter-Liste im Desktop-Browser nicht, ohne dass etwas
+│                                        fehlschlägt. ⚠️ Reine Texte stehen unzuverlässig im
+│                                        Semantik-Baum (von einer vollen Anleitungs-Seite nur ~190
+│                                        Zeichen), Knöpfe immer — Zustände deshalb an Knöpfen ablesen
 └── build_web.sh                     ✅ **Einzige Stelle der Bau-Schalter**: --no-source-maps, -O4, --csp,
                                          --base-href, Version aus pubspec.yaml, Baunummer aus
                                          GITHUB_RUN_NUMBER. Die Automatik ruft DIESES Skript auf —
@@ -667,16 +699,24 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 
 | Was | Wo | Kern |
 |---|---|---|
-| Plattform-Weichen | `core/utils/platform_support.dart` | `supportsReminders`, `supportsHomeScreenWidgets`, `supportsOrientationLock`. **`kIsWeb` steht NUR hier** |
+| Plattform-Weichen | `core/utils/platform_support.dart` | `supportsReminders`, `supportsHomeScreenWidgets`, `supportsOrientationLock`, `usesBrowserStorage`, `canReadForeignResponseHeaders`. **`kIsWeb` steht NUR hier** |
 | Datenbank im Browser | `data/local/database.dart` | `DriftWebOptions` — ohne den Parameter wirft `driftDatabase()` im Web |
 | Sicherung einlesen | `core/services/file_pick/` | Bedingter Import: mobil Dateipfad, im Browser `<input type="file">` |
+| Netzzugriff | `package:http` in `time_service.dart` + `repo_content_service.dart` | **Kein `dart:io`** — es übersetzt für den Browser und wirft dort (Lehre 30) |
 | Werte vom Bau | `core/constants/app_config.dart` | `String.fromEnvironment` + die Warnung, was das **nicht** leistet |
 
-⚠️ **OFFENE FEHLER in der veröffentlichten Web-Fassung** (PLAN.md 26.10, gefunden 2026-08-14). Nur Beobachtungen — Ursache noch nicht gesucht:
-- App-Symbol der Web-Fassung stimmt nicht (`web/icons/`, `web/favicon.png`)
-- Seite „Heute" zeigt „kein Internetzugang"
-- Seite „Ansicht" zeigt „kein Internetzugang"
-- Alle fünf Seiten unter Einstellungen → Root-in Anleitung zeigen „kein Internetzugang"
+✅ **DIE VIER GEMELDETEN FEHLER SIND BEHOBEN** (PLAN.md 26.10/26.11, gemeldet und behoben am 2026-08-14) — zwei Ursachen hinter vier Beobachtungen:
+
+| Beobachtung | Ursache | Behoben durch |
+|---|---|---|
+| App-Symbol stimmt nicht | Web-Symbole waren die der Flutter-Vorlage | `flutter_launcher_icons` mit `web: generate: true` |
+| „Heute" leer (gemeldet als „kein Internetzugang") | `HttpClient()` aus `dart:io` warf im Browser → `todayProvider` im Fehler → kein Datum | `package:http` in `time_service.dart` |
+| „Ansicht" leer (dieselbe Meldung) | dieselbe | dieselbe |
+| Fünf Anleitungs-Seiten „kein Internet" | `HttpClient()` warf → `load()` warf | `package:http` in `repo_content_service.dart` |
+
+**Nachgewiesen, nicht behauptet:** `tool/webtest.py` deckt jetzt alle vier Reiter und eine Anleitungs-Seite ab. Am **lokalen, reparierten** Bau sind alle 17 Prüfungen grün; an der **veröffentlichten** Fassung fallen genau die vier durch, die den gemeldeten Fehlern entsprechen.
+
+⬜ **Noch offen:** veröffentlichen (der Push auf `main` löst die Automatik aus) und danach denselben Durchgang gegen die veröffentlichte Seite laufen lassen; App-Symbol auf einem echten iPhone ansehen.
 
 **Wo die Daten der Web-Fassung liegen** (PLAN.md Phase 26.8) — zwei getrennte Orte, beide überstehen Schließen und Neuöffnen:
 
@@ -732,6 +772,7 @@ Manifest (siehe Hinweise).
 - Widgets am unteren Ende einer `ListView`/`GridView` sind im Test-Viewport noch nicht gemountet — erst `tester.scrollUntilVisible(...)`. Bei mehreren verschachtelten Scrollables `find.byType(Scrollable).first` nehmen.
 - **Datenbank-Abfragen mitten im Widget-Test** brauchen `await tester.runAsync(() async { … })`. Drift liefert Stream-Ergebnisse über einen Timer, und im Widget-Test steht die Uhr still — ein blankes `await stream.first` hängt bis zum Timeout (dieselbe Ursache wie bei `disposeAndFlush`). Wo kein Widget-Baum nötig ist, ist ein reines `test(...)` mit `ProviderContainer` der einfachere Weg.
 - Ein **Render-Test** beweist Geometrie und Ausrichtung, aber **nicht** den verfügbaren Platz auf einem echten Gerät und nichts, was an einem Konfigurationswechsel hängt (Drehung, Theme). Wer ein Bild erzeugt: `FontLoader` und `boundary.toImage()` **müssen** in `tester.runAsync(...)` laufen, sonst hängt der Test bis zum Timeout.
+- **Kein `dart:io` in `lib/`** — es übersetzt für den Browser und wirft dort erst zur Laufzeit (PLAN.md Lehre 30). Netzzugriffe über `package:http`; was wirklich Plattform braucht, kommt hinter einen bedingten Import (`*_io.dart` / `*_web.dart`, Vorbild `core/services/file_pick/`). `test/unit/no_dart_io_in_lib_test.dart` hält die Regel.
 - **Netzzugriff braucht `INTERNET` im *Haupt*-Manifest.** Flutter legt sie nur in `src/debug/` und `src/profile/` an — neue Netz-Funktionen deshalb **im Release-Build** gegenprüfen.
 - `AndroidManifest.xml` hat einen `<queries>`-Eintrag für `https`-`VIEW`-Intents (Android-11-Package-Visibility) — nötig für `url_launcher`.
 - **Provider abwarten:** `container.read(streamProvider.future)` **ohne** gleichzeitigen Zuhörer hängt für immer (Riverpod verwirft den Provider und bricht die Drift-Subscription ab). Außerhalb des Widget-Baums `_awaitAlive` aus `home_widget_service.dart` nehmen oder selbst eine `container.listen`-Subscription halten.

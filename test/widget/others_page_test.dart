@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart';
 import 'package:root_in/core/services/repo_content_service.dart';
 import 'package:root_in/core/services/settings_service.dart';
 import 'package:root_in/features/others/presentation/others_folder_page.dart';
@@ -44,7 +43,7 @@ RepoFetcher _server(Map<String, RepoFetchResult> routes) {
     for (final entry in routes.entries) {
       if (url.path.endsWith(entry.key)) return entry.value;
     }
-    throw const SocketException('kein Netz');
+    throw ClientException('kein Netz');
   };
 }
 
@@ -143,7 +142,7 @@ void main() {
             textCalls++;
             return (status: 200, body: '# Kursstart\n\nAb Montag.');
           }
-          throw const SocketException('kein Netz');
+          throw ClientException('kein Netz');
         },
       ),
     );

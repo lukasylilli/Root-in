@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart';
 import 'package:root_in/core/services/repo_content_service.dart';
 // PHASE 20 (2026-08-01): Werbung deaktiviert — zum Wiederaktivieren diesen Block einkommentieren.
 // import 'package:root_in/core/services/purchase_service.dart';
@@ -135,7 +135,7 @@ void main() {
     await tester.pumpWidget(
       await _wrapGuide(
         GuideTopic.studyPlanning,
-        fetch: (_) => throw const SocketException('kein Netz'),
+        fetch: (_) => throw ClientException('kein Netz'),
       ),
     );
     await tester.pumpAndSettle();
