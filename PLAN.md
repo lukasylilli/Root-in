@@ -559,8 +559,8 @@ Zusätzlich gegen die ausgelieferten Dateien geprüft: `base href` = `/Root-in/`
 
 ⚠️ **Warum keine der eingebauten Prüfungen anschlug:** `flutter analyze` sieht nichts (der Import ist gültig), `flutter build web` sieht nichts (die Attrappe übersetzt), `flutter test` sieht nichts (Tests laufen auf der Dart-VM, wo `dart:io` echt ist). Diese Fehlerart ist **nur im Browser** sichtbar — oder durch eine Regel, die den Import verbietet (siehe 26.11).
 
-#### 26.11 Behoben: `dart:io` raus, Web-Symbole rein 🔄
-**Gebaut am 2026-08-14** als Antwort auf 26.10. Beide Ursachen sind behoben; **die Prüfung im echten Browser steht noch aus** (siehe unten) — bis dahin bleibt diese Nummer offen.
+#### 26.11 Behoben: `dart:io` raus, Web-Symbole rein ✅
+**Gebaut, geprüft und veröffentlicht am 2026-08-14** als Antwort auf 26.10. Beide Ursachen sind behoben, die Behebung ist **an der veröffentlichten Seite im echten Browser nachgewiesen** — 17 von 17 Prüfungen grün, dieselben vier, die vorher rot waren.
 
 - [x] **`package:http` statt `dart:io`** in beiden Diensten. Keine Weiche, kein bedingter Import: `http` geht auf allen drei Plattformen denselben Weg und nimmt im Browser `fetch`. Damit gilt wieder, was schon 26.1 leitete — **die beste Weiche ist keine Weiche**. `http` und `http_parser` (nur für `parseHttpDate`, das RFC-1123-Format kann `DateTime.parse` nicht) lagen ohnehin als transitive Abhängigkeiten im Baum; sie sind jetzt ausdrücklich eingetragen.
 - [x] **`dart:io` ist damit vollständig aus `lib/` verschwunden.** Die einzige verbliebene Stelle ist `pick_text_file_io.dart` — eine Datei, die der Compiler im Web-Bau gar nicht erst lädt.
@@ -573,13 +573,15 @@ Zusätzlich gegen die ausgelieferten Dateien geprüft: `base href` = `/Root-in/`
 
 **Der Beweis: derselbe Durchgang gegen beide Stände.** `tool/webtest.py` ist um die Seiten erweitert, die es nie besucht hat — alle vier Reiter und eine Anleitungs-Seite. Entscheidend ist nicht, dass er grün wird, sondern **dass er auf dem kaputten Stand rot wird**: Ein Test, der den gemeldeten Fehler nicht sieht, beweist nichts über seine Behebung.
 
-| Prüfung | Lokaler Bau (repariert) | Veröffentlichte Seite (Stand 26.10) |
-|---|---|---|
-| Die acht Prüfungen aus 26.7 | ✅ | ✅ (waren nie das Problem) |
-| Heute zeigt Tagesring, Punkte, Erledigt-Zähler | ✅ | ❌ |
-| Ansicht zeigt den Zeitraum „Diese Woche" | ✅ | ❌ |
-| Anleitung ohne „Erneut versuchen"-Knopf | ✅ | ❌ |
-| Anleitungs-Text geladen und abgelegt | ✅ 6045 Zeichen | ❌ nichts abgelegt |
+| Prüfung | Vorher veröffentlicht (26.10) | Lokaler Bau (repariert) | **Jetzt veröffentlicht** |
+|---|---|---|---|
+| Die acht Prüfungen aus 26.7 | ✅ (waren nie das Problem) | ✅ | ✅ |
+| Heute zeigt Tagesring, Punkte, Erledigt-Zähler | ❌ | ✅ | ✅ |
+| Ansicht zeigt den Zeitraum „Diese Woche" | ❌ | ✅ | ✅ |
+| Anleitung ohne „Erneut versuchen"-Knopf | ❌ | ✅ | ✅ |
+| Anleitungs-Text geladen und abgelegt | ❌ nichts abgelegt | ✅ 6045 Zeichen | ✅ 6045 Zeichen |
+
+**Veröffentlicht mit Commit `bec572a`**; der Automatik-Lauf lief durch, und das App-Symbol im Netz ist seither die Root-in-Zeichnung (11 299 statt 5 292 Bytes — die Flutter-Vorlage ist weg).
 
 **Vier Fallen, die dieser Durchgang selbst gestellt hat** — alle vier hätten ihn grün gemeldet, ohne etwas zu prüfen:
 
@@ -589,8 +591,7 @@ Zusätzlich gegen die ausgelieferten Dateien geprüft: `base href` = `/Root-in/`
 - [x] ⚠️ **Eine feste Wartezeit reicht gegen `localhost`, aber nicht übers Netz.** Ein Lauf gegen die veröffentlichte Seite tippte auf eine Erklärung, die noch stand — danach maß jede Prüfung etwas anderes als gedacht. `boot()` wartet jetzt auf das erste Ergebnis statt auf die Uhr.
 
 ⬜ **Was noch offen ist:**
-- [ ] **Veröffentlichen.** Der Push auf `main` löst die Automatik aus; bis dahin steht die kaputte Fassung online. Danach denselben Durchgang **gegen die veröffentlichte Seite** laufen lassen — dann muss er dort ebenfalls vollständig grün sein.
-- [ ] **Auf einem echten iPhone nachsehen**, ob das App-Symbol beim Ablegen auf dem Home-Bildschirm jetzt stimmt (der Durchgang prüft Safari am Mac, nicht das Ablegen).
+- [ ] **Auf einem echten iPhone nachsehen**, ob das App-Symbol beim Ablegen auf dem Home-Bildschirm stimmt. Der Durchgang prüft Safari **am Mac**; das Ablegen selbst kann er nicht — dieselbe Grenze wie in 26.7 und 26.8, und sie gilt weiter.
 
 #### Offene Fragen dieser Phase
 - **Repository öffentlich oder privat?** GitHub Pages aus einem **privaten** Repository ist ein kostenpflichtiges Merkmal. Öffentlich heißt: der Quellcode ist für jeden lesbar. ⚠️ Das ist die eigentliche Entscheidung hinter dem Wunsch „niemand soll meinen Code nachbauen können" — und sie ist keine technische, sondern eine des Nutzers. Anmerkung: Auch bei einem **privaten** Repository bleibt die veröffentlichte Web-Fassung analysierbar (siehe 26.4); privat schützt die Quelle, nicht das Ergebnis.
