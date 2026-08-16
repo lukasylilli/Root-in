@@ -1,12 +1,12 @@
 # Root-in — Projekt-Map (Ordner- & Datei-Übersicht)
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
-> ✅ **2026-08-14: Die vier Web-Fehler sind behoben, veröffentlicht und an der veröffentlichten Seite nachgeprüft** (17/17 Browser-Prüfungen grün, Commit `bec572a`). Offen bleibt nur das App-Symbol auf einem echten iPhone. Siehe PLAN.md 26.11.
-> ⚠️ **2026-08-16: Knöpfe reagieren erst, wenn man ÜBER sie tippt — aber nur in der auf dem Home-Bildschirm abgelegten Fassung** (PLAN.md 26.12/26.13). Ursache: `viewport-fit=cover` + `black-translucent` ziehen die Seite unter die Statusleiste, und Flutter wertet im Web die iOS-Schutzabstände nicht aus. Beide Angaben in `web/index.html` sind entfernt bzw. auf `default` gesetzt. ⬜ **Bestätigung durch den Nutzer steht aus** — das Ablegen lässt sich hier nicht nachstellen.
-> Zuletzt aktualisiert: 2026-08-14 (nachmittags) — **Phase 26.11: die vier gemeldeten Web-Fehler behoben.** `dart:io` ist aus `lib/` verschwunden (`time_service.dart` und `repo_content_service.dart` nehmen jetzt `package:http` — die Attrappe von `dart:io` warf im Browser und legte drei der vier Hauptseiten lahm, PLAN.md 26.10). Neu: `test/unit/no_dart_io_in_lib_test.dart` (Wächter über die Regel), Fähigkeit `canReadForeignResponseHeaders` in `platform_support.dart`, direkte Abhängigkeiten `http` + `http_parser`, Web-Symbole aus `assets/icon/app_icon.png` erzeugt (`flutter_launcher_icons` mit `web:`).
-> Zuvor 2026-08-14 — **Phase 26 gebaut: Web-Fassung (PWA) und Veröffentlichung über GitHub**, einschließlich 26.8 und 26.9. Neu im Root-Baum: `content/` (aus dem früheren Inhalts-Repository), `.claude/settings.json`. Neu: `tool/` (zwei Skripte), `.github/workflows/deploy-web.yml`, `.env.example`, `core/constants/app_config.dart`, `core/services/file_pick/` (drei Dateien), `core/services/web_storage/` (drei Dateien), `core/widgets/web_storage_hint.dart`, `test/widget/web_storage_hint_test.dart`, `web/` überarbeitet. Entfallen als direkte Abhängigkeit: `path_provider`. Das Projekt ist ein Git-Repository — Quellcode und Inhalts-Repository sind darin zusammengeführt. Einzelheiten im Abschnitt „Web-Fassung & Automatik".
-> Zuvor 2026-08-07 — **Phase 13 gebaut** (Diagramm-Feinschliff & Tests): keine neuen Dateien, geändert sind `core/widgets/chart_card.dart`, die drei ARB-Dateien und drei Test-Dateien.
-> Zuvor 2026-08-02 — Phasen 25, 24, 23 und 22 gebaut; der Abschnitt „Geplante Dateien" ist entfallen.
+>
+> **Stand 2026-08-16.** Android-Code fertig · Web-Fassung live unter `lukasylilli.github.io/Root-in/` · 189 Tests grün.
+>
+> 🚧 **In Arbeit: Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase).** Die dafür geplanten Dateien stehen unten mit 🚧 an ihrem künftigen Platz; Einzelheiten und Reihenfolge in PLAN.md Phase 27. ⚠️ **Diese Phase kehrt die älteste Festlegung des Projekts um** („kein Backend, keine Nutzerkonten") — was daran hängt, steht in PLAN.md 27.0.
+>
+> Zuletzt geändert: **26.13** — `web/index.html` ohne `viewport-fit=cover`, Statusleiste `default`. ⬜ Bestätigung auf einem echten iPhone steht aus. Zuvor **26.11**: `dart:io` ist aus `lib/` verschwunden (`package:http` überall), Web-Symbole aus derselben Quelle wie die Android-Symbole, neuer Wächter-Test `no_dart_io_in_lib_test.dart`.
 
 ## Inhaltsverzeichnis
 1. [Legende](#legende)
@@ -14,9 +14,10 @@
 3. [lib/ (App-Code)](#lib-app-code)
 4. [test/](#test)
 5. [Release-Artefakte (Android)](#release-artefakte-android)
-6. [Web-Fassung & Automatik](#web-fassung--automatik) 🚧 *(Phase 26)*
-7. [Inhalts-Repository (GitHub)](#inhalts-repository-github)
-8. [Hinweise](#hinweise)
+6. [Web-Fassung & Automatik](#web-fassung--automatik)
+7. [Nutzerkonten & Cloud (Supabase)](#nutzerkonten--cloud-supabase) 🚧 *(Phase 27)*
+8. [Inhalts-Repository (GitHub)](#inhalts-repository-github)
+9. [Hinweise](#hinweise)
 
 ## Legende
 - ✅ vorhanden
@@ -96,13 +97,11 @@
 │   ├── index.html                   ✅ Einstiegsseite, Markenfarbe schon vor dem ersten Frame + iOS-Meta-Tags.
 │   │                                    ⚠️ Safari liest fürs Ablegen apple-mobile-web-app-*, NICHT
 │   │                                    manifest.json — ohne sie öffnet die Verknüpfung eine Browser-Seite
-│   │                                    mit Adressleiste statt einer App
-│   │                                    ⚠️ KEIN `viewport-fit=cover`, Statusleiste `default` statt
-│   │                                    `black-translucent` (Phase 26.13). Beides wirkt NUR in der
-│   │                                    abgelegten Fassung und zieht die Seite unter die Statusleiste;
-│   │                                    Flutter wertet im Web die Schutzabstände nicht aus, dann liegen
-│   │                                    gezeichnete und berührte Fläche auseinander. Nicht „zur
-│   │                                    Verschönerung" zurückdrehen — siehe PLAN.md Lehre 34
+│   │                                    mit Adressleiste statt einer App.
+│   │                                    ⚠️ KEIN `viewport-fit=cover`, Statusleiste `default` (Phase 26.13):
+│   │                                    beides zieht die Seite unter die Statusleiste, und Flutter wertet
+│   │                                    im Web die Schutzabstände nicht aus → Bild und Berührung liegen
+│   │                                    auseinander. Nicht „zur Verschönerung" zurückdrehen (Lehre 34)
 │   ├── manifest.json                ✅ PWA-Manifest (Root-in, Markengrün #2E7D5B, Symbole)
 │   ├── sqlite3.wasm                 ⚙️ NICHT versioniert — tool/fetch_web_db_assets.sh holt sie. Ohne diese
 │   │                                    Datei wirft driftDatabase() im Browser, die App startet gar nicht
@@ -120,7 +119,9 @@
 │                                        Abschnitt „Inhalts-Repository (GitHub)"
 ├── tool/                            ✅ Bau-Skripte (siehe Abschnitt „Web-Fassung & Automatik")
 ├── .github/workflows/deploy-web.yml ✅ Push auf main → analyze + test → build_web.sh → GitHub Pages
-├── .env.example                     ✅ Vorlage für --dart-define-from-file (die echte .env ist ausgeschlossen)
+├── .env.example                     ✅ Vorlage für --dart-define-from-file (die echte .env ist ausgeschlossen).
+│                                        🚧 Phase 27.3 ergänzt SUPABASE_URL und SUPABASE_ANON_KEY
+├── supabase/schema.sql              🚧 Phase 27.4 — Server-Schema + Zugriffsregeln, versioniert
 ├── .claude/
 │   ├── settings.json                ✅ Freigabeliste für Claude Code (Phase 26.9): weniger Rückfragen bei
 │   │                                    flutter-/git-/adb-Befehlen, `defaultMode: acceptEdits`.
@@ -229,35 +230,41 @@ lib/
 │   │   ├── streak_calculator.dart            ✅ Reine Streak-Logik inkl. 1-Frei-Tag/Woche (unit-getestet)
 │   │   ├── achievement_evaluator.dart        ✅ Reine Freischalt-Logik (unit-getestet)
 │   │   └── platform_support.dart             ✅ **Die einzige Stelle im Projekt, an der `kIsWeb` steht.**
-│   │                                             isMobilePlatform + seit Phase 26 fünf nach FÄHIGKEIT
-│   │                                             benannte Abfragen: supportsReminders,
-│   │                                             supportsHomeScreenWidgets, supportsOrientationLock,
-│   │                                             usesBrowserStorage (Phase 26.8),
-│   │                                             canReadForeignResponseHeaders (Phase 26.11 — im Browser
-│   │                                             gibt eine fremde Adresse ihre Kopfzeilen nur soweit frei,
-│   │                                             wie CORS es erlaubt, und `Date` gehört nicht dazu).
-│   │                                             ⚠️ usesBrowserStorage NICHT durch
-│   │                                             supportsHomeScreenWidgets ersetzen: Im Browser liefern
-│   │                                             beide dasselbe, sie MEINEN aber Verschiedenes — auf einem
-│   │                                             Desktop-Bau erschiene sonst der Safari-Hinweis
-│   │                                             Bewusst nicht nach Plattform benannt — der Aufrufer will
-│   │                                             wissen „gibt es hier Erinnerungen?", nicht „wo laufe ich?".
+│   │                                             isMobilePlatform + fünf nach FÄHIGKEIT benannte Abfragen:
+│   │                                             supportsReminders, supportsHomeScreenWidgets,
+│   │                                             supportsOrientationLock, usesBrowserStorage (26.8),
+│   │                                             canReadForeignResponseHeaders (26.11 — fremde Kopfzeilen
+│   │                                             gibt der Browser nur soweit frei, wie CORS es erlaubt,
+│   │                                             und `Date` gehört nicht dazu).
+│   │                                             🚧 Phase 27 ergänzt supportsCloudSync (nur true, wenn
+│   │                                             BEIDE Supabase-Werte gesetzt sind → ein Bau ohne
+│   │                                             Schlüssel verhält sich exakt wie heute).
+│   │                                             ⚠️ Zwei Abfragen, die im Browser dasselbe liefern, aber
+│   │                                             Verschiedenes MEINEN, bleiben getrennt (usesBrowserStorage
+│   │                                             vs. supportsHomeScreenWidgets) — sonst erschiene auf einem
+│   │                                             Desktop-Bau der Safari-Hinweis.
 │   │                                             🕯️ isStorePlatform ist mit Phase 20 auskommentiert
 │   ├── services/
-│   │   ├── time_service.dart                 ✅ Aktuelles Datum (HTTP-Date-Header + Offline-Fallback).
-│   │   │                                         Seit Phase 26.11 über `package:http` statt `dart:io` —
-│   │   │                                         letzteres warf im Browser schon beim `HttpClient()` und
-│   │   │                                         riss damit todayProvider und die Heute-/Ansicht-Seite
-│   │   │                                         mit sich (PLAN.md 26.10, Lehre 30).
-│   │   │                                         ⚠️ Im Browser wird die EIGENE Adresse gefragt (Uri.base
-│   │   │                                         + Zeitstempel gegen den Zwischenspeicher), weil fremde
-│   │   │                                         Kopfzeilen dort nicht lesbar sind
+│   │   ├── time_service.dart                 ✅ Aktuelles Datum (HTTP-Date-Header + Offline-Fallback), über
+│   │   │                                         `package:http` (Lehre 30). ⚠️ Im Browser wird die EIGENE
+│   │   │                                         Adresse gefragt (Uri.base + Zeitstempel gegen den
+│   │   │                                         Zwischenspeicher) — fremde Kopfzeilen sind dort nicht lesbar
 │   │   ├── settings_service.dart             ✅ Persistiert ThemeMode, AppThemeVariant, AppLanguage, AscentSource,
 │   │   │                                         onboarding_seen, share_include_overview (Phase 19) und
 │   │   │                                         status_notification_enabled (Phase 23);
 │   │   │                                         dazu appLocaleProvider (MaterialApp.locale) und
 │   │   │                                         resolvedLocaleProvider (Texte ohne BuildContext)
-│   │   ├── profile_service.dart              ✅ Persistiert UserProfile (Name)
+│   │   ├── profile_service.dart              ✅ Persistiert UserProfile (Name). 🚧 Phase 27.6 spiegelt ihn
+│   │   │                                         auf den Server — lokal bleibt er die Quelle der Anzeige
+│   │   ├── auth_service.dart                 🚧 **Phase 27.5** — die EINZIGE Stelle für `supabase_flutter`
+│   │   │                                         (Bauart wie notification_service/share_service). Anmelden,
+│   │   │                                         Registrieren, Abmelden, Sitzungs-Zustand.
+│   │   │                                         ⚠️ Fehler kommen als Grund-Code heraus, nicht als
+│   │   │                                         englischer Server-Text (Muster: backup_data.dart)
+│   │   ├── cloud_backup_service.dart         🚧 **Phase 27.7** — Bestand als Backup-JSON hoch/runter.
+│   │   │                                         ⚠️ Nutzt `backup_data.dart` UNVERÄNDERT — ein zweites
+│   │   │                                         Serialisierungs-Format wäre die verbotene Doppelung.
+│   │   │                                         Hochladen automatisch, Herunterladen nur auf Nachfrage
 │   │   ├── share_service.dart                ✅ Einzige Stelle für share_plus: shareApp (Text) und
 │   │   │                                         shareProgressImage (Bytes → Share-Sheet). Beide Texte tragen
 │   │   │                                         seit Phase 19 den Store-Link aus app_links.dart.
@@ -514,9 +521,15 @@ lib/
 │   │       └── others_folder_page.dart       ✅ Beiträge eines Ordners, klappen an Ort und Stelle auf — der Text
 │   │                                             wird ERST beim Aufklappen geladen. Verkraftet einen Ordner,
 │   │                                             den es im Repository nicht mehr gibt
-│   └── onboarding/presentation/onboarding_page.dart ✅ Erststart-Erklärung in vier Schritten; erscheint nur,
-│                                                 solange onboardingSeenProvider false ist (Startroute, kein
-│                                                 Redirect); liegt außerhalb der ShellRoute → ohne Bottom-Nav
+│   ├── onboarding/presentation/onboarding_page.dart ✅ Erststart-Erklärung in vier Schritten; erscheint nur,
+│   │                                             solange onboardingSeenProvider false ist (Startroute, kein
+│   │                                             Redirect); liegt außerhalb der ShellRoute → ohne Bottom-Nav
+│   └── auth/presentation/                    🚧 **Phase 27.5** — Anmelden, Registrieren, Passwort vergessen,
+│                                                 Zustands-Provider (angemeldet/abgemeldet/lädt). Liegt
+│                                                 außerhalb der ShellRoute wie das Onboarding.
+│                                                 ⚠️ Die Rubrik „Konto & Cloud" in den Einstellungen
+│                                                 VERSCHWINDET, wenn supportsCloudSync falsch ist —
+│                                                 ehrlich abschalten statt Knöpfe ohne Wirkung
 ```
 
 ## test/
@@ -627,6 +640,9 @@ test/
     ├── test_database.dart           ✅ Isolierte In-Memory-Test-DB — nie die echte App-DB
     ├── test_time_service.dart       ✅ Festes Datum, kein Netzwerkzugriff in Tests
     ├── fake_notification_service.dart ✅ Protokolliert geplante/abgebrochene Erinnerungen + zuletzt genutzte Sprache
+    ├── fake_auth_service.dart       🚧 **Phase 27.5** — Anmeldung ohne Server. ⚠️ KEIN Test spricht mit
+    │                                    dem echten Supabase-Projekt: Tests müssen ohne Netz und ohne
+    │                                    Schlüssel laufen (derselbe Grund wie bei RepoFetcher)
     ├── fake_purchase_service.dart   🕯️ offlinePurchaseService(prefs) + FakePurchaseService (Phase 14),
     │                                    stillgelegt. Keine *_test.dart-Datei → kein Platzhalter nötig
     ├── localized_app.dart           ✅ localizedApp(...) — **Pflicht-Rahmen** für Widget-Tests; ein blankes
@@ -667,21 +683,18 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        Worker und Bibliothek nicht auseinanderlaufen.
 │                                        ⚠️ `dart run drift_dev make-worker` ist mit drift 2.34.2 /
 │                                        drift_dev 2.34.0 KAPUTT — nicht erneut versuchen
-├── webtest.py                       ✅ Echter Browser-Durchgang der veröffentlichten Seite über
-│                                        safaridriver (PLAN.md 26.7). 8 Prüfungen bis hin zu
-│                                        „Daten überleben das Neuladen". Auch gegen einen lokalen
-│                                        Bau nutzbar: `python3 tool/webtest.py http://localhost:8765/`
-│                                        ⚠️ Einmalig nötig: `safaridriver --enable` (Mac-Passwort).
+├── webtest.py                       ✅ Echter Browser-Durchgang über safaridriver — **17 Prüfungen**
+│                                        inkl. aller vier Reiter und einer Anleitungs-Seite. Auch gegen
+│                                        einen lokalen Bau: `python3 tool/webtest.py http://localhost:8765/`
+│                                        Am kaputten Stand wird er ROT — daran gemessen, nicht nur am
+│                                        reparierten (Lehre 32). 🚧 27.9 ergänzt Anmelden/Abmelden
+│                                        ⚠️ Einmalig nötig: `safaridriver --enable` (Mac-Passwort)
 │                                        ⚠️ Jede Sitzung startet mit LEEREM Profil — Persistenz nur
-│                                        innerhalb EINER Sitzung prüfbar, sonst misst man nichts
-│                                        Seit Phase 26.11: **17 Prüfungen**, darunter alle vier Reiter
-│                                        und eine Anleitungs-Seite. Am kaputten Stand wird er rot —
-│                                        daran gemessen, nicht nur am reparierten (PLAN.md Lehre 32)
-│                                        ⚠️ Gescrollt wird mit einem RAD-Ereignis: Ein Wisch bewegt
-│                                        eine Flutter-Liste im Desktop-Browser nicht, ohne dass etwas
-│                                        fehlschlägt. ⚠️ Reine Texte stehen unzuverlässig im
-│                                        Semantik-Baum (von einer vollen Anleitungs-Seite nur ~190
-│                                        Zeichen), Knöpfe immer — Zustände deshalb an Knöpfen ablesen
+│                                        innerhalb EINER Sitzung prüfbar
+│                                        ⚠️ Gescrollt wird mit einem RAD-Ereignis (ein Wisch bewegt eine
+│                                        Flutter-Liste im Desktop-Browser nicht, ohne dass etwas
+│                                        fehlschlägt); Zustände an KNÖPFEN ablesen, nicht an Texten —
+│                                        reine Texte stehen unzuverlässig im Semantik-Baum
 └── build_web.sh                     ✅ **Einzige Stelle der Bau-Schalter**: --no-source-maps, -O4, --csp,
                                          --base-href, Version aus pubspec.yaml, Baunummer aus
                                          GITHUB_RUN_NUMBER. Die Automatik ruft DIESES Skript auf —
@@ -712,20 +725,11 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 | Netzzugriff | `package:http` in `time_service.dart` + `repo_content_service.dart` | **Kein `dart:io`** — es übersetzt für den Browser und wirft dort (Lehre 30) |
 | Werte vom Bau | `core/constants/app_config.dart` | `String.fromEnvironment` + die Warnung, was das **nicht** leistet |
 
-✅ **DIE VIER GEMELDETEN FEHLER SIND BEHOBEN** (PLAN.md 26.10/26.11, gemeldet und behoben am 2026-08-14) — zwei Ursachen hinter vier Beobachtungen:
+✅ **Die vier gemeldeten Web-Fehler sind behoben und an der veröffentlichten Seite nachgewiesen** (PLAN.md 26.10–26.13). Zwei Ursachen hinter vier Beobachtungen: die Web-Symbole waren die der Flutter-Vorlage, und `dart:io` warf im Browser (Lehre 30) — dadurch blieben „Heute" und „Ansicht" leer und die fünf Anleitungs-Seiten meldeten „kein Internet". Am alten Stand fielen genau die vier zugehörigen Prüfungen durch; am reparierten Bau und an der veröffentlichten Seite sind alle 17 grün.
 
-| Beobachtung | Ursache | Behoben durch |
-|---|---|---|
-| App-Symbol stimmt nicht | Web-Symbole waren die der Flutter-Vorlage | `flutter_launcher_icons` mit `web: generate: true` |
-| „Heute" leer (gemeldet als „kein Internetzugang") | `HttpClient()` aus `dart:io` warf im Browser → `todayProvider` im Fehler → kein Datum | `package:http` in `time_service.dart` |
-| „Ansicht" leer (dieselbe Meldung) | dieselbe | dieselbe |
-| Fünf Anleitungs-Seiten „kein Internet" | `HttpClient()` warf → `load()` warf | `package:http` in `repo_content_service.dart` |
+⬜ **Noch offen:** App-Symbol und die Behebung aus 26.13 auf einem echten iPhone bestätigen (das Ablegen auf dem Home-Bildschirm lässt sich hier nicht nachstellen).
 
-**Nachgewiesen, nicht behauptet:** `tool/webtest.py` deckt jetzt alle vier Reiter und eine Anleitungs-Seite ab. Am **alten** Stand fielen genau die vier Prüfungen durch, die den gemeldeten Fehlern entsprechen; am reparierten Bau und **an der veröffentlichten Seite** sind alle 17 grün.
-
-⬜ **Noch offen:** App-Symbol auf einem echten iPhone ansehen (Safari am Mac kann das Ablegen auf dem Home-Bildschirm nicht prüfen).
-
-**Prüfstand iOS-Simulator** (seit 2026-08-16, PLAN.md 26.12) — die Web-Fassung in **echtem iOS-Safari** ansehen, ohne iPhone:
+**Prüfstand iOS-Simulator** (seit 2026-08-16) — die Web-Fassung in **echtem iOS-Safari** ansehen, ohne iPhone:
 ```
 xcrun simctl list devices available          # verfügbare Geräte
 xcrun simctl boot <UDID> && open -a Simulator
@@ -744,6 +748,34 @@ xcrun simctl io booted screenshot --type=png <datei>
 Die **Serie wird nirgends gespeichert** — sie entsteht bei jedem Aufruf neu aus den Erledigungen (`StreakCalculator`). ⚠️ Beide Orte gehören zu **einem Browser auf einem Gerät**: Ein zweites Gerät hat einen eigenen Bestand, und „Website-Daten löschen" räumt beides ab. Deshalb der Hinweis aus 26.8 und die Bitte um dauerhaften Speicher beim Start.
 
 **Was im Browser bewusst fehlt** (PLAN.md Phase 26.1): Erinnerungen und Tagesstand-Meldung, Startbildschirm-Widgets, die Querformat-Sperre der Übersicht. Die zugehörigen Bedienelemente verschwinden dort ganz — ein Schalter, der nichts bewirkt, ist schlimmer als kein Schalter. Eine gespeicherte Erinnerungs-Uhrzeit bleibt in der Datenbank **unangetastet**, damit dieselbe Sicherung auf Android wieder vollständig ist.
+
+## Nutzerkonten & Cloud (Supabase)
+
+🚧 **Geplant in PLAN.md Phase 27** — noch nichts davon existiert. Dieser Abschnitt hält fest, **wo** die Teile hinkommen, damit sie nicht verstreut entstehen.
+
+```
+supabase/schema.sql                  🚧 Tabellen, Zugriffsregeln (RLS) und Indizes des Servers.
+                                         ⚠️ Gehört INS REPOSITORY, nicht nur in die Weboberfläche —
+                                         sonst existiert die Server-Struktur an einer Stelle, die
+                                         niemand versionieren, prüfen oder wiederherstellen kann
+lib/core/services/auth_service.dart  🚧 Einzige Stelle für supabase_flutter (27.5)
+lib/core/services/cloud_backup_service.dart 🚧 Bestand als Backup-JSON hoch/runter (27.7)
+lib/features/auth/presentation/      🚧 Anmelden, Registrieren, Passwort vergessen (27.5)
+test/support/fake_auth_service.dart  🚧 Anmeldung ohne Server (27.5)
+```
+
+**Die vier Regeln dieser Phase** (Begründungen in PLAN.md 27.0–27.4):
+
+| Regel | Warum |
+|---|---|
+| **Ohne Schlüssel verhält sich die App wie heute** (`supportsCloudSync`) | Tests, lokale Bauten und der Notfall „Server weg" brauchen keine Sonderbehandlung |
+| **Der `anon`-Schlüssel ist kein Geheimnis** — er steht im Bundle und ist auslesbar (Lehre 26) | Der Schutz kommt **ausschließlich** aus den Zugriffsregeln der Datenbank |
+| **Der `service_role`-Schlüssel darf nie in App oder Repository** | Er umgeht jede Zugriffsregel — vollständiger Datenbank-Zugriff für jeden, der ihn findet |
+| **RLS auf jeder Tabelle, im selben Schritt wie das Anlegen** | Eine Tabelle ohne RLS ist mit dem `anon`-Schlüssel für jeden les- und schreibbar |
+
+⚠️ **Das Format der Cloud-Sicherung ist das vorhandene `backup_data.dart`-JSON** — dieselbe Serialisierung wie Export/Import, dieselben Tests. Ein zweites Format wäre genau die Doppelung, die PLAN.md Abschnitt 9 verbietet.
+
+⚠️ **Sicherung, kein Abgleich.** Hochladen geschieht automatisch, **Herunterladen nur auf Nachfrage** — zwei Geräte ohne Zusammenführungs-Logik löschen sich sonst gegenseitig Daten. „Datenerhalt geht vor" ist die älteste Regel des Projekts.
 
 ## Inhalts-Repository (GitHub)
 
