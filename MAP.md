@@ -698,6 +698,11 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 ├── webtest.py                       ✅ Echter Browser-Durchgang über safaridriver — **17 Prüfungen**
 │                                        inkl. aller vier Reiter und einer Anleitungs-Seite. Auch gegen
 │                                        einen lokalen Bau: `python3 tool/webtest.py http://localhost:8765/`
+│                                        Seit 27.9: **20 Prüfungen**, die letzten zwei für die Rubrik
+│                                        „Konto & Cloud". ⚠️ Der Durchgang meldet sich NICHT an —
+│                                        ein Oberflächen-Test, der Konten anlegt, hinterlässt bei
+│                                        jedem Lauf Datenmüll. Dass die Anmeldung trägt, beweist
+│                                        rls_check.sh. Zwei Werkzeuge, zwei Zuständigkeiten
 │                                        Am kaputten Stand wird er ROT — daran gemessen, nicht nur am
 │                                        reparierten (Lehre 32). 🚧 27.9 ergänzt Anmelden/Abmelden
 │                                        ⚠️ Einmalig nötig: `safaridriver --enable` (Mac-Passwort)
@@ -817,6 +822,12 @@ lib/core/services/auth_service.dart  ✅ Einzige Stelle für supabase_flutter (2
                                          wird nichts gestartet und nichts gesendet
 test/unit/auth_issue_test.dart       ✅ 7 Fälle: Code-Zuordnung, unbekannter Code, Verhalten ohne
                                          Konfiguration
+test/unit/profile_cloud_sync_test.dart ✅ 7 Fälle — die GANZE Zusammenstoß-Tabelle aus 27.6.
+                                         ⚠️ Vorher stand sie nur als Prosa in der Datei und wurde
+                                         von nichts gehalten (PLAN.md Lehre 35)
+test/unit/cloud_backup_service_test.dart ✅ 4 Fälle: ohne Konto meldet alles notAvailable, ohne zu
+                                         werfen und ohne zu senden
+test/unit/app_links_test.dart        ✅ 3 Fälle: geteilt wird die Web-Fassung, nicht der Store
 lib/core/services/cloud_backup_service.dart ✅ Bestand als Backup-JSON hoch/runter (27.7): upload,
                                          fetch, restore, lastBackupAt.
                                          ⚠️ fetch und restore sind GETRENNT — die Oberfläche muss

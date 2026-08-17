@@ -204,7 +204,21 @@ def main():
                 failures.append(name)
 
         def shows(*labels):
-            """Steht eine dieser Beschriftungen gerade auf dem Bildschirm?"""
+            """Steht eine dieser Beschriftungen gerade auf dem Bildschirm?
+
+            ⚠️ **Nur nach KNÖPFEN und Listeneinträgen fragen, nie nach
+            Überschriften.** Reine Text-Widgets stehen unzuverlässig im
+            Semantik-Baum — von einer vollen Seite kommen dort oft nur ein
+            paar hundert Zeichen an, und Abschnitts-Titel gehören regelmäßig
+            zu dem, was fehlt. Knöpfe tragen `role="button"` und sind immer
+            da.
+
+            Diese Falle ist in diesem Projekt **dreimal** zugeschnappt
+            (PLAN.md Lehre 32): Jedes Mal meldete die Prüfung „nicht da",
+            während das Gesuchte auf dem Bildschirmfoto deutlich zu sehen
+            war. Deshalb steht die Warnung hier und nicht nur im Plan — hier
+            liest sie, wer sie braucht.
+            """
             texts = [n["t"] for n in leaves()]
             return any(any(label in t for label in labels) for t in texts)
 
@@ -330,6 +344,39 @@ def main():
         """)
         check("Anleitungs-Text wurde geladen und abgelegt",
               "lernplanung" in str(cached).lower(), str(cached))
+
+        # ------------------------------------------------------------------
+        # Konto & Cloud (PLAN.md Phase 27.9)
+        # ------------------------------------------------------------------
+        # ⚠️ Geprüft wird am KNOPF, nicht am Titel der Rubrik. Beim ersten
+        # Anlauf suchte diese Prüfung „حساب و ابر" im Semantik-Baum und
+        # meldete „nicht da", während die Karte auf dem Bildschirmfoto
+        # deutlich zu sehen war — dieselbe Falle wie eine Zeile weiter oben.
+        print()
+        call("POST", f"/session/{session}/url", {"url": URL})
+        boot()
+        check("Reiter „Einstellungen“ (zweiter Durchgang)",
+              tap_any("تنظیمات", "Einstellungen", "Settings", wait=5))
+        konto = ("اطلاعات حساب", "Konto-Infos", "Account info")
+        check("Konto-Eintrag erreichbar", scroll_to(*konto))
+        tap_any(*konto, exact=False, wait=5)
+
+        # Dieselbe UND-Verknüpfung wie bei der Anleitung: Die Konto-Seite
+        # liegt außerhalb der Shell, also ist die Bottom-Navigation weg.
+        # (Nach dem Titel „نمایه" zu fragen, schlug fehl — siehe `shows`.)
+        on_account = not shows("خانه", "Home")
+        check("Konto-Seite ist offen (keine Bottom-Navigation mehr)",
+              on_account)
+
+        # Ohne Supabase-Schlüssel gibt es die Rubrik bewusst NICHT — dann ist
+        # ihr Fehlen richtig und kein Fehlschlag. Beides wird unterschieden,
+        # statt eine der beiden Lagen falsch zu melden.
+        anmelden = ("ورود", "Anmelden", "Sign in")
+        if shows(*anmelden):
+            check("Rubrik „Konto & Cloud“ bietet Anmelden an", on_account)
+        else:
+            print("  – Rubrik „Konto & Cloud“ nicht vorhanden — dieser Bau "
+                  "hat keine Supabase-Schlüssel (das ist zulässig)")
 
         print()
         if failures:

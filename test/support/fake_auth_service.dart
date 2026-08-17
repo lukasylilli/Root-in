@@ -20,6 +20,9 @@ class FakeAuthService extends AuthService {
 
   final List<String> calls = [];
 
+  /// Der Anzeigename, wie er „auf dem Server" liegt (PLAN.md 27.6).
+  String? remoteDisplayName;
+
   @override
   AuthAccount? get currentAccount => _account;
 
@@ -70,6 +73,15 @@ class FakeAuthService extends AuthService {
 
   @override
   Future<String?> loadUsername() async => _account?.username;
+
+  @override
+  Future<String?> loadDisplayName() async => remoteDisplayName;
+
+  @override
+  Future<void> saveDisplayName(String name) async {
+    calls.add('saveDisplayName:$name');
+    remoteDisplayName = name;
+  }
 
   @override
   Future<void> signOut() async {
