@@ -36,11 +36,19 @@ bool get isMobilePlatform =>
 
 /// Ob geplante Erinnerungen möglich sind.
 ///
-/// `flutter_local_notifications` hat keine Web-Umsetzung. Echte Web-Push-
-/// Benachrichtigungen bräuchten einen Server, der Nachrichten zustellt — das
-/// widerspricht Abschnitt 3 („kein Backend"). Im Browser entfallen sie
-/// deshalb **sichtbar**: Die Rubrik verschwindet aus den Einstellungen,
-/// statt Schalter anzubieten, die nichts auslösen.
+/// `flutter_local_notifications` hat keine Web-Umsetzung. Im Browser
+/// entfallen Erinnerungen deshalb **sichtbar**: Die Rubrik verschwindet aus
+/// den Einstellungen, statt Schalter anzubieten, die nichts auslösen.
+///
+/// ⚠️ **Die frühere Begründung „ein Server widerspricht Abschnitt 3 (kein
+/// Backend)" gilt seit Phase 27 nicht mehr** — den Server gibt es. Was
+/// Web-Push heute im Weg steht, ist nicht die Haltung, sondern der Umfang:
+/// Erinnerungszeiten liegen **auf dem Gerät** (`habits.reminderMinuteOfDay`)
+/// und werden dort geplant. Zustellen müsste sie der Server, also bräuchte
+/// er sie als abfragbare Zeilen **samt Zeitzone**, dazu Push-Anmeldungen je
+/// Gerät und einen Wecker, der jede Minute nachsieht. Und es ginge nur noch
+/// **mit Konto** — heute funktionieren Erinnerungen ohne. Ein eigenes
+/// Vorhaben; die Entscheidung steht in PLAN.md Abschnitt 12.
 bool get supportsReminders => !kIsWeb;
 
 /// Ob es Startbildschirm-Widgets gibt (`home_widget` — nur Android/iOS).
