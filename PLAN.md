@@ -342,25 +342,35 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] ⚠️ **`anonKey` heißt in neueren Fassungen `publishableKey`** (beim Bauen aufgefallen, der alte Name ist als veraltet markiert). Derselbe Wert — in der Supabase-Oberfläche kann er als „anon public" **oder** „Publishable key" auftauchen. Steht als Kommentar an der Aufrufstelle, damit niemand zwei Schlüssel sucht.
 - [x] `test/unit/auth_issue_test.dart` — 7 Fälle.
 - [x] **Web-Bau gegengeprüft:** läuft, `main.dart.js` wächst durch das Paket auf ~4,4 MB (vorher ~4,0 MB). Vertretbar, aber es ist ein Zuwachs für **alle** — auch für die, die nie ein Konto anlegen.
-- [ ] `features/auth/presentation/` — Registrieren (drei Felder), Anmelden (zwei), Zustands-Provider.
+- [x] **`features/auth/presentation/auth_sheet.dart`** — Anmelden und Registrieren in **einem** Sheet, umgeschaltet über einen Segment-Knopf. Dasselbe Muster wie `showShareProgressSheet()`: eine Funktion, ein Einstieg. Zwei Seiten mit fast gleichem Formular wären zwei Stellen für jede spätere Änderung.
+- [x] **Die Übersetzung der Gründe steht in der Oberfläche, nicht im Dienst** (`authIssueText`, `usernameIssueText`). Der Dienst kennt keine Sprache, die Oberfläche keine Server-Codes. Wer das vermischt, braucht `BuildContext` in einem Dienst — und kann ihn nicht mehr testen.
+- [x] **Der Benutzername wird geprüft, BEVOR ein Konto entsteht.** Sonst legte eine ungültige Eingabe erst das Konto an und scheiterte dann am Namen.
+- [x] **`cloudSyncEnabledProvider`** statt eines direkten Zugriffs auf `supportsCloudSync` in der Oberfläche. ⚠️ Ohne ihn wäre die halbe Oberfläche dieser Phase **unprüfbar**: Im Testlauf gibt es keine Schlüssel, also verstecken sich die Widgets grundsätzlich.
 - [ ] ⚠️ **Reihenfolge bei der Registrierung, und was schiefgehen kann:** Erst `signUp(email, password)`, **dann** die Profilzeile mit dem Benutzernamen (die braucht die Kennung, die es erst danach gibt). Ist der Name schon vergeben, existiert das Konto bereits, die Profilzeile aber nicht — **kein kaputter Zustand, aber einer, der behandelt werden muss**: Die Oberfläche fragt nach einem anderen Namen, `claimUsername()` schreibt ihn nach. Das Konto darf dabei **nicht** gelöscht werden; nur der Name fehlt.
 - [ ] **Verfügbarkeit vorab prüfen** über `username_available()` — reine Höflichkeit. ⚠️ **Die Wahrheit ist der eindeutige Index der Datenbank**: Zwischen Frage und Absenden kann ein anderer denselben Namen nehmen. Bei Zweifeln antwortet die Abfrage „frei" — ein Formular, das wegen einer wackligen Verbindung „vergeben" behauptet, hält jemanden von seinem eigenen Namen ab.
 - [ ] **„Passwort vergessen" ist vorgesehen**, funktioniert aber erst mit eigenem SMTP (27.2). ⚠️ Solange es das nicht gibt, darf der Knopf **nicht** dastehen und ins Leere greifen — dieselbe Regel wie bei den Erinnerungen im Browser (26.1).
-- [ ] Rubrik **„Konto & Cloud"** in den Einstellungen: angemeldet als … (Benutzername), **die hinterlegte E-Mail sichtbar und änderbar** (Gegenmaßnahme zum Tippfehler, 27.0b), Abmelden, Stand der letzten Sicherung, Konto löschen. Verschwindet ganz, wenn `supportsCloudSync` falsch ist.
-- [ ] Texte in **allen drei** ARB-Dateien, danach `flutter gen-l10n` (Lehre 20).
-- [ ] ⚠️ **Fehlermeldungen sprachneutral herausreichen** (Grund-Code statt Text): Supabase meldet auf Englisch. Zu unterscheiden sind mindestens: E-Mail schon registriert · Benutzername vergeben · E-Mail oder Passwort falsch · Passwort zu kurz · E-Mail-Format ungültig · kein Netz.
-- [ ] Tests mit `test/support/fake_auth_service.dart`. ⚠️ **Kein Test spricht mit dem echten Server** — Tests müssen ohne Netz und ohne Schlüssel laufen.
+- [x] **Rubrik „Konto & Cloud" auf der bestehenden Konto-Seite** (`account_cloud_card.dart`) — **nicht** in einer eigenen Rubrik daneben. ⚠️ Entscheidung des Nutzers und die richtige: Ein Konto ist genau das, worum es auf dieser Seite ohnehin geht; ein zweiter Ort für dasselbe Thema wäre die verbotene Doppelung, und der Nutzer müsste sich merken, welcher der beiden Orte was kann.
+- [x] Zeigt: angemeldet als … · die hinterlegte E-Mail **sichtbar** samt Hinweis (Gegenmaßnahme zum Tippfehler, 27.0b) · Stand der letzten Sicherung · Sichern · Wiederherstellen · Abmelden. **Verschwindet vollständig ohne Cloud.**
+- [x] Texte in **allen drei** ARB-Dateien, `flutter gen-l10n` gelaufen (Lehre 20).
+- [x] **Fehlermeldungen sprachneutral** durchgereicht und erst in der Oberfläche übersetzt.
+- [x] `test/support/fake_auth_service.dart` + `test/widget/account_cloud_card_test.dart` (6 Fälle, darunter **„ohne Cloud ist die Rubrik gar nicht da"**, das Konto ohne Benutzernamen und die persische Fassung). ⚠️ **Kein Test spricht mit dem echten Server.**
+- [ ] „Konto löschen" — hängt an 27.8 (der `anon`-Schlüssel kann `auth.users` nicht löschen).
 
 #### 27.6 Profil in der Cloud
 - [ ] Beim Anmelden Profil laden; beim Ändern hochladen. Lokal bleibt `profile_service.dart` die Quelle für die Anzeige — der Server ist die Kopie.
 - [ ] ⚠️ **Regel für den ersten Zusammenstoß:** Es gibt schon einen lokalen Namen **und** vielleicht einen auf dem Server. Ohne ausdrückliche Regel gewinnt der Zufall. Festzulegen und hier zu notieren, **bevor** die erste Zeile geschrieben wird.
 
-#### 27.7 Cloud-Sicherung des ganzen Bestands
-- [ ] **Format ist das vorhandene Backup-JSON** (`backup_data.dart`) — dieselbe Serialisierung wie Export/Import, dieselben fünf Tests, dieselbe Versions-Prüfung. Kein zweites Format.
-- [ ] **Hochladen automatisch** (entprellt, nach Änderungen und beim App-Start), **Herunterladen nur auf Nachfrage** mit klarer Ansage, was überschrieben wird. Begründung in 27.0b, Punkt 4.
-- [ ] Sichtbarer Stand: „zuletzt gesichert vor …" in der Rubrik „Konto & Cloud". Eine Sicherung, deren Alter man nicht sieht, ist eine Vermutung.
-- [ ] ⚠️ **Scheitern muss folgenlos bleiben.** Kein Netz, Server pausiert, Land blockiert die Adresse — die App arbeitet lokal weiter und versucht es später. **Kein Ladezustand ohne Ende, kein Dialog, der den Start blockiert.**
-- [ ] ⚠️ **Die Grenze aussprechen:** Das ist eine **Sicherung**, kein Abgleich. Wer auf zwei Geräten gleichzeitig arbeitet, hat zwei Bestände; die Wiederherstellung überschreibt. Ein echter Abgleich braucht Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase, keine Fußnote.
+#### 27.7 Cloud-Sicherung des ganzen Bestands ✅ *(gebaut 2026-08-17)*
+- [x] **Format ist das vorhandene Backup-JSON** (`backup_data.dart`) — dieselbe Serialisierung wie Export/Import, dieselben fünf Tests, dieselbe Versions-Prüfung. Kein zweites Format: Jede spätere Änderung am Datenmodell müsste sonst an zwei Stellen nachgezogen werden, und die zweite würde vergessen.
+- [x] **`cloud_backup_service.dart`** mit `upload` / `fetch` / `restore` / `lastBackupAt`. ⚠️ **`fetch` und `restore` sind getrennt**, damit die Oberfläche vorher sagen kann, *was* überschrieben würde. Ein Wiederherstellen ohne diese Ansage wäre der schnellste Weg, jemandem seinen Bestand zu nehmen.
+- [x] **`lastBackupAt()` fragt nur den Zeitstempel ab**, nicht die Sicherung. Sonst lüde jeder Aufbau der Konto-Seite den gesamten Bestand herunter — bei einem gewachsenen Verlauf einige hundert Kilobyte für eine Zeile Text.
+- [x] **Hochladen automatisch** (`cloud_auto_backup.dart`), **als dritter Empfänger an demselben Sender** wie Startbildschirm-Widget und Tagesstand (Phase 23). ⚠️ **Entprellt (20 s)** — ohne das schickte eine Morgenrunde mit acht Häkchen achtmal den ganzen Bestand.
+- [x] **Zweiter Auslöser für Gewohnheiten/Kategorien:** Sie ändern den Bestand, ohne den heutigen Fortschritt zu berühren — eine umbenannte Gewohnheit landete sonst erst beim nächsten Abhaken in der Sicherung.
+- [x] **Herunterladen nur auf Nachfrage**, mit Bestätigungsdialog, der ausspricht, dass der lokale Bestand vollständig ersetzt wird.
+- [x] Sichtbarer Stand „zuletzt gesichert" — eine Sicherung, deren Alter man nicht sieht, ist eine Vermutung. Der Zeitstempel kommt **vom Server** (Trigger), nicht von der Geräteuhr.
+- [x] ⚠️ **Scheitern ist folgenlos und stumm.** Die automatische Sicherung meldet keinen Fehler und startet keinen Wiederholungs-Sturm; die nächste Änderung versucht es ohnehin erneut. Eine automatische Sicherung, die den Nutzer mit Fehlern behelligt, wäre schlimmer als keine. Nur die **von Hand** ausgelöste sagt, was passiert ist.
+- [x] ⚠️ **Eine Sicherung aus einer neueren App-Fassung wird abgelehnt** (`tooNew`), nicht halb eingespielt: Ein älterer Leser verlöre Felder, die er nicht kennt — und das fiele erst viel später auf.
+- [ ] ⚠️ **Die Grenze bleibt:** Das ist eine **Sicherung**, kein Abgleich. Wer auf zwei Geräten arbeitet, hat zwei Bestände; die Wiederherstellung überschreibt. Ein echter Abgleich braucht Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase, keine Fußnote.
 
 #### 27.8 Datenschutz nachziehen *(blockiert Phase 15)*
 

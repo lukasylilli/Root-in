@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/routing/app_router.dart';
+import 'core/services/cloud_auto_backup.dart';
 import 'core/services/home_widget_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/settings_service.dart';
@@ -130,6 +131,18 @@ class _RootInAppState extends ConsumerState<RootInApp> {
     ref.listen(todayProgressProvider, (previous, next) {
       _pushHomeWidgetUpdate(next);
       _pushStatusNotification(next);
+      // Dritter Empfänger seit Phase 27.7. Der Aufruf ist entprellt und
+      // schweigt ohne Konto — deshalb steht hier keine Bedingung: Wer die
+      // Bedingung an drei Stellen wiederholt, vergisst sie an der vierten.
+      ref.read(cloudAutoBackupProvider).scheduleUpload();
+    });
+
+    // Gewohnheiten und Kategorien ändern den Bestand, ohne den heutigen
+    // Fortschritt zu berühren — eine umbenannte Gewohnheit landete sonst
+    // erst beim nächsten Abhaken in der Sicherung.
+    ref.listen(activeHabitsProvider, (previous, next) {
+      if (previous == null) return; // erster Aufbau, nichts hat sich geändert
+      ref.read(cloudAutoBackupProvider).scheduleUpload();
     });
 
     // Wer den Tagesstand abschaltet, soll ihn sofort loswerden — und beim

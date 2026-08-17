@@ -5,6 +5,7 @@ import '../../../core/constants/dashboard_defaults.dart';
 import '../../../core/services/profile_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/date_utils.dart';
+import '../../../core/utils/platform_support.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/dashboard/dashboard_section.dart';
 import '../../../core/widgets/dashboard/dashboard_widget_type.dart';
@@ -12,6 +13,7 @@ import '../../../core/widgets/section_card.dart';
 import '../../../core/widgets/stat_column.dart';
 import '../../../data/repositories/habit_repository.dart';
 import '../../../l10n/gen/app_localizations.dart';
+import '../../auth/presentation/account_cloud_card.dart';
 import 'achievements_grid.dart';
 import 'share_progress_sheet.dart';
 
@@ -61,6 +63,10 @@ class _AccountPageState extends ConsumerState<AccountPage> {
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
+          // Steht ganz oben und nur, wenn ein Server konfiguriert ist
+          // (PLAN.md 27.5) — das Konto ist das Thema dieser Seite.
+          const AccountCloudCard(),
+          if (supportsCloudSync) const SizedBox(height: AppSpacing.md),
           SectionCard(
             title: l10n.accountProfile,
             child: TextField(

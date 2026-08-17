@@ -159,7 +159,6 @@
   "webStorageHintSteps": "در سافاری: روی نشان اشتراک‌گذاری بزنید و سپس «افزودن به صفحهٔ اصلی» را انتخاب کنید.",
   "webStorageHintBackup": "هر از گاهی هم یک نسخهٔ پشتیبان بگیرید — در تنظیمات، بخش «برون‌بری نسخهٔ پشتیبان».",
   "webStorageHintUnderstood": "متوجه شدم",
-
   "chartNoData": "هنوز داده‌ای برای این بازه نیست.",
   "chartTrendWeeklyAverage": "میانگین هفتگی",
   "chartTrendMonthlyAverage": "میانگین ماهانه",
@@ -259,5 +258,67 @@
   "notificationSnoozedBody": "یادآور {minutes} دقیقه به تعویق افتاد.",
   "homeWidgetSubtitle": "{done}/{total} انجام‌شده",
   "homeWidgetOpen": "{count, plural, one{۱ مانده} other{{count} مانده}}",
-  "homeWidgetAllDone": "امروز همه انجام شد"
+  "homeWidgetAllDone": "امروز همه انجام شد",
+  "cloudSectionTitle": "حساب و ابر",
+  "cloudSignedOutBody": "داده‌هایتان روی همین دستگاه است. با یک حساب، یک نسخه هم روی سرور می‌ماند — به درد گم شدن دستگاه یا نصب دوباره می‌خورد. داشتن حساب اختیاری است؛ بدون آن هم همه‌چیز مثل قبل کار می‌کند.",
+  "cloudSignIn": "ورود",
+  "cloudRegister": "ساختن حساب",
+  "cloudSignOut": "خروج",
+  "cloudSignedInAs": "واردشده به‌عنوان {name}",
+  "@cloudSignedInAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cloudNoUsernameYet": "هنوز نام کاربری ندارید",
+  "cloudEmailHint": "این نشانی تنها راه بازیابی رمز فراموش‌شده است. اگر درست نیست، همین‌جا تغییرش دهید.",
+  "fieldEmail": "ایمیل",
+  "fieldPassword": "رمز عبور",
+  "fieldUsername": "نام کاربری",
+  "authErrorEmailTaken": "با این ایمیل قبلاً حسابی ساخته شده است.",
+  "authErrorUsernameTaken": "این نام کاربری قبلاً گرفته شده است.",
+  "authErrorInvalidCredentials": "ایمیل یا رمز درست نیست.",
+  "authErrorWeakPassword": "رمز کوتاه است.",
+  "authErrorInvalidEmail": "این نشانی ایمیل درست به نظر نمی‌رسد.",
+  "authErrorSignupDisabled": "ساختن حساب تازه فعلاً بسته است.",
+  "authErrorRateLimited": "تلاش زیاد بود. کمی بعد دوباره امتحان کنید.",
+  "authErrorOffline": "ارتباط با سرور برقرار نشد.",
+  "authErrorUnknown": "انجام نشد. دوباره تلاش کنید.",
+  "usernameErrorEmpty": "لطفاً یک نام کاربری بنویسید.",
+  "usernameErrorTooShort": "دست‌کم {min} نویسه.",
+  "@usernameErrorTooShort": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameErrorTooLong": "حداکثر {max} نویسه.",
+  "@usernameErrorTooLong": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameErrorInvalidChars": "مجاز: حروف کوچک انگلیسی، رقم، _ و -",
+  "cloudBackupNow": "همین حالا پشتیبان بگیر",
+  "cloudRestore": "گرفتن از سرور",
+  "cloudLastBackup": "آخرین پشتیبان: {when}",
+  "@cloudLastBackup": {
+    "placeholders": {
+      "when": { "type": "String" }
+    }
+  },
+  "cloudNeverBackedUp": "هنوز پشتیبانی گرفته نشده",
+  "cloudRestoreTitle": "از سرور گرفته شود؟",
+  "cloudRestoreBody": "داده‌های این دستگاه کاملاً با پشتیبان روی سرور جایگزین می‌شود. این کار برگشت‌پذیر نیست.",
+  "cloudRestoreConfirm": "جایگزین کن",
+  "cloudBackupDone": "پشتیبان گرفته شد.",
+  "cloudRestoreDone": "بازگردانده شد.",
+  "cloudSyncFailed": "سرور در دسترس نبود. داده‌های روی دستگاه دست‌نخورده است.",
+  "cloudNothingStored": "هنوز پشتیبانی روی سرور نیست.",
+  "cloudTooNew": "این پشتیبان از نسخهٔ جدیدتر Root-in است. لطفاً برنامه را به‌روز کنید."
 }

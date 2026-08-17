@@ -1,17 +1,13 @@
 {
   "@@locale": "en",
-
   "appTitle": "Root-in",
-
   "navHome": "Home",
   "navToday": "Today",
   "navView": "View",
   "navSettings": "Settings",
-
   "pageAccountTitle": "Account",
   "pageCategoriesTitle": "Categories",
   "pageRemindersTitle": "Reminders",
-
   "tabWeek": "Week",
   "tabOverview": "Overview",
   "tabMonth": "Month",
@@ -19,13 +15,11 @@
   "weekTabTitle": "This week",
   "monthTabTitle": "This month",
   "yearTabTitle": "Last 12 months",
-
   "statProgress": "Progress",
   "statPoints": "Points",
   "statDone": "Done",
   "statCompletions": "Completions",
   "statLongestStreak": "Longest streak",
-
   "actionCancel": "Cancel",
   "actionSave": "Save",
   "actionAdd": "Add",
@@ -33,21 +27,20 @@
   "actionEdit": "Edit",
   "actionDelete": "Delete",
   "actionRename": "Rename",
-
   "errorGeneric": "Error: {error}",
   "@errorGeneric": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "todayEmpty": "No habits yet. Add one with +.",
   "dateToday": "Today",
   "dateYesterday": "Yesterday",
   "datePreviousDay": "Previous day",
   "dateNextDay": "Next day",
   "dateBackToToday": "Today",
-
   "habitFormChooseTemplate": "Choose a template",
   "habitFormEditTitle": "Edit habit",
   "habitFormCustomTitle": "Custom habit",
@@ -64,16 +57,21 @@
   "habitDeleteBody": "“{name}” will be permanently deleted, including all of its completions.",
   "@habitDeleteBody": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
-
   "categoriesEmpty": "No categories yet. Add one with +.",
   "categoryStillInUse": "{count, plural, one{“{name}” is still used by one habit — recategorise it first.} other{“{name}” is still used by {count} habits — recategorise those first.}}",
   "@categoryStillInUse": {
     "placeholders": {
-      "name": { "type": "String" },
-      "count": { "type": "int" }
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
     }
   },
   "categoriesAddDefaults": "Add default categories",
@@ -81,11 +79,12 @@
   "categoriesDefaultsAdded": "{count, plural, one{One category added.} other{{count} categories added.}}",
   "@categoriesDefaultsAdded": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "categoriesDefaultsComplete": "All default categories are already there.",
-
   "categoryGrammar": "Grammar",
   "categoryVocabulary": "Vocabulary",
   "categoryMemorization": "Memorization",
@@ -93,7 +92,6 @@
   "categoryWriting": "Writing",
   "categorySpeaking": "Speaking",
   "categoryListening": "Listening",
-
   "reminderDaily": "Daily reminder",
   "reminderOff": "Off",
   "reminderNone": "No reminder",
@@ -101,17 +99,20 @@
   "reminderAt": "At {time}",
   "@reminderAt": {
     "placeholders": {
-      "time": { "type": "String" }
+      "time": {
+        "type": "String"
+      }
     }
   },
   "reminderDailyAt": "Daily at {time}",
   "@reminderDailyAt": {
     "placeholders": {
-      "time": { "type": "String" }
+      "time": {
+        "type": "String"
+      }
     }
   },
   "remindersEmpty": "No habits yet. Create one first to set a reminder time for it here.",
-
   "settingsAppearance": "Appearance",
   "themeLight": "Light",
   "themeDark": "Dark",
@@ -155,20 +156,23 @@
   "othersEntryCount": "{count, plural, =0{No posts yet} one{1 post} other{{count} posts}}",
   "@othersEntryCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "othersBrokenTitle": "Content unreadable",
   "othersBrokenBody": "The index of this section is currently broken. Please try again later.",
   "guideComingSoonTitle": "Content coming soon",
   "guideComingSoonBody": "This guide is being written right now. As soon as it is ready, you will find it right here.",
-
   "settingsAds": "Ads",
   "removeAdsTitle": "Remove ads",
   "removeAdsSubtitle": "{price} · one-time purchase, keeps forever",
   "@removeAdsSubtitle": {
     "placeholders": {
-      "price": { "type": "String" }
+      "price": {
+        "type": "String"
+      }
     }
   },
   "removeAdsUnavailable": "Not available right now — Google Play can't be reached.",
@@ -180,16 +184,21 @@
   "removeAdsFailed": "Purchase failed: {error}",
   "@removeAdsFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "backupRestoreTitle": "Restore backup?",
   "backupRestoreBody": "The backup contains {habits} habits and {completions} completions.\n\nAll current data in the app will be replaced.",
   "@backupRestoreBody": {
     "placeholders": {
-      "habits": { "type": "int" },
-      "completions": { "type": "int" }
+      "habits": {
+        "type": "int"
+      },
+      "completions": {
+        "type": "int"
+      }
     }
   },
   "backupRestoreConfirm": "Restore",
@@ -197,13 +206,17 @@
   "backupExportFailed": "Export failed: {error}",
   "@backupExportFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "backupImportFailed": "Import failed: {error}",
   "@backupImportFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "backupInvalidJson": "The file is not valid JSON.",
@@ -212,17 +225,22 @@
   "backupTooNew": "This backup comes from a newer app version (format {fileVersion}, supported is {supportedVersion}).",
   "@backupTooNew": {
     "placeholders": {
-      "fileVersion": { "type": "int" },
-      "supportedVersion": { "type": "int" }
+      "fileVersion": {
+        "type": "int"
+      },
+      "supportedVersion": {
+        "type": "int"
+      }
     }
   },
   "backupShareText": "Root-in data backup from {date}",
   "@backupShareText": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
-
   "accountProfile": "Profile",
   "accountTotalStats": "Overall statistics",
   "accountAchievements": "Achievements",
@@ -235,16 +253,19 @@
   "shareAppText": "I use Root-in to track my habits — check it out: {link}",
   "@shareAppText": {
     "placeholders": {
-      "link": { "type": "String" }
+      "link": {
+        "type": "String"
+      }
     }
   },
   "shareProgressText": "My progress in Root-in — get it here: {link}",
   "@shareProgressText": {
     "placeholders": {
-      "link": { "type": "String" }
+      "link": {
+        "type": "String"
+      }
     }
   },
-
   "dashboardCustomize": "Customise",
   "dashboardDone": "Done",
   "dashboardRemove": "Remove",
@@ -254,22 +275,20 @@
   "widgetCategoryPie": "Habit type (pie)",
   "widgetProgressTrend": "Progress trend",
   "widgetMonthlyBar": "Monthly overview",
-
   "webStorageHintTitle": "Add to your home screen",
   "webStorageHintBody": "Your data lives in this website's storage — not on a server. Safari deletes the storage of a website you haven't opened for seven days. Once Root-in sits on your home screen, that rule no longer applies.",
   "webStorageHintSteps": "In Safari: tap the share icon, then “Add to Home Screen”.",
   "webStorageHintBackup": "Also export a backup now and then — in Settings under “Export backup”.",
   "webStorageHintUnderstood": "Got it",
-
   "chartNoData": "No data for this period yet.",
-
   "chartTrendWeeklyAverage": "Weekly average",
   "chartTrendMonthlyAverage": "Monthly average",
-
   "overviewWeekLabel": "Week {number}",
   "@overviewWeekLabel": {
     "placeholders": {
-      "number": { "type": "int" }
+      "number": {
+        "type": "int"
+      }
     }
   },
   "overviewActivity": "Activity",
@@ -277,15 +296,23 @@
   "overviewGoalPerWeek": "{count}× per week",
   "@overviewGoalPerWeek": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "overviewGoalInPeriod": "{done} of {target} in {weeks} weeks",
   "@overviewGoalInPeriod": {
     "placeholders": {
-      "done": { "type": "int" },
-      "target": { "type": "int" },
-      "weeks": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      },
+      "weeks": {
+        "type": "int"
+      }
     }
   },
   "overviewHabits": "Habits",
@@ -299,7 +326,6 @@
   "overviewEmpty": "No habits yet.",
   "overviewFullscreen": "Full screen",
   "overviewFullscreenExit": "Exit full screen",
-
   "monthShortJan": "Jan",
   "monthShortFeb": "Feb",
   "monthShortMar": "Mar",
@@ -312,7 +338,6 @@
   "monthShortOct": "Oct",
   "monthShortNov": "Nov",
   "monthShortDec": "Dec",
-
   "weekdayInitialMonday": "M",
   "weekdayInitialTuesday": "T",
   "weekdayInitialWednesday": "W",
@@ -320,7 +345,6 @@
   "weekdayInitialFriday": "F",
   "weekdayInitialSaturday": "S",
   "weekdayInitialSunday": "S",
-
   "ascentSourceToday": "Progress today",
   "ascentSourceWeek": "Progress this week",
   "ascentSourceMonth": "Progress this month",
@@ -333,11 +357,14 @@
   "ascentToNextCamp": "{remaining} % to camp {camp} %",
   "@ascentToNextCamp": {
     "placeholders": {
-      "remaining": { "type": "int" },
-      "camp": { "type": "int" }
+      "remaining": {
+        "type": "int"
+      },
+      "camp": {
+        "type": "int"
+      }
     }
   },
-
   "achievementStreak3Title": "Good start",
   "achievementStreak7Title": "One week in",
   "achievementStreak14Title": "Two weeks strong",
@@ -352,22 +379,28 @@
   "achievementStreakDescription": "{count}-day streak in a row",
   "@achievementStreakDescription": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "achievementPointsDescription": "{count} points collected",
   "@achievementPointsDescription": {
     "placeholders": {
-      "count": { "type": "int", "format": "decimalPattern" }
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
     }
   },
   "achievementCategoriesDescription": "Active in {count} different categories",
   "@achievementCategoriesDescription": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "onboardingSkip": "Skip",
   "onboardingNext": "Next",
   "onboardingStart": "Let's go",
@@ -379,7 +412,6 @@
   "onboardingProgressBody": "Percentages and points appear on every page, and under “View” you also get them by week, month and year. You may skip one day per week without losing your streak.",
   "onboardingRemindersTitle": "Reminders and widgets",
   "onboardingRemindersBody": "Give each habit a time for Root-in to remind you. On your home screen you can place charts, the daily ring or a colour tile — the tile checks a habit off right there, without opening the app.",
-
   "templateYoutube": "YouTube",
   "templateCoursebook": "Coursebook",
   "templateWorkbook": "Workbook",
@@ -391,11 +423,12 @@
   "templateSpeaking": "Speaking",
   "templateListening": "Listening",
   "templateMemorizing": "Memorising",
-
   "notificationStreakAtRisk": "{count, plural, one{Your one-day streak ends at midnight.} other{Your {count}-day streak ends at midnight.}}",
   "@notificationStreakAtRisk": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "notificationStatusChannelName": "Daily status",
@@ -403,14 +436,20 @@
   "notificationStatusTitle": "Today: {done} of {total} done",
   "@notificationStatusTitle": {
     "placeholders": {
-      "done": { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "notificationStatusBody": "{count, plural, one{One habit is still open.} other{{count} habits are still open.}}",
   "@notificationStatusBody": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "settingsStatusNotification": "Daily status in the bar",
@@ -421,29 +460,100 @@
   "notificationTitle": "Time for: {habit}",
   "@notificationTitle": {
     "placeholders": {
-      "habit": { "type": "String" }
+      "habit": {
+        "type": "String"
+      }
     }
   },
   "notificationBody": "Don't forget your habit today.",
   "notificationSnoozedBody": "Reminder postponed by {minutes} minutes.",
   "@notificationSnoozedBody": {
     "placeholders": {
-      "minutes": { "type": "int" }
+      "minutes": {
+        "type": "int"
+      }
     }
   },
-
   "homeWidgetSubtitle": "{done}/{total} done",
   "homeWidgetOpen": "{count, plural, one{1 left} other{{count} left}}",
   "@homeWidgetOpen": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "homeWidgetAllDone": "All done today",
   "@homeWidgetSubtitle": {
     "placeholders": {
-      "done": { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
-  }
+  },
+  "cloudSectionTitle": "Account & cloud",
+  "cloudSignedOutBody": "Your data lives on this device. With an account there is also a copy on the server — it helps if you lose the device or reinstall. An account is optional; without one everything works as before.",
+  "cloudSignIn": "Sign in",
+  "cloudRegister": "Create account",
+  "cloudSignOut": "Sign out",
+  "cloudSignedInAs": "Signed in as {name}",
+  "@cloudSignedInAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cloudNoUsernameYet": "No username yet",
+  "cloudEmailHint": "This address is the only way to reset a forgotten password. If it is wrong, change it here.",
+  "fieldEmail": "Email",
+  "fieldPassword": "Password",
+  "fieldUsername": "Username",
+  "authErrorEmailTaken": "An account with this email already exists.",
+  "authErrorUsernameTaken": "This username is already taken.",
+  "authErrorInvalidCredentials": "Email or password is wrong.",
+  "authErrorWeakPassword": "The password is too short.",
+  "authErrorInvalidEmail": "That email address does not look right.",
+  "authErrorSignupDisabled": "New accounts are currently disabled.",
+  "authErrorRateLimited": "Too many attempts. Please try again later.",
+  "authErrorOffline": "No connection to the server.",
+  "authErrorUnknown": "That did not work. Please try again.",
+  "usernameErrorEmpty": "Please enter a username.",
+  "usernameErrorTooShort": "At least {min} characters.",
+  "@usernameErrorTooShort": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameErrorTooLong": "At most {max} characters.",
+  "@usernameErrorTooLong": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameErrorInvalidChars": "Allowed: lowercase letters, digits, _ and -",
+  "cloudBackupNow": "Back up now",
+  "cloudRestore": "Get from server",
+  "cloudLastBackup": "Last backup: {when}",
+  "@cloudLastBackup": {
+    "placeholders": {
+      "when": { "type": "String" }
+    }
+  },
+  "cloudNeverBackedUp": "Never backed up",
+  "cloudRestoreTitle": "Get from server?",
+  "cloudRestoreBody": "The data on this device will be replaced entirely by the backup from the server. This cannot be undone.",
+  "cloudRestoreConfirm": "Replace",
+  "cloudBackupDone": "Backed up.",
+  "cloudRestoreDone": "Restored.",
+  "cloudSyncFailed": "The server could not be reached. Your data on this device is untouched.",
+  "cloudNothingStored": "There is no backup on the server yet.",
+  "cloudTooNew": "The backup comes from a newer version of Root-in. Please update the app."
 }

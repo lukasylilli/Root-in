@@ -311,6 +311,14 @@ class AuthService {
 
 final authServiceProvider = Provider<AuthService>((ref) => const AuthService());
 
+/// Ob die Rubrik „Konto & Cloud" überhaupt erscheint.
+///
+/// Führt normalerweise nur `supportsCloudSync` weiter. Als Provider, damit
+/// **Tests sie einschalten können**, ohne dass ein Schlüssel im Bau steckt —
+/// sonst wäre die halbe Oberfläche dieser Phase unprüfbar, weil sie sich in
+/// einem Testlauf grundsätzlich versteckt.
+final cloudSyncEnabledProvider = Provider<bool>((ref) => supportsCloudSync);
+
 /// Der angemeldete Zustand für die Oberfläche. `null` = niemand angemeldet.
 final authAccountProvider = StreamProvider<AuthAccount?>((ref) {
   final service = ref.watch(authServiceProvider);

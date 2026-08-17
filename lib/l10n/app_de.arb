@@ -1,17 +1,13 @@
 {
   "@@locale": "de",
-
   "appTitle": "Root-in",
-
   "navHome": "Home",
   "navToday": "Heute",
   "navView": "View",
   "navSettings": "Einstellungen",
-
   "pageAccountTitle": "Konto",
   "pageCategoriesTitle": "Kategorien",
   "pageRemindersTitle": "Erinnerungen",
-
   "tabWeek": "Woche",
   "tabOverview": "Übersicht",
   "tabMonth": "Monat",
@@ -19,13 +15,11 @@
   "weekTabTitle": "Diese Woche",
   "monthTabTitle": "Dieser Monat",
   "yearTabTitle": "Letzte 12 Monate",
-
   "statProgress": "Fortschritt",
   "statPoints": "Punkte",
   "statDone": "Erledigt",
   "statCompletions": "Erledigungen",
   "statLongestStreak": "Längste Serie",
-
   "actionCancel": "Abbrechen",
   "actionSave": "Speichern",
   "actionAdd": "Hinzufügen",
@@ -33,22 +27,21 @@
   "actionEdit": "Bearbeiten",
   "actionDelete": "Löschen",
   "actionRename": "Umbenennen",
-
   "errorGeneric": "Fehler: {error}",
   "@errorGeneric": {
     "description": "Fehlermeldung beim Laden einer Seite",
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "todayEmpty": "Noch keine Gewohnheiten. Mit + eine hinzufügen.",
   "dateToday": "Heute",
   "dateYesterday": "Gestern",
   "datePreviousDay": "Vorheriger Tag",
   "dateNextDay": "Nächster Tag",
   "dateBackToToday": "Heute",
-
   "habitFormChooseTemplate": "Vorlage wählen",
   "habitFormEditTitle": "Gewohnheit bearbeiten",
   "habitFormCustomTitle": "Eigene Gewohnheit",
@@ -65,16 +58,21 @@
   "habitDeleteBody": "„{name}“ wird inklusive aller Erledigungen unwiderruflich gelöscht.",
   "@habitDeleteBody": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
-
   "categoriesEmpty": "Noch keine Kategorien. Mit + eine anlegen.",
   "categoryStillInUse": "{count, plural, one{„{name}“ wird noch von einer Gewohnheit genutzt — erst dort umkategorisieren.} other{„{name}“ wird noch von {count} Gewohnheiten genutzt — erst dort umkategorisieren.}}",
   "@categoryStillInUse": {
     "placeholders": {
-      "name": { "type": "String" },
-      "count": { "type": "int" }
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
     }
   },
   "categoriesAddDefaults": "Standard-Kategorien anlegen",
@@ -82,11 +80,12 @@
   "categoriesDefaultsAdded": "{count, plural, one{Eine Kategorie ergänzt.} other{{count} Kategorien ergänzt.}}",
   "@categoriesDefaultsAdded": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "categoriesDefaultsComplete": "Alle Standard-Kategorien sind schon da.",
-
   "categoryGrammar": "Grammatik",
   "categoryVocabulary": "Wortschatz",
   "categoryMemorization": "Auswendiglernen",
@@ -94,7 +93,6 @@
   "categoryWriting": "Schreiben",
   "categorySpeaking": "Sprechen",
   "categoryListening": "Hören",
-
   "reminderDaily": "Tägliche Erinnerung",
   "reminderOff": "Aus",
   "reminderNone": "Keine Erinnerung",
@@ -103,17 +101,20 @@
   "@reminderAt": {
     "description": "Untertitel im Habit-Formular, wenn eine Erinnerungszeit gesetzt ist",
     "placeholders": {
-      "time": { "type": "String" }
+      "time": {
+        "type": "String"
+      }
     }
   },
   "reminderDailyAt": "Täglich um {time}",
   "@reminderDailyAt": {
     "placeholders": {
-      "time": { "type": "String" }
+      "time": {
+        "type": "String"
+      }
     }
   },
   "remindersEmpty": "Noch keine Gewohnheiten. Lege zuerst eine an, um sie hier an eine Uhrzeit zu erinnern.",
-
   "settingsAppearance": "Darstellung",
   "themeLight": "Hell",
   "themeDark": "Dunkel",
@@ -163,21 +164,24 @@
   "othersEntryCount": "{count, plural, =0{Noch kein Beitrag} one{1 Beitrag} other{{count} Beiträge}}",
   "@othersEntryCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "othersBrokenTitle": "Inhalt nicht lesbar",
   "othersBrokenBody": "Die Übersicht dieser Rubrik ist gerade fehlerhaft. Versuch es später noch einmal.",
   "guideComingSoonTitle": "Inhalt folgt",
   "guideComingSoonBody": "An dieser Anleitung wird gerade geschrieben. Sobald sie fertig ist, findest du sie genau hier.",
-
   "settingsAds": "Werbung",
   "removeAdsTitle": "Werbung entfernen",
   "removeAdsSubtitle": "{price} · einmaliger Kauf, gilt dauerhaft",
   "@removeAdsSubtitle": {
     "description": "Untertitel der Kauf-Kachel; {price} kommt lokalisiert von Google Play",
     "placeholders": {
-      "price": { "type": "String" }
+      "price": {
+        "type": "String"
+      }
     }
   },
   "removeAdsUnavailable": "Gerade nicht verfügbar — Google Play ist nicht erreichbar.",
@@ -189,16 +193,21 @@
   "removeAdsFailed": "Kauf fehlgeschlagen: {error}",
   "@removeAdsFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "backupRestoreTitle": "Sicherung einspielen?",
   "backupRestoreBody": "Die Sicherung enthält {habits} Gewohnheiten und {completions} Erledigungen.\n\nAlle aktuellen Daten in der App werden dabei ersetzt.",
   "@backupRestoreBody": {
     "placeholders": {
-      "habits": { "type": "int" },
-      "completions": { "type": "int" }
+      "habits": {
+        "type": "int"
+      },
+      "completions": {
+        "type": "int"
+      }
     }
   },
   "backupRestoreConfirm": "Einspielen",
@@ -206,13 +215,17 @@
   "backupExportFailed": "Export fehlgeschlagen: {error}",
   "@backupExportFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "backupImportFailed": "Import fehlgeschlagen: {error}",
   "@backupImportFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "backupInvalidJson": "Die Datei ist kein gültiges JSON.",
@@ -221,17 +234,22 @@
   "backupTooNew": "Diese Sicherung stammt aus einer neueren App-Version (Format {fileVersion}, unterstützt wird {supportedVersion}).",
   "@backupTooNew": {
     "placeholders": {
-      "fileVersion": { "type": "int" },
-      "supportedVersion": { "type": "int" }
+      "fileVersion": {
+        "type": "int"
+      },
+      "supportedVersion": {
+        "type": "int"
+      }
     }
   },
   "backupShareText": "Root-in Datensicherung vom {date}",
   "@backupShareText": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
-
   "accountProfile": "Profil",
   "accountTotalStats": "Gesamt-Statistik",
   "accountAchievements": "Achievements",
@@ -244,16 +262,19 @@
   "shareAppText": "Ich nutze Root-in, um meine Gewohnheiten zu tracken — schau es dir an: {link}",
   "@shareAppText": {
     "placeholders": {
-      "link": { "type": "String" }
+      "link": {
+        "type": "String"
+      }
     }
   },
   "shareProgressText": "Mein Fortschritt in Root-in — hier laden: {link}",
   "@shareProgressText": {
     "placeholders": {
-      "link": { "type": "String" }
+      "link": {
+        "type": "String"
+      }
     }
   },
-
   "dashboardCustomize": "Anpassen",
   "dashboardDone": "Fertig",
   "dashboardRemove": "Entfernen",
@@ -263,7 +284,6 @@
   "widgetCategoryPie": "Typ von Gewohnheit (Kreis)",
   "widgetProgressTrend": "Fortschritts-Trend",
   "widgetMonthlyBar": "Monatsübersicht",
-
   "webStorageHintTitle": "Zum Home-Bildschirm hinzufügen",
   "@webStorageHintTitle": {
     "description": "Titel des einmaligen Hinweises, den NUR die Web-Fassung beim ersten Start zeigt (PLAN.md Phase 26.8)"
@@ -275,9 +295,7 @@
   "webStorageHintSteps": "In Safari: Teilen-Symbol antippen, dann „Zum Home-Bildschirm“.",
   "webStorageHintBackup": "Mach zusätzlich ab und zu eine Sicherung — in den Einstellungen unter „Sicherung exportieren“.",
   "webStorageHintUnderstood": "Verstanden",
-
   "chartNoData": "Noch keine Daten für diesen Zeitraum.",
-
   "chartTrendWeeklyAverage": "Wochenmittel",
   "@chartTrendWeeklyAverage": {
     "description": "Hinweis über dem Fortschritts-Trend, sobald die Linie nicht mehr einen Punkt je Tag zeigt, sondern den Mittelwert je Woche"
@@ -286,12 +304,13 @@
   "@chartTrendMonthlyAverage": {
     "description": "Wie chartTrendWeeklyAverage, aber für sehr lange Zeiträume mit Mittelwert je Monat"
   },
-
   "overviewWeekLabel": "Woche {number}",
   "@overviewWeekLabel": {
     "description": "Spaltenkopf über einer der vier Wochen der Übersicht",
     "placeholders": {
-      "number": { "type": "int" }
+      "number": {
+        "type": "int"
+      }
     }
   },
   "overviewActivity": "Aktivität",
@@ -300,15 +319,23 @@
   "@overviewGoalPerWeek": {
     "description": "Summe aller Wochen-Ziele über alle Gewohnheiten",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "overviewGoalInPeriod": "{done} von {target} in {weeks} Wochen",
   "@overviewGoalInPeriod": {
     "placeholders": {
-      "done": { "type": "int" },
-      "target": { "type": "int" },
-      "weeks": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      },
+      "weeks": {
+        "type": "int"
+      }
     }
   },
   "overviewHabits": "Gewohnheiten",
@@ -322,7 +349,6 @@
   "overviewEmpty": "Noch keine Gewohnheiten angelegt.",
   "overviewFullscreen": "Vollbild",
   "overviewFullscreenExit": "Vollbild beenden",
-
   "monthShortJan": "Jan",
   "monthShortFeb": "Feb",
   "monthShortMar": "Mär",
@@ -335,7 +361,6 @@
   "monthShortOct": "Okt",
   "monthShortNov": "Nov",
   "monthShortDec": "Dez",
-
   "weekdayInitialMonday": "M",
   "@weekdayInitialMonday": {
     "description": "Ein Buchstabe für Montag in der Wochen-Checkliste"
@@ -346,7 +371,6 @@
   "weekdayInitialFriday": "F",
   "weekdayInitialSaturday": "S",
   "weekdayInitialSunday": "S",
-
   "ascentSourceToday": "Fortschritt heute",
   "ascentSourceWeek": "Fortschritt diese Woche",
   "ascentSourceMonth": "Fortschritt diesen Monat",
@@ -360,11 +384,14 @@
   "@ascentToNextCamp": {
     "description": "Statuszeile der Berg-Animation bis zum nächsten Camp",
     "placeholders": {
-      "remaining": { "type": "int" },
-      "camp": { "type": "int" }
+      "remaining": {
+        "type": "int"
+      },
+      "camp": {
+        "type": "int"
+      }
     }
   },
-
   "achievementStreak3Title": "Guter Start",
   "achievementStreak7Title": "Eine Woche dran",
   "achievementStreak14Title": "Zwei Wochen stark",
@@ -379,22 +406,28 @@
   "achievementStreakDescription": "{count} Tage Serie am Stück",
   "@achievementStreakDescription": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "achievementPointsDescription": "{count} Punkte gesammelt",
   "@achievementPointsDescription": {
     "placeholders": {
-      "count": { "type": "int", "format": "decimalPattern" }
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
     }
   },
   "achievementCategoriesDescription": "In {count} verschiedenen Kategorien aktiv",
   "@achievementCategoriesDescription": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "onboardingSkip": "Überspringen",
   "onboardingNext": "Weiter",
   "onboardingStart": "Los geht's",
@@ -406,7 +439,6 @@
   "onboardingProgressBody": "Prozent und Punkte siehst du auf jeder Seite, unter „View“ zusätzlich nach Woche, Monat und Jahr. Für deine Serie darfst du pro Woche einen Tag auslassen, ohne sie zu verlieren.",
   "onboardingRemindersTitle": "Erinnerungen und Widgets",
   "onboardingRemindersBody": "Gib jeder Gewohnheit eine Uhrzeit, zu der dich Root-in erinnert. Auf den Startbildschirm kannst du Diagramme, den Tagesring oder eine Farbkachel legen — die Kachel hakt direkt dort ab, ohne die App zu öffnen.",
-
   "templateYoutube": "YouTube",
   "templateCoursebook": "Kursbuch",
   "templateWorkbook": "Arbeitsbuch",
@@ -418,12 +450,13 @@
   "templateSpeaking": "Sprechen",
   "templateListening": "Hören",
   "templateMemorizing": "Auswendiglernen",
-
   "notificationStreakAtRisk": "{count, plural, one{Deine Serie von einem Tag endet um Mitternacht.} other{Deine Serie von {count} Tagen endet um Mitternacht.}}",
   "@notificationStreakAtRisk": {
     "description": "Text der täglichen Erinnerung, wenn eine Serie läuft (PLAN.md Phase 23)",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "notificationStatusChannelName": "Tagesstand",
@@ -431,14 +464,20 @@
   "notificationStatusTitle": "Heute: {done} von {total} erledigt",
   "@notificationStatusTitle": {
     "placeholders": {
-      "done": { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "notificationStatusBody": "{count, plural, one{Eine Gewohnheit ist noch offen.} other{{count} Gewohnheiten sind noch offen.}}",
   "@notificationStatusBody": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "settingsStatusNotification": "Tagesstand in der Leiste",
@@ -449,31 +488,102 @@
   "notificationTitle": "Zeit für: {habit}",
   "@notificationTitle": {
     "placeholders": {
-      "habit": { "type": "String" }
+      "habit": {
+        "type": "String"
+      }
     }
   },
   "notificationBody": "Vergiss deine Gewohnheit heute nicht.",
   "notificationSnoozedBody": "Erinnerung um {minutes} Minuten verschoben.",
   "@notificationSnoozedBody": {
     "placeholders": {
-      "minutes": { "type": "int" }
+      "minutes": {
+        "type": "int"
+      }
     }
   },
-
   "homeWidgetSubtitle": "{done}/{total} erledigt",
   "homeWidgetOpen": "{count, plural, one{Noch 1 offen} other{Noch {count} offen}}",
   "@homeWidgetOpen": {
     "description": "Untertitel des Fortschritts-Widgets, solange etwas offen ist (PLAN.md Phase 23)",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "homeWidgetAllDone": "Heute alles erledigt",
   "@homeWidgetSubtitle": {
     "description": "Untertitel im Home-Screen-Widget: erledigte von allen Gewohnheiten",
     "placeholders": {
-      "done": { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
-  }
+  },
+  "cloudSectionTitle": "Konto & Cloud",
+  "cloudSignedOutBody": "Deine Daten liegen auf diesem Gerät. Mit einem Konto liegt zusätzlich eine Kopie auf dem Server — sie hilft bei Geräteverlust oder Neuinstallation. Ein Konto ist freiwillig; ohne läuft alles wie bisher.",
+  "cloudSignIn": "Anmelden",
+  "cloudRegister": "Konto anlegen",
+  "cloudSignOut": "Abmelden",
+  "cloudSignedInAs": "Angemeldet als {name}",
+  "@cloudSignedInAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cloudNoUsernameYet": "Noch kein Benutzername",
+  "cloudEmailHint": "Diese Adresse ist der einzige Weg, ein vergessenes Passwort zurückzusetzen. Stimmt sie nicht, hier ändern.",
+  "fieldEmail": "E-Mail",
+  "fieldPassword": "Passwort",
+  "fieldUsername": "Benutzername",
+  "authErrorEmailTaken": "Für diese E-Mail gibt es schon ein Konto.",
+  "authErrorUsernameTaken": "Dieser Benutzername ist schon vergeben.",
+  "authErrorInvalidCredentials": "E-Mail oder Passwort stimmt nicht.",
+  "authErrorWeakPassword": "Das Passwort ist zu kurz.",
+  "authErrorInvalidEmail": "Diese E-Mail-Adresse sieht nicht richtig aus.",
+  "authErrorSignupDisabled": "Neue Konten sind zurzeit abgeschaltet.",
+  "authErrorRateLimited": "Zu viele Versuche. Bitte später erneut.",
+  "authErrorOffline": "Keine Verbindung zum Server.",
+  "authErrorUnknown": "Das hat nicht geklappt. Bitte erneut versuchen.",
+  "usernameErrorEmpty": "Bitte einen Benutzernamen eingeben.",
+  "usernameErrorTooShort": "Mindestens {min} Zeichen.",
+  "@usernameErrorTooShort": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameErrorTooLong": "Höchstens {max} Zeichen.",
+  "@usernameErrorTooLong": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameErrorInvalidChars": "Erlaubt sind Kleinbuchstaben, Ziffern, _ und -",
+  "cloudBackupNow": "Jetzt sichern",
+  "cloudRestore": "Vom Server holen",
+  "cloudLastBackup": "Zuletzt gesichert: {when}",
+  "@cloudLastBackup": {
+    "placeholders": {
+      "when": { "type": "String" }
+    }
+  },
+  "cloudNeverBackedUp": "Noch nie gesichert",
+  "cloudRestoreTitle": "Vom Server holen?",
+  "cloudRestoreBody": "Der Bestand auf diesem Gerät wird vollständig durch die Sicherung vom Server ersetzt. Das lässt sich nicht rückgängig machen.",
+  "cloudRestoreConfirm": "Ersetzen",
+  "cloudBackupDone": "Gesichert.",
+  "cloudRestoreDone": "Wiederhergestellt.",
+  "cloudSyncFailed": "Der Server war nicht erreichbar. Deine Daten auf dem Gerät sind unberührt.",
+  "cloudNothingStored": "Auf dem Server liegt noch keine Sicherung.",
+  "cloudTooNew": "Die Sicherung stammt aus einer neueren Version von Root-in. Bitte die App aktualisieren."
 }

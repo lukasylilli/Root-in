@@ -494,7 +494,9 @@ lib/
 │   │   └── guide_page.dart                   ✅ EINE Seite für alle vier Themen: Kopf mit Akzent-Verlauf, darunter
 │   │                                             Markdown bzw. Ladekreis, Offline-Hinweis oder „Inhalt folgt"
 │   ├── account/presentation/
-│   │   ├── account_page.dart                 ✅ Profil, Gesamt-Statistik, Dashboard (gesamter Verlauf),
+│   │   ├── account_page.dart                 ✅ **Ganz oben die Rubrik „Konto & Cloud"** (Phase 27.5,
+│   │   │                                         aus features/auth/) — nur wenn eine Cloud
+│   │   │                                         eingerichtet ist. Darunter unverändert:
 │   │   │                                         Achievements, „Fortschritt teilen" (⚠️ bleibt erhalten — die
 │   │   │                                         Anleitung „Lernplanung" verweist ausdrücklich auf diesen Weg)
 │   │   ├── achievements_grid.dart            ✅ Einziges Achievement-Grid (3 Spalten, gesperrt/freigeschaltet)
@@ -801,10 +803,23 @@ lib/core/services/auth_service.dart  ✅ Einzige Stelle für supabase_flutter (2
                                          wird nichts gestartet und nichts gesendet
 test/unit/auth_issue_test.dart       ✅ 7 Fälle: Code-Zuordnung, unbekannter Code, Verhalten ohne
                                          Konfiguration
-lib/core/services/cloud_backup_service.dart 🚧 Bestand als Backup-JSON hoch/runter (27.7)
-lib/features/auth/presentation/      🚧 Registrieren (E-Mail + Passwort + Benutzername) und
-                                         Anmelden (E-Mail + Passwort) (27.5)
-test/support/fake_auth_service.dart  🚧 Anmeldung ohne Server (27.5)
+lib/core/services/cloud_backup_service.dart ✅ Bestand als Backup-JSON hoch/runter (27.7): upload,
+                                         fetch, restore, lastBackupAt.
+                                         ⚠️ fetch und restore sind GETRENNT — die Oberfläche muss
+                                         vorher sagen können, was überschrieben wird
+                                         ⚠️ lastBackupAt holt NUR den Zeitstempel; sonst lüde jeder
+                                         Aufbau der Konto-Seite den ganzen Bestand herunter
+lib/core/services/cloud_auto_backup.dart ✅ Sichert von selbst (27.7), ENTPRELLT (20 s) — sonst
+                                         schickte eine Morgenrunde mit acht Häkchen achtmal den
+                                         ganzen Bestand. Scheitern bleibt stumm und folgenlos
+lib/features/auth/presentation/
+  auth_sheet.dart                    ✅ EIN Sheet für Anmelden und Registrieren (27.5), Muster wie
+                                         showShareProgressSheet. Enthält die Übersetzung der
+                                         sprachneutralen Gründe — der Dienst kennt keine Sprache
+  account_cloud_card.dart            ✅ Rubrik „Konto & Cloud" auf der BESTEHENDEN Konto-Seite,
+                                         nicht daneben. Verschwindet ganz ohne Cloud
+test/support/fake_auth_service.dart  ✅ Anmeldung ohne Server (27.5)
+test/widget/account_cloud_card_test.dart ✅ 6 Fälle, u. a. „ohne Cloud ist die Rubrik gar nicht da"
 ```
 
 **Registrierung: echte E-Mail + Passwort + Benutzername** (Entscheidung des Nutzers, PLAN.md 27.0b — **geändert am 2026-08-16**, vorher war eine künstliche Adresse aus dem Benutzernamen geplant). E-Mail und Passwort verwaltet Supabase, der Benutzername ist der Name *in* der App. Angemeldet wird mit der **E-Mail**; ob später auch mit dem Benutzernamen, ist offen (es bräuchte eine Edge Function — eine öffentliche Zuordnung Name → Adresse würde fremde E-Mails verraten).
