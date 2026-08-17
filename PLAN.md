@@ -6,16 +6,18 @@
 >
 > ✅ **[Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-) ist codeseitig fertig.** ⚠️ Sie kehrt Abschnitt 3 um — Root-in war von Tag eins „vollständig lokal, kein Backend, keine Nutzerkonten". Was daran hängt, steht in 27.0.
 >
-> ⬜ **Was noch offen ist — und was davon Claude nicht tun kann:**
+> ⚠️ **Ziel neu gesetzt am 2026-08-17: die Web-Fassung ist das Ziel** — „alle sollen sie ohne App Store oder Google Play nutzen können". Android und iOS nativ sind **zurückgestellt**, nicht gestrichen. Was das ändert, steht in [Abschnitt 2](#2-zielplattformen).
 >
-> | Offen | Wer |
-> |---|---|
-> | **Gist der Datenschutzerklärung nachziehen** (inzwischen **zweifach** veraltet) | Nutzer — ⚠️ blockiert Phase 15 |
-> | **Play-Datensicherheitsformular** neu ausfüllen | Nutzer — ⚠️ blockiert Phase 15 |
-> | Ein Durchgang auf einem echten Gerät (21.3) — der größte offene Posten | Nutzer + Claude |
-> | Konto → Sicherung → App löschen → Wiederherstellen einmal am Gerät durchspielen | Nutzer |
-> | Bestätigung von 26.13 auf einem echten iPhone | Nutzer |
-> | Play-Veröffentlichung (15) · iOS nativ (12) | Nutzer bzw. später |
+> ⬜ **Was noch offen ist — nach der neuen Zielsetzung sortiert:**
+>
+> | Offen | Wer | Dringlichkeit |
+> |---|---|---|
+> | **Durchgang der Web-Fassung auf einem echten iPhone** (26 + Konto/Sicherung) | Nutzer | **hoch** — das ist jetzt die Hauptplattform |
+> | **Gist der Datenschutzerklärung nachziehen** (zweifach veraltet) | Nutzer | **hoch** — echte Nutzer, echte E-Mails; unabhängig von jedem Store |
+> | Erinnerungen im Web: bauen oder als Grenze benennen? | Entscheidung | **hoch** — die primäre Plattform hat sie nicht |
+> | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer | mittel |
+> | Konto → Sicherung → Gerät wechseln → Wiederherstellen einmal durchspielen | Nutzer | mittel |
+> | Android-Gerätedurchgang (21.3) · Play-Formular · Play-Veröffentlichung (15) · iOS nativ (12) | — | **zurückgestellt** |
 
 > ⚠️ **Umgebungs-Grundregel dieser Maschine:** Nie Code/SDKs/Dev-Tools unter `~/Desktop` oder `~/Documents` speichern — iCloud „Schreibtisch & Dokumente"-Sync ist hier aktiv und bricht Code-Signing für Binaries (Lehre 1). Immer `~/Projects/<name>` für Projekte, `~/development/<tool>` für SDKs.
 
@@ -33,11 +35,11 @@
     - 10.1 [Erledigte Phasen (Kurzfassung)](#101-erledigte-phasen-kurzfassung) — Phasen 0–11.6, 13, 14, 15.1/15.2, 16–27 ✅
     - 10.2 [Festlegungen aus erledigten Phasen, die man noch braucht](#102-festlegungen-aus-erledigten-phasen-die-man-noch-braucht)
     - [Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-) ✅ *(Code fertig, Datenschutz-Formalitäten offen)*
-    - **Offene Phasen:**
-      - [Phase 21.3 — Gerätedurchgang](#phase-213--gerätedurchgang-) ⬜ **der größte offene Posten**
-      - [Phase 15 — Veröffentlichung im Google Play Store](#phase-15--veröffentlichung-im-google-play-store-android-) 🔄 ⚠️ blockiert durch 27.8
-      - [Phase 26 — Web-Fassung: was noch offen ist](#phase-26--web-fassung-was-noch-offen-ist-) 🔄
-      - [Phase 12 — iOS-Portierung](#phase-12--ios-portierung-) ⬜
+    - **Offene Phasen** *(nach der Zielsetzung vom 2026-08-17 sortiert):*
+      - [Phase 26 — Web-Fassung: was noch offen ist](#phase-26--web-fassung-was-noch-offen-ist-) 🔄 **die Hauptplattform**
+      - [Phase 21.3 — Gerätedurchgang](#phase-213--gerätedurchgang--zurückgestellt) ⬜ zurückgestellt (Android)
+      - [Phase 15 — Veröffentlichung im Google Play Store](#phase-15--veröffentlichung-im-google-play-store-android-) ⏸️ zurückgestellt
+      - [Phase 12 — iOS-Portierung](#phase-12--ios-portierung-) ⏸️ zurückgestellt
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
     - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–35)
 12. [Offene Fragen](#12-offene-fragen)
@@ -46,10 +48,24 @@
 App zum Aufbauen und Verfolgen von Gewohnheiten/Routinen. Nutzer legen Habits an, haken sie täglich ab, sehen Streaks/Statistiken, bekommen Erinnerungen und werden durch kleine Gamification-Elemente motiviert, dranzubleiben. Inhaltlicher Schwerpunkt: Sprachenlernen (siehe Anleitungs-Rubrik und Standard-Kategorien).
 
 ## 2. Zielplattformen
-- **Android** — primäres Zielsystem, Code fertig und signiert
-- **Web als PWA** (seit Phase 26) — der Ersatzweg auf das iPhone, solange keine App-Store-Veröffentlichung möglich ist. Über Safari → „Zum Home-Bildschirm" ablegen
-- **iOS nativ** (Phase 12) — bleibt das Ziel, die Web-Fassung ist die Überbrückung
-- Desktop-Ordner (`macos/`, `linux/`, `windows/`) bleiben ungenutzt
+
+⚠️ **Am 2026-08-17 vom Nutzer neu gesetzt:** *„ziel ist web app, dass alle ohne app store oder google play das nutzen können."* Die Web-Fassung ist damit **das Ziel**, nicht mehr die Überbrückung. Bis dahin stand hier das Gegenteil — Android „primär", Web „Ersatzweg, solange keine Store-Veröffentlichung möglich ist", iOS nativ „bleibt das Ziel". Alle drei Sätze sind hinfällig.
+
+| Plattform | Rolle | Stand |
+|---|---|---|
+| **Web (PWA)** | **das Ziel** — jeder erreicht sie über eine Adresse, ohne Store, ohne Installation, ohne Konto bei Google oder Apple | live unter `lukasylilli.github.io/Root-in/` |
+| Android (APK/Play) | **zurückgestellt.** Der Code bleibt lauffähig und signiert; eine Veröffentlichung ist möglich, aber kein Ziel mehr | Phase 15 pausiert |
+| iOS nativ | **zurückgestellt.** Die Web-Fassung erreicht iPhones bereits über „Zum Home-Bildschirm" | Phase 12 pausiert |
+| Desktop (`macos/`, `linux/`, `windows/`) | ungenutzt | — |
+
+**Was diese Entscheidung wert ist:** Kein Store-Konto, keine Prüfzeiten, keine 12-Tester-Regel, keine Altersfreigabe-Formulare — und ein Update ist ein `git push`. Genau der Grund, warum Phase 26 überhaupt gebaut wurde.
+
+⚠️ **Was sie kostet, und das gehört ausgesprochen:** Zwei Funktionen gibt es im Browser **nicht** und sie fehlen damit auf der *primären* Plattform:
+
+- **Erinnerungen** (`flutter_local_notifications` hat keine Web-Umsetzung). Web-Push wäre möglich — seit Phase 27 gibt es sogar einen Server dafür —, ist aber ein eigenes Vorhaben (Service Worker, Berechtigungen, Versanddienst; auf iOS nur in der abgelegten Fassung). Siehe Abschnitt 12.
+- **Startbildschirm-Widgets** (9 Stück auf Android). Eine Website kann kein Widget stellen; das bleibt so.
+
+Beide verschwinden im Browser **sichtbar** statt wirkungslos dazustehen (Phase 26.1) — aber ein Nutzer, der nur die Web-Fassung kennt, bekommt eine Habit-App **ohne Erinnerungen**. Das ist die eigentliche offene Frage dieser Neuausrichtung, nicht eine Fußnote.
 
 ## 3. Datenhaltung
 
@@ -400,16 +416,18 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] ⚠️ **Eine Sicherung aus einer neueren App-Fassung wird abgelehnt** (`tooNew`), nicht halb eingespielt: Ein älterer Leser verlöre Felder, die er nicht kennt — und das fiele erst viel später auf.
 - [ ] ⚠️ **Die Grenze bleibt:** Das ist eine **Sicherung**, kein Abgleich. Wer auf zwei Geräten arbeitet, hat zwei Bestände; die Wiederherstellung überschreibt. Ein echter Abgleich braucht Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase, keine Fußnote.
 
-#### 27.8 Datenschutz nachziehen 🔄 *(blockiert Phase 15)*
+#### 27.8 Datenschutz nachziehen 🔄
 
 ⚠️ **Mit der Entscheidung für echte E-Mails wiegt dieser Abschnitt schwerer als geplant.** Eine E-Mail-Adresse ist ein personenbezogenes Datum; damit werden auch Gewohnheiten und Erledigungen personenbezogen, weil sie einer identifizierbaren Person zugeordnet sind. Das ist keine Formalie mehr.
+
+⚠️ **Und seit dem 2026-08-17 hängt es nicht mehr an Phase 15.** Bisher stand hier „blockiert die Play-Veröffentlichung" — das war die schwächere Begründung, und mit dem Zurückstellen von Phase 15 wäre sie ganz weggefallen. **Die Pflicht bleibt trotzdem:** Wer die Web-Adresse an 200 Schüler gibt und deren E-Mail speichert, schuldet ihnen eine zutreffende Datenschutzerklärung — ganz ohne Store. Ein Formular bei Google war nie der Grund, sondern nur der Anlass.
 
 - [x] **`store/PRIVACY_POLICY.md` überarbeitet, beide Sprachfassungen.** Neuer Punkt 4 („Konto und Sicherung auf dem Server") nennt in einer Tabelle **welche** Daten, **wozu**, **wo** (Supabase, EU/Frankfurt), **wer sie sieht** (nur der Eigentümer, technisch über RLS), **wann** hochgeladen wird und **wie** man sie loswird. Die Kurzfassung sagt in beiden Sprachen zuerst: **ohne Konto verlässt nichts das Gerät.**
 - [x] **Punkt 9 (Rechte) neu geschrieben** — der alte Satz „wir speichern nichts, also gibt es nichts herauszugeben" ist mit Konto schlicht falsch. Jetzt: Auskunft/Übertragbarkeit über den vorhandenen Export, Berichtigung in der App, Löschung, Rechtsgrundlage Einwilligung, Aufsichtsbehörde.
 - [x] **Die Erststart-Erklärung sagt es jetzt richtig** (alle drei Sprachen): „Deine Daten bleiben auf diesem Gerät; ein Konto ist freiwillig und legt zusätzlich eine Sicherung an." Der alte Satz behauptete das Gegenteil dessen, was die App seit heute kann.
 - [x] **„Daten auf dem Server löschen"** in der Rubrik „Konto & Cloud" (`deleteServerData()`): löscht Sicherung und Profilzeile, lässt den lokalen Bestand unangetastet. ⚠️ **Das ist bewusst nicht als „Konto löschen" beschriftet** — der Eintrag in `auth.users` bleibt, weil der öffentliche Schlüssel ihn nicht entfernen darf. Die Datenschutzerklärung nennt dafür den Weg über eine Nachricht; sie darf den Knopf **nicht** als vollständige Löschung ausgeben.
 - [ ] ⬜ **Den Gist neu speichern** — er zieht nicht von selbst nach (steht seit Phase 20 offen und ist jetzt **zweifach** veraltet). Muss der Nutzer tun; Quelle ist `store/PRIVACY_POLICY.md`.
-- [ ] ⬜ **Play-Datensicherheitsformular** neu ausfüllen: **nicht mehr „keine Daten erhoben"**. Zu deklarieren sind mindestens E-Mail-Adresse und App-Aktivität, jeweils mit Zweck und Übertragung.
+- [ ] ⏸️ **Play-Datensicherheitsformular** — nur relevant, falls Phase 15 je wieder aufgenommen wird. Dann: **nicht mehr „keine Daten erhoben"**, sondern mindestens E-Mail-Adresse und App-Aktivität mit Zweck und Übertragung.
 - [ ] ⬜ *(später, nicht blockierend)* Vollständige Kontolöschung über eine Edge Function, damit der Weg nicht über eine Nachricht laufen muss.
 - [ ] Abschnitt 3 dieses Plans und die Datenschutz-Aussage im Onboarding prüfen — dort steht heute wörtlich, dass alles auf dem Gerät bleibt.
 
@@ -459,8 +477,13 @@ Die Fortschritts-Karte trug seit Phase 19 den Play-Store-Link — für eine App,
 
 ---
 
-### Phase 21.3 — Gerätedurchgang ⬜
-Die Werkzeug-Prüfungen sind durch (`analyze` sauber, Tests grün, Bundle signiert, Manifest ohne `AD_ID`/`BILLING`). **Der Durchgang auf einem echten Gerät steht aus** — er ist der Teil, den Tests nicht ersetzen (Lehre 8).
+### Phase 21.3 — Gerätedurchgang ⬜ *(zurückgestellt)*
+
+⏸️ **Seit dem 2026-08-17 nicht mehr vordringlich.** Diese Liste prüft die **Android**-Fassung für eine Play-Veröffentlichung; das Ziel ist jetzt die Web-Fassung (Abschnitt 2). Sie bleibt vollständig stehen — der Android-Code ist lauffähig und signiert, und wenn die Veröffentlichung je kommt, ist das hier die Vorbereitung.
+
+⚠️ **Ein Teil der Liste gilt weiter, nur woanders:** Leerer Zustand, alle Sprachen, Persisch, Teilen, Import/Export und der Datenerhalt sind **plattformunabhängig** — sie gehören jetzt in den iPhone-Durchgang aus Phase 26. Rein Android sind: die 9 Startbildschirm-Widgets, Erinnerungen, Drehung, APK-Installation und das Update über eine bestehende Installation.
+
+Die Werkzeug-Prüfungen sind durch (`analyze` sauber, Tests grün, Bundle signiert, Manifest ohne `AD_ID`/`BILLING`). Am 2026-08-17 zusätzlich geprüft: Ein **Release-APK mit Cloud-Schlüsseln** baut und installiert sich auf einem frischen Emulator (Android 17). Der eigentliche Durchgang steht aus — er ist der Teil, den Tests nicht ersetzen (Lehre 8).
 
 - [ ] **Release-Build auf einem echten Gerät** (nicht nur Emulator) — Debug und Release unterscheiden sich nachweislich (Lehre 5).
 - [ ] **Frische Installation** (`pm clear`): Onboarding → **sieben** Standard-Kategorien → Gewohnheit aus einer Vorlage (landet sie in der passenden Kategorie?) → abhaken → alle Seiten. **Leerer Zustand** ist der häufigste Absturz-Kandidat: alle Diagramme, Übersicht und Teilen-Karte ohne einen einzigen Eintrag öffnen.
@@ -478,12 +501,13 @@ Die Werkzeug-Prüfungen sind durch (`analyze` sauber, Tests grün, Bundle signie
 
 ---
 
-### Phase 15 — Veröffentlichung im Google Play Store (Android) 🔄
-**Führt der Nutzer selbst durch**; Claude liefert Code-Anteile auf Zuruf und erklärt den nächsten Schritt auf Persisch.
+### Phase 15 — Veröffentlichung im Google Play Store (Android) ⏸️
 
-**Stand:** Code fertig und signiert ✅ · Store-Material vollständig ✅ · Play-Konto angelegt, **Identitätsprüfung läuft** ⏳.
+⏸️ **Zurückgestellt am 2026-08-17.** Das Ziel ist die Web-Fassung — „alle sollen sie ohne App Store oder Google Play nutzen können" (Abschnitt 2). Diese Phase wird **nicht gestrichen**: Das Material ist fertig, der Schlüssel gültig bis 2053, und der Weg steht hier vollständig, falls die Entscheidung je zurückgedreht wird.
 
-⚠️ **Zwei Blocker vor 15.2:** Der Gist der Datenschutzerklärung ist seit Phase 20 veraltet — **und Phase 27 macht ihn erneut falsch.** Erst 27.8, dann der Gist, dann das Formular.
+**Stand:** Code fertig und signiert ✅ · Store-Material vollständig ✅ · Play-Konto angelegt, Identitätsprüfung ⏳.
+
+⚠️ **Was NICHT mit dieser Phase pausiert: die Datenschutzerklärung.** Der veraltete Gist war bisher als „Play-Blocker" notiert — das war schon immer die schwächere Begründung. Seit Phase 27 speichert die App **E-Mail-Adressen echter Nutzer**; der veröffentlichte Text muss stimmen, ob ein Store beteiligt ist oder nicht. Der Punkt wandert deshalb aus dieser Phase heraus und steht in 27.8.
 
 #### Wichtige Kennungen (Nachschlagetabelle)
 | Was | Wert | Wo im Projekt |
@@ -509,16 +533,27 @@ Die Werkzeug-Prüfungen sind durch (`analyze` sauber, Tests grün, Bundle signie
 ---
 
 ### Phase 26 — Web-Fassung: was noch offen ist 🔄
-Die Fassung ist gebaut, veröffentlicht und geprüft (10.1/10.2). Offen bleiben:
+**Seit dem 2026-08-17 die Hauptplattform** (Abschnitt 2). Die Fassung ist gebaut, veröffentlicht und geprüft (10.1/10.2, 20/20 im Browser). Was offen ist, wiegt damit schwerer als zuvor — es betrifft nicht mehr einen Nebenweg, sondern **den** Weg.
 
-- [ ] **Auf einem echten iPhone durchgehen:** Seite in Safari öffnen → Speicher-Hinweis erscheint genau einmal? → „Zum Home-Bildschirm" → startet sie ohne Adressleiste? Bleiben die Daten? Funktionieren Teilen und Sicherung?
-- [ ] **Bestätigung der Behebung aus 26.13:** Symbol vom Home-Bildschirm löschen, in Safari neu laden, **erneut ablegen**, Erststart durchtippen — reagieren die Knöpfe dort, wo sie stehen? ⚠️ Ohne das Löschen startet die abgelegte Fassung weiter mit der alten `index.html`.
-- [ ] **App-Symbol** auf dem Home-Bildschirm ansehen (Safari am Mac kann das Ablegen nicht prüfen).
-- [ ] ⚠️ **GitHub Pages kann `Cross-Origin-Opener-Policy`/`Embedder-Policy` nicht setzen.** Drift nutzt dann nicht die schnellste Speicherart. **Die Daten bleiben erhalten** — eine Frage der Geschwindigkeit, kein Datenverlust.
+**Der Durchgang auf einem echten iPhone** — das ist der eine Test, den weder Safari am Mac noch der Simulator ersetzen können (in beiden lässt sich das Ablegen nicht nachstellen, 26.12):
+
+- [ ] Seite in Safari öffnen → erscheint der Speicher-Hinweis genau **einmal**?
+- [ ] „Zum Home-Bildschirm" → startet sie **ohne Adressleiste**? Stimmt das App-Symbol?
+- [ ] **Bestätigung von 26.13:** Erststart durchtippen — reagieren die Knöpfe **dort, wo sie stehen**? ⚠️ Vorher das alte Symbol **löschen** und neu ablegen, sonst startet die abgelegte Fassung weiter mit der alten `index.html` aus dem Zwischenspeicher.
+- [ ] Konto anlegen, Gewohnheit anlegen, „Jetzt sichern" → liegt in Supabase eine Zeile in `backups`?
+- [ ] App vom Home-Bildschirm löschen, neu ablegen, anmelden, **wiederherstellen** — ist der Bestand zurück?
+- [ ] Bleiben die Daten nach dem Schließen? Funktionieren Teilen und Export?
+
+⬜ **Und die Frage, die aus der Neuausrichtung folgt:** Auf der Hauptplattform gibt es **keine Erinnerungen**. Web-Push ist möglich (der Server steht seit Phase 27), aber ein eigenes Vorhaben. Zu entscheiden: bauen — oder als bewusste Grenze benennen und die App als „ohne Erinnerungen" verstehen. Siehe Abschnitt 12.
+
+⚠️ **GitHub Pages kann `Cross-Origin-Opener-Policy`/`Embedder-Policy` nicht setzen.** Drift nutzt dann nicht die schnellste Speicherart. **Die Daten bleiben erhalten** — eine Frage der Geschwindigkeit, kein Datenverlust. Wer das ändern will, braucht einen Hoster mit eigenen Kopfzeilen.
 
 ---
 
-### Phase 12 — iOS-Portierung ⬜
+### Phase 12 — iOS-Portierung ⏸️
+
+⏸️ **Zurückgestellt am 2026-08-17.** Die Web-Fassung erreicht iPhones bereits über „Zum Home-Bildschirm" und braucht dafür weder Apple-Entwicklerkonto (99 $/Jahr) noch App-Store-Prüfung. Eine native Fassung brächte vor allem die zwei Dinge, die dem Browser fehlen: **Erinnerungen** und **Widgets**. Solange die nicht gebraucht werden, lohnt sie nicht.
+
 - [ ] Bundle-Identifier weg von `com.example.rootIn` (sinnvollerweise passend zu `com.rootin.app`)
 - [ ] iOS-spezifisches Testing, Cupertino-Anpassungen wo sinnvoll
 - [ ] iOS Home-Screen-Widget (WidgetKit) — auf Android seit Phase 10 fertig
@@ -547,6 +582,12 @@ Die Fassung ist gebaut, veröffentlicht und geprüft (10.1/10.2). Offen bleiben:
   - **Geprüft wurde von außen, mit echten Konten** (`tool/rls_check.sh`, 13/13). Ein `select` im SQL-Editor läuft mit erhöhten Rechten und beweist nichts.
   - **Der geteilte QR-Code führte seit Phase 19 auf HTTP 404** — gemeldet vom Nutzer, nachgemessen, behoben. Der bestehende Test hatte den Fehler mitgetragen: Er prüfte, dass die Play-Adresse *korrekt gebildet* war. War sie. War nur die falsche.
   - **Lehre 35 entstand aus dreimaligem Rückfall in Lehre 32.** Eine Regel gehört an die Stelle, an der man gegen sie verstößt — in den Docstring, in den Kommentar, in einen Test. Nicht nur in dieses Dokument.
+
+- **2026-08-17 (Ziel neu gesetzt)** — *„ziel ist web app, dass alle ohne app store oder google play das nutzen können."* Damit kehrt sich Abschnitt 2 um: **Web ist das Ziel**, Android und iOS nativ sind zurückgestellt. Was das bedeutet:
+  - **Phase 15 und 12 werden pausiert, nicht gestrichen.** Material, Signaturschlüssel und Wege bleiben vollständig stehen — eine zurückgedrehte Entscheidung soll nicht bei null anfangen.
+  - **Die Datenschutzerklärung war als „Play-Blocker" begründet — das trug nicht.** Mit dem Zurückstellen von Phase 15 wäre die Begründung weggefallen, die Pflicht aber nicht: Wer 200 Schülern eine Adresse gibt und ihre E-Mail speichert, schuldet ihnen einen zutreffenden Text, ganz ohne Store. Der Punkt ist deshalb aus Phase 15 heraus nach 27.8 gewandert. **Ein Grund, der beim ersten Gegenwind verschwindet, war der falsche Grund.**
+  - **Der Preis steht jetzt ausdrücklich in Abschnitt 2:** Die Hauptplattform hat **keine Erinnerungen** und keine Startbildschirm-Widgets. Bei einer Habit-App ist das erste kein Detail — es ist die offene Frage dieser Neuausrichtung und steht als solche in Abschnitt 12.
+  - **Der Android-Durchgang (21.3) wurde mittendrin angehalten** — Release-APK mit Cloud-Schlüsseln gebaut und auf einem frischen Emulator installiert, dann kam die neue Zielsetzung. Der plattformunabhängige Teil der Liste (leerer Zustand, Sprachen, Persisch, Teilen, Datenerhalt) gilt weiter, nur gehört er jetzt in den iPhone-Durchgang.
 
 ### 11.2 Dauerhafte Lehren & Fallstricke
 1. **iCloud bricht Code-Signing.** Das Flutter-SDK lag auf iCloud Drive; `taskgated` killte die Binaries sporadisch (`SIGKILL`, per Crash-Report belegt). Das war die Wurzel von „Dart compiler exited unexpectedly", `ShaderCompilerException` und den native-asset-Fehlern — **nicht** Arbeitsspeicher. SDKs nach `~/development/`, Projekte nach `~/Projects/`. Bei Build-Abstürzen zuerst `~/Library/Logs/DiagnosticReports/` lesen.
@@ -589,7 +630,7 @@ Die Fassung ist gebaut, veröffentlicht und geprüft (10.1/10.2). Offen bleiben:
 **Entschieden werden in Phase 27** (siehe 27.0b): Anmeldeverfahren · Umfang der Cloud-Daten · Pflicht oder freiwillig · Richtung des Abgleichs.
 
 - **Zwei Fassungen, zwei Datenbestände.** ✅ **Mit Phase 27 gelöst — aber nur halb, und das ist Absicht:** Wer sich auf beiden Geräten anmeldet, kann seinen Bestand übertragen (sichern hier, wiederherstellen dort). Ein **stiller Abgleich** in beide Richtungen ist es nicht und soll es vorerst nicht sein (27.7). Ein echter Abgleich bräuchte Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase.
-- **Erinnerungen im Web** entfallen (Web-Push bräuchte einen Server). ⚠️ Seit Phase 27 gibt es einen Server — die Frage ist damit **wieder offen**. Push ist aber ein eigenes Thema: Es braucht Service-Worker-Registrierung, Berechtigungen und einen Versanddienst, und auf iOS nur in der abgelegten Fassung.
+- ⚠️ **Erinnerungen im Web — die wichtigste offene Frage seit der Neuausrichtung.** Sie entfallen dort (`flutter_local_notifications` hat keine Web-Umsetzung). Solange Web der *Ersatzweg* war, war das ein hinnehmbarer Abstrich; seit Web **das Ziel** ist (Abschnitt 2), fehlt einer Habit-App ihre Erinnerungsfunktion auf der Hauptplattform. Drei Wege: **(a)** Web-Push bauen — möglich, der Server steht seit Phase 27, kostet aber Service Worker, Berechtigungen und einen Versanddienst, und auf iOS wirkt es **nur in der abgelegten Fassung**; **(b)** als bewusste Grenze benennen und die App als „ohne Erinnerungen" führen; **(c)** Android-Fassung für alle, die Erinnerungen wollen, per APK weitergeben (ohne Store). **Entscheidung des Nutzers.**
 - **Vollständige Kontolöschung** braucht eine Edge Function (der öffentliche Schlüssel darf `auth.users` nicht anfassen). Heute löscht die App die Server-Daten und meldet ab; die vollständige Löschung läuft über eine Nachricht. Offen, ob das reicht.
 - **Sollen neue Beiträge in „موارد دیگر" gemeldet werden?** Möglich wäre ein stiller Vergleich beim App-Start (neue Einträge im `index.json` gegenüber dem gespeicherten Stand) und ein Punkt am Einstellungs-Eintrag — ohne Server, ohne Push.
 - ~~Repository öffentlich oder privat?~~ — **entschieden 2026-08-16: öffentlich, das Projekt ist Open Source.** ⚠️ Folge für Phase 27: Die Zugriffsregeln des Servers sind für jeden lesbar, müssen also wirklich stimmen; der `service_role`-Schlüssel darf nirgends im Repository auftauchen.

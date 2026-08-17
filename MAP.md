@@ -8,6 +8,8 @@
 >
 > ⚠️ **Ohne Supabase-Schlüssel im Bau verhält sich die App exakt wie vorher** — keine Anmeldung, keine Rubrik, kein Netzverkehr (`supportsCloudSync`).
 >
+> ⚠️ **Ziel neu gesetzt am 2026-08-17: die Web-Fassung ist das Ziel**, nicht mehr der Ersatzweg („alle sollen sie ohne App Store oder Google Play nutzen können"). Android- und iOS-Anteile bleiben vollständig im Projekt, sind aber **zurückgestellt**. Einzelheiten in PLAN.md Abschnitt 2.
+>
 > Zuvor **26.13**: `web/index.html` ohne `viewport-fit=cover`, Statusleiste `default` (⬜ Bestätigung auf einem echten iPhone steht aus). **26.11**: `dart:io` ist aus `lib/` verschwunden (`package:http` überall), Web-Symbole aus derselben Quelle wie die Android-Symbole.
 
 ## Inhaltsverzeichnis
@@ -17,13 +19,14 @@
 4. [test/](#test)
 5. [Release-Artefakte (Android)](#release-artefakte-android)
 6. [Web-Fassung & Automatik](#web-fassung--automatik)
-7. [Nutzerkonten & Cloud (Supabase)](#nutzerkonten--cloud-supabase) 🚧 *(Phase 27)*
+7. [Nutzerkonten & Cloud (Supabase)](#nutzerkonten--cloud-supabase) ✅ *(Phase 27)*
 8. [Inhalts-Repository (GitHub)](#inhalts-repository-github)
 9. [Hinweise](#hinweise)
 
 ## Legende
 - ✅ vorhanden
-- 🚧 geplant, noch nicht angelegt
+- 🚧 geplant, noch nicht angelegt *(zurzeit nichts — Phase 27 ist gebaut)*
+- ⏸️ vorhanden, aber **zurückgestellt** (Android-/iOS-Anteile seit der Zielsetzung vom 2026-08-17)
 - ⚙️ generiert (nie von Hand ändern)
 - 🕯️ **stillgelegt in Phase 20** — vollständig auskommentiert, nicht gelöscht. Jede Stelle trägt den Marker
   `PHASE 20 (2026-08-01): Werbung deaktiviert — zum Wiederaktivieren diesen Block einkommentieren.`
@@ -125,9 +128,9 @@
 │                                        Abschnitt „Inhalts-Repository (GitHub)"
 ├── tool/                            ✅ Bau-Skripte (siehe Abschnitt „Web-Fassung & Automatik")
 ├── .github/workflows/deploy-web.yml ✅ Push auf main → analyze + test → build_web.sh → GitHub Pages
-├── .env.example                     ✅ Vorlage für --dart-define-from-file (die echte .env ist ausgeschlossen).
-│                                        🚧 Phase 27.3 ergänzt SUPABASE_URL und SUPABASE_ANON_KEY
-├── supabase/schema.sql              🚧 Phase 27.4 — Server-Schema + Zugriffsregeln, versioniert
+├── .env.example                     ✅ Vorlage für --dart-define-from-file (die echte .env ist ausgeschlossen);
+│                                        seit Phase 27.3 mit SUPABASE_URL und SUPABASE_ANON_KEY
+├── supabase/schema.sql              ✅ Phase 27.4 — Server-Schema + Zugriffsregeln, versioniert
 ├── .claude/
 │   ├── settings.json                ✅ Freigabeliste für Claude Code (Phase 26.9): weniger Rückfragen bei
 │   │                                    flutter-/git-/adb-Befehlen, `defaultMode: acceptEdits`.
@@ -250,9 +253,9 @@ lib/
 │   │                                             canReadForeignResponseHeaders (26.11 — fremde Kopfzeilen
 │   │                                             gibt der Browser nur soweit frei, wie CORS es erlaubt,
 │   │                                             und `Date` gehört nicht dazu).
-│   │                                             🚧 Phase 27 ergänzt supportsCloudSync (nur true, wenn
-│   │                                             BEIDE Supabase-Werte gesetzt sind → ein Bau ohne
-│   │                                             Schlüssel verhält sich exakt wie heute).
+│   │                                             supportsCloudSync (Phase 27 — nur true, wenn BEIDE
+│   │                                             Supabase-Werte gesetzt sind; ein Bau ohne Schlüssel
+│   │                                             verhält sich exakt wie vor Phase 27).
 │   │                                             ⚠️ Zwei Abfragen, die im Browser dasselbe liefern, aber
 │   │                                             Verschiedenes MEINEN, bleiben getrennt (usesBrowserStorage
 │   │                                             vs. supportsHomeScreenWidgets) — sonst erschiene auf einem
@@ -268,20 +271,24 @@ lib/
 │   │   │                                         status_notification_enabled (Phase 23);
 │   │   │                                         dazu appLocaleProvider (MaterialApp.locale) und
 │   │   │                                         resolvedLocaleProvider (Texte ohne BuildContext)
-│   │   ├── profile_service.dart              ✅ Persistiert UserProfile (Name). 🚧 Phase 27.6 spiegelt ihn
+│   │   ├── profile_service.dart              ✅ Persistiert UserProfile (Name). Phase 27.6 spiegelt ihn
 │   │   │                                         auf den Server — lokal bleibt er die Quelle der Anzeige
-│   │   ├── auth_service.dart                 🚧 **Phase 27.5** — die EINZIGE Stelle für `supabase_flutter`
+│   │   ├── auth_service.dart                 ✅ **Phase 27.5** — die EINZIGE Stelle für `supabase_flutter`
 │   │   │                                         (Bauart wie notification_service/share_service). Anmelden,
-│   │   │                                         Registrieren, Abmelden, Sitzungs-Zustand.
+│   │   │                                         Registrieren, Abmelden, Sitzungs-Zustand, Benutzername.
 │   │   │                                         ⚠️ Fehler kommen als Grund-Code heraus, nicht als
 │   │   │                                         englischer Server-Text (Muster: backup_data.dart)
-│   │   ├── cloud_backup_service.dart         🚧 **Phase 27.7** — Bestand als Backup-JSON hoch/runter.
+│   │   ├── cloud_backup_service.dart         ✅ **Phase 27.7** — Bestand als Backup-JSON hoch/runter.
 │   │   │                                         ⚠️ Nutzt `backup_data.dart` UNVERÄNDERT — ein zweites
 │   │   │                                         Serialisierungs-Format wäre die verbotene Doppelung.
 │   │   │                                         Hochladen automatisch, Herunterladen nur auf Nachfrage
+│   │   ├── cloud_auto_backup.dart            ✅ **Phase 27.7** — entprellte automatische Sicherung (20 s)
+│   │   ├── profile_cloud_sync.dart           ✅ **Phase 27.6** — Anzeigename Gerät ↔ Server
+│   │   ├── username_rules.dart               ✅ **Phase 27.5** — was ein gültiger Benutzername ist
 │   │   ├── share_service.dart                ✅ Einzige Stelle für share_plus: shareApp (Text) und
 │   │   │                                         shareProgressImage (Bytes → Share-Sheet). Beide Texte tragen
-│   │   │                                         seit Phase 19 den Store-Link aus app_links.dart.
+│   │   │                                         `appShareUrl` aus app_links.dart — seit 27.11 die
+│   │   │                                         WEB-Fassung, vorher der tote Play-Link.
 │   │   │                                         Seit Phase 26.1 OHNE dart:io/path_provider: XFile.fromData
 │   │   │                                         übergibt die Bytes direkt, share_plus legt selbst eine
 │   │   │                                         Temp-Datei an. Dadurch auf allen drei Plattformen ein Weg.
@@ -540,12 +547,15 @@ lib/
 │   ├── onboarding/presentation/onboarding_page.dart ✅ Erststart-Erklärung in vier Schritten; erscheint nur,
 │   │                                             solange onboardingSeenProvider false ist (Startroute, kein
 │   │                                             Redirect); liegt außerhalb der ShellRoute → ohne Bottom-Nav
-│   └── auth/presentation/                    🚧 **Phase 27.5** — Anmelden, Registrieren, Passwort vergessen,
-│                                                 Zustands-Provider (angemeldet/abgemeldet/lädt). Liegt
-│                                                 außerhalb der ShellRoute wie das Onboarding.
-│                                                 ⚠️ Die Rubrik „Konto & Cloud" in den Einstellungen
-│                                                 VERSCHWINDET, wenn supportsCloudSync falsch ist —
-│                                                 ehrlich abschalten statt Knöpfe ohne Wirkung
+│   └── auth/presentation/                    ✅ **Phase 27.5** — zwei Dateien:
+│       ├── auth_sheet.dart                       EIN Sheet für Anmelden UND Registrieren (Muster wie
+│       │                                         showShareProgressSheet). Enthält die Übersetzung der
+│       │                                         sprachneutralen Gründe. KEIN „Passwort vergessen" —
+│       │                                         das geht erst mit eigenem SMTP (27.2)
+│       └── account_cloud_card.dart               Die Rubrik „Konto & Cloud" auf der Konto-Seite.
+│                                                 ⚠️ VERSCHWINDET vollständig, wenn supportsCloudSync
+│                                                 falsch ist — ehrlich abschalten statt Knöpfe ohne
+│                                                 Wirkung (dieselbe Regel wie bei den Erinnerungen)
 ```
 
 ## test/
@@ -656,7 +666,7 @@ test/
     ├── test_database.dart           ✅ Isolierte In-Memory-Test-DB — nie die echte App-DB
     ├── test_time_service.dart       ✅ Festes Datum, kein Netzwerkzugriff in Tests
     ├── fake_notification_service.dart ✅ Protokolliert geplante/abgebrochene Erinnerungen + zuletzt genutzte Sprache
-    ├── fake_auth_service.dart       🚧 **Phase 27.5** — Anmeldung ohne Server. ⚠️ KEIN Test spricht mit
+    ├── fake_auth_service.dart       ✅ **Phase 27.5** — Anmeldung ohne Server. ⚠️ KEIN Test spricht mit
     │                                    dem echten Supabase-Projekt: Tests müssen ohne Netz und ohne
     │                                    Schlüssel laufen (derselbe Grund wie bei RepoFetcher)
     ├── fake_purchase_service.dart   🕯️ offlinePurchaseService(prefs) + FakePurchaseService (Phase 14),
@@ -690,7 +700,9 @@ build/app/outputs/flutter-apk/app-debug.apk       ⚙️ Nur zum lokalen Prüfen
 
 ## Web-Fassung & Automatik
 
-✅ **Gebaut in PLAN.md Phase 26.** Die Web-Fassung ist der Zugang zum iPhone, solange es keine App-Store-Veröffentlichung gibt.
+✅ **Gebaut in PLAN.md Phase 26 — und seit dem 2026-08-17 die HAUPTPLATTFORM** (PLAN.md Abschnitt 2). Nicht mehr „der Zugang zum iPhone, solange es keine Store-Veröffentlichung gibt": Sie **ist** das Ziel, weil sie jeden ohne Store, ohne Installation und ohne Konto bei Google oder Apple erreicht.
+
+⚠️ **Was der Hauptplattform fehlt:** Erinnerungen und Startbildschirm-Widgets gibt es im Browser nicht (Phase 26.1). Bei einer Habit-App ist das erste kein Detail — die offene Entscheidung dazu steht in PLAN.md Abschnitt 12.
 
 ```
 tool/                                ✅ Skripte — von Hand UND von der Automatik aufgerufen
@@ -699,16 +711,19 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        Worker und Bibliothek nicht auseinanderlaufen.
 │                                        ⚠️ `dart run drift_dev make-worker` ist mit drift 2.34.2 /
 │                                        drift_dev 2.34.0 KAPUTT — nicht erneut versuchen
-├── webtest.py                       ✅ Echter Browser-Durchgang über safaridriver — **17 Prüfungen**
-│                                        inkl. aller vier Reiter und einer Anleitungs-Seite. Auch gegen
-│                                        einen lokalen Bau: `python3 tool/webtest.py http://localhost:8765/`
-│                                        Seit 27.9: **20 Prüfungen**, die letzten zwei für die Rubrik
-│                                        „Konto & Cloud". ⚠️ Der Durchgang meldet sich NICHT an —
-│                                        ein Oberflächen-Test, der Konten anlegt, hinterlässt bei
-│                                        jedem Lauf Datenmüll. Dass die Anmeldung trägt, beweist
-│                                        rls_check.sh. Zwei Werkzeuge, zwei Zuständigkeiten
+├── webtest.py                       ✅ Echter Browser-Durchgang über safaridriver — **20 Prüfungen**:
+│                                        Start, Datenerhalt, alle vier Reiter, eine Anleitungs-Seite
+│                                        und die Rubrik „Konto & Cloud". Auch gegen einen lokalen Bau:
+│                                        `python3 tool/webtest.py http://localhost:8765/`
+│                                        ⚠️ **Das wichtigste Werkzeug seit der Neuausrichtung** — Web
+│                                        ist die Hauptplattform, und dies ist der einzige Durchgang,
+│                                        der sie als Ganzes anfasst
+│                                        ⚠️ Der Durchgang meldet sich NICHT an — ein Oberflächen-Test,
+│                                        der Konten anlegt, hinterlässt bei jedem Lauf Datenmüll. Dass
+│                                        die Anmeldung trägt, beweist rls_check.sh. Zwei Werkzeuge,
+│                                        zwei Zuständigkeiten
 │                                        Am kaputten Stand wird er ROT — daran gemessen, nicht nur am
-│                                        reparierten (Lehre 32). 🚧 27.9 ergänzt Anmelden/Abmelden
+│                                        reparierten (Lehre 32)
 │                                        ⚠️ Einmalig nötig: `safaridriver --enable` (Mac-Passwort)
 │                                        ⚠️ Jede Sitzung startet mit LEEREM Profil — Persistenz nur
 │                                        innerhalb EINER Sitzung prüfbar
@@ -783,7 +798,7 @@ Die **Serie wird nirgends gespeichert** — sie entsteht bei jedem Aufruf neu au
 
 ## Nutzerkonten & Cloud (Supabase)
 
-🚧 **Geplant in PLAN.md Phase 27** — noch nichts davon existiert. Dieser Abschnitt hält fest, **wo** die Teile hinkommen, damit sie nicht verstreut entstehen.
+✅ **Gebaut in PLAN.md Phase 27** (2026-08-17). Dieser Abschnitt hält die Teile an **einer** Stelle zusammen; im Baum oben stehen sie zusätzlich an ihrem Platz.
 
 ```
 supabase/schema.sql                  ✅ Tabellen `profiles` (mit `username`) + `backups`, ZWEI
