@@ -303,7 +303,7 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] **`test/unit/cloud_config_test.dart`** hält die Zusage fest: ohne Schlüssel ist `supportsCloudSync` falsch. Sonst wäre „verhält sich wie vorher" eine Behauptung — und die App böte eine Anmeldung an, die nirgendwohin führt.
 - [x] **`tool/build_web.sh` reicht die Werte durch** und liest lokal `.env`. ⚠️ Eine vorhandene Umgebungsvariable gewinnt gegen die Datei — sonst überschriebe eine vergessene `.env` auf dem Entwicklungsrechner still die Werte der Automatik. Leer bleibt zulässig: Dann hat die Web-Fassung schlicht keine Cloud.
 - [x] **`main.dart` startet Supabase vor dem ersten Frame** — und nur, wenn konfiguriert. ⚠️ Der Aufruf kann den Start nicht verhindern: `initialize()` fängt jeden Fehler ab. Ein Server, der nicht antwortet, ist kein Grund, eine App nicht zu starten, die ohnehin lokal arbeitet.
-- [ ] Die Schlüssel als **GitHub-Actions-Secrets** hinterlegen, damit auch die **veröffentlichte** Web-Fassung ein Konto anbietet. *(Bis dahin hat sie keins — und verhält sich genau wie vorher.)*
+- [x] **Schlüssel als GitHub-Actions-Secrets** (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, vom Nutzer am 2026-08-17 hinterlegt); der Bau-Schritt in `deploy-web.yml` reicht sie durch. ⚠️ Fehlen sie, sind die Werte leer und die Automatik baut eine Fassung **ohne Konto** — kein Fehler, sondern der Zustand von vor Phase 27.
 
 #### 27.4 Server-Schema und Zugriffsregeln 🔄
 - [x] **`supabase/schema.sql` liegt im Repository**, nicht nur in der Weboberfläche — sonst existiert die Server-Struktur an einer Stelle, die niemand versionieren, gegenlesen oder nach einem Unfall wiederherstellen kann. Mehrfach ausführbar.

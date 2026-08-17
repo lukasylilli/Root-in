@@ -718,6 +718,10 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
                                          Genau daran ist Lauf 1 gescheitert — siehe PLAN.md Lehre 29.
                                          ⚠️ KEIN gh-pages-Zweig: Pages nimmt das Artefakt direkt
                                          entgegen, damit landet das Bauergebnis nie in der Geschichte
+                                         Seit Phase 27.3 reicht der Bau-Schritt SUPABASE_URL und
+                                         SUPABASE_ANON_KEY aus den Repository-Secrets durch.
+                                         ⚠️ Fehlen sie, baut die Automatik eine Fassung OHNE Konto —
+                                         kein Fehler, die App verhält sich dann wie vor Phase 27
 
 .env.example                         ✅ Vorlage für --dart-define-from-file. Die echte `.env` ist
                                          ausgeschlossen. ⚠️ Definierte Werte landen IM BUNDLE und sind

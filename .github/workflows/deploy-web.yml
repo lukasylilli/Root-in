@@ -60,6 +60,21 @@ jobs:
       # einzutragen — ein umbenanntes Repository bricht den Bau damit nicht.
       - name: Web bauen
         run: ./tool/build_web.sh "/${{ github.event.repository.name }}/"
+        # Supabase (PLAN.md Phase 27.3). Die Werte kommen aus
+        # Settings → Secrets and variables → Actions.
+        #
+        # ⚠️ SIND DIE SECRETS NICHT GESETZT, sind die Werte leer — dann baut
+        # die Automatik eine Fassung OHNE Konto und ohne Cloud. Das ist kein
+        # Fehler und bricht nichts: Die App verhält sich dann genau wie vor
+        # Phase 27 (siehe `supportsCloudSync`).
+        #
+        # ⚠️ Hier gehört ausschließlich der anon/publishable key hinein. Er
+        # landet im ausgelieferten Bundle und ist dort lesbar — das ist so
+        # vorgesehen. Der `service_role`-Schlüssel niemals: Er umgeht jede
+        # Zugriffsregel, und dieses Repository ist öffentlich.
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - uses: actions/configure-pages@v5
 
