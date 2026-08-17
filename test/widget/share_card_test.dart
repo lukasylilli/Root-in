@@ -113,19 +113,24 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('trägt den Store-Link als QR-Code (Phase 19)', (tester) async {
+  testWidgets('trägt den geteilten Link als QR-Code (Phase 19/27.11)', (
+    tester,
+  ) async {
     await _pumpCard(tester);
 
     // Ein Bild ist nicht anklickbar — der QR-Code ist der einzige Weg vom
-    // geteilten Bild in den Store. Was er kodiert, lässt `QrImageView` nicht
-    // auslesen (das Feld ist privat), deshalb hier zwei getrennte Prüfungen:
-    // dass er auf der Karte steht, und dass die Quelle die richtige Adresse
-    // liefert. Beides zusammen deckt den Weg ab.
+    // geteilten Bild zur App. Was er kodiert, lässt `QrImageView` nicht
+    // auslesen (das Feld ist privat), deshalb zwei getrennte Prüfungen: dass
+    // er auf der Karte steht, und dass die Quelle die richtige Adresse
+    // liefert.
+    //
+    // ⚠️ Geprüft wird `appShareUrl`, **nicht** `playStoreUrl`. Genau diese
+    // Verwechslung war der Fehler aus 27.11: Die Karte trug den Play-Link,
+    // obwohl es die Store-Seite nicht gibt — und der Test bestätigte
+    // fleißig, dass die Play-Adresse korrekt gebildet war. Sie war es. Sie
+    // war nur die falsche.
     expect(find.byType(QrImageView), findsOneWidget);
-    expect(
-      playStoreUrl,
-      'https://play.google.com/store/apps/details?id=com.rootin.app',
-    );
+    expect(appShareUrl, webAppUrl);
     expect(find.text('Root-in laden'), findsOneWidget);
   });
 

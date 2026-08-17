@@ -404,6 +404,26 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [ ] Gerätedurchgang: anmelden, Bestand anlegen, App löschen und neu installieren, wiederherstellen. **Das ist die eigentliche Prüfung dieser Phase** — alles davor ist Vorbereitung.
 - [ ] ⚠️ **Flugmodus-Durchgang:** vollständige Benutzung ohne Netz, danach mit Netz die Sicherung nachziehen.
 
+#### 27.11 Der geteilte Link führte ins Leere ✅ *(2026-08-17)*
+**Vom Nutzer gemeldet:** *„موقع اشتراک گذاری لینک اشتباهی زیرش میاد"* — beim Teilen steht der falsche Link darunter.
+
+**Nachgemessen, nicht angenommen:**
+
+| Adresse | Antwort |
+|---|---|
+| `play.google.com/store/apps/details?id=com.rootin.app` (bisher geteilt) | **HTTP 404** |
+| `lukasylilli.github.io/Root-in/` (jetzt geteilt) | HTTP 200 |
+
+Die Fortschritts-Karte trug seit Phase 19 den Play-Store-Link — für eine App, die dort **nie veröffentlicht wurde**. Jeder geteilte QR-Code führte auf eine „nicht gefunden"-Seite von Google.
+
+⚠️ **Warum das besonders unangenehm ist:** Ein geteiltes Bild bleibt in Chats liegen. Wer den Code scannt und eine Fehlerseite bekommt, probiert es kein zweites Mal — **und meldet es auch nicht.** Der Schaden ist still und dauerhaft.
+
+- [x] **`appShareUrl` ist die neue eine Quelle** und zeigt auf die **Web-Fassung**. Zwei Gründe, und der zweite gilt auch nach einer Play-Veröffentlichung weiter: Der Link war schlicht tot — **und** eine Play-Seite schließt genau die iPhone-Nutzer aus, für die die Web-Fassung überhaupt gebaut wurde (Phase 26). Wer teilt, weiß nicht, was der Empfänger benutzt.
+- [x] `playStoreUrl` **bleibt** (aus dem Paketnamen abgeleitet) — er wird gebraucht, sobald veröffentlicht wird. Ein Wechsel ist dann **eine Zeile**, und alle drei Leser ziehen mit.
+- [x] ⚠️ **Der bestehende Test hat den Fehler mitgetragen.** Er prüfte, dass `playStoreUrl` korrekt gebildet ist — das war es. Es war nur die **falsche** Adresse. Geprüft wird jetzt `appShareUrl`, dazu `test/unit/app_links_test.dart` mit der ausdrücklichen Regel „geteilt wird die Web-Fassung, nicht der Store".
+
+⬜ **Offen bleibt die Entscheidung des Nutzers, ob überhaupt in den Play Store veröffentlicht wird.** Sie ändert an dieser Behebung nichts: Die Web-Adresse funktioniert in jedem Fall, und der Store-Link ist eine Zeile entfernt.
+
 #### 27.10 Risiken, die diese Phase mitbringt
 | Risiko | Folge | Umgang |
 |---|---|---|

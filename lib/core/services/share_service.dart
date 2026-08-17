@@ -11,16 +11,20 @@ import '../constants/app_links.dart';
 /// diese Methoden auf, statt selbst `SharePlus.instance.share(...)` zu
 /// konstruieren.
 ///
-/// Beide Texte tragen seit Phase 19 den [playStoreUrl] — **hier** ist er
-/// anklickbar, auf dem geteilten Bild steht er als QR-Code
+/// Beide Texte tragen [appShareUrl] — **hier** ist er anklickbar, auf dem
+/// geteilten Bild steht derselbe Link als QR-Code
 /// (`core/widgets/share_card.dart`). Das geteilte Bild ist zugleich die
-/// Werbung für die App; ohne Link führt es niemanden zum Store.
+/// Werbung für die App; ohne Link führt es niemanden irgendwohin.
+///
+/// ⚠️ Seit Phase 27.11 ist das die **Web-Fassung**, nicht die Play-Seite:
+/// Die gab es noch gar nicht, jeder geteilte QR-Code führte auf „nicht
+/// gefunden". Die Begründung steht bei [appShareUrl].
 class ShareService {
   const ShareService();
 
   Future<void> shareApp(AppLocalizations l10n) {
     return SharePlus.instance.share(
-      ShareParams(text: l10n.shareAppText(playStoreUrl)),
+      ShareParams(text: l10n.shareAppText(appShareUrl)),
     );
   }
 
@@ -43,7 +47,7 @@ class ShareService {
         // Kennung — `XFile.fromData` reicht `name` außerhalb des Webs nicht
         // durch.
         fileNameOverrides: const ['root_in_fortschritt.png'],
-        text: l10n.shareProgressText(playStoreUrl),
+        text: l10n.shareProgressText(appShareUrl),
         downloadFallbackEnabled: true,
       ),
     );

@@ -223,9 +223,15 @@ lib/
 │   │   │                                         ⚠️ Trägt die Warnung, dass ein --dart-define KEINE
 │   │   │                                         Verschlüsselung ist — der Wert steht im Bundle. Sie steht
 │   │   │                                         dort, wo jemand den ersten Schlüssel eintragen würde
-│   │   ├── app_links.dart                    ✅ Einzige Quelle des Play-Store-Links (Phase 19), abgeleitet aus
-│   │   │                                         `appPackageName`. Drei Leser: QR-Code auf der Karte,
-│   │   │                                         Share-Begleittext, „App teilen" in den Einstellungen
+│   │   ├── app_links.dart                    ✅ Einzige Quelle der öffentlichen Adressen (Phase 19).
+│   │   │                                         Drei Leser: QR-Code auf der Karte, Share-Begleittext,
+│   │   │                                         „App teilen" in den Einstellungen.
+│   │   │                                         ⚠️ Sie lesen `appShareUrl` = die WEB-FASSUNG, nicht
+│   │   │                                         `playStoreUrl` (Phase 27.11): Die Store-Seite gibt es
+│   │   │                                         nicht (HTTP 404 nachgemessen), jeder geteilte QR-Code
+│   │   │                                         führte dorthin. Und sie schlösse iPhone-Nutzer aus.
+│   │   │                                         Der Play-Link bleibt für später — ein Wechsel ist EINE
+│   │   │                                         Zeile
 │   │   ├── ad_config.dart                    🕯️ Ad-Unit-IDs + Test-Geräte + Not-Schalter adsDisabledForEveryone
 │   │   └── app_assets.dart                   ✅ Asset-Pfade; AppAssets.homeAnimation = Lottie-Slot (null →
 │   │                                             eingebaute gemalte Animation)

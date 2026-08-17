@@ -217,7 +217,7 @@ class ShareCard extends StatelessWidget {
     return Row(
       children: [
         QrImageView(
-          data: playStoreUrl,
+          data: appShareUrl,
           size: 96,
           padding: EdgeInsets.zero,
           backgroundColor: tokens.cardBg,
