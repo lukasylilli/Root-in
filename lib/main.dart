@@ -11,6 +11,7 @@ import 'core/l10n/app_language.dart';
 // import 'dart:async';
 // import 'core/services/ads_service.dart';
 // import 'core/services/purchase_service.dart';
+import 'core/services/auth_service.dart';
 import 'core/services/home_widget_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/settings_service.dart';
@@ -50,6 +51,15 @@ Future<void> main() async {
   // Nutzer nach — die Antwort soll vorliegen, bevor die App Daten anlegt.
   // Auf Android/iOS kehrt der Aufruf sofort mit `false` zurück.
   await requestPersistentStorage();
+
+  // Supabase starten, **falls** ein Projekt konfiguriert ist (PLAN.md Phase
+  // 27.3). Ohne Schlüssel kehrt der Aufruf sofort zurück und die App verhält
+  // sich wie vor Phase 27.
+  //
+  // ⚠️ Der Aufruf darf den Start **nie** verhindern: `initialize()` fängt
+  // jeden Fehler ab und meldet nur `false`. Ein Server, der nicht antwortet,
+  // ist kein Grund, eine App nicht zu starten, die ohnehin lokal arbeitet.
+  await const AuthService().initialize();
 
   // Expliziter Container statt `ProviderScope`: die Standard-Kategorien
   // müssen in der gewählten Sprache stehen, bevor die erste Seite baut (siehe

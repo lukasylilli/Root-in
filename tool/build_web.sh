@@ -18,6 +18,14 @@ cd "$(dirname "$0")/.."
 BASE_HREF="${1:-/}"
 FLUTTER="${FLUTTER:-flutter}"
 
+# Lokal die .env einlesen, damit ein Bau von Hand dieselben Werte bekommt wie
+# die Automatik (dort kommen sie aus GitHub-Secrets in die Umgebung).
+# ⚠️ Vorhandene Umgebungsvariablen gewinnen NICHT — sonst überschriebe eine
+# vergessene .env auf dem Entwicklungsrechner still die Werte der Automatik.
+if [ -f .env ] && [ -z "${SUPABASE_URL:-}" ]; then
+  set -a; . ./.env; set +a
+fi
+
 # Baunummer: in der Automatik die Lauf-Nummer, lokal 0 (PLAN.md Phase 26.6).
 BUILD_NUMBER="${GITHUB_RUN_NUMBER:-0}"
 
@@ -46,6 +54,13 @@ echo "Baue Web-Fassung ${APP_VERSION}+${BUILD_NUMBER} (base-href ${BASE_HREF}) �
   `# allein landen im Web nur in version.json, nicht im Dart-Code.` \
   --dart-define=APP_VERSION="${APP_VERSION}" \
   --dart-define=BUILD_NUMBER="${BUILD_NUMBER}" \
+  `# Supabase (PLAN.md Phase 27.3). LEER = die Web-Fassung hat keine Cloud` \
+  `# und verhält sich wie vor Phase 27 — kein Sonderfall, kein Fehler.` \
+  `# In der Automatik kommen die Werte aus GitHub-Secrets, lokal aus .env.` \
+  `# ⚠️ Nur der anon/publishable key gehört hierher; er steht ohnehin im` \
+  `# Bundle. Der service_role-Schlüssel NIEMALS.` \
+  --dart-define=SUPABASE_URL="${SUPABASE_URL:-}" \
+  --dart-define=SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY:-}" \
   `# Ohne Source-Maps gibt es im Browser keinen lesbaren Dart-Code. Sie` \
   `# sind im Release ohnehin aus, hier steht es ausdrücklich da — der` \
   `# Auftrag verlangt es (PLAN.md Phase 26.4).` \

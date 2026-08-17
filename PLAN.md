@@ -301,7 +301,9 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] **Neue Fähigkeit `supportsCloudSync`** in `platform_support.dart`. ⚠️ Sie hängt als einzige dort **nicht an der Plattform**, sondern an der Konfiguration — der Kommentar sagt das ausdrücklich, damit niemand sie später „vereinheitlicht".
 - [x] ⚠️ **Der `anon`-Schlüssel ist der eine erlaubte Sonderfall** zur Regel aus 26.5: Er ist dafür gemacht, in Clients zu stehen. Die Begründung steht jetzt in `app_config.dart` — direkt neben dem Schlüssel, zusammen mit der Gegenwarnung zu `service_role`.
 - [x] **`test/unit/cloud_config_test.dart`** hält die Zusage fest: ohne Schlüssel ist `supportsCloudSync` falsch. Sonst wäre „verhält sich wie vorher" eine Behauptung — und die App böte eine Anmeldung an, die nirgendwohin führt.
-- [ ] `tool/build_web.sh` und der Android-Bau reichen die Werte durch; als **GitHub-Actions-Secrets** hinterlegen. *(Erst nach 27.2 — vorher gibt es nichts durchzureichen.)*
+- [x] **`tool/build_web.sh` reicht die Werte durch** und liest lokal `.env`. ⚠️ Eine vorhandene Umgebungsvariable gewinnt gegen die Datei — sonst überschriebe eine vergessene `.env` auf dem Entwicklungsrechner still die Werte der Automatik. Leer bleibt zulässig: Dann hat die Web-Fassung schlicht keine Cloud.
+- [x] **`main.dart` startet Supabase vor dem ersten Frame** — und nur, wenn konfiguriert. ⚠️ Der Aufruf kann den Start nicht verhindern: `initialize()` fängt jeden Fehler ab. Ein Server, der nicht antwortet, ist kein Grund, eine App nicht zu starten, die ohnehin lokal arbeitet.
+- [ ] Die Schlüssel als **GitHub-Actions-Secrets** hinterlegen, damit auch die **veröffentlichte** Web-Fassung ein Konto anbietet. *(Bis dahin hat sie keins — und verhält sich genau wie vorher.)*
 
 #### 27.4 Server-Schema und Zugriffsregeln 🔄
 - [x] **`supabase/schema.sql` liegt im Repository**, nicht nur in der Weboberfläche — sonst existiert die Server-Struktur an einer Stelle, die niemand versionieren, gegenlesen oder nach einem Unfall wiederherstellen kann. Mehrfach ausführbar.
@@ -383,7 +385,9 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [ ] Abschnitt 3 dieses Plans und die Datenschutz-Aussage im Onboarding prüfen — dort steht heute wörtlich, dass alles auf dem Gerät bleibt.
 
 #### 27.9 Prüfen
-- [ ] Tests grün, `flutter analyze` sauber, **und der Bau ohne Schlüssel verhält sich wie vorher** (eigener Testfall).
+- [x] **Im echten Browser angesehen** (lokaler Bau **mit** Schlüsseln, Safari im Telefon-Format): Die Rubrik „Konto & Cloud" steht oben auf der Konto-Seite, persisch und rechtsläufig, mit dem Knopf „ورود". Bildschirmfoto gemacht — nicht aus grünen Tests geschlossen.
+- [x] ⚠️ **Dabei ist Lehre 32 noch einmal aufgetreten:** Die erste Prüfung suchte den Titel „حساب و ابر" im Semantik-Baum und meldete „nicht da", obwohl die Karte deutlich sichtbar war. Reine Texte stehen dort unzuverlässig, **Knöpfe immer** — der Knopf „ورود" war der Beleg. Wer eine Oberfläche über Semantik prüft, prüft an Knöpfen.
+- [x] Tests grün, `flutter analyze` sauber, **und der Bau ohne Schlüssel verhält sich wie vorher** (eigener Testfall).
 - [ ] `tool/webtest.py` erweitern: Anmelden im Browser, Sicherung sichtbar, Abmelden. ⚠️ Der Durchgang darf **keine** echten Zugangsdaten enthalten — Testkonto über Umgebungsvariablen.
 - [ ] Gerätedurchgang: anmelden, Bestand anlegen, App löschen und neu installieren, wiederherstellen. **Das ist die eigentliche Prüfung dieser Phase** — alles davor ist Vorbereitung.
 - [ ] ⚠️ **Flugmodus-Durchgang:** vollständige Benutzung ohne Netz, danach mit Netz die Sicherung nachziehen.
