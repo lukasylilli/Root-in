@@ -51,7 +51,11 @@
 │   │                                    abgeleitet. **Quelle** der veröffentlichten Gist-Fassung — Änderungen
 │   │                                    müssen dort von Hand nachgezogen werden. Stand Phase 20: ohne AdMob/
 │   │                                    Billing, dafür **neu** mit dem GitHub-Abruf der Anleitungs-Texte.
-│   │                                    ⚠️ Der Gist ist noch NICHT nachgezogen (PLAN.md Phase 15)
+│   │                                    Stand Phase 27.8: neuer Punkt 4 (Konto und Server-Sicherung,
+│   │                                    Supabase EU/Frankfurt) und neu geschriebene Rechte —
+│   │                                    „wir speichern nichts" war mit Konto schlicht falsch.
+│   │                                    ⚠️ Der Gist ist noch NICHT nachgezogen und damit inzwischen
+│   │                                    ZWEIFACH veraltet (Phase 20 und 27.8)
 │   ├── OTHERS_CONTENT.md                Pflege-Anleitung für die Rubrik „موارد دیگر" (Phase 22): wo die
 │   │                                    Dateien liegen, Felder des Manifests, was der Nutzer sieht, wenn
 │   │                                    etwas fehlt, häufige Fehler
@@ -813,6 +817,10 @@ lib/core/services/cloud_backup_service.dart ✅ Bestand als Backup-JSON hoch/run
                                          vorher sagen können, was überschrieben wird
                                          ⚠️ lastBackupAt holt NUR den Zeitstempel; sonst lüde jeder
                                          Aufbau der Konto-Seite den ganzen Bestand herunter
+lib/core/services/profile_cloud_sync.dart ✅ Anzeigename zwischen Geraet und Server (27.6).
+                                         ⚠️ Die Regel fuer den Zusammenstoss steht dort AUSDRUECKLICH
+                                         in einer Tabelle: bei Gleichstand gewinnt das GERAET, weil
+                                         es die Quelle der Wahrheit ist
 lib/core/services/cloud_auto_backup.dart ✅ Sichert von selbst (27.7), ENTPRELLT (20 s) — sonst
                                          schickte eine Morgenrunde mit acht Häkchen achtmal den
                                          ganzen Bestand. Scheitern bleibt stumm und folgenlos

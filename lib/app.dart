@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'dart:async';
+
 import 'core/routing/app_router.dart';
+import 'core/services/auth_service.dart';
 import 'core/services/cloud_auto_backup.dart';
 import 'core/services/home_widget_service.dart';
+import 'core/services/profile_cloud_sync.dart';
+import 'core/services/profile_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/settings_service.dart';
 import 'core/theme/app_theme.dart';
@@ -143,6 +148,20 @@ class _RootInAppState extends ConsumerState<RootInApp> {
     ref.listen(activeHabitsProvider, (previous, next) {
       if (previous == null) return; // erster Aufbau, nichts hat sich geändert
       ref.read(cloudAutoBackupProvider).scheduleUpload();
+    });
+
+    // Anmelden gleicht den Anzeigenamen ab (PLAN.md 27.6). Die Regel für den
+    // Zusammenstoß steht in `profile_cloud_sync.dart` — sie gehört an eine
+    // Stelle, nicht in jede Seite, die den Namen anfasst.
+    ref.listen(authAccountProvider, (previous, next) {
+      if (next.value == null) return;
+      unawaited(ref.read(profileCloudSyncProvider).reconcile());
+    });
+
+    // Und eine lokale Änderung wandert hoch.
+    ref.listen(profileProvider, (previous, next) {
+      if (previous == null || previous.name == next.name) return;
+      unawaited(ref.read(profileCloudSyncProvider).pushLocalName());
     });
 
     // Wer den Tagesstand abschaltet, soll ihn sofort loswerden — und beim

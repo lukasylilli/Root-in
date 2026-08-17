@@ -148,6 +148,40 @@ class _SignedInState extends ConsumerState<_SignedIn> {
     );
   }
 
+  Future<void> _deleteServerData() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.cloudDeleteTitle),
+        content: Text(l10n.cloudDeleteBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.actionCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.cloudDeleteConfirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _busy = true);
+    final status = await ref
+        .read(cloudBackupServiceProvider)
+        .deleteServerData();
+    if (!mounted) return;
+    setState(() => _busy = false);
+    ref.invalidate(_lastBackupProvider);
+    _say(
+      status == CloudSyncStatus.ok
+          ? l10n.cloudDeleteDone
+          : l10n.cloudSyncFailed,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -196,6 +230,15 @@ class _SignedInState extends ConsumerState<_SignedIn> {
               ? null
               : () => ref.read(authServiceProvider).signOut(),
           child: Text(l10n.cloudSignOut),
+        ),
+        // ⚠️ Steht ganz unten und in der Warnfarbe: Es ist der einzige Knopf
+        // hier, der etwas unwiderruflich wegnimmt.
+        TextButton(
+          onPressed: _busy ? null : _deleteServerData,
+          style: TextButton.styleFrom(
+            foregroundColor: theme.colorScheme.error,
+          ),
+          child: Text(l10n.cloudDeleteData),
         ),
       ],
     );

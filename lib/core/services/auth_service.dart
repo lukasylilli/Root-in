@@ -298,6 +298,41 @@ class AuthService {
     }
   }
 
+  /// Anzeigename aus `profiles` (PLAN.md 27.6) — das ist der Name, den der
+  /// Nutzer auf der Konto-Seite eingibt, **nicht** der Benutzername.
+  Future<String?> loadDisplayName() async {
+    final client = _client;
+    final user = client?.auth.currentUser;
+    if (client == null || user == null) return null;
+    try {
+      final row = await client
+          .from('profiles')
+          .select('display_name')
+          .eq('user_id', user.id)
+          .maybeSingle();
+      return row?['display_name'] as String?;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Schreibt den Anzeigenamen. Stillschweigend wirkungslos ohne Konto —
+  /// der Aufrufer ist ein Listener und soll keine Fehlerbehandlung brauchen.
+  Future<void> saveDisplayName(String name) async {
+    final client = _client;
+    final user = client?.auth.currentUser;
+    if (client == null || user == null) return;
+    try {
+      await client.from('profiles').upsert({
+        'user_id': user.id,
+        'display_name': name,
+      });
+    } catch (_) {
+      // Kein Netz: Der lokale Name steht bereits und ist die Quelle der
+      // Wahrheit. Die nächste Änderung schiebt ihn nach.
+    }
+  }
+
   Future<void> signOut() async {
     try {
       await _client?.auth.signOut();

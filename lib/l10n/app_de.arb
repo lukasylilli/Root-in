@@ -432,7 +432,7 @@
   "onboardingNext": "Weiter",
   "onboardingStart": "Los geht's",
   "onboardingWelcomeTitle": "Willkommen bei Root-in",
-  "onboardingWelcomeBody": "Root-in hilft dir, Gewohnheiten aufzubauen und dranzubleiben — Schritt für Schritt, ganz ohne Konto. Alle deine Daten bleiben auf diesem Gerät.",
+  "onboardingWelcomeBody": "Root-in hilft dir, Gewohnheiten aufzubauen und dranzubleiben — Schritt für Schritt. Deine Daten bleiben auf diesem Gerät; ein Konto ist freiwillig und legt zusätzlich eine Sicherung an.",
   "onboardingHabitsTitle": "Anlegen und abhaken",
   "onboardingHabitsBody": "Lege Gewohnheiten aus einer Vorlage oder frei an; jede gehört zu einer Kategorie, die du selbst verwaltest. Auf „Heute“ hakst du ab, was erledigt ist — oder trägst Minuten ein, wenn du dir ein Dauer-Ziel gesetzt hast.",
   "onboardingProgressTitle": "Fortschritt im Blick",
@@ -585,5 +585,10 @@
   "cloudRestoreDone": "Wiederhergestellt.",
   "cloudSyncFailed": "Der Server war nicht erreichbar. Deine Daten auf dem Gerät sind unberührt.",
   "cloudNothingStored": "Auf dem Server liegt noch keine Sicherung.",
-  "cloudTooNew": "Die Sicherung stammt aus einer neueren Version von Root-in. Bitte die App aktualisieren."
+  "cloudTooNew": "Die Sicherung stammt aus einer neueren Version von Root-in. Bitte die App aktualisieren.",
+  "cloudDeleteData": "Daten auf dem Server löschen",
+  "cloudDeleteTitle": "Daten auf dem Server löschen?",
+  "cloudDeleteBody": "Die Sicherung und dein Profil auf dem Server werden gelöscht. Die Daten auf diesem Gerät bleiben unberührt. Für die vollständige Löschung deines Kontos schreib uns.",
+  "cloudDeleteConfirm": "Löschen",
+  "cloudDeleteDone": "Die Daten auf dem Server sind gelöscht."
 }

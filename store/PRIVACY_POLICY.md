@@ -11,16 +11,17 @@
 ### Kurzfassung
 
 Root-in speichert deine Gewohnheiten, Erledigungen, Statistiken und dein Profil
-**ausschließlich auf deinem Gerät**. Es gibt keine Benutzerkonten, keinen
-Server und keine Registrierung. Wir können deine Daten nicht einsehen.
+**auf deinem Gerät**. Die App ist ohne Konto vollständig benutzbar — und ohne
+Konto verlassen diese Daten dein Gerät nicht.
+
+**Neu: Du kannst freiwillig ein Konto anlegen.** Dann liegt zusätzlich eine
+**Kopie** deiner Daten auf einem Server, damit du sie nach einem Geräteverlust
+oder einer Neuinstallation zurückholen kannst. Was dabei gespeichert wird und
+wie du es wieder loswirst, steht in Punkt 4.
 
 Die App enthält **keine Werbung** und **keine In-App-Käufe**. Es wird **keine
-Werbe-ID** und keine andere Kennung deines Geräts erhoben.
-
-Deine Inhalte verlassen dein Gerät nur, wenn **du selbst** einen Export
-auslöst. Darüber hinaus ruft die App zwei Internetadressen auf — für die
-Datumsprüfung und für die Anleitungs-Texte (Punkte 2 und 3). Dabei werden
-keine persönlichen Daten übermittelt.
+Werbe-ID** und keine andere Kennung deines Geräts erhoben. Deine Daten werden
+**nicht** verkauft, nicht analysiert und nicht an Dritte weitergegeben.
 
 ### 1. Daten, die auf deinem Gerät bleiben
 
@@ -31,8 +32,9 @@ Die App legt lokal in einer Datenbank auf deinem Gerät ab:
 - Deinen im Profil eingetragenen Namen
 - App-Einstellungen (Sprache, Darstellungsmodus, Farbschema, Layouts)
 
-Diese Daten werden **nicht** an uns oder an Dritte übertragen. Sie werden
-gelöscht, wenn du die App deinstallierst oder die App-Daten löschst.
+Ohne Konto werden diese Daten **nicht** an uns oder an Dritte übertragen. Sie
+werden gelöscht, wenn du die App deinstallierst oder die App-Daten löschst.
+Mit Konto gilt zusätzlich Punkt 4.
 
 ### 2. Datumsprüfung im Internet
 
@@ -52,13 +54,42 @@ deine IP-Adresse gegenüber GitHub). Es werden **keine** Daten über dich, deine
 Gewohnheiten oder deine Nutzung gesendet. Anbieter ist GitHub, Inc.; es gilt
 deren Datenschutzerklärung: https://docs.github.com/site-policy
 
-### 4. Sicherung und Export
+### 4. Konto und Sicherung auf dem Server (freiwillig)
 
-Du kannst deine Daten selbst als Datei exportieren. Wohin diese Datei geht,
-entscheidest **allein du** über die Teilen-Funktion deines Geräts. Dasselbe
-gilt für das Bild deines Fortschritts, das du über „Fortschritt teilen"
-erzeugst. Es findet keine automatische Übertragung und keine Cloud-Sicherung
-durch uns statt.
+**Ohne Konto passiert nichts davon.** Die App ist vollständig benutzbar, ohne
+dass du dich registrierst; es gibt dann keine Verbindung zu unserem Server.
+
+Legst du ein Konto an, speichern wir:
+
+| Was | Wozu |
+|---|---|
+| **E-Mail-Adresse** | Anmeldung und — sobald eingerichtet — das Zurücksetzen eines vergessenen Passworts. Sonst nichts: keine Newsletter, keine Werbung |
+| **Passwort** | nur als kryptografischer Hash. Wir können es **nicht** lesen |
+| **Benutzername** und Anzeigename | damit dein Konto einen Namen hat |
+| **Eine Kopie deiner App-Daten** | Gewohnheiten, Kategorien und abgehakte Tage — dieselben Angaben wie in einem Export |
+
+**Wo das liegt:** bei Supabase (Datenbank in der EU, Region Frankfurt).
+Auftragsverarbeiter ist Supabase Inc.; es gilt zusätzlich deren
+Datenschutzerklärung: https://supabase.com/privacy
+
+**Wer es sehen kann:** nur du. Der Server gibt jede Zeile ausschließlich an
+das angemeldete Konto heraus, dem sie gehört (technisch abgesichert über
+Zugriffsregeln in der Datenbank). Wir sehen deine Gewohnheiten nicht an und
+werten sie nicht aus.
+
+**Wann hochgeladen wird:** automatisch nach Änderungen, solange du angemeldet
+bist. Heruntergeladen wird **nur**, wenn du es ausdrücklich verlangst.
+
+**Wie du es wieder loswirst:** In der App unter *Einstellungen → Konto →
+Konto & Cloud* kannst du deine Daten auf dem Server löschen und dich
+abmelden. Eine vollständige Löschung deines Kontos veranlassen wir auf Zuruf
+an alirzsaleh@gmail.com — wir bestätigen sie dir.
+
+### 4b. Eigener Export
+
+Unabhängig davon kannst du deine Daten jederzeit als Datei exportieren. Wohin
+diese Datei geht, entscheidest **allein du** über die Teilen-Funktion deines
+Geräts. Dasselbe gilt für das Bild deines Fortschritts.
 
 ### 5. Automatische Sicherung durch Android
 
@@ -94,10 +125,24 @@ wissentlich keine personenbezogenen Daten von Kindern.
 
 ### 9. Deine Rechte
 
-Da wir keine personenbezogenen Daten auf eigenen Systemen speichern, können
-wir dir keine Daten herausgeben oder löschen — es gibt schlicht keine. Deine
-Daten liegen vollständig in deiner Hand: Du löschst sie, indem du die App
-deinstallierst oder die App-Daten in den Android-Einstellungen löschst.
+**Ohne Konto** speichern wir nichts über dich; es gibt dann auch nichts
+herauszugeben oder zu löschen. Deine Daten löschst du, indem du die App
+deinstallierst oder die App-Daten löschst.
+
+**Mit Konto** hast du die Rechte aus der DSGVO — Auskunft, Berichtigung,
+Löschung, Datenübertragbarkeit und Widerspruch. In der Praxis:
+
+- **Auskunft und Übertragbarkeit:** Der Export in der App liefert dir denselben
+  Datenbestand, der auf dem Server liegt — als lesbare JSON-Datei.
+- **Berichtigung:** Name und E-Mail änderst du in der App.
+- **Löschung:** In der App löschst du die Server-Kopie und meldest dich ab;
+  für die vollständige Löschung des Kontos schreib an alirzsaleh@gmail.com.
+- **Rechtsgrundlage** ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) —
+  du gibst sie, indem du ein Konto anlegst, und ziehst sie zurück, indem du es
+  löschst.
+
+Beschweren kannst du dich bei der österreichischen Datenschutzbehörde
+(dsb.gv.at).
 
 ### 10. Änderungen
 
@@ -117,16 +162,17 @@ alirzsaleh@gmail.com · https://t.me/LukasAlmani
 
 ### Summary
 
-Root-in stores your habits, completions, statistics and profile **exclusively
-on your device**. There are no user accounts, no server and no sign-up. We
-cannot see your data.
+Root-in stores your habits, completions, statistics and profile **on your
+device**. The app is fully usable without an account — and without an account
+that data never leaves your device.
+
+**New: you may optionally create an account.** A **copy** of your data is then
+kept on a server so you can get it back after losing your device or
+reinstalling. What is stored and how to get rid of it is in section 4.
 
 The app contains **no advertising** and **no in-app purchases**. **No
-Advertising ID** and no other device identifier is collected.
-
-Your content leaves your device only when **you** trigger an export. Beyond
-that, the app contacts two internet addresses — for the date check and for the
-guide texts (sections 2 and 3). No personal data is transmitted in the process.
+Advertising ID** and no other device identifier is collected. Your data is
+**not** sold, not analysed and not passed on to third parties.
 
 ### 1. Data that stays on your device
 
@@ -138,8 +184,9 @@ The app stores locally, in a database on your device:
 - The name you enter in your profile
 - App settings (language, appearance mode, colour scheme, layouts)
 
-This data is **not** transmitted to us or to any third party. It is deleted
-when you uninstall the app or clear its data.
+Without an account this data is **not** transmitted to us or to any third
+party. It is deleted when you uninstall the app or clear its data. With an
+account, section 4 applies in addition.
 
 ### 2. Online date check
 
@@ -158,12 +205,40 @@ among others). **No** data about you, your habits or your usage is sent. The
 provider is GitHub, Inc.; their privacy statement applies:
 https://docs.github.com/site-policy
 
-### 4. Backup and export
+### 4. Account and server backup (optional)
 
-You can export your data as a file yourself. Where that file goes is decided
-**by you alone**, via your device's share function. The same applies to the
-progress image you create via "Share progress". There is no automatic transfer
-and no cloud backup on our side.
+**Without an account none of this happens.** The app is fully usable without
+signing up; there is then no connection to our server at all.
+
+If you create an account, we store:
+
+| What | Why |
+|---|---|
+| **Email address** | Sign-in and — once configured — resetting a forgotten password. Nothing else: no newsletters, no advertising |
+| **Password** | only as a cryptographic hash. We **cannot** read it |
+| **Username** and display name | so your account has a name |
+| **A copy of your app data** | habits, categories and completed days — the same content as an export |
+
+**Where it lives:** with Supabase (database in the EU, Frankfurt region). The
+processor is Supabase Inc.; their privacy statement applies in addition:
+https://supabase.com/privacy
+
+**Who can see it:** only you. The server hands out each row exclusively to the
+signed-in account it belongs to (enforced by access rules in the database). We
+do not look at your habits and do not analyse them.
+
+**When it is uploaded:** automatically after changes while you are signed in.
+It is downloaded **only** when you explicitly ask for it.
+
+**How to get rid of it:** in the app under *Settings → Account → Account &
+cloud* you can delete your server data and sign out. For full deletion of the
+account, write to alirzsaleh@gmail.com — we will confirm it.
+
+### 4b. Your own export
+
+Independently of this, you can export your data as a file at any time. Where
+that file goes is decided **by you alone**, via your device's share function.
+The same applies to the progress image you create via "Share progress".
 
 ### 5. Automatic backup by Android
 
@@ -197,10 +272,22 @@ personal data from children.
 
 ### 9. Your rights
 
-Because we store no personal data on our own systems, we cannot hand over or
-delete any data — there simply is none. Your data is entirely in your hands:
-delete it by uninstalling the app or clearing its data in the Android
-settings.
+**Without an account** we store nothing about you, so there is nothing to hand
+over or delete. Delete your data by uninstalling the app or clearing its data.
+
+**With an account** you have the rights granted by the GDPR — access,
+rectification, erasure, portability and objection. In practice:
+
+- **Access and portability:** the export in the app gives you the same data
+  that sits on the server, as a readable JSON file.
+- **Rectification:** change your name and email in the app.
+- **Erasure:** delete the server copy and sign out in the app; for full
+  deletion of the account, write to alirzsaleh@gmail.com.
+- **Legal basis** is your consent (Art. 6(1)(a) GDPR) — given by creating an
+  account, withdrawn by deleting it.
+
+You may lodge a complaint with the Austrian data protection authority
+(dsb.gv.at).
 
 ### 10. Changes
 

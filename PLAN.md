@@ -358,9 +358,18 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] `test/support/fake_auth_service.dart` + `test/widget/account_cloud_card_test.dart` (6 Fälle, darunter **„ohne Cloud ist die Rubrik gar nicht da"**, das Konto ohne Benutzernamen und die persische Fassung). ⚠️ **Kein Test spricht mit dem echten Server.**
 - [ ] „Konto löschen" — hängt an 27.8 (der `anon`-Schlüssel kann `auth.users` nicht löschen).
 
-#### 27.6 Profil in der Cloud
-- [ ] Beim Anmelden Profil laden; beim Ändern hochladen. Lokal bleibt `profile_service.dart` die Quelle für die Anzeige — der Server ist die Kopie.
-- [ ] ⚠️ **Regel für den ersten Zusammenstoß:** Es gibt schon einen lokalen Namen **und** vielleicht einen auf dem Server. Ohne ausdrückliche Regel gewinnt der Zufall. Festzulegen und hier zu notieren, **bevor** die erste Zeile geschrieben wird.
+#### 27.6 Profil in der Cloud ✅ *(gebaut 2026-08-17)*
+- [x] **`profile_cloud_sync.dart`** — beim Anmelden abgleichen, bei lokaler Änderung hochladen. Angehängt an dieselbe Listener-Stelle in `app.dart` wie Widget und Tagesstand.
+- [x] ⚠️ **Die Regel für den Zusammenstoß steht ausdrücklich da, nicht im Zufall:**
+
+  | lokal | Server | Ergebnis |
+  |---|---|---|
+  | leer | gesetzt | Server gewinnt (neues Gerät, der Name kommt zurück) |
+  | gesetzt | leer | lokal wird hochgeladen |
+  | gesetzt | gesetzt | **lokal gewinnt** |
+  | leer | leer | nichts zu tun |
+
+  **Warum bei Gleichstand das Gerät gewinnt:** Es ist die Quelle der Wahrheit (Abschnitt 3). Der Nutzer sitzt vor diesem Gerät; würde ihm ein älterer Name vom Server über den gerade eingegebenen gelegt, sähe es wie ein verlorener Eintrag aus. Andersherum verliert er höchstens einen Namen, den er anderswo gesetzt hat — sichtbar und korrigierbar.
 
 #### 27.7 Cloud-Sicherung des ganzen Bestands ✅ *(gebaut 2026-08-17)*
 - [x] **Format ist das vorhandene Backup-JSON** (`backup_data.dart`) — dieselbe Serialisierung wie Export/Import, dieselben fünf Tests, dieselbe Versions-Prüfung. Kein zweites Format: Jede spätere Änderung am Datenmodell müsste sonst an zwei Stellen nachgezogen werden, und die zweite würde vergessen.
@@ -374,14 +383,17 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] ⚠️ **Eine Sicherung aus einer neueren App-Fassung wird abgelehnt** (`tooNew`), nicht halb eingespielt: Ein älterer Leser verlöre Felder, die er nicht kennt — und das fiele erst viel später auf.
 - [ ] ⚠️ **Die Grenze bleibt:** Das ist eine **Sicherung**, kein Abgleich. Wer auf zwei Geräten arbeitet, hat zwei Bestände; die Wiederherstellung überschreibt. Ein echter Abgleich braucht Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase, keine Fußnote.
 
-#### 27.8 Datenschutz nachziehen *(blockiert Phase 15)*
+#### 27.8 Datenschutz nachziehen 🔄 *(blockiert Phase 15)*
 
 ⚠️ **Mit der Entscheidung für echte E-Mails wiegt dieser Abschnitt schwerer als geplant.** Eine E-Mail-Adresse ist ein personenbezogenes Datum; damit werden auch Gewohnheiten und Erledigungen personenbezogen, weil sie einer identifizierbaren Person zugeordnet sind. Das ist keine Formalie mehr.
 
-- [ ] `store/PRIVACY_POLICY.md` überarbeiten: **welche** Daten (E-Mail, Benutzername, Gewohnheiten, Erledigungen), **wo** gespeichert (Supabase, gewählte Region), **wie lange**, **wie löschbar**, und dass ein Konto **freiwillig** ist. **Und den Gist neu speichern** — er zieht nicht von selbst nach (⚠️ steht seit Phase 20 offen).
-- [ ] **Konto löschen** muss möglich sein — nicht nur abmelden. ⚠️ Der `anon`-Schlüssel kann den Eintrag in `auth.users` **nicht** entfernen (27.4); dafür braucht es eine Edge Function. Bis dahin löscht die App Profil und Sicherung und meldet ab — **das ist noch kein vollständiges Löschen** und darf in der Datenschutzerklärung nicht als solches beschrieben werden.
-- [ ] Play-Datensicherheitsformular neu ausfüllen: **nicht mehr „keine Daten erhoben"**. Zu deklarieren sind mindestens E-Mail-Adresse und App-Aktivität, jeweils mit Zweck und Übertragung.
-- [ ] Die Datenschutz-Aussage in der **Erststart-Erklärung** prüfen — dort steht heute wörtlich, dass alle Daten auf dem Gerät bleiben. Das stimmt weiterhin für alle **ohne** Konto; der Satz muss diese Bedingung nennen.
+- [x] **`store/PRIVACY_POLICY.md` überarbeitet, beide Sprachfassungen.** Neuer Punkt 4 („Konto und Sicherung auf dem Server") nennt in einer Tabelle **welche** Daten, **wozu**, **wo** (Supabase, EU/Frankfurt), **wer sie sieht** (nur der Eigentümer, technisch über RLS), **wann** hochgeladen wird und **wie** man sie loswird. Die Kurzfassung sagt in beiden Sprachen zuerst: **ohne Konto verlässt nichts das Gerät.**
+- [x] **Punkt 9 (Rechte) neu geschrieben** — der alte Satz „wir speichern nichts, also gibt es nichts herauszugeben" ist mit Konto schlicht falsch. Jetzt: Auskunft/Übertragbarkeit über den vorhandenen Export, Berichtigung in der App, Löschung, Rechtsgrundlage Einwilligung, Aufsichtsbehörde.
+- [x] **Die Erststart-Erklärung sagt es jetzt richtig** (alle drei Sprachen): „Deine Daten bleiben auf diesem Gerät; ein Konto ist freiwillig und legt zusätzlich eine Sicherung an." Der alte Satz behauptete das Gegenteil dessen, was die App seit heute kann.
+- [x] **„Daten auf dem Server löschen"** in der Rubrik „Konto & Cloud" (`deleteServerData()`): löscht Sicherung und Profilzeile, lässt den lokalen Bestand unangetastet. ⚠️ **Das ist bewusst nicht als „Konto löschen" beschriftet** — der Eintrag in `auth.users` bleibt, weil der öffentliche Schlüssel ihn nicht entfernen darf. Die Datenschutzerklärung nennt dafür den Weg über eine Nachricht; sie darf den Knopf **nicht** als vollständige Löschung ausgeben.
+- [ ] ⬜ **Den Gist neu speichern** — er zieht nicht von selbst nach (steht seit Phase 20 offen und ist jetzt **zweifach** veraltet). Muss der Nutzer tun; Quelle ist `store/PRIVACY_POLICY.md`.
+- [ ] ⬜ **Play-Datensicherheitsformular** neu ausfüllen: **nicht mehr „keine Daten erhoben"**. Zu deklarieren sind mindestens E-Mail-Adresse und App-Aktivität, jeweils mit Zweck und Übertragung.
+- [ ] ⬜ *(später, nicht blockierend)* Vollständige Kontolöschung über eine Edge Function, damit der Weg nicht über eine Nachricht laufen muss.
 - [ ] Abschnitt 3 dieses Plans und die Datenschutz-Aussage im Onboarding prüfen — dort steht heute wörtlich, dass alles auf dem Gerät bleibt.
 
 #### 27.9 Prüfen

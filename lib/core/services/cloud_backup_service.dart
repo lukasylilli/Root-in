@@ -176,6 +176,31 @@ class CloudBackupService {
     }
   }
 
+  /// Löscht **alles, was auf dem Server zu diesem Konto liegt** — Sicherung
+  /// und Profilzeile (PLAN.md 27.8).
+  ///
+  /// ⚠️ **Das ist noch keine vollständige Kontolöschung.** Der Eintrag in
+  /// `auth.users` bleibt bestehen: Ihn zu entfernen braucht erhöhte Rechte,
+  /// die der öffentliche Schlüssel bewusst nicht hat. Was hier verschwindet,
+  /// sind die **Daten**; übrig bleibt eine leere Anmeldung. Die
+  /// Datenschutzerklärung nennt dafür den Weg über eine Nachricht an uns —
+  /// und darf diesen Knopf **nicht** als vollständige Löschung beschreiben.
+  ///
+  /// Der lokale Bestand bleibt unangetastet. Wer seine Server-Kopie löscht,
+  /// will nicht auch die Daten auf seinem Gerät verlieren.
+  Future<CloudSyncStatus> deleteServerData() async {
+    final client = _client;
+    final account = _ref.read(authServiceProvider).currentAccount;
+    if (client == null || account == null) return CloudSyncStatus.notAvailable;
+    try {
+      await client.from(_table).delete().eq('user_id', account.id);
+      await client.from('profiles').delete().eq('user_id', account.id);
+      return CloudSyncStatus.ok;
+    } catch (_) {
+      return CloudSyncStatus.failed;
+    }
+  }
+
   /// Spielt eine zuvor mit [fetch] geholte Sicherung ein.
   ///
   /// ⚠️ **Überschreibt den lokalen Bestand vollständig** — dieselbe

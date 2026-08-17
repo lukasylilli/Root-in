@@ -405,7 +405,7 @@
   "onboardingNext": "Next",
   "onboardingStart": "Let's go",
   "onboardingWelcomeTitle": "Welcome to Root-in",
-  "onboardingWelcomeBody": "Root-in helps you build habits and stick with them — step by step, with no account needed. All your data stays on this device.",
+  "onboardingWelcomeBody": "Root-in helps you build habits and stick with them — step by step. Your data stays on this device; an account is optional and adds a backup.",
   "onboardingHabitsTitle": "Create and check off",
   "onboardingHabitsBody": "Create habits from a template or from scratch; each belongs to a category you manage yourself. On “Today” you check off what's done — or log minutes if you set a duration goal.",
   "onboardingProgressTitle": "See your progress",
@@ -555,5 +555,10 @@
   "cloudRestoreDone": "Restored.",
   "cloudSyncFailed": "The server could not be reached. Your data on this device is untouched.",
   "cloudNothingStored": "There is no backup on the server yet.",
-  "cloudTooNew": "The backup comes from a newer version of Root-in. Please update the app."
+  "cloudTooNew": "The backup comes from a newer version of Root-in. Please update the app.",
+  "cloudDeleteData": "Delete data on the server",
+  "cloudDeleteTitle": "Delete data on the server?",
+  "cloudDeleteBody": "Your backup and profile on the server will be deleted. The data on this device is untouched. For full deletion of your account, write to us.",
+  "cloudDeleteConfirm": "Delete",
+  "cloudDeleteDone": "The data on the server has been deleted."
 }
