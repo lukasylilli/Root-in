@@ -724,6 +724,16 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        zwei Zuständigkeiten
 │                                        Am kaputten Stand wird er ROT — daran gemessen, nicht nur am
 │                                        reparierten (Lehre 32)
+│                                        ⚠️ Scheitert der Start, wird ABGEBROCHEN statt weitergeprüft:
+│                                        Ohne laufende App messen die übrigen 19 Prüfungen nichts und
+│                                        melden eine Ursache als sechzehn Fehler (Lehre 36). `diagnosis()`
+│                                        nennt die Lage in Worten — häufigster Fall: zu früh nach der
+│                                        Veröffentlichung gemessen
+│                                        ⚠️ `painted()` sucht die Zeichenfläche im SCHATTEN-DOM von
+│                                        flt-glass-pane. Im hellen DOM findet man sie nie — auch nicht
+│                                        bei einer tadellos laufenden App
+│                                        ⚠️ `wait_until()` statt fester Wartezeiten: Ein `sleep` nach dem
+│                                        Antippen reicht lokal und gegen die veröffentlichte Seite nicht
 │                                        ⚠️ Einmalig nötig: `safaridriver --enable` (Mac-Passwort)
 │                                        ⚠️ Jede Sitzung startet mit LEEREM Profil — Persistenz nur
 │                                        innerhalb EINER Sitzung prüfbar

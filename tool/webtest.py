@@ -108,7 +108,15 @@ def main():
                 time.sleep(1)
                 if not js("return !!document.querySelector('flutter-view');"):
                     continue
-                time.sleep(5)  # Datenbank + erster echter Frame
+                # Auf den ersten wirklich gezeichneten Frame warten, nicht auf
+                # die Uhr: Eine feste Wartezeit war hier schon zu kurz, und der
+                # Durchgang tippte dann in eine Seite, die es noch nicht gab.
+                for _ in range(30):
+                    if painted():
+                        break
+                    time.sleep(1)
+                else:
+                    return False
                 for _ in range(20):
                     js("var p=document.querySelector('flt-semantics-placeholder');"
                        "if(p) p.click();")
@@ -118,6 +126,45 @@ def main():
                         return True
                 return False
             return False
+
+        def painted():
+            """Wie viele Zeichenflächen hat Flutter angelegt? 0 = nichts gemalt.
+
+            ⚠️ **Nicht** `document.querySelectorAll('canvas')`: Die Fläche
+            liegt im **Schatten-DOM** von `flt-glass-pane`. Eine Suche im
+            hellen DOM liefert dort immer 0 — auch bei einer tadellos
+            laufenden App. Genau diese Fehlmessung hat einen ganzen
+            Nachmittag gekostet (PLAN.md Lehre 36).
+            """
+            return js("""
+              var g = document.querySelector('flt-glass-pane');
+              if (!g || !g.shadowRoot) return 0;
+              return g.shadowRoot.querySelectorAll('canvas').length;
+            """) or 0
+
+        def diagnosis():
+            """Warum kam die App nicht hoch? Drei Lagen, drei Auswege.
+
+            Ohne diese Unterscheidung meldet der Durchgang 16 rote Prüfungen,
+            von denen keine einzige stimmt: Sobald der Semantik-Baum leer
+            bleibt, findet **jede** Text-Prüfung nichts und jede Prüfung auf
+            eine ABWESENHEIT besteht. Das Bild sieht dann nach „die halbe App
+            ist kaputt" aus, während in Wahrheit nur der Start nicht geklappt
+            hat (PLAN.md Lehre 36).
+            """
+            if not js("return !!document.querySelector('flutter-view');"):
+                return ("Die Seite hat Flutter gar nicht geladen. Stimmt die "
+                        "Adresse? Bei GitHub Pages: Ist die Veröffentlichung "
+                        "durch?")
+            if not painted():
+                return ("Flutter ist geladen, hat aber nichts gezeichnet. Das "
+                        "sah hier schon einmal nach einem kaputten Bau aus und "
+                        "war in Wirklichkeit eine Veröffentlichung, die noch "
+                        "nicht überall angekommen war — ein bis zwei Minuten "
+                        "warten und erneut messen (PLAN.md Lehre 36).")
+            return ("Gezeichnet ist, aber der Semantik-Baum bleibt leer. Der "
+                    "Klick auf 'flt-semantics-placeholder' hat nicht gezogen — "
+                    "ohne ihn kann dieser Durchgang nichts lesen.")
 
         def leaves():
             """Blätter des Semantik-Baums samt Mittelpunkt."""
@@ -198,6 +245,21 @@ def main():
                 scroll_down()
             return False
 
+        def wait_until(condition, seconds=12):
+            """Wartet auf einen ZUSTAND, nicht auf die Uhr.
+
+            ⚠️ Ein festes `sleep` nach dem Antippen ist hier zweimal
+            umgekippt: Gegen einen lokalen Bau reicht es, gegen die
+            veröffentlichte Seite über eine langsamere Leitung nicht. Der
+            Seitenwechsel meldete sich dann als „Seite nicht offen" — ein
+            Fehlschlag, der nur die Wartezeit gemessen hat (PLAN.md Lehre 36).
+            """
+            for _ in range(seconds * 2):
+                if condition():
+                    return True
+                time.sleep(0.5)
+            return False
+
         def check(name, condition, detail=""):
             print(f"  {'✓' if condition else '✗'} {name}{'  ' + detail if detail else ''}")
             if not condition:
@@ -225,7 +287,17 @@ def main():
         print(f"Prüfe: {URL}\n")
 
         call("POST", f"/session/{session}/url", {"url": URL})
-        check("App startet", boot())
+
+        # ⚠️ Kommt die App nicht hoch, wird hier ABGEBROCHEN — die folgenden
+        # 19 Prüfungen würden sonst allesamt dasselbe eine Problem melden,
+        # nur unkenntlich gemacht (PLAN.md Lehre 36).
+        if not boot():
+            check("App startet", False)
+            print(f"\nABBRUCH: {diagnosis()}")
+            print("Die übrigen 19 Prüfungen wurden NICHT ausgeführt — ohne "
+                  "laufende App messen sie nichts.")
+            return 2
+        check("App startet", True)
 
         texts = [n["t"] for n in leaves()]
         check("Erststart-Erklärung erscheint", any("Root-in" in t for t in texts))
@@ -293,8 +365,7 @@ def main():
               tap_any("تنظیمات", "Einstellungen", "Settings", wait=5))
         planning = ("برنامه‌ریزی یادگیری", "Lernplanung", "Study planning")
         check("Rubrik „Root-in Anleitung“ ist erreichbar", scroll_to(*planning))
-        tap_any(*planning, exact=False, wait=8)
-        time.sleep(4)
+        tap_any(*planning, exact=False, wait=2)
 
         # ⚠️ „Getippt" ist nicht „geöffnet", und die Adresszeile hilft hier
         # NICHT: Die Anleitung wird mit `context.push` geöffnet, und die
@@ -304,7 +375,8 @@ def main():
         # der Shell). Einzeln taugt keines von beiden — den Titel zeigt auch
         # die Einstellungen-Liste, und ohne Navigation ist auch die
         # Erststart-Erklärung.
-        on_guide = shows(*planning) and not shows("خانه", "Home")
+        on_guide = wait_until(
+            lambda: shows(*planning) and not shows("خانه", "Home"))
         check("Anleitungs-Seite ist wirklich offen", on_guide)
 
         # Der Fehlerzustand wird am KNOPF „Erneut versuchen" erkannt, nicht
@@ -359,20 +431,23 @@ def main():
               tap_any("تنظیمات", "Einstellungen", "Settings", wait=5))
         konto = ("اطلاعات حساب", "Konto-Infos", "Account info")
         check("Konto-Eintrag erreichbar", scroll_to(*konto))
-        tap_any(*konto, exact=False, wait=5)
+        tap_any(*konto, exact=False, wait=2)
 
         # Dieselbe UND-Verknüpfung wie bei der Anleitung: Die Konto-Seite
         # liegt außerhalb der Shell, also ist die Bottom-Navigation weg.
         # (Nach dem Titel „نمایه" zu fragen, schlug fehl — siehe `shows`.)
-        on_account = not shows("خانه", "Home")
+        on_account = wait_until(lambda: not shows("خانه", "Home"))
         check("Konto-Seite ist offen (keine Bottom-Navigation mehr)",
               on_account)
 
         # Ohne Supabase-Schlüssel gibt es die Rubrik bewusst NICHT — dann ist
         # ihr Fehlen richtig und kein Fehlschlag. Beides wird unterschieden,
         # statt eine der beiden Lagen falsch zu melden.
+        # Auch hier gewartet: Die Karte erscheint erst, wenn der Anmeldestand
+        # feststeht. Ohne Warten liest man den Zustand davor und meldet „ohne
+        # Schlüssel gebaut", obwohl die Schlüssel da sind.
         anmelden = ("ورود", "Anmelden", "Sign in")
-        if shows(*anmelden):
+        if wait_until(lambda: shows(*anmelden), seconds=8):
             check("Rubrik „Konto & Cloud“ bietet Anmelden an", on_account)
         else:
             print("  – Rubrik „Konto & Cloud“ nicht vorhanden — dieser Bau "
