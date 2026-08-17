@@ -2,11 +2,20 @@
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
 >
-> **Stand 2026-08-16.** Android-Code fertig und signiert · Web-Fassung live unter `lukasylilli.github.io/Root-in/` · **189 Tests grün**, `flutter analyze` sauber.
+> **Stand 2026-08-17.** Android-Code fertig und signiert · Web-Fassung live unter `lukasylilli.github.io/Root-in/` · **Nutzerkonten und Cloud-Sicherung laufen** · **228 Tests grün**, `flutter analyze` sauber, 20/20 im echten Browser, 13/13 Zugriffsregeln am Server.
 >
-> 🔄 **Aktuell in Arbeit: [Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-).** Vom Nutzer am 2026-08-16 beauftragt. ⚠️ **Diese Phase kehrt Abschnitt 3 um** — Root-in war von Tag eins „vollständig lokal, kein Backend, keine Nutzerkonten". Was daran hängt, steht in 27.0.
+> ✅ **[Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-) ist codeseitig fertig.** ⚠️ Sie kehrt Abschnitt 3 um — Root-in war von Tag eins „vollständig lokal, kein Backend, keine Nutzerkonten". Was daran hängt, steht in 27.0.
 >
-> ⬜ **Sonst offen:** Gerätedurchgang (21.3) · Play-Veröffentlichung (15, führt der Nutzer selbst durch) · iOS nativ (12) · Bestätigung der Behebung aus 26.13 auf einem echten iPhone.
+> ⬜ **Was noch offen ist — und was davon Claude nicht tun kann:**
+>
+> | Offen | Wer |
+> |---|---|
+> | **Gist der Datenschutzerklärung nachziehen** (inzwischen **zweifach** veraltet) | Nutzer — ⚠️ blockiert Phase 15 |
+> | **Play-Datensicherheitsformular** neu ausfüllen | Nutzer — ⚠️ blockiert Phase 15 |
+> | Ein Durchgang auf einem echten Gerät (21.3) — der größte offene Posten | Nutzer + Claude |
+> | Konto → Sicherung → App löschen → Wiederherstellen einmal am Gerät durchspielen | Nutzer |
+> | Bestätigung von 26.13 auf einem echten iPhone | Nutzer |
+> | Play-Veröffentlichung (15) · iOS nativ (12) | Nutzer bzw. später |
 
 > ⚠️ **Umgebungs-Grundregel dieser Maschine:** Nie Code/SDKs/Dev-Tools unter `~/Desktop` oder `~/Documents` speichern — iCloud „Schreibtisch & Dokumente"-Sync ist hier aktiv und bricht Code-Signing für Binaries (Lehre 1). Immer `~/Projects/<name>` für Projekte, `~/development/<tool>` für SDKs.
 
@@ -21,16 +30,16 @@
 8. [Architektur-Prinzip](#8-architektur-prinzip)
 9. [Arbeitsweise & Konventionen](#9-arbeitsweise--konventionen)
 10. [Roadmap / Phasen](#10-roadmap--phasen)
-    - 10.1 [Erledigte Phasen (Kurzfassung)](#101-erledigte-phasen-kurzfassung) — Phasen 0–11.6, 13, 14, 15.1/15.2, 16–26 ✅
+    - 10.1 [Erledigte Phasen (Kurzfassung)](#101-erledigte-phasen-kurzfassung) — Phasen 0–11.6, 13, 14, 15.1/15.2, 16–27 ✅
     - 10.2 [Festlegungen aus erledigten Phasen, die man noch braucht](#102-festlegungen-aus-erledigten-phasen-die-man-noch-braucht)
+    - [Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-) ✅ *(Code fertig, Datenschutz-Formalitäten offen)*
     - **Offene Phasen:**
-      - [Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-) 🔄 **aktuell**
-      - [Phase 21.3 — Gerätedurchgang](#phase-213--gerätedurchgang-) ⬜
-      - [Phase 15 — Veröffentlichung im Google Play Store](#phase-15--veröffentlichung-im-google-play-store-android-) 🔄
+      - [Phase 21.3 — Gerätedurchgang](#phase-213--gerätedurchgang-) ⬜ **der größte offene Posten**
+      - [Phase 15 — Veröffentlichung im Google Play Store](#phase-15--veröffentlichung-im-google-play-store-android-) 🔄 ⚠️ blockiert durch 27.8
       - [Phase 26 — Web-Fassung: was noch offen ist](#phase-26--web-fassung-was-noch-offen-ist-) 🔄
       - [Phase 12 — iOS-Portierung](#phase-12--ios-portierung-) ⬜
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
-    - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–34)
+    - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–35)
 12. [Offene Fragen](#12-offene-fragen)
 
 ## 1. Vision
@@ -44,20 +53,23 @@ App zum Aufbauen und Verfolgen von Gewohnheiten/Routinen. Nutzer legen Habits an
 
 ## 3. Datenhaltung
 
-⚠️ **Dieser Abschnitt ändert sich mit Phase 27.** Bis dahin gilt die linke Spalte; sie beschreibt den **gebauten** Stand.
+⚠️ **Mit Phase 27 (2026-08-17) hat sich dieser Abschnitt geändert.** Root-in war von Tag eins „vollständig lokal, kein Backend, keine Nutzerkonten"; das gilt so nicht mehr.
 
-| | Bis Phase 26 (gebaut) | Ab Phase 27 (geplant) |
+| | Bis Phase 26 | **Heute (ab Phase 27)** |
 |---|---|---|
-| Ort der Daten | ausschließlich auf dem Gerät | Gerät **bleibt die Quelle der Wahrheit**, zusätzlich eine Kopie auf dem Server |
+| Ort der Daten | ausschließlich auf dem Gerät | Gerät **bleibt die Quelle der Wahrheit**, mit Konto zusätzlich eine Kopie auf dem Server |
 | Nutzerkonten | keine | **freiwillig** — ohne Konto läuft die App unverändert weiter |
-| Backend | keins | Supabase (Postgres + Auth), kostenloser Tarif |
+| Backend | keins | Supabase (Postgres + Auth), kostenloser Tarif, Region Frankfurt |
 | Netzzugriff | Datums-Verifikation, Anleitungs-Texte | zusätzlich Anmeldung und Cloud-Sicherung |
+| Personenbezug | keiner | mit Konto: E-Mail-Adresse ⇒ Gewohnheiten werden personenbezogen (27.8) |
 
-**Unverändert gültig, auch nach Phase 27:**
-- **Lokal zuerst.** Die App muss ohne Internet und ohne Konto vollständig benutzbar bleiben. Der Server ist eine **Kopie**, keine Voraussetzung.
-- Lokale Datenbank: Drift (SQLite); Key-Value (Profil, Einstellungen): `shared_preferences`
-- Sicherung/Export: JSON über Dateisystem bzw. Share-Sheet
-- „Wettkampf" zwischen Nutzern läuft **nicht** über einen Server, sondern über geteilte **Bilder** des Fortschritts (Telegram-Gruppe, siehe Anleitung „Lernplanung"). Bestätigt 2026-07-19, unverändert.
+**Vier Sätze, die weiterhin gelten — und die die ganze Phase getragen haben:**
+- **Lokal zuerst.** Die App muss ohne Internet **und ohne Konto** vollständig benutzbar bleiben. Der Server ist eine **Kopie**, keine Voraussetzung. Fällt er aus, merkt man es nur daran, dass „zuletzt gesichert" älter wird.
+- **Ohne Schlüssel im Bau gibt es die Cloud überhaupt nicht** (`supportsCloudSync`) — kein Knopf, keine Rubrik, kein Netzverkehr.
+- **Sicherung, kein Abgleich.** Hochladen automatisch, Herunterladen nur auf Nachfrage; zwei Geräte ohne Zusammenführungs-Logik löschen sich sonst gegenseitig Daten.
+- „Wettkampf" zwischen Nutzern läuft **nicht** über den Server, sondern über geteilte **Bilder** des Fortschritts (Telegram-Gruppe, siehe Anleitung „Lernplanung"). Bestätigt 2026-07-19, auch mit Server unverändert.
+
+Lokale Datenbank: Drift (SQLite); Key-Value (Profil, Einstellungen): `shared_preferences`; Export: JSON über Dateisystem bzw. Share-Sheet — **dasselbe JSON, das auch in die Cloud geht.**
 
 ## 4. Tech-Stack
 | Bereich | Wahl | Begründung |
@@ -66,7 +78,7 @@ App zum Aufbauen und Verfolgen von Gewohnheiten/Routinen. Nutzer legen Habits an
 | Navigation | go_router | Deklarative Routen, Bottom-Nav + verschachtelte Tabs |
 | Lokale DB | drift + drift_flutter + sqlite3 | SQL für Streaks/Statistik. `sqlite3_flutter_libs` bewusst nicht (end-of-life) |
 | Key-Value | shared_preferences | Profil, Einstellungen |
-| **Backend** | **supabase_flutter** 🚧 | **Phase 27** — Postgres + Auth + RLS, kostenloser Tarif. Einzelheiten und Risiken dort |
+| **Backend** | supabase_flutter | **Phase 27** — Postgres + Auth + RLS, kostenloser Tarif. Einzige Stelle: `core/services/auth_service.dart`. ⚠️ Ohne Schlüssel wird es nicht einmal gestartet |
 | Netzzugriff | http + http_parser | **Kein `dart:io`** (Lehre 30) — es übersetzt für den Browser und wirft dort |
 | Diagramme | fl_chart | Balken/Linie/Kreis; Wrapper ausschließlich in `chart_card.dart` |
 | Matrix-Grid | eigene Komponente | Volle Design-Kontrolle, überall wiederverwendbar |
@@ -91,9 +103,11 @@ App zum Aufbauen und Verfolgen von Gewohnheiten/Routinen. Nutzer legen Habits an
 
 **5.3 View** (Tabs Woche / Übersicht / Monat / Jahr) — Woche/Monat/Jahr je ein individualisierbares Dashboard; **Übersicht** = die letzten vier Kalenderwochen als **eine** quer liegende Bühne mit festem Raster, Vollbild-Knopf, Querformat-Sperre.
 
-**5.4 Einstellungen** — Sprache, Darstellungsmodus, Farb-Variante, Quelle der Berg-Animation · Konto, Kategorien, Erinnerungen · App teilen, Sicherung exportieren/importieren, Kontakt · Rubrik **Root-in Anleitung** (vier Themen) · Eintrag **موارد دیگر** direkt darunter. 🚧 **Phase 27 ergänzt hier die Rubrik „Konto & Cloud".**
+**5.4 Einstellungen** — Sprache, Darstellungsmodus, Farb-Variante, Quelle der Berg-Animation · Konto, Kategorien, Erinnerungen · App teilen, Sicherung exportieren/importieren, Kontakt · Rubrik **Root-in Anleitung** (vier Themen) · Eintrag **موارد دیگر** direkt darunter.
 
-**5.5 Konto** — Profil (heute nur ein Name, lokal), Achievements-Grid, längste Serie, Gesamt-Statistik, Dashboard über den gesamten Verlauf, „Fortschritt teilen" (bleibt hier — die Anleitung „Lernplanung" verweist ausdrücklich darauf).
+**5.5 Konto** — ganz oben die Rubrik **„Konto & Cloud"** (Phase 27: anmelden/registrieren, hinterlegte E-Mail, Stand der letzten Sicherung, sichern, wiederherstellen, Server-Daten löschen; **ohne Cloud unsichtbar**). Darunter unverändert: Profil (Name, lokal), Achievements-Grid, längste Serie, Gesamt-Statistik, Dashboard über den gesamten Verlauf, „Fortschritt teilen" (bleibt hier — die Anleitung „Lernplanung" verweist ausdrücklich darauf).
+
+⚠️ Die Anmeldung sitzt bewusst **hier** und nicht in einer eigenen Rubrik daneben: Ein Konto ist genau das, worum es auf dieser Seite ohnehin geht. Zwei Orte für dasselbe Thema wären die verbotene Doppelung — und der Nutzer müsste sich merken, welcher was kann.
 
 **5.6 Kategorien** — Liste, anlegen, umbenennen (kaskadiert), löschen (blockiert solange in Benutzung), Standard-Kategorien beim Erststart + Nachrüst-Knopf, Symbol je Standard-Kategorie.
 
@@ -123,7 +137,7 @@ Beim Erststart in der gewählten Sprache angelegt, danach **Nutzerdaten**: frei 
 Feature-first (Dateien im Einzelnen: MAP.md):
 - `core/` — Services, Theme, Utils, Konstanten, geteilte Widgets
 - `data/` — Drift-Datenbank, DAOs, Repository, Modelle
-- `features/<feature>/` — Screens, Widgets, Provider (home, today, view, habits, settings, guide, account, categories, others, onboarding; 🚧 Phase 27: `auth`)
+- `features/<feature>/` — Screens, Widgets, Provider (home, today, view, habits, settings, guide, account, categories, others, onboarding, **auth**)
 
 ## 9. Arbeitsweise & Konventionen
 
@@ -175,8 +189,10 @@ Feature-first (Dateien im Einzelnen: MAP.md):
 | 26 Web-Fassung (PWA) | Drift auf WebAssembly, vier Plattform-Weichen an **einer** Stelle, GitHub-Action baut und veröffentlicht, Speicher-Hinweis für Safari · **live** | 08-14 |
 | 26.9 Weniger Rückfragen | `.claude/settings.json` mit ermittelter (nicht geratener) Freigabeliste | 08-14 |
 | 26.10 → 26.13 Web-Fehler behoben | `dart:io` aus `lib/` verbannt, Web-Symbole aus der einen Quelle, Koordinaten-Versatz der abgelegten Fassung | 08-14/16 |
+| 27 Nutzerkonten & Cloud | Supabase: freiwilliges Konto (E-Mail + Passwort + Benutzername), Cloud-Sicherung im vorhandenen Backup-Format, Profil-Abgleich, Datenschutzerklärung neu · Zugriffsregeln von außen mit echten Konten geprüft | 08-17 |
+| 27.11 Geteilter Link | QR-Code und Share-Text zeigten auf eine Play-Seite mit **HTTP 404**; jetzt auf die Web-Fassung | 08-17 |
 
-**Stand danach: 189 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, Release-Bundle signiert und hochladbar, Web-Fassung veröffentlicht.
+**Stand danach: 228 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, 20/20 im echten Browser gegen die veröffentlichte Seite, 13/13 Zugriffsregeln am Server, Release-Bundle signiert und hochladbar.
 
 ### 10.2 Festlegungen aus erledigten Phasen, die man noch braucht
 
@@ -204,7 +220,8 @@ Die Langfassungen sind eingedampft; was hier steht, braucht man beim Weiterbauen
 
 ---
 
-### Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase) 🔄
+### Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase) ✅
+**Code fertig am 2026-08-17.** Offen bleiben nur zwei Formalitäten beim Nutzer (27.8) — die aber Phase 15 blockieren.
 **Vom Nutzer am 2026-08-16 beauftragt:** *„اطلاعات حساب کاربر اینجا ذخیره بشه — Supabase … اینجوری ی سرور داریم که رایگان و اتوماتیک اطلاعات کاربران رو ذخیره میکنه."* Ein Server, der die Nutzerdaten kostenlos und automatisch aufbewahrt.
 
 #### 27.0 Was diese Phase umkehrt — vor dem ersten Handgriff lesen
@@ -523,6 +540,14 @@ Die Fassung ist gebaut, veröffentlicht und geprüft (10.1/10.2). Offen bleiben:
 - **2026-08-16** — 26.12/26.13: „Knöpfe reagieren nicht" — drei plausible Erklärungen der Reihe nach **gemessen und widerlegt**, ohne eine Zeile zu ändern (Lehre 33). Die fehlende Bedingung nannte der Nutzer: **nur in der auf dem Home-Bildschirm abgelegten Fassung**, und man muss ein Stück **über** den Knopf tippen. Damit war es kein toter Knopf, sondern ein Koordinaten-Versatz (Lehre 34). Werkzeug-Gewinn: der iOS-Simulator als Prüfstand für echtes iOS-Safari.
 - **2026-08-16 (Phase 27 beauftragt)** — Nutzerdaten sollen auf einem Server liegen (Supabase). Damit fällt die älteste Festlegung des Projekts („kein Backend, keine Nutzerkonten"). Vor dem ersten Handgriff festgehalten, **was daran hängt** (27.0) — insbesondere, dass die Datenschutzerklärung und das Play-Formular keine Nacharbeit sind, sondern eine **Bedingung der Veröffentlichung**.
 
+- **2026-08-17 (Phase 27 gebaut)** — Konto, Cloud-Sicherung, Datenschutz. Tragende Entscheidungen:
+  - **Das Anmeldeverfahren wurde einmal umgeworfen — rechtzeitig.** Zuerst „Benutzername ohne E-Mail" (Supabase kann das nicht von sich aus, also künstliche Adressen), dann auf Wunsch des Nutzers **echte E-Mail**. Der halbe Tag Arbeit war nicht verloren: Die Umrechnung fiel **ersatzlos** weg statt als toter Code liegen zu bleiben, und die Namensregeln blieben. **Vor dem ersten echten Nutzer ist ein Umwurf billig** — danach verwaist er Konten.
+  - **Nachgelesen statt geraten, dreimal.** Tarifgrenzen (`supabase.com/pricing`), Mail-Grenze (**2 Nachrichten/Stunde und nur an eigene Team-Adressen** — damit war „E-Mail-Bestätigung an" von vornherein unmöglich) und die Fehler-Codes der Anmeldung. Alle drei hätten aus dem Gedächtnis falsch geraten werden können, und zwei davon hätten die Phase in eine Sackgasse geführt.
+  - **Zwei unabhängige Schutzschichten am Server**, ausgelöst durch eine Frage des Nutzers zu den Data-API-Schaltern: Rechte (nur `authenticated`, nie `anon`) **und** RLS. Dabei fiel auf, dass `schema.sql` sich auf einen Schalter in einer Weboberfläche verlassen hatte — jetzt trägt die Datei ihre Rechte selbst.
+  - **Geprüft wurde von außen, mit echten Konten** (`tool/rls_check.sh`, 13/13). Ein `select` im SQL-Editor läuft mit erhöhten Rechten und beweist nichts.
+  - **Der geteilte QR-Code führte seit Phase 19 auf HTTP 404** — gemeldet vom Nutzer, nachgemessen, behoben. Der bestehende Test hatte den Fehler mitgetragen: Er prüfte, dass die Play-Adresse *korrekt gebildet* war. War sie. War nur die falsche.
+  - **Lehre 35 entstand aus dreimaligem Rückfall in Lehre 32.** Eine Regel gehört an die Stelle, an der man gegen sie verstößt — in den Docstring, in den Kommentar, in einen Test. Nicht nur in dieses Dokument.
+
 ### 11.2 Dauerhafte Lehren & Fallstricke
 1. **iCloud bricht Code-Signing.** Das Flutter-SDK lag auf iCloud Drive; `taskgated` killte die Binaries sporadisch (`SIGKILL`, per Crash-Report belegt). Das war die Wurzel von „Dart compiler exited unexpectedly", `ShaderCompilerException` und den native-asset-Fehlern — **nicht** Arbeitsspeicher. SDKs nach `~/development/`, Projekte nach `~/Projects/`. Bei Build-Abstürzen zuerst `~/Library/Logs/DiagnosticReports/` lesen.
 2. **PATH in der Bash-Tool-Shell ist eingefroren.** Flutter/Dart immer mit vollem Pfad aufrufen: `"$HOME/development/flutter/bin/flutter"`.
@@ -563,8 +588,9 @@ Die Fassung ist gebaut, veröffentlicht und geprüft (10.1/10.2). Offen bleiben:
 ## 12. Offene Fragen
 **Entschieden werden in Phase 27** (siehe 27.0b): Anmeldeverfahren · Umfang der Cloud-Daten · Pflicht oder freiwillig · Richtung des Abgleichs.
 
-- **Zwei Fassungen, zwei Datenbestände.** Wer Root-in auf Android **und** im Browser benutzt, hat heute zwei getrennte Bestände. **Phase 27 kann das lösen** — aber nur als Sicherung/Wiederherstellung, nicht als stiller Abgleich (27.7).
-- **Erinnerungen im Web** entfallen (Web-Push bräuchte einen Server). ⚠️ Mit Phase 27 gibt es einen Server — die Entscheidung ist damit **wieder offen**, aber Push ist ein eigenes Thema und keine Nebensache.
+- **Zwei Fassungen, zwei Datenbestände.** ✅ **Mit Phase 27 gelöst — aber nur halb, und das ist Absicht:** Wer sich auf beiden Geräten anmeldet, kann seinen Bestand übertragen (sichern hier, wiederherstellen dort). Ein **stiller Abgleich** in beide Richtungen ist es nicht und soll es vorerst nicht sein (27.7). Ein echter Abgleich bräuchte Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase.
+- **Erinnerungen im Web** entfallen (Web-Push bräuchte einen Server). ⚠️ Seit Phase 27 gibt es einen Server — die Frage ist damit **wieder offen**. Push ist aber ein eigenes Thema: Es braucht Service-Worker-Registrierung, Berechtigungen und einen Versanddienst, und auf iOS nur in der abgelegten Fassung.
+- **Vollständige Kontolöschung** braucht eine Edge Function (der öffentliche Schlüssel darf `auth.users` nicht anfassen). Heute löscht die App die Server-Daten und meldet ab; die vollständige Löschung läuft über eine Nachricht. Offen, ob das reicht.
 - **Sollen neue Beiträge in „موارد دیگر" gemeldet werden?** Möglich wäre ein stiller Vergleich beim App-Start (neue Einträge im `index.json` gegenüber dem gespeicherten Stand) und ein Punkt am Einstellungs-Eintrag — ohne Server, ohne Push.
 - ~~Repository öffentlich oder privat?~~ — **entschieden 2026-08-16: öffentlich, das Projekt ist Open Source.** ⚠️ Folge für Phase 27: Die Zugriffsregeln des Servers sind für jeden lesbar, müssen also wirklich stimmen; der `service_role`-Schlüssel darf nirgends im Repository auftauchen.
 - **iOS-Bundle-Identifier ist weiterhin `com.example.rootIn`** — wird in Phase 12 entschieden.

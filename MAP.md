@@ -2,11 +2,13 @@
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
 >
-> **Stand 2026-08-16.** Android-Code fertig · Web-Fassung live unter `lukasylilli.github.io/Root-in/` · 189 Tests grün.
+> **Stand 2026-08-17.** Android-Code fertig · Web-Fassung live unter `lukasylilli.github.io/Root-in/` · **228 Tests grün**, 20/20 im echten Browser, 13/13 Zugriffsregeln am Server.
 >
-> 🚧 **In Arbeit: Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase).** Die dafür geplanten Dateien stehen unten mit 🚧 an ihrem künftigen Platz; Einzelheiten und Reihenfolge in PLAN.md Phase 27. ⚠️ **Diese Phase kehrt die älteste Festlegung des Projekts um** („kein Backend, keine Nutzerkonten") — was daran hängt, steht in PLAN.md 27.0.
+> ✅ **Phase 27 gebaut: Nutzerkonten & Cloud-Speicher (Supabase).** Neu: `supabase/schema.sql`, `core/services/{auth_service, cloud_backup_service, cloud_auto_backup, profile_cloud_sync, username_rules}.dart`, `features/auth/presentation/` (zwei Dateien), `tool/rls_check.sh`, fünf Test-Dateien. Neue Abhängigkeit `supabase_flutter`. ⚠️ **Diese Phase kehrt die älteste Festlegung des Projekts um** („kein Backend, keine Nutzerkonten") — was daran hängt, steht in PLAN.md 27.0.
 >
-> Zuletzt geändert: **26.13** — `web/index.html` ohne `viewport-fit=cover`, Statusleiste `default`. ⬜ Bestätigung auf einem echten iPhone steht aus. Zuvor **26.11**: `dart:io` ist aus `lib/` verschwunden (`package:http` überall), Web-Symbole aus derselben Quelle wie die Android-Symbole, neuer Wächter-Test `no_dart_io_in_lib_test.dart`.
+> ⚠️ **Ohne Supabase-Schlüssel im Bau verhält sich die App exakt wie vorher** — keine Anmeldung, keine Rubrik, kein Netzverkehr (`supportsCloudSync`).
+>
+> Zuvor **26.13**: `web/index.html` ohne `viewport-fit=cover`, Statusleiste `default` (⬜ Bestätigung auf einem echten iPhone steht aus). **26.11**: `dart:io` ist aus `lib/` verschwunden (`package:http` überall), Web-Symbole aus derselben Quelle wie die Android-Symbole.
 
 ## Inhaltsverzeichnis
 1. [Legende](#legende)
@@ -143,7 +145,9 @@
 
 ## lib/ (App-Code)
 
-**Funktionsstand:** Home mit Berg-Animation, individualisierbarem Dashboard und Teilen-Knopf · Heute-Seite mit Tagesring, Abhaken, Bearbeiten/Löschen · View mit vier Tabs (Woche/Übersicht/Monat/Jahr, Übersicht zusätzlich im Vollbild) · Konto mit Profil, Achievements, lebenslanger Statistik und Fortschritt-Teilen · Kategorien: sieben Standard-Kategorien beim Erststart, danach frei verwaltbar · tägliche Erinnerungen je Gewohnheit inkl. Snooze · Sicherung exportieren/importieren · Rubrik „Root-in Anleitung" mit vier Seiten aus dem Repository · neun Home-Screen-Widgets inkl. antippbarer Farbkachel · Darstellungsmodus, Farb-Variante und Sprache (**DE/EN/FA, Persisch inkl. RTL**) über je **einen** Schalter · Erststart-Erklärung · Fortschritts-Karte mit Übersicht-Block und QR-Code zum Store · **keine Werbung, keine In-App-Käufe** (🕯️ in Phase 20 stillgelegt).
+**Funktionsstand:** Home mit Berg-Animation, individualisierbarem Dashboard und Teilen-Knopf · Heute-Seite mit Tagesring, Abhaken, Bearbeiten/Löschen · View mit vier Tabs (Woche/Übersicht/Monat/Jahr, Übersicht zusätzlich im Vollbild) · Konto mit **Rubrik „Konto & Cloud"**, Profil, Achievements, lebenslanger Statistik und Fortschritt-Teilen · Kategorien: sieben Standard-Kategorien beim Erststart, danach frei verwaltbar · tägliche Erinnerungen je Gewohnheit inkl. Snooze · Sicherung exportieren/importieren **und optional in die Cloud** · Rubrik „Root-in Anleitung" mit vier Seiten aus dem Repository · neun Home-Screen-Widgets inkl. antippbarer Farbkachel · Darstellungsmodus, Farb-Variante und Sprache (**DE/EN/FA, Persisch inkl. RTL**) über je **einen** Schalter · Erststart-Erklärung · Fortschritts-Karte mit Übersicht-Block und QR-Code **zur Web-Fassung** · **keine Werbung, keine In-App-Käufe** (🕯️ in Phase 20 stillgelegt).
+
+**Freiwilliges Nutzerkonto (Phase 27):** E-Mail + Passwort + Benutzername, Cloud-Sicherung im vorhandenen Backup-Format. ⚠️ **Ohne Konto und ohne Schlüssel im Bau ändert sich nichts** — die App bleibt vollständig lokal benutzbar.
 
 ```
 lib/
