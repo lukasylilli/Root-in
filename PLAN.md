@@ -477,6 +477,61 @@ Die Fortschritts-Karte trug seit Phase 19 den Play-Store-Link — für eine App,
 
 ---
 
+### Phase 28 — Nur noch Web 🔄 *(beauftragt 2026-08-17)*
+
+**Vier Anweisungen des Nutzers, in seinen Worten:**
+
+1. *„حریم خصوصی رو خودت اپدیت کن"* — die Datenschutzerklärung selbst nachziehen.
+2. *„یاد آور ها رو کلا حذف کن چون نسخه وب نمیتونه الارم داشته باشه"* — Erinnerungen **ganz** entfernen; die Web-Fassung kann keinen Wecker stellen.
+3. *„کلا انتشار در اپ استور و گوگل پلی و نسخه اندروید رو از پلن حذف کن، فقط نسخه وب خواهیم داشت"* — Store-Veröffentlichung und Android-Fassung aus dem Plan **streichen**. Es wird nur die Web-Fassung geben.
+4. *„کل اپ رو قراره برای همیشه تو نسخه وب داشته باشم و کلا از مک پاکش کنم … بقیه تغییرات رو داخل گیت هاب ادامه میدیم"* — das Projekt verschwindet vom Mac; weitergearbeitet wird auf GitHub.
+
+⚠️ **Das ist keine Verschiebung mehr, sondern eine Streichung.** Am Vormittag desselben Tages wurden Phase 15 und 12 „zurückgestellt, **nicht** gestrichen" — mit der Begründung, eine zurückgedrehte Entscheidung solle nicht bei null anfangen. Diese Begründung ist hinfällig. Was gestrichen ist, verschwindet auch aus dem Plan: **Ein Plan, der Wege aufbewahrt, die niemand mehr gehen wird, ist ein Archiv und kein Plan.** Die Versionsgeschichte behält alles — wer die Android-Fassung je zurückholen will, findet sie vollständig im Stand vom 2026-08-17.
+
+#### 28.0 ⚠️ Was beim Löschen des Macs verloren geht — VOR dem Löschen lesen
+
+Nach dem Löschen gibt es **keine zweite Kopie**. Alles, was nicht im Repository liegt, ist dann weg:
+
+| Was | Lage | Zu tun |
+|---|---|---|
+| **`meine/`** — 20 Screenshots, die Berg-Animations-Vorlage (React/SVG), zwei Design-Specs, `Logo.jpeg` | ⛔ **0 von 24 Dateien versioniert** — bewusst ausgeschlossen (Phase 26) | **Der Nutzer muss diesen Ordner selbst woandershin sichern.** Er wird NICHT ins öffentliche Repository geschoben; es ist sein Material, und die Entscheidung darüber ist seine |
+| `.env` (Supabase-Adresse + öffentlicher Schlüssel) | ⛔ nicht versioniert | **Kein Verlust:** Beide Werte liegen als GitHub-Actions-Secrets, und der `anon`-Schlüssel steht ohnehin auslesbar im veröffentlichten Bundle (Lehre 26). Die Automatik baut also weiter |
+| `assets/icon/app_icon.png` (1024×1024) | ✅ versioniert | nichts — das App-Symbol überlebt. `Logo.jpeg` als Ursprung liegt in `meine/` |
+| Signaturschlüssel `~/development/keys/root-in-upload.jks` | ⛔ außerhalb des Projekts | Mit Anweisung 3 **gegenstandslos**. Wer ihn trotzdem behalten will, sichert ihn jetzt; ohne ihn ist eine Play-Veröffentlichung später unmöglich |
+| `.claude/settings.local.json` | ⛔ nicht versioniert | egal — maschinenlokal |
+
+#### 28.1 Erinnerungen vollständig entfernen ⬜
+
+Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffen sind neun Ebenen, und keine darf übrig bleiben — ein halb entfernter Feature-Strang ist schlimmer als gar keiner:
+
+- [ ] `core/services/notification_service.dart` und `features/settings/presentation/reminders_page.dart` löschen
+- [ ] Route `/reminders` aus `app_routes.dart` + `app_router.dart`, Eintrag aus `settings_page.dart`
+- [ ] Erinnerungs-Schalter und Time-Picker aus `habit_form_sheet.dart`
+- [ ] `setHabitReminder` / `rescheduleAllReminders` aus `habit_repository.dart`, `setReminder` / `habitsWithReminder` aus `habit_dao.dart`
+- [ ] Tagesstand-Meldung (Phase 23): Listener in `app.dart`, `status_notification_enabled` in `settings_service.dart`
+- [ ] ⚠️ **DB-Spalten `reminderEnabled` / `reminderMinuteOfDay`: `schemaVersion` 3 → 4 mit `onUpgrade`-Zweig UND Migrations-Test.** „Datenerhalt geht vor" (Abschnitt 9) gilt beim Entfernen genauso wie beim Hinzufügen — Bestandsnutzer der Web-Fassung haben echte Daten
+- [ ] Pakete: `flutter_local_notifications`, `timezone`, `flutter_timezone`
+- [ ] ARB-Schlüssel in **allen drei** Sprachen, danach `flutter gen-l10n` (Lehre 20)
+- [ ] Tests: `reschedule_reminders_test.dart`, `daily_status_notification_test.dart`, `reminders_page_test.dart`, `support/fake_notification_service.dart` weg; `habit_form_sheet_test.dart`, `persian_ui_test.dart` nachziehen
+
+#### 28.2 Android, iOS und Desktop entfernen ⬜
+- [ ] Ordner `android/`, `ios/`, `macos/`, `linux/`, `windows/`
+- [ ] `home_widget_service.dart` samt der neun Startbildschirm-Widgets und `colorTileInteractionCallback`
+- [ ] Pakete `home_widget` und `flutter_file_dialog`. ⚠️ **Der bedingte Import in `file_pick/` bleibt** — `flutter test` läuft auf der Dart-VM und wählt dort den `_io`-Zweig; er wird zu einem ehrlichen Stub, nicht gelöscht
+- [ ] `platform_support.dart` schrumpft auf das, was im Browser noch eine Frage ist
+- [ ] Store-Material: `store/PLAY_LISTING.md`, Feature-Grafik, Play-Symbol, Screenshots
+- [ ] ⚠️ **`store/PRIVACY_POLICY.md` bleibt** — sie hängt nicht am Store (siehe 28.3)
+
+#### 28.3 Datenschutzerklärung ⬜
+- [ ] Erinnerungen und Benachrichtigungen aus dem Text nehmen, Android-/Play-Bezüge streichen
+- [ ] ⚠️ **Der Gist bleibt Nutzersache** — er zieht nicht von selbst nach. Neu ist nur: Ab jetzt ist die Quelle so kurz, dass ein Nachziehen ein Kopieren ist
+
+#### 28.4 Weiterarbeit auf GitHub ⬜
+- [ ] Alles gepusht, `main` grün, veröffentlichte Seite mit `tool/webtest.py` nachgewiesen — **das ist die Abnahme dieser Phase**, nicht „die Tests sind grün"
+- [ ] ⚠️ Nach dem Löschen ist `tool/webtest.py` (safaridriver, braucht einen Mac) nicht mehr ausführbar. Die verbleibende Absicherung ist die Automatik: `analyze` + `test` laufen bei **jedem** Push vor der Veröffentlichung
+
+---
+
 ### Phase 21.3 — Gerätedurchgang ⬜ *(zurückgestellt)*
 
 ⏸️ **Seit dem 2026-08-17 nicht mehr vordringlich.** Diese Liste prüft die **Android**-Fassung für eine Play-Veröffentlichung; das Ziel ist jetzt die Web-Fassung (Abschnitt 2). Sie bleibt vollständig stehen — der Android-Code ist lauffähig und signiert, und wenn die Veröffentlichung je kommt, ist das hier die Vorbereitung.
