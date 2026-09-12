@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 // import '../../../core/constants/ad_config.dart';
 // import 'remove_ads_tile.dart';
 import '../../../core/constants/app_config.dart';
+import '../../../core/constants/app_links.dart';
 import '../../../core/constants/contact_info.dart';
 import '../../../core/l10n/app_language.dart';
 import '../../../core/routing/app_routes.dart';
@@ -212,6 +213,18 @@ class SettingsPage extends ConsumerWidget {
             title: Text(l10n.settingsContact),
             onTap: () => launchUrl(
               Uri.parse(contactUrl),
+              mode: LaunchMode.externalApplication,
+            ),
+          ),
+          // PLAN.md 29.5: Seit die App E-Mail-Adressen speichert, muss die
+          // Datenschutzerklärung nicht nur existieren, sondern auffindbar
+          // sein — eine Erklärung, die nur unter einer Adresse steht, die
+          // niemand kennt, erfüllt ihren Zweck nicht.
+          ListTile(
+            leading: const Icon(Icons.privacy_tip_outlined),
+            title: Text(l10n.settingsPrivacy),
+            onTap: () => launchUrl(
+              Uri.parse(privacyPolicyUrl),
               mode: LaunchMode.externalApplication,
             ),
           ),

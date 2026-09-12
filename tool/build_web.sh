@@ -73,4 +73,11 @@ echo "Baue Web-Fassung ${APP_VERSION}+${BUILD_NUMBER} (base-href ${BASE_HREF}) �
   --csp \
   --no-wasm-dry-run
 
+# Die Datenschutzerklärung als Seite daneben legen (PLAN.md 29.5).
+# ⚠️ Sie entsteht aus derselben EINEN Quelle wie alles andere
+# (store/PRIVACY_POLICY.md) und wird mit der App zusammen veröffentlicht.
+# Der frühere Weg über einen von Hand gepflegten Gist war zweimal veraltet —
+# eine zweite Kopie veraltet, das ist keine Frage der Sorgfalt.
+python3 tool/build_privacy_page.py build/web/privacy.html
+
 echo "Fertig: build/web"

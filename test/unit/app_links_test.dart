@@ -23,6 +23,16 @@ void main() {
     expect(appShareUrl, webAppUrl);
   });
 
+  test('die Datenschutzerklärung liegt neben der App', () {
+    // ⚠️ Sie MUSS unter derselben Adresse liegen wie die App: Nur dann
+    // entsteht sie bei jedem Bau aus `store/PRIVACY_POLICY.md` mit und kann
+    // nicht mehr veralten. Zeigt sie wieder woandershin (Gist, eigene
+    // Domain), ist die zweite Kopie zurück — und mit ihr der Fehler, der sie
+    // zweimal veralten ließ (PLAN.md 29.5).
+    expect(privacyPolicyUrl, startsWith(webAppUrl));
+    expect(privacyPolicyUrl, endsWith('privacy.html'));
+  });
+
   test('die Web-Adresse ist vollständig und aufrufbar geformt', () {
     final uri = Uri.parse(appShareUrl);
     expect(uri.scheme, 'https');

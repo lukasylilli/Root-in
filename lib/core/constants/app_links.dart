@@ -26,3 +26,17 @@ const String webAppUrl = 'https://lukasylilli.github.io/Root-in/';
 /// ein zweiter Zugang dazu, ändert sich genau diese Zeile — und alle drei
 /// Leser ziehen mit.
 const String appShareUrl = webAppUrl;
+
+/// Die **veröffentlichte Datenschutzerklärung** (PLAN.md 29.5).
+///
+/// Sie liegt neben der App und entsteht bei jedem Bau aus derselben einen
+/// Quelle (`store/PRIVACY_POLICY.md`, gewandelt von
+/// `tool/build_privacy_page.py`).
+///
+/// ⚠️ **Deshalb kann sie nicht mehr veralten.** Vorher lag die
+/// veröffentlichte Fassung in einem von Hand gepflegten GitHub-Gist — und
+/// war **zweimal** veraltet, nach Phase 20 und nach Phase 27.8. Nicht aus
+/// Nachlässigkeit: Eine zweite Kopie, die jemand nachziehen muss, wird
+/// irgendwann nicht nachgezogen. Eine Änderung an der Markdown-Datei **ist**
+/// jetzt die Veröffentlichung.
+const String privacyPolicyUrl = '${webAppUrl}privacy.html';

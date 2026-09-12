@@ -119,6 +119,10 @@
   "settingsImport": "Sicherung importieren",
   "settingsImportSubtitle": "Ersetzt alle aktuellen Daten",
   "settingsContact": "Kontakt uns",
+  "settingsPrivacy": "Datenschutzerklärung",
+  "@settingsPrivacy": {
+    "description": "Eintrag in den Einstellungen, öffnet die veröffentlichte Datenschutzerklärung im Browser"
+  },
   "settingsGuide": "Root-in Anleitung",
   "guidePlanning": "Lernplanung",
   "guidePlanningSubtitle": "Wochen, Ziele und Pausen sinnvoll aufteilen",
