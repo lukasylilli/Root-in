@@ -660,6 +660,11 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        bei einer tadellos laufenden App
 │                                        ⚠️ `wait_until()` statt fester Wartezeiten: Ein `sleep` nach dem
 │                                        Antippen reicht lokal und gegen die veröffentlichte Seite nicht
+│                                        ⚠️ **Der Prüfstand kann müde werden** (Lehre 38): safaridriver
+│                                        hört nach vielen Sitzungen auf zu zeichnen und meldet dann
+│                                        gegen JEDEN Bau „nichts gezeichnet". Erst die GEGENPROBE gegen
+│                                        einen bekannt guten Bau, dann im Code suchen. Hilft nichts:
+│                                        Rechner neu starten, oder den iOS-Simulator nehmen
 │                                        ⚠️ Einmalig nötig: `safaridriver --enable` (Mac-Passwort)
 │                                        ⚠️ Jede Sitzung startet mit LEEREM Profil — Persistenz nur
 │                                        innerhalb EINER Sitzung prüfbar

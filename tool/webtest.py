@@ -157,11 +157,20 @@ def main():
                         "Adresse? Bei GitHub Pages: Ist die Veröffentlichung "
                         "durch?")
             if not painted():
-                return ("Flutter ist geladen, hat aber nichts gezeichnet. Das "
-                        "sah hier schon einmal nach einem kaputten Bau aus und "
-                        "war in Wirklichkeit eine Veröffentlichung, die noch "
-                        "nicht überall angekommen war — ein bis zwei Minuten "
-                        "warten und erneut messen (PLAN.md Lehre 36).")
+                return (
+                    "Flutter ist geladen, hat aber nichts gezeichnet.\n"
+                    "     ⚠️ Das ist ZWEIMAL ein Fehlalarm gewesen und kein "
+                    "einziges Mal ein kaputter Bau (PLAN.md Lehre 36/38).\n"
+                    "     Bevor du im Code suchst, in dieser Reihenfolge:\n"
+                    "     1. Frisch veröffentlicht? Ein bis zwei Minuten warten.\n"
+                    "     2. GEGENPROBE: denselben Durchgang gegen einen Bau "
+                    "laufen lassen, von dem du WEISST, dass er lief.\n"
+                    "        Scheitert der auch, liegt es an diesem Rechner — "
+                    "safaridriver hört nach vielen Sitzungen auf zu zeichnen.\n"
+                    "        Dann hilft nur ein Neustart des Rechners.\n"
+                    "     3. Erst danach: die Seite in echtem Safari oder im "
+                    "iOS-Simulator ansehen (siehe MAP.md)."
+                )
             return ("Gezeichnet ist, aber der Semantik-Baum bleibt leer. Der "
                     "Klick auf 'flt-semantics-placeholder' hat nicht gezogen — "
                     "ohne ihn kann dieser Durchgang nichts lesen.")
