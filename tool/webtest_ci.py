@@ -217,8 +217,15 @@ def main():
         def tap_any(*labels, wait=2):
             """Die Oberfläche folgt der Gerätesprache — im CI meist Englisch,
             lokal oft Deutsch oder Persisch. Deshalb jede Beschriftung in
-            allen drei Sprachen anbieten."""
-            return any(tap(label, wait=wait) for label in labels)
+            allen drei Sprachen anbieten.
+
+            ⚠️ Erst genau, dann als Teiltreffer: Ein Semantik-Knoten trägt
+            gelegentlich mehr als nur seine Beschriftung. Ein Tipp, der
+            deswegen nicht stattfindet, sieht aus wie eine kaputte Seite.
+            """
+            if any(tap(label, wait=wait) for label in labels):
+                return True
+            return any(tap(label, exact=False, wait=wait) for label in labels)
 
         bestanden = [0]
 
@@ -246,6 +253,15 @@ def main():
         # einen anderen Text; „Root-in" steht in allen dreien.
         check("Erststart-Erklärung erscheint", shows("Root-in"))
         tap_any("رد کردن", "Überspringen", "Skip", wait=4)
+
+        # ⚠️ **Danach steht der Speicher-Hinweis im Weg** (PLAN.md 26.8) — ein
+        # modaler Dialog. Ohne ihn wegzuklicken ist KEIN Reiter erreichbar,
+        # und der Durchgang meldet sechs rote Prüfungen für eine Ursache.
+        # Genau daran ist sein erster Lauf gescheitert; `webtest.py` hatte
+        # diesen Schritt, die CI-Fassung hatte ihn beim Abschreiben verloren.
+        check("Speicher-Hinweis der Web-Fassung erscheint",
+              shows("صفحهٔ اصلی", "Home-Bildschirm", "home screen"))
+        tap_any("متوجه شدم", "Verstanden", "Got it", wait=3)
 
         storage = js("return Object.keys(localStorage).join(',');")
         check("Einstellungen landen im Browser-Speicher",
