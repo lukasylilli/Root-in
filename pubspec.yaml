@@ -9,8 +9,6 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # followed by an optional build number separated by a +.
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
 # In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
@@ -59,8 +57,6 @@ dependencies:
   intl: ^0.20.2
   drift_flutter: ^0.3.1
   sqlite3: ^3.5.0
-  flutter_file_dialog: ^3.3.1
-  home_widget: ^0.9.3
   # Mit Phase 26.11 dazugekommen — und zwar als BEHEBUNG, nicht als Zuwachs:
   # Vorher holten `time_service.dart` und `repo_content_service.dart` ihre
   # Daten mit `HttpClient` aus `dart:io`. Das ÜBERSETZT für den Browser
@@ -112,28 +108,17 @@ dev_dependencies:
   build_runner: ^2.15.1
   flutter_launcher_icons: ^0.14.4
 
-# App-Symbol (siehe PLAN.md Phase 15.2). Quelle ist EINE Datei —
-# `assets/icon/app_icon.png` (1024×1024, aus `meine/Logo.jpeg` aufbereitet);
-# alle Android-Auflösungen entstehen daraus per `dart run flutter_launcher_icons`.
-# Das Store-Symbol 512×512 liegt separat unter `store/`, weil es nicht in die
-# App gebaut, sondern in der Play Console hochgeladen wird.
+# App-Symbol. Quelle ist EINE Datei — `assets/icon/app_icon.png` (1024×1024,
+# aus `meine/Logo.jpeg` aufbereitet). Daraus entstehen Favicon und die
+# PWA-Symbole per `dart run flutter_launcher_icons`.
 #
-# `adaptive_icon_background` ist weiß statt App-grün: die Vorlage ist ein JPEG
-# mit fest eingebranntem weißem Hintergrund, eine farbige Fläche würde als
-# weißer Kasten darauf erscheinen.
-#
-# `web: generate: true` kam mit Phase 26.11 dazu. Bis dahin lagen in `web/`
-# noch die Symbole der Flutter-Vorlage — das blaue „F" stand als App-Symbol
-# auf dem Home-Bildschirm. Der Weg über dieses Werkzeug statt von Hand
-# erzeugter Dateien hält es bei EINER Quelle: Ein neues `app_icon.png` zieht
-# Android und Web in einem Lauf nach.
+# ⚠️ Seit PLAN.md Phase 28 erzeugt der Lauf **nur noch Web-Symbole** — Android
+# und iOS sind entfernt. Bis Phase 26.11 lagen in `web/` noch die Symbole der
+# Flutter-Vorlage; das blaue „F" stand als App-Symbol auf dem
+# Home-Bildschirm. Der Weg über dieses Werkzeug statt von Hand erzeugter
+# Dateien hält alles bei EINER Quelle.
 flutter_launcher_icons:
   image_path: "assets/icon/app_icon.png"
-  android: true
-  ios: false # folgt in Phase 12 zusammen mit der iOS-Portierung
-  remove_alpha_ios: true
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/icon/app_icon.png"
   web:
     generate: true
     background_color: "#2E7D5B"

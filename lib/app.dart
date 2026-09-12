@@ -7,14 +7,11 @@ import 'dart:async';
 import 'core/routing/app_router.dart';
 import 'core/services/auth_service.dart';
 import 'core/services/cloud_auto_backup.dart';
-import 'core/services/home_widget_service.dart';
 import 'core/services/profile_cloud_sync.dart';
 import 'core/services/profile_service.dart';
 import 'core/services/settings_service.dart';
 import 'core/theme/app_theme.dart';
-import 'core/utils/date_utils.dart';
 import 'data/local/database.dart';
-import 'data/models/daily_progress.dart';
 import 'data/repositories/habit_repository.dart';
 import 'l10n/gen/app_localizations.dart';
 
@@ -58,56 +55,18 @@ class _RootInAppState extends ConsumerState<RootInApp> {
     db.markTablesUpdated({db.habitCompletions});
   }
 
-  /// Schreibt Fortschritt, gerenderte Diagramme und Farbkacheln ins
-  /// Home-Screen-Widget.
-  ///
-  /// Das Widget lebt außerhalb des Widget-Baums der App — seine Texte kommen
-  /// daher über die aufgelöste Sprache, nicht über
-  /// `AppLocalizations.of(context)` (hier oberhalb der MaterialApp gäbe es
-  /// die Delegates ohnehin noch nicht).
-  Future<void> _pushHomeWidgetUpdate(DailyProgress progress) async {
-    // Container vor dem ersten `await` greifen: danach ist nicht garantiert,
-    // dass der Element-Baum noch steht.
-    final container = ProviderScope.containerOf(context);
-    final service = ref.read(homeWidgetServiceProvider);
-
-    await service.updateProgress(
-      progress,
-      lookupAppLocalizations(ref.read(resolvedLocaleProvider)),
-    );
-
-    final today = ref.read(todayProvider).value;
-    if (today == null) return;
-
-    await service.updateAllCharts(
-      container: container,
-      // Letzte 16 Wochen wie auf der Home-Seite — genug Verlauf, damit
-      // auch das Matrix-Grid im Widget etwas zeigt.
-      range: (start: addDays(weekStartOf(today), -7 * 15), end: today),
-      progress: progress,
-    );
-
-    await service.updateColorTiles(
-      await container.read(habitRepositoryProvider).habitTileData(today),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final variant = ref.watch(themeVariantProvider);
 
-    // **Ein Sender, zwei Empfänger** (siehe PLAN.md Phase 10/10.5 und 23):
-    // Der heutige Fortschritt wird an genau einer Stelle beobachtet und von
-    // hier an Home-Screen-Widget und Tagesstand-Meldung verteilt. Keine
-    // einzelne Seite muss daran denken, nach einer Änderung nachzuziehen.
+    // Der heutige Fortschritt wird an genau einer Stelle beobachtet.
     //
-    // Bewusst `todayProgressProvider`, nicht der gewählte Tag (Phase 24):
-    // Widget und Leiste zeigen immer **heute**.
+    // ⚠️ Bis Phase 28 hingen hier DREI Empfänger (Startbildschirm-Widget,
+    // Tagesstand-Meldung, Cloud-Sicherung) — daher der Satz „ein Sender,
+    // mehrere Empfänger" in PLAN.md Phase 10/23. Mit dem Wegfall von Android
+    // und den Erinnerungen ist die Cloud-Sicherung der einzige übrig
+    // gebliebene. Der Aufruf ist entprellt und schweigt ohne Konto.
     ref.listen(todayProgressProvider, (previous, next) {
-      _pushHomeWidgetUpdate(next);
-      // Zweiter Empfänger seit Phase 27.7. Der Aufruf ist entprellt und
-      // schweigt ohne Konto — deshalb steht hier keine Bedingung: Wer die
-      // Bedingung an drei Stellen wiederholt, vergisst sie an der vierten.
       ref.read(cloudAutoBackupProvider).scheduleUpload();
     });
 
@@ -131,16 +90,6 @@ class _RootInAppState extends ConsumerState<RootInApp> {
     ref.listen(profileProvider, (previous, next) {
       if (previous == null || previous.name == next.name) return;
       unawaited(ref.read(profileCloudSyncProvider).pushLocalName());
-    });
-
-    // Ein Sprachwechsel wirkt auch außerhalb des Widget-Baums (siehe PLAN.md
-    // Phase 11.5) — beide Stellen ziehen hier gebündelt nach, damit keine
-    // Einstellungs-Seite daran denken muss. Beobachtet wird die *aufgelöste*
-    // Sprache: wer „System" eingestellt lässt, bekommt keinen unnötigen
-    // Durchlauf.
-    ref.listen(resolvedLocaleProvider, (previous, next) async {
-      if (previous == next) return;
-      await _pushHomeWidgetUpdate(ref.read(todayProgressProvider));
     });
 
     return MaterialApp.router(

@@ -18,15 +18,4 @@ enum DashboardWidgetType {
     DashboardWidgetType.progressTrend => l10n.widgetProgressTrend,
     DashboardWidgetType.monthlyBar => l10n.widgetMonthlyBar,
   };
-
-  /// Klassenname des zugehörigen Android-`AppWidgetProvider`s (siehe PLAN.md
-  /// Phase 10.7) — muss zu den Klassen in `ChartWidgetProviders.kt` und den
-  /// Receivern im `AndroidManifest.xml` passen.
-  String get androidWidgetProvider => switch (this) {
-    DashboardWidgetType.matrixGrid => 'MatrixGridWidgetProvider',
-    DashboardWidgetType.categoryBar => 'CategoryBarWidgetProvider',
-    DashboardWidgetType.categoryPie => 'CategoryPieWidgetProvider',
-    DashboardWidgetType.progressTrend => 'ProgressTrendWidgetProvider',
-    DashboardWidgetType.monthlyBar => 'MonthlyBarWidgetProvider',
-  };
 }

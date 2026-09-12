@@ -1,18 +1,15 @@
-import 'dart:io';
-
-import 'package:flutter_file_dialog/flutter_file_dialog.dart';
-
-/// Android/iOS-Fassung von `pickTextFileContent` — siehe `pick_text_file.dart`
+/// Nicht-Web-Fassung von `pickTextFileContent` — siehe `pick_text_file.dart`
 /// für den Grund der Aufteilung.
-Future<String?> pickTextFileContent() async {
-  final path = await FlutterFileDialog.pickFile(
-    params: const OpenFileDialogParams(
-      // Bewusst kein Endungs-Filter: je nach Quelle (Drive, Downloads …)
-      // meldet Android nicht zuverlässig eine `.json`-Endung.
-      copyFileToCacheDir: true,
-    ),
-  );
-  if (path == null) return null;
-
-  return File(path).readAsString();
-}
+///
+/// ⚠️ **Seit PLAN.md Phase 28 ein bewusster Stub, kein toter Code.** Die App
+/// gibt es nur noch im Browser; Android und iOS sind entfernt. Diese Datei
+/// bleibt trotzdem stehen, weil der bedingte Import einen Nicht-Web-Zweig
+/// **braucht**: `flutter test` läuft auf der Dart-VM, und die wählt genau
+/// diesen hier. Ohne ihn ließe sich `backup_service.dart` gar nicht mehr
+/// übersetzen — und damit kein einziger Test starten.
+///
+/// `null` bedeutet an dieser Stelle „der Nutzer hat abgebrochen" und wird
+/// vom Aufrufer schon behandelt. Ein Wurf wäre hier falsch: Er würde in
+/// Tests als Fehler durchschlagen, obwohl niemand eine Datei auswählen
+/// wollte.
+Future<String?> pickTextFileContent() async => null;

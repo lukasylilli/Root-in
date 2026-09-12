@@ -34,12 +34,6 @@ bool get isMobilePlatform =>
 // steht `kIsWeb` **nur hier** und nirgends sonst im Code.
 // ---------------------------------------------------------------------------
 
-/// Ob es Startbildschirm-Widgets gibt (`home_widget` — nur Android/iOS).
-///
-/// Auf dem iPhone-Startbildschirm liegt bei der Web-Fassung nur die
-/// Verknüpfung zur Seite; ein Widget kann eine Website nicht stellen.
-bool get supportsHomeScreenWidgets => isMobilePlatform;
-
 /// Ob die Daten im Speicher **des Browsers** liegen statt in einem
 /// App-Verzeichnis (PLAN.md Phase 26.8).
 ///

@@ -25,7 +25,6 @@ migrate_working_dir/
 
 # Flutter/Dart/Pub related
 **/doc/api/
-**/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins-dependencies
 .pub-cache/
@@ -43,15 +42,11 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
 
 # Release-Signatur (siehe PLAN.md Phase 15.1): key.properties enthält
-# Passwörter, .jks/.keystore sind der Schlüssel selbst — beides darf niemals
-# in die Versionierung. Die Vorlage android/key.properties.example bleibt drin.
-/android/key.properties
+# Signaturschlüssel: mit PLAN.md Phase 28 gegenstandslos (es gibt keine
+# Android-Fassung mehr). Die Regeln bleiben trotzdem stehen — sie kosten
+# nichts, und ein versehentlich hier abgelegter Schlüssel wäre teuer.
 *.jks
 *.keystore
 

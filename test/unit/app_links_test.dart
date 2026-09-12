@@ -14,13 +14,13 @@ import 'package:root_in/core/constants/app_links.dart';
 /// ⚠️ Ein Link in einem geteilten Bild ist besonders unbarmherzig: Das Bild
 /// bleibt in Chats liegen, und wer den Code scannt und eine Fehlerseite
 /// bekommt, probiert es kein zweites Mal — und meldet es auch nicht.
+///
+/// ⚠️ **Seit Phase 28 gibt es nur noch die Web-Fassung**, `playStoreUrl` und
+/// `appPackageName` sind entfallen. Der Test bleibt trotzdem: Er hält fest,
+/// dass geteilt wird, was auch wirklich erreichbar ist.
 void main() {
-  test('geteilt wird die Web-Fassung, nicht der Play-Store', () {
-    // Wer diese Zeile ändert, ändert sie bewusst: Der Play-Link darf erst
-    // hier stehen, wenn die App dort **wirklich** veröffentlicht ist
-    // (PLAN.md Phase 15.6). Vorher ist er eine Sackgasse.
+  test('geteilt wird die Web-Fassung', () {
     expect(appShareUrl, webAppUrl);
-    expect(appShareUrl, isNot(playStoreUrl));
   });
 
   test('die Web-Adresse ist vollständig und aufrufbar geformt', () {
@@ -30,12 +30,5 @@ void main() {
     // Ohne den Pfad landet man auf der GitHub-Seite des Nutzers, nicht auf
     // Root-in — dieselbe Falle wie `--base-href` (Lehre 28).
     expect(uri.path, isNot('/'));
-  });
-
-  test('der Play-Link bleibt aus dem Paketnamen abgeleitet', () {
-    // Er wird gebraucht, sobald veröffentlicht wird; bis dahin steht er nur
-    // bereit. Der Paketname ist nach der Veröffentlichung unveränderlich.
-    expect(appPackageName, 'com.rootin.app');
-    expect(playStoreUrl, contains(appPackageName));
   });
 }
