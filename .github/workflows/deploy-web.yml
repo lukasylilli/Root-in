@@ -76,6 +76,36 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
+      # Browser-Durchgang gegen den GERADE GEBAUTEN Stand, vor der
+      # Veröffentlichung (PLAN.md 29.3).
+      #
+      # ⚠️ Warum das hier stehen MUSS: Keiner der Tests oben öffnet einen
+      # Browser — sie laufen alle auf der Dart-VM. Genau diese Lücke hat in
+      # Phase 26 drei kaputte Hauptseiten durchgelassen (Lehre 31), und mit
+      # dem Wegfall des Entwicklungsrechners war sie wieder offen (Lehre 39).
+      #
+      # ⚠️ `continue-on-error: true` ist ABSICHT und vorläufig: Dieser Schritt
+      # konnte vor seinem ersten Lauf nirgends erprobt werden (auf dem
+      # Entwicklungsrechner gab es keinen ChromeDriver, und Chrome headless
+      # zeichnet Flutter nicht). Ein ungeprüftes Werkzeug darf keine
+      # Veröffentlichung blockieren — es darf aber sehr wohl berichten.
+      # ➜ **Sobald er einmal grün gelaufen ist, gehört diese Zeile weg**;
+      #   dann wird aus dem Bericht ein Tor. Steht sie in einem halben Jahr
+      #   noch hier, prüft dieser Schritt nichts, was jemanden aufhält.
+      - name: Browser-Durchgang (vorläufig nicht blockierend)
+        continue-on-error: true
+        run: |
+          # Unter demselben Unterpfad ausliefern wie GitHub Pages — sonst
+          # sucht die Seite ihre Dateien eine Ebene zu hoch (Lehre 28).
+          mkdir -p /tmp/serve/"${{ github.event.repository.name }}"
+          cp -R build/web/. /tmp/serve/"${{ github.event.repository.name }}"/
+          python3 -m http.server 8765 --directory /tmp/serve &
+          for i in $(seq 1 20); do
+            curl -sf -o /dev/null "http://localhost:8765/${{ github.event.repository.name }}/" && break
+            sleep 1
+          done
+          python3 tool/webtest_ci.py "http://localhost:8765/${{ github.event.repository.name }}/"
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3

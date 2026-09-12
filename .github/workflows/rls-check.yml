@@ -1,0 +1,49 @@
+# Prüft die Zugriffsregeln des Servers von AUSSEN (PLAN.md Phase 27.4/29.2).
+#
+# ⚠️ Von Hand auszulösen, NICHT bei jedem Push:
+#   GitHub → Actions → „Server-Zugriffsregeln prüfen" → Run workflow
+#
+# Warum es diesen Arbeitsablauf gibt
+# ----------------------------------
+# `tool/rls_check.sh` war die einzige Prüfung, die belegt, dass ein Fremder
+# **nicht** an die Daten anderer kommt. Bis Phase 29 lief sie auf dem Rechner
+# des Entwicklers und las die Zugangsdaten aus einer lokalen `.env`. Diesen
+# Rechner gibt es nicht mehr — und damit wäre die wichtigste Sicherheitsaussage
+# des Projekts unprüfbar geworden.
+#
+# Das Skript musste dafür **nicht angefasst werden**: Es liest `.env` nur,
+# falls eine da ist, und nimmt sonst die Umgebungsvariablen. Hier kommen sie
+# aus denselben Secrets, aus denen auch der Bau seine Werte bekommt.
+#
+# ⚠️ Warum nicht bei jedem Push:
+# Der Durchgang legt zwei echte Testkonten an (`@example.com`, per RFC 2606
+# reserviert). Bei jedem Push wäre das unnötiger Verkehr auf einem Server im
+# kostenlosen Tarif — und der Grund, das Skript zu starten, ist ohnehin ein
+# anderer: **nach jeder Änderung an `supabase/schema.sql`.** Eine Zugriffsregel,
+# die man nicht gegengeprüft hat, ist eine Hoffnung.
+name: Server-Zugriffsregeln prüfen
+
+on:
+  workflow_dispatch:
+
+# Nur lesen — dieser Ablauf veröffentlicht nichts.
+permissions:
+  contents: read
+
+jobs:
+  rls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Zugriffsregeln von außen prüfen
+        run: bash tool/rls_check.sh
+        env:
+          # ⚠️ Ausschließlich der anon/publishable key. Genau das ist der
+          # Sinn der Prüfung: Sie fragt den Server mit denselben Rechten,
+          # die jeder Fremde hat. Mit dem `service_role`-Schlüssel liefe sie
+          # an allen Regeln vorbei und bewiese das Gegenteil von dem, was
+          # sie beweisen soll — dieselbe Falle wie ein `select` im
+          # SQL-Editor (PLAN.md 27.4).
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
