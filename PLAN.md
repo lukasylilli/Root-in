@@ -2,23 +2,25 @@
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
 >
-> **Stand 2026-08-17.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **205 Tests grün**, `flutter analyze` sauber, 20/20 im echten Browser, 13/13 Zugriffsregeln am Server.
+> **Stand 2026-08-17.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **205 Tests grün**, `flutter analyze` sauber, 13/13 Zugriffsregeln am Server.
 >
-> ⚠️ **Am 2026-08-17 endgültig festgelegt: es gibt nur die Web-Fassung** (siehe [Phase 28](#phase-28--nur-noch-web--umgesetzt-2026-08-17)). Android, iOS und Desktop sind **aus dem Projekt entfernt**, ebenso die Erinnerungen — ein Browser kann keinen Wecker stellen. Die Versionsgeschichte behält alles; der letzte Stand mit Android ist der Commit vom 2026-08-17.
+> ⚠️ **Ab dem 2026-08-17 gibt es keinen Entwicklungsrechner mehr.** Der Nutzer löscht alles, was nicht auf GitHub liegt — inklusive VS Code. **Jede weitere Änderung entsteht auf GitHub.** Was das für die Prüfung bedeutet, steht in [Abschnitt 9](#9-arbeitsweise--konventionen) und [Phase 29](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17).
 >
-> ✅ **[Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-)**: freiwilliges Konto, Cloud-Sicherung. ⚠️ Sie kehrt Abschnitt 3 um — Root-in war von Tag eins „vollständig lokal, kein Backend".
+> ⚠️ **Es gibt nur die Web-Fassung** ([Phase 28](#phase-28--nur-noch-web--umgesetzt-2026-08-17)). Android, iOS und Desktop sind **aus dem Projekt entfernt**, ebenso die Erinnerungen — ein Browser kann keinen Wecker stellen. Die Versionsgeschichte behält alles.
 >
-> ⬜ **Was noch offen ist:**
+> ✅ **[Phase 27 — Nutzerkonten & Cloud (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-)**: freiwilliges Konto, Cloud-Sicherung.
 >
-> | Offen | Wer | Dringlichkeit |
-> |---|---|---|
-> | **Durchgang auf einem echten iPhone** (Phase 26 + Konto/Sicherung) | Nutzer | **hoch** — das ist die einzige Plattform |
-> | **Gist der Datenschutzerklärung nachziehen** | Nutzer | **hoch** — echte Nutzer, echte E-Mails |
-> | **`meine/` sichern, bevor der Mac geleert wird** | Nutzer | **hoch** — 24 Dateien, bewusst nicht im Repository (28.0) |
-> | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer | mittel |
-> | Konto → Sicherung → Gerät wechseln → Wiederherstellen einmal durchspielen | Nutzer | mittel |
-
-> ⚠️ **Umgebungs-Grundregel dieser Maschine:** Nie Code/SDKs/Dev-Tools unter `~/Desktop` oder `~/Documents` speichern — iCloud „Schreibtisch & Dokumente"-Sync ist hier aktiv und bricht Code-Signing für Binaries (Lehre 1). Immer `~/Projects/<name>` für Projekte, `~/development/<tool>` für SDKs.
+> ⬜ **Was noch offen ist — in der Reihenfolge, in der es angegangen gehört:**
+>
+> | # | Offen | Wer | Warum in dieser Reihenfolge |
+> |---|---|---|---|
+> | 1 | **`meine/` sichern — letzte Gelegenheit** (24 Dateien, 1,1 MB, **0 versioniert**) | Nutzer | Nach dem Löschen unwiederbringlich (28.0) |
+> | 2 | **Gist der Datenschutzerklärung nachziehen** | Nutzer | Echte Nutzer, echte E-Mails — Pflicht, nicht Formalie |
+> | 3 | **Durchgang auf einem echten iPhone** (Phase 26) | Nutzer | Die einzige Plattform — und der einzige Prüfstand, der bleibt |
+> | 4 | **`rls_check.sh` als GitHub-Action** (29.2) | Claude | Sonst ist die Server-Prüfung nach dem Löschen unerreichbar |
+> | 5 | **Browser-Prüfung in der Automatik** (29.3) | Claude | `webtest.py` fällt mit dem Mac weg; die Hauptplattform hätte sonst keinen echten Browser-Test |
+> | 6 | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer | Ohne ihn ist die E-Mail gespeichert, aber nutzlos |
+> | 7 | **Ein Konto für Root-in und Vox** ([Phase 30](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte)) | beide | Vom Nutzer für die **letzten** Projektschritte angesagt |
 
 ## Inhaltsverzeichnis
 1. [Vision](#1-vision)
@@ -35,9 +37,11 @@
     - 10.2 [Festlegungen aus erledigten Phasen, die man noch braucht](#102-festlegungen-aus-erledigten-phasen-die-man-noch-braucht)
     - [Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-) ✅
     - [Phase 28 — Nur noch Web](#phase-28--nur-noch-web--umgesetzt-2026-08-17) ✅
-    - [Phase 26 — Web-Fassung: was noch offen ist](#phase-26--web-fassung-was-noch-offen-ist-) 🔄 **die einzige Plattform**
+    - [Phase 26 — Web-Fassung: was noch offen ist](#phase-26--web-fassung-was-noch-offen-ist-) 🔄
+    - [Phase 29 — Arbeiten und Prüfen ohne Rechner](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17) 🔄
+    - [Phase 30 — Ein Konto für Root-in und Vox](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte) ⬜
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
-    - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–35)
+    - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–39)
 12. [Offene Fragen](#12-offene-fragen)
 
 ## 1. Vision
@@ -165,7 +169,32 @@ Feature-first (Dateien im Einzelnen: MAP.md):
 
 **Datenerhalt geht vor** — die Datenbank ist Nutzereigentum. **Jede Änderung an `schemaVersion` braucht im selben Schritt einen `onUpgrade`-Zweig und einen Migrations-Test.** Fehlt er, startet die App nach dem Update nicht mehr auf dem alten Bestand — vom Nutzer aus gesehen dasselbe wie Datenverlust.
 
-**Verifizieren statt annehmen** — „Build erfolgreich" ist kein Beweis. Ergebnisse werden gegengeprüft (Bildschirmfoto aus dem echten Browser, `tool/webtest.py` gegen die veröffentlichte Seite, `tool/rls_check.sh` von außen). Ein neuer Oberflächen-Test wird **einmal gegen den kaputten Stand gehalten** (Lehre 32).
+**Verifizieren statt annehmen** — „Build erfolgreich" ist kein Beweis. Ein neuer Oberflächen-Test wird **einmal gegen den kaputten Stand gehalten** (Lehre 32). ⚠️ **Womit geprüft werden kann, hat sich am 2026-08-17 geändert** — siehe die Tabelle unten.
+
+### Wo gearbeitet wird: nur noch GitHub *(ab 2026-08-17)*
+
+**Vom Nutzer festgelegt:** *„هیچ چیزی دیگ از داخل مک و پوشه های محلی … نمیشه چون در حال پاک کردن هر چیزی هستم که توی گیت هاب نیست. از الان به بعد تمام تغییرات فقط در گیت هاب."* Auch VS Code wird gelöscht.
+
+**Damit gilt: Was nicht im Repository steht, existiert nicht.** Kein `flutter` auf einer Kommandozeile, kein Emulator, kein Simulator, kein `git` auf einer Festplatte. Jede Änderung ist eine Änderung an Dateien im Repository, und der einzige Ausführende ist die Automatik.
+
+⚠️ **Das ist keine Unbequemlichkeit, sondern eine Verschiebung der Beweislast.** Bisher hing die Sicherheit an drei Werkzeugen, von denen zwei einen Mac brauchten. Was bleibt und was fehlt:
+
+| Prüfung | Wo | Nach dem Löschen |
+|---|---|---|
+| `flutter analyze` | GitHub-Action, **vor** jeder Veröffentlichung | ✅ bleibt |
+| `flutter test` (205 Fälle) | GitHub-Action, **vor** jeder Veröffentlichung | ✅ bleibt |
+| Bau der Web-Fassung | GitHub-Action | ✅ bleibt |
+| **`tool/rls_check.sh`** — Zugriffsregeln von außen | brauchte `.env` auf dem Mac | ⚠️ **verwaist, aber rettbar** — es braucht nur `curl` und die zwei Secrets, die es schon gibt (29.2) |
+| **`tool/webtest.py`** — echter Browser | braucht safaridriver, also macOS | ⛔ **fällt weg.** Ersatz in 29.3 |
+| iOS-Simulator | macOS | ⛔ fällt weg |
+| **Echtes iPhone** | beim Nutzer | ✅ **bleibt — und ist damit der einzige verbliebene Blick auf die echte Oberfläche** |
+
+⚠️ **Die Folge, ausgesprochen:** Ohne 29.3 kann niemand mehr feststellen, ob die veröffentlichte Seite überhaupt startet. Alle 205 Tests laufen auf der Dart-VM; **keiner** von ihnen öffnet einen Browser. Genau diese Lücke hat in Phase 26 drei kaputte Hauptseiten durchgelassen (Lehre 31). Sie ist jetzt wieder offen — und diesmal gibt es keinen Mac, der sie schließt.
+
+**Was daraus für jede weitere Änderung folgt:**
+- **Kleine Schritte, ein Thema je Push.** Ein grüner Lauf sagt „übersetzt und Tests grün", nicht „sieht richtig aus". Je kleiner der Schritt, desto leichter ist ein Fehler dem Push zuzuordnen.
+- **Der Nutzer ist der Abnehmende.** Was die Oberfläche betrifft, gilt erst als fertig, wenn er es auf seinem iPhone gesehen hat.
+- **Reine Logik gehört in einen Test**, nicht in einen Blick — ein Test ist das Einzige, was ohne Rechner noch von selbst prüft.
 
 ## 10. Roadmap / Phasen
 
@@ -204,7 +233,7 @@ Feature-first (Dateien im Einzelnen: MAP.md):
 | 27 Nutzerkonten & Cloud | Supabase: freiwilliges Konto (E-Mail + Passwort + Benutzername), Cloud-Sicherung im vorhandenen Backup-Format, Profil-Abgleich, Datenschutzerklärung neu · Zugriffsregeln von außen mit echten Konten geprüft | 08-17 |
 | 27.11 Geteilter Link | QR-Code und Share-Text zeigten auf eine Play-Seite mit **HTTP 404**; jetzt auf die Web-Fassung | 08-17 |
 
-**Stand danach: 228 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, 20/20 im echten Browser gegen die veröffentlichte Seite, 13/13 Zugriffsregeln am Server, Release-Bundle signiert und hochladbar.
+**Stand nach Phase 28: 205 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, 13/13 Zugriffsregeln am Server. ⚠️ Die Zahl ist **kleiner** als die 228 von Phase 27 — mit Erinnerungen und Startbildschirm-Widgets sind auch deren 23 Tests entfallen. Weniger Tests sind hier kein Rückschritt, sondern die Folge von weniger Funktion.
 
 ### 10.2 Festlegungen aus erledigten Phasen, die man noch braucht
 
@@ -224,11 +253,11 @@ Die Langfassungen sind eingedampft; was hier steht, braucht man beim Weiterbauen
 
 **Datum nachtragen (24).** `selectedDateProvider` ist der eine Schalter; dahinter ein **Override** (`null` = heute), damit die Seite über Mitternacht von selbst weiterspringt. Die Fortschritts-Karte bleibt auf heute (getrennte Provider über dieselbe Family). ⚠️ **Ein Nachtrag verlängert die Serie rückwirkend** — gewollt. Die Datums-Prüfung im Netz bleibt unangetastet: nachtragen ja, „heute" vordatieren nein.
 
-**Datenerhalt (25).** Ein Update löschte noch nie etwas (Drift liegt in `getApplicationDocumentsDirectory()`); die Gefahr war eine Schema-Änderung ohne Migration. Der Migrations-Test zieht echte Bestände aus Schema 1 und 2 hoch und prüft, dass **dieselben IDs** dastehen — eine Migration, die Gewohnheiten neu anlegt statt sie zu behalten, würde jede Erledigung von ihrer Gewohnheit trennen. Der vierte Testfall ist eine **Bremse**: Er hält `schemaVersion` auf dem geprüften Wert fest.
+**Datenerhalt (25).** Die Gefahr war nie das Update selbst, sondern eine Schema-Änderung ohne Migration. ⚠️ **Im Browser wiegt das schwerer als früher auf Android:** Dort lag die Datei in einem App-Verzeichnis, das niemand anfasst; hier liegt sie in IndexedDB/OPFS, und eine Migration, die scheitert, trifft einen Bestand, von dem es **keine zweite Kopie auf dem Gerät** gibt (die Cloud-Sicherung hat nur, wer ein Konto hat). Der Migrations-Test zieht echte Bestände aus Schema 1 und 2 hoch und prüft, dass **dieselben IDs** dastehen — eine Migration, die Gewohnheiten neu anlegt statt sie zu behalten, würde jede Erledigung von ihrer Gewohnheit trennen. Der vierte Testfall ist eine **Bremse**: Er hält `schemaVersion` auf dem geprüften Wert fest.
 
 **Web-Fassung (26).** Drift auf WebAssembly (`sqlite3.wasm` + `drift_worker.js`, von `tool/fetch_web_db_assets.sh` geholt). **Die beste Weiche ist keine Weiche** — Sicherung und Bild-Teilen verloren ihren Plattform-Anteil ganz, statt einen Web-Sonderfall zu bekommen; mit Phase 28 ist diese Linie zu Ende gegangen und die Weichen sind ganz weg. Bau-Schalter stehen ausschließlich in `tool/build_web.sh` — die Automatik ruft dasselbe Skript. **Kein `gh-pages`-Zweig**: Pages nimmt das Artefakt direkt entgegen, damit landet das Bauergebnis nie in der Versionsgeschichte.
 
-**Was die vier Web-Fehler waren (26.10–26.13)** — die Ursachen stehen als Lehren 30–34; hier nur das Ergebnis: `dart:io` ist vollständig aus `lib/` verschwunden (`package:http` überall), die Web-Symbole kommen aus derselben Quelle wie die Android-Symbole, und `web/index.html` trägt **kein** `viewport-fit=cover` und `default` statt `black-translucent`. `tool/webtest.py` prüft seither **20 Punkte** inklusive aller vier Reiter, einer Anleitungs-Seite und der Rubrik „Konto & Cloud" — und wurde am kaputten Stand rot gemessen, bevor er am reparierten grün wurde.
+**Was die vier Web-Fehler waren (26.10–26.13)** — die Ursachen stehen als Lehren 30–34; hier nur das Ergebnis: `dart:io` ist vollständig aus `lib/` verschwunden (`package:http` überall), die Web-Symbole kommen aus derselben Quelle wie die Android-Symbole, und `web/index.html` trägt **kein** `viewport-fit=cover` und `default` statt `black-translucent`. `tool/webtest.py` prüfte seither **20 Punkte** inklusive aller vier Reiter, einer Anleitungs-Seite und der Rubrik „Konto & Cloud" — und wurde am kaputten Stand rot gemessen, bevor er am reparierten grün wurde. ⚠️ **Er braucht macOS und ist ab Phase 29 nicht mehr ausführbar** (Abschnitt 9); die Datei bleibt als Vorlage für den Ersatz in 29.3.
 
 ---
 
@@ -329,7 +358,7 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] **Neue Fähigkeit `supportsCloudSync`** in `platform_support.dart`. ⚠️ Sie hängt als einzige dort **nicht an der Plattform**, sondern an der Konfiguration — der Kommentar sagt das ausdrücklich, damit niemand sie später „vereinheitlicht".
 - [x] ⚠️ **Der `anon`-Schlüssel ist der eine erlaubte Sonderfall** zur Regel aus 26.5: Er ist dafür gemacht, in Clients zu stehen. Die Begründung steht jetzt in `app_config.dart` — direkt neben dem Schlüssel, zusammen mit der Gegenwarnung zu `service_role`.
 - [x] **`test/unit/cloud_config_test.dart`** hält die Zusage fest: ohne Schlüssel ist `supportsCloudSync` falsch. Sonst wäre „verhält sich wie vorher" eine Behauptung — und die App böte eine Anmeldung an, die nirgendwohin führt.
-- [x] **`tool/build_web.sh` reicht die Werte durch** und liest lokal `.env`. ⚠️ Eine vorhandene Umgebungsvariable gewinnt gegen die Datei — sonst überschriebe eine vergessene `.env` auf dem Entwicklungsrechner still die Werte der Automatik. Leer bleibt zulässig: Dann hat die Web-Fassung schlicht keine Cloud.
+- [x] **`tool/build_web.sh` reicht die Werte durch.** Es liest `.env`, **falls** eine da ist, und nimmt sonst die Umgebungsvariablen — seit Phase 29 immer der zweite Fall. ⚠️ Eine vorhandene Umgebungsvariable gewinnt gegen die Datei. Leer bleibt zulässig: Dann hat die Web-Fassung schlicht keine Cloud.
 - [x] **`main.dart` startet Supabase vor dem ersten Frame** — und nur, wenn konfiguriert. ⚠️ Der Aufruf kann den Start nicht verhindern: `initialize()` fängt jeden Fehler ab. Ein Server, der nicht antwortet, ist kein Grund, eine App nicht zu starten, die ohnehin lokal arbeitet.
 - [x] **Schlüssel als GitHub-Actions-Secrets** (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, vom Nutzer am 2026-08-17 hinterlegt); der Bau-Schritt in `deploy-web.yml` reicht sie durch. ⚠️ Fehlen sie, sind die Werte leer und die Automatik baut eine Fassung **ohne Konto** — kein Fehler, sondern der Zustand von vor Phase 27.
 
@@ -519,9 +548,10 @@ Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffe
 - [x] Erinnerungen und Benachrichtigungen aus dem Text nehmen, Android-/Play-Bezüge streichen
 - [ ] ⬜ ⚠️ **Der Gist bleibt Nutzersache** — er zieht nicht von selbst nach. Neu ist nur: Ab jetzt ist die Quelle so kurz, dass ein Nachziehen ein Kopieren ist
 
-#### 28.4 Weiterarbeit auf GitHub 🔄
-- [x] Alles gepusht, `main` grün, veröffentlichte Seite mit `tool/webtest.py` nachgewiesen — **das ist die Abnahme dieser Phase**, nicht „die Tests sind grün"
-- [x] ⚠️ Nach dem Löschen ist `tool/webtest.py` (safaridriver, braucht einen Mac) nicht mehr ausführbar. Die verbleibende Absicherung ist die Automatik: `analyze` + `test` laufen bei **jedem** Push vor der Veröffentlichung
+#### 28.4 Weiterarbeit auf GitHub ✅
+- [x] Alles gepusht, `main` grün (die Automatik läuft `analyze` + `test` **vor** jeder Veröffentlichung).
+- [x] **Veröffentlichte Seite nachgewiesen — im iOS-Simulator, nicht mit `webtest.py`.** Das Bildschirmfoto zeigt die neue Erklärung mit **drei** Punkten. ⚠️ `webtest.py` war zu diesem Zeitpunkt auf diesem Rechner nicht mehr brauchbar (Lehre 38); ein Werkzeug, das nicht mehr misst, wird nicht zur Abnahme herangezogen.
+- [x] ➜ **Was danach kommt, steht in [Phase 29](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17):** Der Wegfall des Rechners nimmt zwei von drei Prüfständen mit. Das ist kein Nebeneffekt dieser Phase, sondern ihre eigentliche Folge.
 
 #### 28.5 Was dabei gefunden wurde
 
@@ -533,9 +563,9 @@ Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffe
 ---
 
 ### Phase 26 — Web-Fassung: was noch offen ist 🔄
-**Seit dem 2026-08-17 die Hauptplattform** (Abschnitt 2). Die Fassung ist gebaut, veröffentlicht und geprüft (10.1/10.2, 20/20 im Browser). Was offen ist, wiegt damit schwerer als zuvor — es betrifft nicht mehr einen Nebenweg, sondern **den** Weg.
+**Die einzige Plattform** (Abschnitt 2). Die Fassung ist gebaut und veröffentlicht; zuletzt am 2026-08-17 mit 20/20 im echten Browser geprüft — ⚠️ **ein Stand, der sich seither nicht mehr wiederholen lässt**, weil der Prüfstand mit dem Rechner weggefallen ist (Phase 29).
 
-**Der Durchgang auf einem echten iPhone** — das ist der eine Test, den weder Safari am Mac noch der Simulator ersetzen können (in beiden lässt sich das Ablegen nicht nachstellen, 26.12):
+**Der Durchgang auf einem echten iPhone** — er war schon vorher der einzige Test, den weder Safari am Mac noch der Simulator ersetzen konnten (in beiden lässt sich das Ablegen nicht nachstellen, 26.12). ⚠️ **Seit Phase 29 ist er nicht mehr nur der beste, sondern der einzige Blick auf die echte Oberfläche:**
 
 - [ ] Seite in Safari öffnen → erscheint der Speicher-Hinweis genau **einmal**?
 - [ ] „Zum Home-Bildschirm" → startet sie **ohne Adressleiste**? Stimmt das App-Symbol?
@@ -544,9 +574,71 @@ Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffe
 - [ ] App vom Home-Bildschirm löschen, neu ablegen, anmelden, **wiederherstellen** — ist der Bestand zurück?
 - [ ] Bleiben die Daten nach dem Schließen? Funktionieren Teilen und Export?
 
-⬜ **Und die Frage, die aus der Neuausrichtung folgt:** Auf der Hauptplattform gibt es **keine Erinnerungen**. Web-Push ist möglich (der Server steht seit Phase 27), aber ein eigenes Vorhaben. Zu entscheiden: bauen — oder als bewusste Grenze benennen und die App als „ohne Erinnerungen" verstehen. Siehe Abschnitt 12.
-
 ⚠️ **GitHub Pages kann `Cross-Origin-Opener-Policy`/`Embedder-Policy` nicht setzen.** Drift nutzt dann nicht die schnellste Speicherart. **Die Daten bleiben erhalten** — eine Frage der Geschwindigkeit, kein Datenverlust. Wer das ändern will, braucht einen Hoster mit eigenen Kopfzeilen.
+
+---
+
+### Phase 29 — Arbeiten und Prüfen ohne Rechner 🔄 *(beauftragt 2026-08-17)*
+
+**Vom Nutzer:** *„هیچ چیزی دیگ از داخل مک و پوشه های محلی برنامه نویسی و یا کد نویسی نمیشه چون در حال پاک کردن هر چیزی هستم که توی گیت هاب نیست. از الان به بعد تمام تغییرات فقط در گیت هاب."* Dazu wird VS Code gelöscht; gearbeitet wird künftig aus der Cloud heraus.
+
+⚠️ **Diese Phase ist keine Aufräumarbeit, sondern schließt ein Loch, das der Wegfall des Rechners aufreißt.** Die Tabelle in Abschnitt 9 zeigt es: Von drei Prüfständen bleibt einer automatisch (`analyze` + `test`), einer verwaist (`rls_check.sh`), einer fällt ganz weg (`webtest.py`). **Keiner der 205 Tests öffnet einen Browser** — genau die Lücke, durch die in Phase 26 drei kaputte Hauptseiten geschlüpft sind (Lehre 31).
+
+#### 29.1 Was schon getragen hat ✅
+- [x] Die Automatik prüft **vor** jeder Veröffentlichung: `pub get` → `analyze` → `test` → bauen → Pages. Eine rote Prüfung veröffentlicht nicht.
+- [x] Die Supabase-Schlüssel liegen als Repository-Secrets, nicht in einer Datei auf dem Rechner (27.3) — die Automatik baut also weiter, wenn `.env` verschwindet.
+- [x] `tool/build_web.sh` ist die **eine** Stelle der Bau-Schalter, und die Automatik ruft genau dieses Skript. Es gibt keinen „Bau von Hand", der davon abweichen könnte.
+- [x] `tool/fetch_web_db_assets.sh` holt `sqlite3.wasm` und `drift_worker.js` **im Lauf** — beide sind bewusst nicht versioniert und fehlen deshalb nie, weil sie jedes Mal frisch kommen.
+
+#### 29.2 `rls_check.sh` erreichbar machen ⬜
+- [ ] **Als GitHub-Action mit `workflow_dispatch`** (von Hand auslösbar, nicht bei jedem Push).
+- [x] **Geprüft, dass es geht:** Das Skript braucht nur `bash`, `curl` und die zwei Werte `SUPABASE_URL` / `SUPABASE_ANON_KEY` — beide liegen bereits als Secrets. Es liest `.env` nur, **falls vorhanden**, und nimmt sonst die Umgebungsvariablen. Es muss also nicht angefasst werden, nur aufgerufen.
+- [ ] ⚠️ **Nicht bei jedem Push:** Der Durchgang legt zwei echte Testkonten an (`@example.com`, RFC 2606). Bei jedem Push wäre das unnötiger Verkehr auf einem Server, der im freien Tarif lebt.
+- [ ] ⚠️ **Nach jeder Änderung an `supabase/schema.sql` auslösen** — das ist der einzige Grund, warum es das Skript gibt. Eine ungeprüfte Zugriffsregel ist eine Hoffnung.
+
+#### 29.3 Ersatz für den Browser-Durchgang ⬜
+
+⚠️ **Der wichtigste offene Punkt des ganzen Projekts.** Ohne ihn merkt niemand, wenn die veröffentlichte Seite gar nicht mehr startet — und der Nutzer verteilt die Adresse an Schüler.
+
+- [ ] Browser-Prüfung **in der Automatik**, nach dem Bau und **vor** der Veröffentlichung. Auf `ubuntu-latest` steht Chrome bereit; Safari gibt es dort nicht.
+- [ ] ⚠️ **Der Umfang darf klein anfangen, aber nicht null sein.** Die eine Frage, die zählt: **Zeichnet die App überhaupt?** Alles Weitere (Reiter, Anleitung, Konto-Rubrik) ist Zugabe. Ein Durchgang, der nur den Start prüft, hätte 26.10 gefunden — dort blieben drei Seiten leer, aber die App startete; also besser gleich die vier Reiter mitnehmen, wenn es ohne viel Mehraufwand geht.
+- [ ] **Vorlage ist `tool/webtest.py`.** Die Erkenntnisse darin sind nicht browser-spezifisch und dürfen nicht verloren gehen: Semantik-Baum über den Platzhalter einschalten, an **Knöpfen** ablesen statt an Überschriften (Lehre 32/35), auf **Zustände** warten statt auf die Uhr (Lehre 36), Zeichenfläche im **Schatten-DOM** suchen (Lehre 36), beim gescheiterten Start **abbrechen** statt 19 Folgefehler zu melden.
+- [ ] ⚠️ **Gegen den kaputten Stand halten** (Lehre 32) — ein Durchgang, der nie rot war, prüft nichts. Im CI heißt das: einmal absichtlich mit einem kaputten Bau laufen lassen und den roten Lauf im Plan festhalten.
+- [ ] ⚠️ **Nicht anmelden.** Dieselbe Regel wie bisher: Ein Oberflächen-Test, der Konten anlegt, hinterlässt bei jedem Lauf Datenmüll. Dass die Anmeldung trägt, beweist 29.2.
+
+#### 29.4 Was im Repository nicht mehr gebraucht wird ⬜
+- [ ] `Root-in.code-workspace` — VS Code wird gelöscht. Die Datei ist versioniert und schadet nicht; sie **beschreibt aber eine Arbeitsweise, die es nicht mehr gibt**. Entfernen oder als historisch kennzeichnen.
+- [ ] `.claude/settings.json` — die Freigabeliste aus Phase 26.9 gilt für Claude Code auf einem Rechner. In der Cloud greift sie nicht. Nicht schädlich, aber irreführend.
+- [ ] ⚠️ **`tool/webtest.py` NICHT löschen**, bevor 29.3 steht. Es ist die einzige geschriebene Fassung dieser Prüf-Erkenntnisse.
+
+---
+
+### Phase 30 — Ein Konto für Root-in und Vox ⬜ *(beauftragt 2026-08-17, für die letzten Projektschritte)*
+
+**Vom Nutzer:** *„ثبت اکانت برنامه root-in و ثبت اکانت داخل برنامه vox جوری خواهد بود که هر دو از یک اکانت استفاده کنند! این برای اخرین مراحل پروژه‌است."* — Registrierung in Root-in und Registrierung in **Vox** sollen **dasselbe Konto** benutzen. Ausdrücklich für die **letzten** Schritte des Projekts.
+
+⚠️ **Hier steht bewusst nur, was feststeht.** Über Vox ist in diesem Projekt nichts dokumentiert — weder Technik noch Stand noch Zeitplan. Was unten steht, ist **keine Planung von Vox**, sondern die Aufstellung dessen, was ein gemeinsames Konto **auf der Root-in-Seite** bedeutet, und der Fragen, die vor dem ersten Handgriff beantwortet sein müssen.
+
+**Was aus „ein Konto" technisch folgt, wenn Root-in bleibt, wie es ist:**
+
+Ein Konto ist bei Supabase eine Zeile in `auth.users`, und die gehört **einem Projekt**. „Dasselbe Konto" heißt deshalb: **beide Apps sprechen mit demselben Supabase-Projekt.** Daraus folgt Punkt für Punkt:
+
+| Betroffen | Heute in Root-in | Mit gemeinsamem Konto |
+|---|---|---|
+| `auth.users` | nur Root-in-Nutzer | **geteilt** — wer sich in Vox registriert, existiert auch in Root-in und umgekehrt |
+| `profiles` (Anzeigename, `username`) | Root-in-eigen | zu klären: **ein** gemeinsames Profil oder je App eines? Der eindeutige Index auf `lower(username)` gilt dann **über beide Apps** |
+| `backups` | Root-in-eigen (`user_id` = Primärschlüssel) | bleibt Root-in-eigen; Vox braucht eine **eigene** Tabelle, keine gemeinsame |
+| Zugriffsregeln (RLS) | mit `tool/rls_check.sh` von außen geprüft | **erneut zu prüfen** — jede neue Tabelle bringt neue Regeln (29.2) |
+| Datenschutzerklärung | nennt Root-in und Supabase | **muss beide Apps nennen**: Wer sich einmal registriert, gibt sein Einverständnis für zwei Anwendungen |
+| Der `anon`-Schlüssel | steht im Root-in-Bundle | steht dann in **beiden** Bundles — unverändert kein Geheimnis, aber zwei Wege hinein |
+
+**Fragen, die vor dem ersten Handgriff beantwortet gehören** — sie ändern den Aufwand um Größenordnungen:
+- [ ] **Gibt es Vox schon, und womit ist es gebaut?** Eine zweite Flutter-Web-App kann `auth_service.dart` fast unverändert übernehmen; alles andere braucht eine eigene Anbindung.
+- [ ] **Ein Supabase-Projekt für beide, oder zwei getrennte?** Ein Konto für beide **erzwingt** ein gemeinsames Projekt. ⚠️ Der freie Tarif erlaubt **zwei aktive Projekte** — das ist hier kein Engpass, aber die Entscheidung ist trotzdem eine Einbahnstraße: Konten nachträglich zusammenzuführen heißt, Nutzer neu registrieren zu lassen.
+- [ ] **Ein Anzeigename und ein Benutzername für beide** — oder je App eigene? Ein gemeinsamer Name ist einfacher und vermutlich gewollt („derselbe Mensch"), macht aber den Benutzernamen zu einer projektweiten Ressource.
+- [ ] **Was passiert beim Löschen?** Wer in Vox sein Konto löscht, löscht auch seinen Root-in-Zugang. Das gehört in beide Oberflächen **und** in die Datenschutzerklärung.
+
+⚠️ **Der günstigste Zeitpunkt ist vor dem ersten echten Nutzer** — genau die Lehre aus Phase 27, wo das Anmeldeverfahren einmal umgeworfen wurde und es billig war, weil noch niemand ein Konto hatte. **Root-in hat jetzt echte Nutzer, sobald die Adresse verteilt ist.** Wer Vox danach anschließt, kann `auth.users` nicht mehr folgenlos umbauen. Das ist der eine Grund, diese Phase **nicht** beliebig weit nach hinten zu schieben, obwohl der Nutzer sie „für die letzten Schritte" angesetzt hat.
 
 ---
 
@@ -587,14 +679,22 @@ Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffe
   - **Die Erinnerungen gingen tiefer als gedacht:** neun Ebenen bis hinunter in die Datenbank. Eine Funktion zu entfernen ist selten das Gegenteil davon, sie zu bauen — die Migration 3 → 4 war aufwendiger als die 2 → 3, die sie einst angelegt hatte.
   - ⚠️ **Beim Löschen des Macs zählt nur, was im Repository liegt.** Die Prüfung fand `meine/` mit **0 von 24 Dateien versioniert** — Screenshots, Design-Specs und die Logo-Quelle. Bewusst ausgeschlossen, also bleibt es auch draußen; der Nutzer sichert es selbst. Die Prüfung selbst ist die Lehre: **Vor einer Löschung nicht fragen „ist alles gepusht?", sondern „was ist nie gepusht worden?"** (Lehre 37).
 
+- **2026-08-17 (Phase 29/30 beauftragt — das Projekt verlässt den Rechner)** — *„از الان به بعد تمام تغییرات فقط در گیت هاب."* Alles, was nicht auf GitHub liegt, wird gelöscht, VS Code inbegriffen.
+  - ⚠️ **Die eigentliche Folge ist nicht bequemlicher, sondern gefährlicher:** Von drei Prüfständen bleibt einer (`analyze` + `test` in der Automatik), einer verwaist (`rls_check.sh` — rettbar, 29.2), einer fällt weg (`webtest.py`, braucht macOS). **Keiner der 205 Tests öffnet einen Browser.** Genau diese Lücke ließ in Phase 26 drei kaputte Hauptseiten durch (Lehre 31), und sie ist jetzt wieder offen (Lehre 39).
+  - **Was bleibt, ist der Nutzer mit seinem iPhone.** Damit wird er vom Auftraggeber zum letzten Prüfstand — das gehört ausgesprochen, weil es die Reihenfolge der offenen Punkte bestimmt.
+  - **Neu angesagt: ein gemeinsames Konto für Root-in und Vox** (Phase 30). Festgehalten ist nur, was feststeht; über Vox ist in diesem Projekt nichts dokumentiert, also wird darüber auch nichts behauptet. ⚠️ Aufgeschrieben ist dafür, was „ein Konto" auf der Root-in-Seite **erzwingt** — ein gemeinsames Supabase-Projekt — und dass der günstigste Zeitpunkt **vor** dem ersten echten Nutzer liegt.
+
 ### 11.2 Dauerhafte Lehren & Fallstricke
-1. **iCloud bricht Code-Signing.** Das Flutter-SDK lag auf iCloud Drive; `taskgated` killte die Binaries sporadisch (`SIGKILL`, per Crash-Report belegt). Das war die Wurzel von „Dart compiler exited unexpectedly", `ShaderCompilerException` und den native-asset-Fehlern — **nicht** Arbeitsspeicher. SDKs nach `~/development/`, Projekte nach `~/Projects/`. Bei Build-Abstürzen zuerst `~/Library/Logs/DiagnosticReports/` lesen.
-2. **PATH in der Bash-Tool-Shell ist eingefroren.** Flutter/Dart immer mit vollem Pfad aufrufen: `"$HOME/development/flutter/bin/flutter"`.
-3. **`keytool`, `java`, `adb` fehlen im PATH.** JDK: `/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/`, adb: `~/Library/Android/sdk/platform-tools/adb`.
-4. **Systemsprache `fa_AT` kippt den AAB-Build.** Die JVM erbt persische Ziffern, `bundletool` erwartete `classes۲.dex`. Fix steht in `android/gradle.properties`: `-Duser.language=en -Duser.country=US`. Betraf **nur** den Release-AAB.
-5. **`INTERNET` gehört ins Haupt-Manifest.** Flutter legt sie nur in Debug/Profile an — im Release schlägt sonst jede Anfrage fehl, still.
-6. **`container.read(streamProvider.future)` ohne Zuhörer hängt für immer.** Riverpod verwirft den Provider sofort. Lösung: `_awaitAlive` in `home_widget_service.dart` bzw. eine eigene `listen`-Subscription.
-7. **ARGB-Farben passen nicht in einen Android-`Int`.** Werte über `Int.MAX_VALUE` landen als `Long` → `ClassCastException` in Kotlin. Immer `.toSigned(32)` schreiben.
+
+⚠️ **Die Lehren 1–5 und 7 betreffen einen Rechner und Plattformen, die es in diesem Projekt nicht mehr gibt** (Phase 28/29). Sie sind **historisch** und mit 🕰️ gekennzeichnet — nicht gelöscht, weil ihre *Denkweise* trägt und weil ein Log, der sich nachträglich glattbügelt, wertlos ist. Wer heute etwas nachschlägt, fängt bei 6 an.
+
+1. 🕰️ **iCloud bricht Code-Signing.** Das Flutter-SDK lag auf iCloud Drive; `taskgated` killte die Binaries sporadisch (`SIGKILL`, per Crash-Report belegt). Das war die Wurzel von „Dart compiler exited unexpectedly", `ShaderCompilerException` und den native-asset-Fehlern — **nicht** Arbeitsspeicher. SDKs nach `~/development/`, Projekte nach `~/Projects/`. Bei Build-Abstürzen zuerst `~/Library/Logs/DiagnosticReports/` lesen.
+2. 🕰️ **PATH in der Bash-Tool-Shell ist eingefroren.** Flutter/Dart immer mit vollem Pfad aufrufen: `"$HOME/development/flutter/bin/flutter"`.
+3. 🕰️ **`keytool`, `java`, `adb` fehlen im PATH.** JDK: `/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/`, adb: `~/Library/Android/sdk/platform-tools/adb`.
+4. 🕰️ **Systemsprache `fa_AT` kippt den AAB-Build.** Die JVM erbt persische Ziffern, `bundletool` erwartete `classes۲.dex`. Fix steht in `android/gradle.properties`: `-Duser.language=en -Duser.country=US`. Betraf **nur** den Release-AAB.
+5. 🕰️ **`INTERNET` gehört ins Haupt-Manifest.** Flutter legt sie nur in Debug/Profile an — im Release schlägt sonst jede Anfrage fehl, still.
+6. **`container.read(streamProvider.future)` ohne Zuhörer hängt für immer.** Riverpod verwirft den Provider sofort. Lösung: eine eigene `listen`-Subscription halten. ⚠️ Das Vorbild `_awaitAlive` lag in `home_widget_service.dart` und ist mit Phase 28 entfallen — die Falle nicht.
+7. 🕰️ **ARGB-Farben passen nicht in einen Android-`Int`.** Werte über `Int.MAX_VALUE` landen als `Long` → `ClassCastException` in Kotlin. Immer `.toSigned(32)` schreiben.
 8. **Der Gerätelauf findet, was Tests nicht finden:** verfügbarer Platz, Drehung, Theme-Wechsel, Überläufe, fehlendes Clipping. Ein Render-Test beweist Geometrie — nicht Benutzbarkeit.
 9. **Drift-Details:** `uniqueKeys` auf (habitId, date) nötig; Teil-Updates mit `.write()` statt `.replace()`; Tests gegen eine In-Memory-DB (`test/support/test_database.dart`) plus `disposeAndFlush(tester)`, sonst „Timer is still pending".
 10. **`pumpAndSettle()` ist auf der Home-Seite verboten** — die funkelnden Sterne laufen dauerhaft. Stattdessen `pump(duration)`; für Routenwechsel drei aufeinanderfolgende `pump()`.
@@ -629,10 +729,14 @@ Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffe
 
 38. **Ein Prüfstand kann müde werden — und sagt es nicht.** Am Ende von Phase 28 meldete `tool/webtest.py` dreimal hintereinander „nichts gezeichnet", gegen die veröffentlichte Seite **und** gegen jeden lokalen Bau. Die Suche ging erst durch die Bau-Schalter (`--csp`, `-O4`), dann durch den `--base-href`, dann durch die Datenbank-Migration — alles plausibel, alles falsch. **Die Gegenprobe hat es entschieden:** Derselbe Durchgang gegen den Stand **vor** Phase 28 scheiterte identisch, und die exakt gleiche Kombination aus Bau und Adresse hatte eine Stunde zuvor 20/20 bestanden. Damit war die einzige Größe, die sich geändert hatte, der **Rechner**: safaridriver hört nach vielen Sitzungen auf zu zeichnen, ohne Fehlermeldung. ⚠️ Die Lehre ist nicht „safaridriver ist schlecht", sondern: **Wenn ein Werkzeug plötzlich alles rot meldet, ist die erste Messung nicht am Verdächtigen, sondern an einem bekannt guten Vergleichsfall.** Das ist dieselbe Regel wie in Lehre 36, nur eine Ebene höher — dort war die *Messmethode* schuld, hier der *Prüfstand*. Und dass die App in Wahrheit lief, bewies kein Test, sondern ein Bildschirmfoto aus echtem iOS-Safari.
 
+39. **Wer den Rechner abschafft, schafft auch die Hälfte seiner Beweise ab — und merkt es erst, wenn er sie braucht.** Beim Umzug auf „nur noch GitHub" war der erste Gedanke, welche *Befehle* fehlen würden. Die richtige Frage war eine andere: **welche Aussagen** danach niemand mehr treffen kann. Die Antwort war unangenehm: `flutter analyze` und 205 Tests laufen weiter in der Automatik, aber **kein einziger davon öffnet einen Browser** — und Root-in ist eine Web-App. Der Prüfstand, der als einziger „die Seite startet und ist bedienbar" belegen konnte, hing an macOS. ⚠️ Vor jeder Werkzeug-Abschaffung deshalb nicht die Werkzeuge auflisten, sondern die **Zusagen**: Was behaupte ich heute über dieses Projekt, und welches Werkzeug trägt diese Behauptung? Fällt das Werkzeug weg, fällt die Behauptung mit — bis ein Ersatz steht, ist sie eine Hoffnung. Und: **Ein Werkzeug, das nur auf einem Rechner läuft, ist geliehen.** Was tragen soll, gehört dorthin, wo das Projekt lebt.
+
 ## 12. Offene Fragen
 
 - **Zwei Geräte, zwei Datenbestände.** ✅ **Mit Phase 27 halb gelöst, und das ist Absicht:** Wer sich auf beiden anmeldet, kann seinen Bestand übertragen (sichern hier, wiederherstellen dort). Ein **stiller Abgleich** in beide Richtungen ist es nicht. Ein echter Abgleich bräuchte Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase.
 - ~~**Erinnerungen im Web: bauen oder als Grenze benennen?**~~ ✅ **Entschieden am 2026-08-17: als Grenze benannt.** Der Nutzer: *„یاد آور ها رو کلا حذف کن چون نسخه وب نمیتونه الارم داشته باشه."* Sie sind **entfernt**, nicht ausgeblendet (Phase 28). ⚠️ Wer sie je zurückholen will, holt sich mehr als einen Schalter zurück: Web-Push braucht Service Worker, Push-Anmeldungen je Gerät, Erinnerungszeiten als abfragbare Zeilen **samt Zeitzone** auf dem Server und einen Wecker, der jede Minute nachsieht — und es ginge **nur mit Konto**, das heute freiwillig ist. Die Begründung steht im Docstring von `platform_support.dart`, dort wird sie gelesen.
+- ⚠️ **Wie wird die veröffentlichte Seite künftig geprüft?** Seit dem Wegfall des Rechners öffnet **kein** automatischer Test mehr einen Browser (Abschnitt 9). Der Weg steht in 29.3; bis er gebaut ist, ist „die Seite läuft" eine Annahme und kein Befund.
+- ⚠️ **Ein Konto für Root-in und Vox** — die Anweisung steht, die Voraussetzungen sind offen (Phase 30). Die wichtigste Frage ist nicht technisch, sondern zeitlich: **vor** dem ersten echten Nutzer ist der Umbau billig, danach nicht mehr.
 - **Vollständige Kontolöschung** braucht eine Edge Function (der öffentliche Schlüssel darf `auth.users` nicht anfassen). Heute löscht die App die Server-Daten und meldet ab; die vollständige Löschung läuft über eine Nachricht. Offen, ob das reicht.
 - **Sollen neue Beiträge in „موارد دیگر" gemeldet werden?** Möglich wäre ein stiller Vergleich beim App-Start (neue Einträge im `index.json` gegenüber dem gespeicherten Stand) und ein Punkt am Einstellungs-Eintrag.
 - **Die persische Übersetzung ist ein Entwurf** — alle Schlüssel sind gefüllt, gelesen hat sie noch kein Muttersprachler. Korrekturen betreffen nur `lib/l10n/app_fa.arb`.

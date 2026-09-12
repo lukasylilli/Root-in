@@ -2,11 +2,13 @@
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
 >
-> **Stand 2026-08-17.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **205 Tests grün**, 20/20 im echten Browser, 13/13 Zugriffsregeln am Server.
+> **Stand 2026-08-17.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **205 Tests grün**, 13/13 Zugriffsregeln am Server.
 >
-> ⚠️ **Phase 28 hat das Projekt auf Web-only zurückgebaut.** Entfernt: die Ordner `android/`, `ios/`, `macos/`, `linux/`, `windows/` (153 Dateien), `home_widget_service.dart` samt den neun Startbildschirm-Widgets, `notification_service.dart` und `reminders_page.dart` samt allem, was daran hing (bis hinunter in die Datenbank — Schema 4), das Play-Material unter `store/`. Pakete raus: `flutter_local_notifications`, `timezone`, `flutter_timezone`, `home_widget`, `flutter_file_dialog`. **Die Versionsgeschichte behält alles.**
+> ⚠️ **Es gibt keinen Entwicklungsrechner mehr** (PLAN.md Phase 29). Alles, was nicht in diesem Repository liegt, ist gelöscht — auch VS Code. **Diese Datei beschreibt damit nicht mehr „was auf dem Rechner liegt", sondern „was das Repository enthält".** Wer etwas sucht, das hier nicht steht, sucht etwas, das es nicht gibt.
 >
-> ✅ **Phase 27: Nutzerkonten & Cloud-Speicher (Supabase).** `supabase/schema.sql`, `core/services/{auth_service, cloud_backup_service, cloud_auto_backup, profile_cloud_sync, username_rules}.dart`, `features/auth/presentation/`, `tool/rls_check.sh`. ⚠️ **Ohne Supabase-Schlüssel im Bau verhält sich die App exakt wie vorher** — keine Anmeldung, keine Rubrik, kein Netzverkehr (`supportsCloudSync`).
+> ⚠️ **Phase 28 hat das Projekt auf Web-only zurückgebaut.** Entfernt: `android/`, `ios/`, `macos/`, `linux/`, `windows/` (153 Dateien), `home_widget_service.dart` samt den neun Startbildschirm-Widgets, `notification_service.dart` und `reminders_page.dart` samt allem, was daran hing (bis hinunter in die Datenbank — Schema 4), das Play-Material unter `store/`. Pakete raus: `flutter_local_notifications`, `timezone`, `flutter_timezone`, `home_widget`, `flutter_file_dialog`. **Die Versionsgeschichte behält alles.**
+>
+> ✅ **Phase 27: Nutzerkonten & Cloud (Supabase).** `supabase/schema.sql`, `core/services/{auth_service, cloud_backup_service, cloud_auto_backup, profile_cloud_sync, username_rules}.dart`, `features/auth/presentation/`, `tool/rls_check.sh`. ⚠️ **Ohne Supabase-Schlüssel im Bau verhält sich die App exakt wie vorher** — keine Anmeldung, keine Rubrik, kein Netzverkehr (`supportsCloudSync`).
 
 ## Inhaltsverzeichnis
 1. [Legende](#legende)
@@ -19,17 +21,20 @@
 8. [Hinweise](#hinweise)
 
 ## Legende
-- ✅ vorhanden
-- ⚙️ generiert (nie von Hand ändern)
+- ✅ im Repository vorhanden
+- ⚙️ generiert (nie von Hand ändern) bzw. beim Bau geholt
+- ⛔ **nicht im Repository** — existiert also nicht mehr
+- 🕰️ vorhanden, beschreibt aber eine Arbeitsweise, die es nicht mehr gibt (siehe PLAN.md 29.4)
 - 🕯️ **stillgelegt in Phase 20** — vollständig auskommentiert, nicht gelöscht. Jede Stelle trägt den Marker
   `PHASE 20 (2026-08-01): Werbung deaktiviert — zum Wiederaktivieren diesen Block einkommentieren.`
   Das Wiedereinschalten ist damit ein `grep`, keine Suche.
 
-⚠️ **Die Markierungen 🚧 (geplant) und ⏸️ (zurückgestellt) gibt es nicht mehr.** Es ist nichts geplant, was nicht gebaut wäre, und nichts zurückgestellt — was gestrichen war, ist entfernt (PLAN.md Phase 28).
-
 ## Root-Verzeichnis
+
+⚠️ **Das ist der Inhalt von `github.com/lukasylilli/Root-in`, Zweig `main`** — nicht der eines Ordners auf einer Festplatte. Seit Phase 29 gibt es keinen zweiten Ort.
+
 ```
-/Users/lukasaliramezani/Projects/Root-in/
+github.com/lukasylilli/Root-in  (öffentlich, Zweig main)
 ├── PLAN.md                          ✅ Gesamtplan/Roadmap der App
 ├── MAP.md                           ✅ Diese Datei — Struktur-Übersicht
 ├── README.md                        ✅ Standard-Flutter-README
@@ -40,7 +45,9 @@
 ├── .metadata                        ⚙️ Von Flutter gepflegt (Projekt-Herkunft, migrierte Plattformen) —
 │                                        nie von Hand ändern. Nennt noch die entfernten Plattformen; das
 │                                        ist folgenlos und wird beim nächsten Flutter-Werkzeuglauf richtig
-├── Root-in.code-workspace           ✅ VS-Code-Arbeitsbereich
+├── Root-in.code-workspace           🕰️ VS-Code-Arbeitsbereich — VS Code ist mit Phase 29
+│                                        gelöscht; die Datei beschreibt eine Arbeitsweise, die es
+│                                        nicht mehr gibt (29.4)
 ├── l10n.yaml                        ✅ gen-l10n: ARB in lib/l10n, Ausgabe lib/l10n/gen, Vorlage Deutsch
 ├── assets/icon/app_icon.png         ✅ EINZIGE Quelle des App-Symbols (1024×1024). Favicon und PWA-Symbole
 │                                        entstehen daraus per `dart run flutter_launcher_icons`.
@@ -62,9 +69,15 @@
 │   │                                    etwas fehlt, häufige Fehler
 │   └── others_index_beispiel.json       Gültige Vorlage zum Hochladen — ein Test prüft sie mit, damit die
 │                                        Anleitung nicht in die Irre führt
-├── meine/                           ✅ Referenzmaterial des Nutzers: 20 Screenshots, „Berg-Animation"
-│                                        (React/SVG-Vorlage, Phase 8.6), zwei Design-Specs (Phase 10.6),
-│                                        Logo.jpeg (Quelle des App-Symbols)
+├── meine/                           ⛔ **NICHT im Repository und mit dem Rechner verschwunden.**
+│                                        Enthielt das Referenzmaterial des Nutzers: 20 Vorlagen-Bilder,
+│                                        die Berg-Animation als React/SVG (Phase 8.6), zwei Design-Specs
+│                                        als JSON (Phase 10.6) und `Logo.jpeg` — die Quelle, aus der
+│                                        `assets/icon/app_icon.png` entstanden ist.
+│                                        ⚠️ Das **Ergebnis** ist versioniert (Symbol, Design-Tokens,
+│                                        die nachgebaute Animation in `ascent_scene_painter.dart`), die
+│                                        **Vorlagen** nicht. Wer das Erscheinungsbild neu ableiten will,
+│                                        hat sie nicht mehr — siehe PLAN.md 28.0
 ├── web/                             ✅ **Die App** (PLAN.md Phase 26/28) — seit Phase 28 die einzige
 │   │                                    Plattform des Projekts
 │   ├── index.html                   ✅ Einstiegsseite, Markenfarbe schon vor dem ersten Frame + iOS-Meta-Tags.
@@ -96,21 +109,18 @@
 │                                        seit Phase 27.3 mit SUPABASE_URL und SUPABASE_ANON_KEY
 ├── supabase/schema.sql              ✅ Phase 27.4 — Server-Schema + Zugriffsregeln, versioniert
 ├── .claude/
-│   ├── settings.json                ✅ Freigabeliste für Claude Code (Phase 26.9): weniger Rückfragen bei
+│   ├── settings.json                🕰️ Freigabeliste für Claude Code (Phase 26.9): weniger Rückfragen bei
 │   │                                    flutter-/git-Befehlen, `defaultMode: acceptEdits`.
+│   │                                    ⚠️ Gilt für Claude Code auf einem Rechner — in der Cloud greift
+│   │                                    sie nicht (29.4)
 │   │                                    ⚠️ Bewusst OHNE Muster wie `for *`/`awk *` — die sähen eng aus,
 │   │                                    erlauben aber jeden beliebigen Befehl. Wer gar keine Rückfrage
 │   │                                    will, nimmt den Modus-Umschalter, nicht eine getarnte Liste
-│   └── settings.local.json          ⛔ NICHT versioniert — maschinenlokal, enthält hunderte absolute
-│                                        Pfade unter /Users/<name>/
-└── .git/                            ✅ Seit 2026-08-07 ein Git-Repository (Zweig `main`; Quellcode und
-                                         Inhalts-Repository zusammengeführt).
-                                         ⚠️ **NICHT im Repository** — und das zählt, seit das Projekt nur
-                                         noch auf GitHub weiterlebt (PLAN.md 28.0):
-                                         **meine/** (24 Dateien, 0 versioniert — Screenshots, Design-Specs,
-                                         Logo-Quelle; der Nutzer sichert sie selbst), .env (Werte liegen
-                                         als GitHub-Secrets), .claude/settings.local.json, build/,
-                                         web/sqlite3.wasm, web/drift_worker.js
+│   └── settings.local.json          ⛔ war maschinenlokal — mit dem Rechner verschwunden
+└── .env                             ⛔ war die lokale Vorlage-Kopie — mit dem Rechner verschwunden.
+                                         **Kein Verlust:** Beide Werte liegen als GitHub-Actions-Secrets
+                                         (`SUPABASE_URL`, `SUPABASE_ANON_KEY`), und der `anon`-Schlüssel
+                                         steht ohnehin lesbar im veröffentlichten Bundle (Lehre 26)
 ```
 
 ## lib/ (App-Code)
@@ -637,13 +647,19 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        Worker und Bibliothek nicht auseinanderlaufen.
 │                                        ⚠️ `dart run drift_dev make-worker` ist mit drift 2.34.2 /
 │                                        drift_dev 2.34.0 KAPUTT — nicht erneut versuchen
-├── webtest.py                       ✅ Echter Browser-Durchgang über safaridriver — **20 Prüfungen**:
+├── webtest.py                       🕰️ **Nicht mehr ausführbar** — braucht safaridriver, also macOS
+│                                        (PLAN.md 29.3). Bleibt liegen, weil er die einzige geschriebene
+│                                        Fassung dieser Prüf-Erkenntnisse ist und die **Vorlage für den
+│                                        Ersatz in der Automatik**. Bis der steht, öffnet KEIN
+│                                        automatischer Test einen Browser — bei einer Web-App die
+│                                        größte offene Lücke des Projekts (Lehre 39).
+│                                        Was er prüfte — **20 Punkte**:
 │                                        Start, Datenerhalt, alle vier Reiter, eine Anleitungs-Seite
 │                                        und die Rubrik „Konto & Cloud". Auch gegen einen lokalen Bau:
 │                                        `python3 tool/webtest.py http://localhost:8765/`
-│                                        ⚠️ **Das wichtigste Werkzeug seit der Neuausrichtung** — Web
-│                                        ist die Hauptplattform, und dies ist der einzige Durchgang,
-│                                        der sie als Ganzes anfasst
+│                                        ⚠️ Es war der einzige Durchgang, der die Web-Fassung als
+│                                        Ganzes angefasst hat — und genau deshalb wiegt sein Wegfall
+│                                        so schwer
 │                                        ⚠️ Der Durchgang meldet sich NICHT an — ein Oberflächen-Test,
 │                                        der Konten anlegt, hinterlässt bei jedem Lauf Datenmüll. Dass
 │                                        die Anmeldung trägt, beweist rls_check.sh. Zwei Werkzeuge,
@@ -672,8 +688,13 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        Flutter-Liste im Desktop-Browser nicht, ohne dass etwas
 │                                        fehlschlägt); Zustände an KNÖPFEN ablesen, nicht an Texten —
 │                                        reine Texte stehen unzuverlässig im Semantik-Baum
-├── rls_check.sh                     ✅ Gegenprobe der Server-Zugriffsregeln von AUSSEN (Phase 27.4):
-│                                        13 Prüfungen mit zwei echten Testkonten, liest .env.
+├── rls_check.sh                     ⚠️ Gegenprobe der Server-Zugriffsregeln von AUSSEN (Phase 27.4):
+│                                        13 Prüfungen mit zwei echten Testkonten.
+│                                        ⚠️ **Verwaist, aber rettbar** (29.2): Es braucht nur `bash`,
+│                                        `curl` und SUPABASE_URL/SUPABASE_ANON_KEY — beide liegen schon
+│                                        als Secrets. `.env` liest es nur, FALLS vorhanden, sonst nimmt
+│                                        es die Umgebungsvariablen. Es muss also nicht geändert werden,
+│                                        nur als Action aufgerufen
 │                                        ⚠️ Ein `select` im SQL-Editor beweist NICHTS — er läuft mit
 │                                        erhöhten Rechten und umgeht die Regeln. Nur ein Aufruf mit
 │                                        dem öffentlichen Schlüssel prüft, was ein Fremder sieht.
@@ -717,14 +738,7 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 
 ⬜ **Noch offen:** App-Symbol und die Behebung aus 26.13 auf einem echten iPhone bestätigen (das Ablegen auf dem Home-Bildschirm lässt sich hier nicht nachstellen).
 
-**Prüfstand iOS-Simulator** (seit 2026-08-16) — die Web-Fassung in **echtem iOS-Safari** ansehen, ohne iPhone:
-```
-xcrun simctl list devices available          # verfügbare Geräte
-xcrun simctl boot <UDID> && open -a Simulator
-xcrun simctl openurl booted "<URL>"          # Seite in Handy-Safari öffnen
-xcrun simctl io booted screenshot --type=png <datei>
-```
-⚠️ **Tippen geht damit NICHT** — `simctl` kennt keine Eingabe, und die Bedienungshilfen sind für `osascript` gesperrt. Zwei Auswege haben sich bewährt: Messwerte per JavaScript **auf die Seite schreiben** und fotografieren, oder eine Kopie des Baus servieren, in deren `index.html` ein Skript den Tipp selbst auslöst.
+⛔ **Prüfstand iOS-Simulator — mit dem Rechner entfallen.** Er war seit 2026-08-16 der Weg, die Web-Fassung in **echtem iOS-Safari** anzusehen (`xcrun simctl`), und hat zuletzt den Beweis geliefert, dass die veröffentlichte Seite nach Phase 28 läuft. ⚠️ **Was an seine Stelle tritt, ist das echte iPhone des Nutzers** — der einzige verbliebene Blick auf die tatsächliche Oberfläche (PLAN.md Abschnitt 9).
 
 **Wo die Daten der Web-Fassung liegen** (PLAN.md Phase 26.8) — zwei getrennte Orte, beide überstehen Schließen und Neuöffnen:
 
@@ -861,9 +875,9 @@ Manifest (siehe Hinweise).
 ## Hinweise
 - Diese Datei bildet **nur die Struktur** ab (was liegt wo) — Fortschritt und Feature-Details stehen in PLAN.md.
 - Bei jeder neuen Datei/jedem neuen Ordner: hier ergänzen. Bei Löschung/Umbenennung: hier korrigieren.
-- `*.g.dart` sind generiert (`dart run build_runner build`) und werden hier nicht einzeln aufgeführt.
-- **Kommando-Aufruf auf dieser Maschine:** immer den vollen SDK-Pfad, `"$HOME/development/flutter/bin/flutter" analyze` / `test` / … — die Bash-Tool-Shell sourct `~/.zshenv`/`~/.zshrc` nicht neu und zeigt sonst auf die alte iCloud-SDK-Kopie (PLAN.md Abschnitt 11, Lehre 1–2).
-- **Eine Seite wirklich ansehen:** lokal bauen (`tool/build_web.sh` oder `flutter build web --dart-define-from-file=.env`), `python3 -m http.server` über `build/web/` und `python3 tool/webtest.py http://localhost:8765/`. Für einen Blick mit echten Daten: `lib/main_seed.dart` als Einstiegspunkt.
+- `*.g.dart` sind generiert (`dart run build_runner build`) und werden hier nicht einzeln aufgeführt. ⚠️ **Sie sind versioniert, und das ist seit Phase 29 lebenswichtig:** Die Automatik ruft `build_runner` **nicht** auf. Wer eine Drift-Tabelle oder `database.dart` ändert, ohne die passende `.g.dart` mitzuliefern, bekommt einen roten Lauf — und kann ihn ohne Rechner nur beheben, indem er die generierte Datei von Hand nachzieht.
+- ⚠️ **Es gibt keine Kommandozeile mehr** (PLAN.md Phase 29). `flutter analyze`, `flutter test`, `flutter build web` und `tool/build_web.sh` laufen **nur noch in der Automatik**, bei jedem Push auf `main`. Wer eine Änderung prüfen will, pusht sie und liest den Lauf. ⚠️ Das heißt auch: **`flutter gen-l10n` und `build_runner` laufen niemand mehr von Hand.** `gen-l10n` startet beim Bau von selbst; **`build_runner` NICHT** — wer `database.dart` oder eine Tabelle ändert, muss `database.g.dart` mitliefern, sonst bricht der Bau (siehe unten).
+- **Eine Seite wirklich ansehen:** pushen, den Lauf abwarten, `lukasylilli.github.io/Root-in/` im Browser öffnen. ⚠️ **Nicht sofort nach dem Lauf messen** — GitHub Pages liefert nicht überall gleichzeitig aus (Lehre 36). Für einen Blick mit echten Daten gäbe es `lib/main_seed.dart`; der braucht aber einen Bau von Hand und ist damit vorerst unerreichbar.
 - Jeder Widget-Test, der DB-gestützte Provider berührt, überschreibt `appDatabaseProvider` und `timeServiceProvider` und ruft `disposeAndFlush(tester)` als letzte Zeile. Die früheren Overrides für `notificationServiceProvider` (Phase 28) und `purchaseServiceProvider` (Phase 20) sind entfallen.
 - Tests, die die Home-Seite rendern, dürfen **kein** `pumpAndSettle()` verwenden — die funkelnden Sterne laufen dauerhaft. Stattdessen `tester.pump(const Duration(seconds: 1))`; für einen **Wechsel** auf Home braucht es drei aufeinanderfolgende `pump()` (Tipp → Speichern → Routen-Übergang, siehe `settleNavigation`).
 - Tests, die die ganze App starten, müssen `onboarding_seen` in den gemockten Prefs setzen — sonst landen sie auf der Erststart-Erklärung.
