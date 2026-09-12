@@ -64,11 +64,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       title: l10n.onboardingProgressTitle,
       body: l10n.onboardingProgressBody,
     ),
-    _OnboardingStep(
-      icon: Icons.notifications_active_outlined,
-      title: l10n.onboardingRemindersTitle,
-      body: l10n.onboardingRemindersBody,
-    ),
   ];
 
   Future<void> _finish() async {

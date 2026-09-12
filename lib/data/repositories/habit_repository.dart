@@ -1,10 +1,7 @@
-import 'dart:ui' show Locale;
 
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/services/notification_service.dart';
-import '../../core/services/settings_service.dart' show resolvedLocaleProvider;
 import '../../core/services/time_service.dart';
 import '../../core/utils/achievement_evaluator.dart';
 import '../../core/utils/date_utils.dart';
@@ -47,8 +44,6 @@ class HabitRepository {
     this._categoryDao,
     this._backupDao,
     this._timeService,
-    this._notificationService,
-    this._currentLocale,
   );
 
   final HabitDao _habitDao;
@@ -56,12 +51,6 @@ class HabitRepository {
   final CategoryDao _categoryDao;
   final BackupDao _backupDao;
   final TimeService _timeService;
-  final NotificationService _notificationService;
-
-  /// Sprache für Notification-Texte, bei jedem Planen frisch gelesen (siehe
-  /// PLAN.md Phase 11). Bewusst eine Funktion statt eines festen Werts: sonst
-  /// müsste das Repository bei jedem Sprachwechsel neu gebaut werden.
-  final Locale Function() _currentLocale;
 
   /// Erstellt eine vollständige Sicherung des aktuellen Bestands (siehe
   /// PLAN.md Phase 9).
@@ -75,31 +64,13 @@ class HabitRepository {
     );
   }
 
-  /// Ersetzt den gesamten Bestand durch [data] und plant die Erinnerungen
-  /// neu — sonst zeigten nach dem Wiederherstellen zwar die richtigen
-  /// Uhrzeiten in der App, es käme aber keine Benachrichtigung mehr
-  /// (die alten Notifications gehörten zu den gelöschten Habit-IDs).
+  /// Ersetzt den gesamten Bestand durch [data] (siehe PLAN.md Phase 9).
   Future<void> restoreBackup(BackupData data) async {
-    for (final habit in await _backupDao.allHabits()) {
-      await _notificationService.cancelForHabit(habit.id);
-    }
-
     await _backupDao.replaceAll(
       newHabits: data.habits,
       newCompletions: data.completions,
       newCategories: data.categories,
     );
-
-    for (final habit in data.habits) {
-      final minuteOfDay = habit.reminderMinuteOfDay;
-      if (!habit.reminderEnabled || minuteOfDay == null) continue;
-      await _notificationService.scheduleForHabit(
-        habitId: habit.id,
-        habitName: habit.name,
-        minuteOfDay: minuteOfDay,
-        locale: _currentLocale(),
-      );
-    }
   }
 
   Future<DateTime> today() => _timeService.today();
@@ -185,57 +156,7 @@ class HabitRepository {
     );
   }
 
-  Future<void> deleteHabit(int id) async {
-    await _notificationService.cancelForHabit(id);
-    await _habitDao.deleteHabit(id);
-  }
-
-  /// Setzt/entfernt die tägliche Erinnerung einer Gewohnheit (siehe PLAN.md
-  /// Phase 7): schreibt die Uhrzeit in die DB **und** plant/canceln die
-  /// Notification an einer Stelle, damit beide nie auseinanderlaufen.
-  /// [minuteOfDay] null = Erinnerung aus.
-  Future<void> setHabitReminder({
-    required int habitId,
-    required String habitName,
-    required int? minuteOfDay,
-  }) async {
-    await _habitDao.setReminder(habitId, minuteOfDay);
-    if (minuteOfDay == null) {
-      await _notificationService.cancelForHabit(habitId);
-    } else {
-      await _notificationService.scheduleForHabit(
-        habitId: habitId,
-        habitName: habitName,
-        minuteOfDay: minuteOfDay,
-        locale: _currentLocale(),
-        streak: await currentStreakForHabit(habitId, await today()),
-      );
-    }
-  }
-
-  /// Plant alle aktiven Erinnerungen neu — nötig nach einem Sprachwechsel
-  /// (siehe PLAN.md Phase 11.5) **und** immer dann, wenn sich die Serie
-  /// geändert hat (Phase 23).
-  ///
-  /// Titel und Text einer Notification werden beim Planen fest
-  /// hineingeschrieben. Ohne dieses Neuplanen erschiene eine schon
-  /// eingeplante Erinnerung weiterhin in der alten Sprache — und mit dem
-  /// Serien-Stand von vorgestern.
-  Future<void> rescheduleAllReminders() async {
-    final locale = _currentLocale();
-    final now = await today();
-    for (final habit in await _habitDao.habitsWithReminder()) {
-      final minuteOfDay = habit.reminderMinuteOfDay;
-      if (minuteOfDay == null) continue;
-      await _notificationService.scheduleForHabit(
-        habitId: habit.id,
-        habitName: habit.name,
-        minuteOfDay: minuteOfDay,
-        locale: locale,
-        streak: await currentStreakForHabit(habit.id, now),
-      );
-    }
-  }
+  Future<void> deleteHabit(int id) => _habitDao.deleteHabit(id);
 
   Future<void> setCompletion(
     int habitId,
@@ -286,11 +207,6 @@ final habitRepositoryProvider = Provider<HabitRepository>((ref) {
     db.categoryDao,
     db.backupDao,
     ref.watch(timeServiceProvider),
-    ref.watch(notificationServiceProvider),
-    // `read` statt `watch`: die Sprache wird erst beim Planen einer
-    // Erinnerung gebraucht — ein Sprachwechsel soll nicht das ganze
-    // Repository (und damit alle Streams darauf) neu aufbauen.
-    () => ref.read(resolvedLocaleProvider),
   );
 });
 

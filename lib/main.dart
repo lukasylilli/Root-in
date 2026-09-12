@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +12,6 @@ import 'core/l10n/app_language.dart';
 // import 'core/services/purchase_service.dart';
 import 'core/services/auth_service.dart';
 import 'core/services/home_widget_service.dart';
-import 'core/services/notification_service.dart';
 import 'core/services/settings_service.dart';
 import 'core/services/web_storage/request_persistent_storage.dart';
 import 'core/utils/platform_support.dart';
@@ -24,17 +22,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
 
-  // Die gespeicherte Sprache wird schon vor dem ersten Frame gebraucht: für
-  // die iOS-Notification-Kategorie (Snooze-Button, wird bei der
-  // Initialisierung registriert) und für die Standard-Kategorien einer
-  // frischen Installation.
+  // Die gespeicherte Sprache wird schon vor dem ersten Frame gebraucht: die
+  // Standard-Kategorien einer frischen Installation entstehen in ihr.
   final locale = resolveLocale(SettingsService(prefs).loadLanguage());
   final l10n = lookupAppLocalizations(locale);
-
-  final notificationService = NotificationService(
-    FlutterLocalNotificationsPlugin(),
-  );
-  await notificationService.initialize(locale);
 
   // Log-Button der Farbkacheln (siehe PLAN.md Phase 10.6d): Android startet
   // dafür ein eigenes Isolate und ruft diese Top-Level-Funktion.
@@ -67,7 +58,6 @@ Future<void> main() async {
   final container = ProviderContainer(
     overrides: [
       sharedPreferencesProvider.overrideWithValue(prefs),
-      notificationServiceProvider.overrideWithValue(notificationService),
     ],
   );
   await container.read(habitRepositoryProvider).ensureDefaultCategories(

@@ -21,14 +21,4 @@ class Habits extends Table {
   DateTimeColumn get startDate => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
-
-  /// Erinnerung an (siehe PLAN.md Phase 7). Nur relevant, wenn
-  /// [reminderMinuteOfDay] gesetzt ist.
-  BoolColumn get reminderEnabled =>
-      boolean().withDefault(const Constant(false))();
-
-  /// Uhrzeit der täglichen Erinnerung als Minuten seit Mitternacht (0–1439),
-  /// z. B. 8:30 Uhr = 510. Ein einzelner Int statt Stunde+Minute hält die
-  /// Umrechnung von/zu `TimeOfDay` in der Präsentationsschicht einfach.
-  IntColumn get reminderMinuteOfDay => integer().nullable()();
 }

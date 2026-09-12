@@ -8,7 +8,7 @@ import 'package:root_in/core/services/auth_service.dart';
 /// ohne Netz, ohne Schlüssel und ohne fremden Zustand laufen — sonst hängen
 /// sie an der Erreichbarkeit eines Servers und hinterlassen dort Datenmüll.
 /// Derselbe Gedanke wie bei `RepoFetcher` (Phase 22) und
-/// `FakeNotificationService` (Phase 7).
+/// `FakeRepoFetcher` (Phase 17).
 class FakeAuthService extends AuthService {
   FakeAuthService({AuthAccount? signedIn, this.issue}) : _account = signedIn;
 

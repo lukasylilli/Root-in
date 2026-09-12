@@ -7,7 +7,6 @@
   "navSettings": "Settings",
   "pageAccountTitle": "Account",
   "pageCategoriesTitle": "Categories",
-  "pageRemindersTitle": "Reminders",
   "tabWeek": "Week",
   "tabOverview": "Overview",
   "tabMonth": "Month",
@@ -92,27 +91,6 @@
   "categoryWriting": "Writing",
   "categorySpeaking": "Speaking",
   "categoryListening": "Listening",
-  "reminderDaily": "Daily reminder",
-  "reminderOff": "Off",
-  "reminderNone": "No reminder",
-  "reminderChangeTime": "Change time",
-  "reminderAt": "At {time}",
-  "@reminderAt": {
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "reminderDailyAt": "Daily at {time}",
-  "@reminderDailyAt": {
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "remindersEmpty": "No habits yet. Create one first to set a reminder time for it here.",
   "settingsAppearance": "Appearance",
   "themeLight": "Light",
   "themeDark": "Dark",
@@ -131,7 +109,6 @@
   "settingsAccountTitle": "Account info",
   "settingsAccountSubtitle": "Profile, lifetime statistics, achievements",
   "settingsCategoriesSubtitle": "Create, rename, delete",
-  "settingsRemindersSubtitle": "All habit reminder times at a glance",
   "settingsShareApp": "Share app",
   "settingsExport": "Export backup",
   "settingsExportSubtitle": "An update deletes nothing. A backup helps if you lose your device or reinstall.",
@@ -410,8 +387,6 @@
   "onboardingHabitsBody": "Create habits from a template or from scratch; each belongs to a category you manage yourself. On “Today” you check off what's done — or log minutes if you set a duration goal.",
   "onboardingProgressTitle": "See your progress",
   "onboardingProgressBody": "Percentages and points appear on every page, and under “View” you also get them by week, month and year. You may skip one day per week without losing your streak.",
-  "onboardingRemindersTitle": "Reminders and widgets",
-  "onboardingRemindersBody": "Give each habit a time for Root-in to remind you. On your home screen you can place charts, the daily ring or a colour tile — the tile checks a habit off right there, without opening the app.",
   "templateYoutube": "YouTube",
   "templateCoursebook": "Coursebook",
   "templateWorkbook": "Workbook",
@@ -423,57 +398,6 @@
   "templateSpeaking": "Speaking",
   "templateListening": "Listening",
   "templateMemorizing": "Memorising",
-  "notificationStreakAtRisk": "{count, plural, one{Your one-day streak ends at midnight.} other{Your {count}-day streak ends at midnight.}}",
-  "@notificationStreakAtRisk": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "notificationStatusChannelName": "Daily status",
-  "notificationStatusChannelDescription": "Keeps showing what is still open today",
-  "notificationStatusTitle": "Today: {done} of {total} done",
-  "@notificationStatusTitle": {
-    "placeholders": {
-      "done": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "notificationStatusBody": "{count, plural, one{One habit is still open.} other{{count} habits are still open.}}",
-  "@notificationStatusBody": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "settingsStatusNotification": "Daily status in the bar",
-  "settingsStatusNotificationSubtitle": "Stays visible while something is open today.",
-  "notificationChannelName": "Reminders",
-  "notificationChannelDescription": "Daily habit reminders",
-  "notificationSnoozeAction": "10 min later",
-  "notificationTitle": "Time for: {habit}",
-  "@notificationTitle": {
-    "placeholders": {
-      "habit": {
-        "type": "String"
-      }
-    }
-  },
-  "notificationBody": "Don't forget your habit today.",
-  "notificationSnoozedBody": "Reminder postponed by {minutes} minutes.",
-  "@notificationSnoozedBody": {
-    "placeholders": {
-      "minutes": {
-        "type": "int"
-      }
-    }
-  },
   "homeWidgetSubtitle": "{done}/{total} done",
   "homeWidgetOpen": "{count, plural, one{1 left} other{{count} left}}",
   "@homeWidgetOpen": {
@@ -544,7 +468,9 @@
   "cloudLastBackup": "Last backup: {when}",
   "@cloudLastBackup": {
     "placeholders": {
-      "when": { "type": "String" }
+      "when": {
+        "type": "String"
+      }
     }
   },
   "cloudNeverBackedUp": "Never backed up",

@@ -60,8 +60,8 @@ TextDirection textDirectionForLanguage(String languageCode) =>
     : TextDirection.ltr;
 
 /// Löst [language] zu einer **konkreten** Sprache auf. Nötig für Texte
-/// außerhalb des Widget-Baums (Notifications, siehe
-/// `core/services/notification_service.dart`): dort gibt es keinen
+/// außerhalb des Widget-Baums (Standard-Kategorien beim Erststart, Texte
+/// fürs Teilen): dort gibt es keinen
 /// `BuildContext`, aus dem Flutter die Systemsprache ableiten könnte.
 Locale resolveLocale(AppLanguage language) {
   final explicit = language.locale;

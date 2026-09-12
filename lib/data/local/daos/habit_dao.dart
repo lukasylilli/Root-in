@@ -20,14 +20,6 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
     return (select(habits)..where((h) => h.id.equals(id))).getSingleOrNull();
   }
 
-  /// Alle nicht archivierten Gewohnheiten mit aktiver Erinnerung — Grundlage
-  /// fürs Neuplanen nach einem Sprachwechsel (siehe PLAN.md Phase 11.5).
-  Future<List<Habit>> habitsWithReminder() {
-    return (select(habits)..where(
-      (h) => h.archived.equals(false) & h.reminderEnabled.equals(true),
-    )).get();
-  }
-
   Future<int> addHabit(HabitsCompanion entry) => into(habits).insert(entry);
 
   /// Teil-Update per `where`-Klausel statt `.replace()`: `.replace()` würde
@@ -42,17 +34,6 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
   Future<int> archiveHabit(int id) {
     return (update(habits)..where((h) => h.id.equals(id))).write(
       const HabitsCompanion(archived: Value(true)),
-    );
-  }
-
-  /// Setzt/entfernt die Erinnerungszeit einer Gewohnheit (siehe PLAN.md
-  /// Phase 7). [minuteOfDay] null = Erinnerung aus.
-  Future<void> setReminder(int id, int? minuteOfDay) async {
-    await (update(habits)..where((h) => h.id.equals(id))).write(
-      HabitsCompanion(
-        reminderEnabled: Value(minuteOfDay != null),
-        reminderMinuteOfDay: Value(minuteOfDay),
-      ),
     );
   }
 

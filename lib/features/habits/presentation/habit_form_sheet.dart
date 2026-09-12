@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/habit_templates.dart';
-import '../../../core/services/notification_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/utils/platform_support.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/text_prompt_dialog.dart';
 import '../../../data/local/database.dart' show Habit;
@@ -36,7 +34,6 @@ class _HabitFormSheetState extends ConsumerState<HabitFormSheet> {
   late HabitGoalType _goalType;
   late int _targetMinutes;
   String? _category;
-  TimeOfDay? _reminderTime;
 
   bool get _isEditing => widget.existing != null;
 
@@ -48,29 +45,6 @@ class _HabitFormSheetState extends ConsumerState<HabitFormSheet> {
     _goalType = existing?.goalType ?? HabitGoalType.checkbox;
     _targetMinutes = existing?.targetMinutes ?? 10;
     _category = existing?.category;
-    final minuteOfDay = existing?.reminderEnabled == true
-        ? existing?.reminderMinuteOfDay
-        : null;
-    _reminderTime = minuteOfDay == null
-        ? null
-        : TimeOfDay(hour: minuteOfDay ~/ 60, minute: minuteOfDay % 60);
-  }
-
-  int? get _reminderMinuteOfDay =>
-      _reminderTime == null ? null : _reminderTime!.hour * 60 + _reminderTime!.minute;
-
-  Future<void> _pickReminderTime() async {
-    // Berechtigung erst anfragen, wenn der Nutzer eine Erinnerung aktiviert.
-    final granted = await ref
-        .read(notificationServiceProvider)
-        .requestPermission();
-    if (!mounted || !granted) return;
-
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _reminderTime ?? const TimeOfDay(hour: 8, minute: 0),
-    );
-    if (picked != null) setState(() => _reminderTime = picked);
   }
 
   @override
@@ -123,11 +97,6 @@ class _HabitFormSheetState extends ConsumerState<HabitFormSheet> {
         targetMinutes: targetMinutes,
       );
     }
-    await repo.setHabitReminder(
-      habitId: habitId,
-      habitName: name,
-      minuteOfDay: _reminderMinuteOfDay,
-    );
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -291,40 +260,6 @@ class _HabitFormSheetState extends ConsumerState<HabitFormSheet> {
                   ),
                 ],
               ),
-            ],
-            // PLAN.md Phase 26.1: Im Browser gibt es keine Erinnerungen —
-            // dann fehlt hier auch der Schalter dafür. Eine gespeicherte
-            // Uhrzeit bleibt dabei **unangetastet** in der Datenbank stehen:
-            // Wer dieselbe Sicherung später auf Android einspielt, findet
-            // seine Erinnerungen wieder (derselbe Gedanke wie Phase 25).
-            if (supportsReminders) ...[
-              const SizedBox(height: AppSpacing.sm),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(l10n.reminderDaily),
-                subtitle: Text(
-                  _reminderTime == null
-                      ? l10n.reminderOff
-                      : l10n.reminderAt(_reminderTime!.format(context)),
-                ),
-                value: _reminderTime != null,
-                onChanged: (enabled) {
-                  if (enabled) {
-                    _pickReminderTime();
-                  } else {
-                    setState(() => _reminderTime = null);
-                  }
-                },
-              ),
-              if (_reminderTime != null)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    onPressed: _pickReminderTime,
-                    icon: const Icon(Icons.schedule, size: 18),
-                    label: Text(l10n.reminderChangeTime),
-                  ),
-                ),
             ],
             const SizedBox(height: AppSpacing.md),
             AppButton(

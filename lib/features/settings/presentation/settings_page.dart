@@ -16,7 +16,6 @@ import '../../../core/services/share_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_theme_variant.dart';
-import '../../../core/utils/platform_support.dart';
 import '../../../data/repositories/habit_repository.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../guide/presentation/guide_topic.dart';
@@ -191,29 +190,6 @@ class SettingsPage extends ConsumerWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push(AppRoutes.categories),
           ),
-          // PLAN.md Phase 26.1: Im Browser gibt es keine Erinnerungen. Beide
-          // Einträge verschwinden dann ganz, statt ins Leere zu führen — ein
-          // Schalter, der nichts bewirkt, ist schlimmer als kein Schalter.
-          if (supportsReminders) ...[
-            ListTile(
-              leading: const Icon(Icons.notifications_outlined),
-              title: Text(l10n.pageRemindersTitle),
-              subtitle: Text(l10n.settingsRemindersSubtitle),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push(AppRoutes.reminders),
-            ),
-            // Phase 23: Der Tagesstand ist der einzige Hinweis, der dauerhaft
-            // stehen bleibt — deshalb bekommt er einen eigenen Schalter direkt
-            // neben den Erinnerungen.
-            SwitchListTile(
-              secondary: const Icon(Icons.push_pin_outlined),
-              title: Text(l10n.settingsStatusNotification),
-              subtitle: Text(l10n.settingsStatusNotificationSubtitle),
-              value: ref.watch(statusNotificationProvider),
-              onChanged: (next) =>
-                  ref.read(statusNotificationProvider.notifier).set(next),
-            ),
-          ],
           ListTile(
             leading: const Icon(Icons.ios_share_outlined),
             title: Text(l10n.settingsShareApp),

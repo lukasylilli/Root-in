@@ -22,7 +22,6 @@ class SettingsService {
   static const _languageKey = 'app_language';
   static const _onboardingSeenKey = 'onboarding_seen';
   static const _shareOverviewKey = 'share_include_overview';
-  static const _statusNotificationKey = 'status_notification_enabled';
   static const _webStorageHintKey = 'web_storage_hint_seen';
 
   ThemeMode loadThemeMode() {
@@ -104,16 +103,6 @@ class SettingsService {
 
   Future<void> saveShareIncludeOverview(bool include) {
     return _prefs.setBool(_shareOverviewKey, include);
-  }
-
-  /// Ob der Tagesstand dauerhaft in der Benachrichtigungsleiste steht
-  /// (PLAN.md Phase 23). Standard `true`: Er ist der Grund, warum die Phase
-  /// gebaut wurde — wer ihn nicht will, schaltet ihn hier ab.
-  bool loadStatusNotificationEnabled() =>
-      _prefs.getBool(_statusNotificationKey) ?? true;
-
-  Future<void> saveStatusNotificationEnabled(bool enabled) {
-    return _prefs.setBool(_statusNotificationKey, enabled);
   }
 }
 
@@ -212,7 +201,7 @@ final appLocaleProvider = Provider<Locale?>(
 );
 
 /// Konkrete Sprache für Texte **außerhalb** des Widget-Baums — vor allem die
-/// Notification-Texte (siehe `core/services/notification_service.dart`), die
+/// Texte außerhalb des Widget-Baums, die
 /// keinen `BuildContext` haben.
 final resolvedLocaleProvider = Provider<Locale>(
   (ref) => resolveLocale(ref.watch(appLanguageProvider)),
@@ -251,23 +240,3 @@ final shareIncludeOverviewProvider =
       ShareIncludeOverviewNotifier.new,
     );
 
-class StatusNotificationNotifier extends Notifier<bool> {
-  @override
-  bool build() =>
-      ref.watch(settingsServiceProvider).loadStatusNotificationEnabled();
-
-  Future<void> set(bool enabled) async {
-    state = enabled;
-    await ref.read(settingsServiceProvider).saveStatusNotificationEnabled(
-      enabled,
-    );
-  }
-}
-
-/// Einziger Schalter für die dauerhafte Tagesstand-Meldung (PLAN.md
-/// Phase 23). Gelesen wird er an genau einer Stelle — dem Listener in
-/// `app.dart`, der ohnehin den Fortschritt verteilt.
-final statusNotificationProvider =
-    NotifierProvider<StatusNotificationNotifier, bool>(
-      StatusNotificationNotifier.new,
-    );

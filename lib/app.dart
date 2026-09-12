@@ -10,7 +10,6 @@ import 'core/services/cloud_auto_backup.dart';
 import 'core/services/home_widget_service.dart';
 import 'core/services/profile_cloud_sync.dart';
 import 'core/services/profile_service.dart';
-import 'core/services/notification_service.dart';
 import 'core/services/settings_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/utils/date_utils.dart';
@@ -57,35 +56,6 @@ class _RootInAppState extends ConsumerState<RootInApp> {
   void _refreshAfterBackgroundWrites() {
     final db = ref.read(appDatabaseProvider);
     db.markTablesUpdated({db.habitCompletions});
-  }
-
-  /// Schreibt den Tagesstand in die Benachrichtigungsleiste (siehe PLAN.md
-  /// Phase 23).
-  ///
-  /// Hängt bewusst am **selben** Auslöser wie das Home-Screen-Widget: Der
-  /// Fortschritt wird an einer Stelle beobachtet und von dort an alle
-  /// Empfänger verteilt. Eine zweite Beobachtungsstelle würde früher oder
-  /// später auseinanderlaufen.
-  ///
-  /// Der Dienst räumt die Meldung selbst ab, sobald alles erledigt ist; hier
-  /// wird nur zusätzlich der Nutzer-Schalter beachtet.
-  Future<void> _pushStatusNotification(DailyProgress progress) async {
-    final service = ref.read(notificationServiceProvider);
-    // Der Tagesstand ist Beiwerk: Fehlt die Berechtigung oder antwortet der
-    // Plattform-Kanal nicht, darf das die App nicht mitreißen — sie wird
-    // deswegen benutzt, nicht wegen der Meldung in der Leiste.
-    try {
-      if (!ref.read(statusNotificationProvider)) {
-        return await service.cancelDailyStatus();
-      }
-      await service.showDailyStatus(
-        done: progress.completedCount,
-        total: progress.totalCount,
-        locale: ref.read(resolvedLocaleProvider),
-      );
-    } catch (error) {
-      debugPrint('Tagesstand nicht gesetzt: $error');
-    }
   }
 
   /// Schreibt Fortschritt, gerenderte Diagramme und Farbkacheln ins
@@ -135,8 +105,7 @@ class _RootInAppState extends ConsumerState<RootInApp> {
     // Widget und Leiste zeigen immer **heute**.
     ref.listen(todayProgressProvider, (previous, next) {
       _pushHomeWidgetUpdate(next);
-      _pushStatusNotification(next);
-      // Dritter Empfänger seit Phase 27.7. Der Aufruf ist entprellt und
+      // Zweiter Empfänger seit Phase 27.7. Der Aufruf ist entprellt und
       // schweigt ohne Konto — deshalb steht hier keine Bedingung: Wer die
       // Bedingung an drei Stellen wiederholt, vergisst sie an der vierten.
       ref.read(cloudAutoBackupProvider).scheduleUpload();
@@ -164,14 +133,6 @@ class _RootInAppState extends ConsumerState<RootInApp> {
       unawaited(ref.read(profileCloudSyncProvider).pushLocalName());
     });
 
-    // Wer den Tagesstand abschaltet, soll ihn sofort loswerden — und beim
-    // Wiedereinschalten sofort zurückbekommen, ohne auf die nächste
-    // Fortschritts-Änderung zu warten.
-    ref.listen(statusNotificationProvider, (previous, next) {
-      if (previous == next) return;
-      _pushStatusNotification(ref.read(todayProgressProvider));
-    });
-
     // Ein Sprachwechsel wirkt auch außerhalb des Widget-Baums (siehe PLAN.md
     // Phase 11.5) — beide Stellen ziehen hier gebündelt nach, damit keine
     // Einstellungs-Seite daran denken muss. Beobachtet wird die *aufgelöste*
@@ -179,16 +140,6 @@ class _RootInAppState extends ConsumerState<RootInApp> {
     // Durchlauf.
     ref.listen(resolvedLocaleProvider, (previous, next) async {
       if (previous == next) return;
-
-      // Titel/Text einer Notification werden beim Planen fest
-      // hineingeschrieben — ohne Neuplanen erschiene eine bereits
-      // eingeplante Erinnerung weiterhin in der alten Sprache. Das
-      // `initialize` registriert dabei die iOS-Notification-Kategorie
-      // (Snooze-Button) in der neuen Sprache neu.
-      await ref.read(notificationServiceProvider).initialize(next);
-      await ref.read(habitRepositoryProvider).rescheduleAllReminders();
-
-      if (!mounted) return;
       await _pushHomeWidgetUpdate(ref.read(todayProgressProvider));
     });
 

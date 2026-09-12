@@ -53,15 +53,12 @@ dependencies:
   screenshot: ^3.0.0
   shared_preferences: ^2.5.5
   url_launcher: ^6.3.2
-  flutter_local_notifications: ^22.1.0
   # ^0.20.2 statt ^0.20.3: `flutter_localizations` pinnt intl fest auf die
   # vom SDK mitgelieferte Version — eine höhere Untergrenze macht die
   # Auflösung unlösbar.
   intl: ^0.20.2
   drift_flutter: ^0.3.1
   sqlite3: ^3.5.0
-  flutter_timezone: ^5.1.0
-  timezone: ^0.11.1
   flutter_file_dialog: ^3.3.1
   home_widget: ^0.9.3
   # Mit Phase 26.11 dazugekommen — und zwar als BEHEBUNG, nicht als Zuwachs:

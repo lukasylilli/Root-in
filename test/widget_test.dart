@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:root_in/core/services/notification_service.dart';
 import 'package:root_in/core/services/settings_service.dart';
 import 'package:root_in/core/services/time_service.dart';
 import 'package:root_in/data/local/database.dart';
@@ -9,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:root_in/app.dart';
 
 import 'support/dispose_and_flush.dart';
-import 'support/fake_notification_service.dart';
 import 'support/test_database.dart';
 import 'support/test_time_service.dart';
 
@@ -43,9 +41,6 @@ void main() {
           // den Tagesstand an die Benachrichtigungsleiste — der echte Dienst
           // greift dafür auf einen Plattform-Kanal zu, den es im Test nicht
           // gibt.
-          notificationServiceProvider.overrideWithValue(
-            FakeNotificationService(),
-          ),
         ],
         child: const RootInApp(),
       ),
@@ -123,13 +118,15 @@ void main() {
   testWidgets('„Weiter" blättert bis zum Start-Knopf durch', (tester) async {
     await pumpApp(tester, language: 'german', onboardingSeen: false);
 
-    // Vier Seiten: dreimal „Weiter", dann steht „Los geht's" da.
-    for (var i = 0; i < 3; i++) {
+    // Drei Seiten: zweimal „Weiter", dann steht „Los geht's" da.
+    // ⚠️ Seit Phase 28 sind es DREI statt vier — die Erinnerungs-Folie ist
+    // mit den Erinnerungen weggefallen.
+    for (var i = 0; i < 2; i++) {
       await tester.tap(find.text('Weiter'));
       await tester.pumpAndSettle();
     }
 
-    expect(find.text('Erinnerungen und Widgets'), findsOneWidget);
+    expect(find.text('Fortschritt im Blick'), findsOneWidget);
     expect(find.text('Weiter'), findsNothing);
 
     await tester.tap(find.text('Los geht\'s'));

@@ -1,7 +1,7 @@
 /// Nutzerkonten (PLAN.md Phase 27.5).
 ///
 /// **Einzige** Stelle im Projekt, die `supabase_flutter` kennt — dieselbe
-/// Bauart wie `notification_service.dart` oder `share_service.dart`. Die
+/// Bauart wie `share_service.dart`. Die
 /// Oberfläche spricht nur mit [AuthService].
 library;
 

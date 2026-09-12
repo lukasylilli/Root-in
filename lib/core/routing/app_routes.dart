@@ -31,7 +31,6 @@ abstract final class AppRoutes {
 
   static const String account = '/account';
   static const String categories = '/categories';
-  static const String reminders = '/reminders';
 
   /// Erststart-Erklärung (siehe PLAN.md Phase 11.6). Wird nicht angesteuert,
   /// sondern ist beim allerersten Start die Startroute.

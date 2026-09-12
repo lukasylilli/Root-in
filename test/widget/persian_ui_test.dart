@@ -126,15 +126,16 @@ void main() {
       faL10n.achievementStreak100Title,
       isNot(de.achievementStreak100Title),
     );
-    expect(faL10n.notificationBody, isNot(de.notificationBody));
+    expect(faL10n.cloudBackupNow, isNot(de.cloudBackupNow));
   });
 
   test('Persisch ist eine unterstützte Locale und die App-Sprache dafür', () {
     expect(AppLocalizations.supportedLocales, contains(fa));
     // Ohne diesen Schritt bliebe die Oberfläche deutsch (Stand Phase 17.2).
     expect(AppLanguage.persian.locale, fa);
-    // Texte ohne BuildContext (Benachrichtigungen) müssen fa auflösen können.
+    // Texte ohne BuildContext (Standard-Kategorien beim Erststart, Texte
+    // fürs Teilen) müssen fa auflösen können.
     expect(resolveLocale(AppLanguage.persian), fa);
-    expect(lookupAppLocalizations(fa).notificationChannelName, isNotEmpty);
+    expect(lookupAppLocalizations(fa).navHome, isNotEmpty);
   });
 }

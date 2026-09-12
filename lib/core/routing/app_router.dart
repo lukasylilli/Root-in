@@ -6,7 +6,6 @@ import '../../features/guide/presentation/guide_page.dart';
 import '../../features/guide/presentation/guide_topic.dart';
 import '../../features/others/presentation/others_folder_page.dart';
 import '../../features/others/presentation/others_folders_page.dart';
-import '../../features/settings/presentation/reminders_page.dart';
 import '../../features/home/presentation/home_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
@@ -89,10 +88,6 @@ GoRouter createAppRouter({required bool showOnboarding}) => GoRouter(
     GoRoute(
       path: AppRoutes.categories,
       builder: (context, state) => const CategoriesPage(),
-    ),
-    GoRoute(
-      path: AppRoutes.reminders,
-      builder: (context, state) => const RemindersPage(),
     ),
   ],
 );

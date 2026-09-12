@@ -36,8 +36,6 @@ void main() {
       startDate: DateTime(2026, 7, 1),
       createdAt: DateTime(2026, 7, 1),
       archived: false,
-      reminderEnabled: false,
-      reminderMinuteOfDay: null,
     );
 
     await db.backupDao.replaceAll(

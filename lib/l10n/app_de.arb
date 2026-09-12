@@ -7,7 +7,6 @@
   "navSettings": "Einstellungen",
   "pageAccountTitle": "Konto",
   "pageCategoriesTitle": "Kategorien",
-  "pageRemindersTitle": "Erinnerungen",
   "tabWeek": "Woche",
   "tabOverview": "Übersicht",
   "tabMonth": "Monat",
@@ -93,28 +92,6 @@
   "categoryWriting": "Schreiben",
   "categorySpeaking": "Sprechen",
   "categoryListening": "Hören",
-  "reminderDaily": "Tägliche Erinnerung",
-  "reminderOff": "Aus",
-  "reminderNone": "Keine Erinnerung",
-  "reminderChangeTime": "Uhrzeit ändern",
-  "reminderAt": "Um {time}",
-  "@reminderAt": {
-    "description": "Untertitel im Habit-Formular, wenn eine Erinnerungszeit gesetzt ist",
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "reminderDailyAt": "Täglich um {time}",
-  "@reminderDailyAt": {
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "remindersEmpty": "Noch keine Gewohnheiten. Lege zuerst eine an, um sie hier an eine Uhrzeit zu erinnern.",
   "settingsAppearance": "Darstellung",
   "themeLight": "Hell",
   "themeDark": "Dunkel",
@@ -136,7 +113,6 @@
   "settingsAccountTitle": "Konto-Infos",
   "settingsAccountSubtitle": "Profil, lebenslange Statistik, Achievements",
   "settingsCategoriesSubtitle": "Anlegen, umbenennen, löschen",
-  "settingsRemindersSubtitle": "Uhrzeiten aller Gewohnheiten auf einen Blick",
   "settingsShareApp": "App teilen",
   "settingsExport": "Sicherung exportieren",
   "settingsExportSubtitle": "Ein Update löscht nichts. Eine Sicherung hilft bei Geräteverlust oder Neuinstallation.",
@@ -437,8 +413,6 @@
   "onboardingHabitsBody": "Lege Gewohnheiten aus einer Vorlage oder frei an; jede gehört zu einer Kategorie, die du selbst verwaltest. Auf „Heute“ hakst du ab, was erledigt ist — oder trägst Minuten ein, wenn du dir ein Dauer-Ziel gesetzt hast.",
   "onboardingProgressTitle": "Fortschritt im Blick",
   "onboardingProgressBody": "Prozent und Punkte siehst du auf jeder Seite, unter „View“ zusätzlich nach Woche, Monat und Jahr. Für deine Serie darfst du pro Woche einen Tag auslassen, ohne sie zu verlieren.",
-  "onboardingRemindersTitle": "Erinnerungen und Widgets",
-  "onboardingRemindersBody": "Gib jeder Gewohnheit eine Uhrzeit, zu der dich Root-in erinnert. Auf den Startbildschirm kannst du Diagramme, den Tagesring oder eine Farbkachel legen — die Kachel hakt direkt dort ab, ohne die App zu öffnen.",
   "templateYoutube": "YouTube",
   "templateCoursebook": "Kursbuch",
   "templateWorkbook": "Arbeitsbuch",
@@ -450,58 +424,6 @@
   "templateSpeaking": "Sprechen",
   "templateListening": "Hören",
   "templateMemorizing": "Auswendiglernen",
-  "notificationStreakAtRisk": "{count, plural, one{Deine Serie von einem Tag endet um Mitternacht.} other{Deine Serie von {count} Tagen endet um Mitternacht.}}",
-  "@notificationStreakAtRisk": {
-    "description": "Text der täglichen Erinnerung, wenn eine Serie läuft (PLAN.md Phase 23)",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "notificationStatusChannelName": "Tagesstand",
-  "notificationStatusChannelDescription": "Zeigt dauerhaft, was heute noch offen ist",
-  "notificationStatusTitle": "Heute: {done} von {total} erledigt",
-  "@notificationStatusTitle": {
-    "placeholders": {
-      "done": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "notificationStatusBody": "{count, plural, one{Eine Gewohnheit ist noch offen.} other{{count} Gewohnheiten sind noch offen.}}",
-  "@notificationStatusBody": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "settingsStatusNotification": "Tagesstand in der Leiste",
-  "settingsStatusNotificationSubtitle": "Bleibt sichtbar, solange heute etwas offen ist.",
-  "notificationChannelName": "Erinnerungen",
-  "notificationChannelDescription": "Tägliche Erinnerungen an Gewohnheiten",
-  "notificationSnoozeAction": "10 Min. später",
-  "notificationTitle": "Zeit für: {habit}",
-  "@notificationTitle": {
-    "placeholders": {
-      "habit": {
-        "type": "String"
-      }
-    }
-  },
-  "notificationBody": "Vergiss deine Gewohnheit heute nicht.",
-  "notificationSnoozedBody": "Erinnerung um {minutes} Minuten verschoben.",
-  "@notificationSnoozedBody": {
-    "placeholders": {
-      "minutes": {
-        "type": "int"
-      }
-    }
-  },
   "homeWidgetSubtitle": "{done}/{total} erledigt",
   "homeWidgetOpen": "{count, plural, one{Noch 1 offen} other{Noch {count} offen}}",
   "@homeWidgetOpen": {
@@ -574,7 +496,9 @@
   "cloudLastBackup": "Zuletzt gesichert: {when}",
   "@cloudLastBackup": {
     "placeholders": {
-      "when": { "type": "String" }
+      "when": {
+        "type": "String"
+      }
     }
   },
   "cloudNeverBackedUp": "Noch nie gesichert",

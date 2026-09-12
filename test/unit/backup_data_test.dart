@@ -23,8 +23,6 @@ void main() {
         startDate: DateTime(2026, 7, 1),
         createdAt: DateTime(2026, 7, 1),
         archived: false,
-        reminderEnabled: true,
-        reminderMinuteOfDay: 450,
       ),
     ],
     completions: [
@@ -57,8 +55,6 @@ void main() {
     expect(habit.targetMinutes, 30);
     expect(habit.timesPerWeek, 5);
     expect(habit.archived, isFalse);
-    expect(habit.reminderEnabled, isTrue);
-    expect(habit.reminderMinuteOfDay, 450);
 
     final completion = restored.completions.single;
     expect(completion.habitId, 7);

@@ -136,31 +136,6 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     ),
     defaultValue: const Constant(false),
   );
-  static const VerificationMeta _reminderEnabledMeta = const VerificationMeta(
-    'reminderEnabled',
-  );
-  @override
-  late final GeneratedColumn<bool> reminderEnabled = GeneratedColumn<bool>(
-    'reminder_enabled',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("reminder_enabled" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _reminderMinuteOfDayMeta =
-      const VerificationMeta('reminderMinuteOfDay');
-  @override
-  late final GeneratedColumn<int> reminderMinuteOfDay = GeneratedColumn<int>(
-    'reminder_minute_of_day',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -174,8 +149,6 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     startDate,
     createdAt,
     archived,
-    reminderEnabled,
-    reminderMinuteOfDay,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -256,24 +229,6 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         archived.isAcceptableOrUnknown(data['archived']!, _archivedMeta),
       );
     }
-    if (data.containsKey('reminder_enabled')) {
-      context.handle(
-        _reminderEnabledMeta,
-        reminderEnabled.isAcceptableOrUnknown(
-          data['reminder_enabled']!,
-          _reminderEnabledMeta,
-        ),
-      );
-    }
-    if (data.containsKey('reminder_minute_of_day')) {
-      context.handle(
-        _reminderMinuteOfDayMeta,
-        reminderMinuteOfDay.isAcceptableOrUnknown(
-          data['reminder_minute_of_day']!,
-          _reminderMinuteOfDayMeta,
-        ),
-      );
-    }
     return context;
   }
 
@@ -329,14 +284,6 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         DriftSqlType.bool,
         data['${effectivePrefix}archived'],
       )!,
-      reminderEnabled: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}reminder_enabled'],
-      )!,
-      reminderMinuteOfDay: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}reminder_minute_of_day'],
-      ),
     );
   }
 
@@ -366,15 +313,6 @@ class Habit extends DataClass implements Insertable<Habit> {
   final DateTime startDate;
   final DateTime createdAt;
   final bool archived;
-
-  /// Erinnerung an (siehe PLAN.md Phase 7). Nur relevant, wenn
-  /// [reminderMinuteOfDay] gesetzt ist.
-  final bool reminderEnabled;
-
-  /// Uhrzeit der täglichen Erinnerung als Minuten seit Mitternacht (0–1439),
-  /// z. B. 8:30 Uhr = 510. Ein einzelner Int statt Stunde+Minute hält die
-  /// Umrechnung von/zu `TimeOfDay` in der Präsentationsschicht einfach.
-  final int? reminderMinuteOfDay;
   const Habit({
     required this.id,
     required this.name,
@@ -387,8 +325,6 @@ class Habit extends DataClass implements Insertable<Habit> {
     required this.startDate,
     required this.createdAt,
     required this.archived,
-    required this.reminderEnabled,
-    this.reminderMinuteOfDay,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -410,10 +346,6 @@ class Habit extends DataClass implements Insertable<Habit> {
     map['start_date'] = Variable<DateTime>(startDate);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['archived'] = Variable<bool>(archived);
-    map['reminder_enabled'] = Variable<bool>(reminderEnabled);
-    if (!nullToAbsent || reminderMinuteOfDay != null) {
-      map['reminder_minute_of_day'] = Variable<int>(reminderMinuteOfDay);
-    }
     return map;
   }
 
@@ -432,10 +364,6 @@ class Habit extends DataClass implements Insertable<Habit> {
       startDate: Value(startDate),
       createdAt: Value(createdAt),
       archived: Value(archived),
-      reminderEnabled: Value(reminderEnabled),
-      reminderMinuteOfDay: reminderMinuteOfDay == null && nullToAbsent
-          ? const Value.absent()
-          : Value(reminderMinuteOfDay),
     );
   }
 
@@ -458,10 +386,6 @@ class Habit extends DataClass implements Insertable<Habit> {
       startDate: serializer.fromJson<DateTime>(json['startDate']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       archived: serializer.fromJson<bool>(json['archived']),
-      reminderEnabled: serializer.fromJson<bool>(json['reminderEnabled']),
-      reminderMinuteOfDay: serializer.fromJson<int?>(
-        json['reminderMinuteOfDay'],
-      ),
     );
   }
   @override
@@ -481,8 +405,6 @@ class Habit extends DataClass implements Insertable<Habit> {
       'startDate': serializer.toJson<DateTime>(startDate),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'archived': serializer.toJson<bool>(archived),
-      'reminderEnabled': serializer.toJson<bool>(reminderEnabled),
-      'reminderMinuteOfDay': serializer.toJson<int?>(reminderMinuteOfDay),
     };
   }
 
@@ -498,8 +420,6 @@ class Habit extends DataClass implements Insertable<Habit> {
     DateTime? startDate,
     DateTime? createdAt,
     bool? archived,
-    bool? reminderEnabled,
-    Value<int?> reminderMinuteOfDay = const Value.absent(),
   }) => Habit(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -514,10 +434,6 @@ class Habit extends DataClass implements Insertable<Habit> {
     startDate: startDate ?? this.startDate,
     createdAt: createdAt ?? this.createdAt,
     archived: archived ?? this.archived,
-    reminderEnabled: reminderEnabled ?? this.reminderEnabled,
-    reminderMinuteOfDay: reminderMinuteOfDay.present
-        ? reminderMinuteOfDay.value
-        : this.reminderMinuteOfDay,
   );
   Habit copyWithCompanion(HabitsCompanion data) {
     return Habit(
@@ -538,12 +454,6 @@ class Habit extends DataClass implements Insertable<Habit> {
       startDate: data.startDate.present ? data.startDate.value : this.startDate,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       archived: data.archived.present ? data.archived.value : this.archived,
-      reminderEnabled: data.reminderEnabled.present
-          ? data.reminderEnabled.value
-          : this.reminderEnabled,
-      reminderMinuteOfDay: data.reminderMinuteOfDay.present
-          ? data.reminderMinuteOfDay.value
-          : this.reminderMinuteOfDay,
     );
   }
 
@@ -560,9 +470,7 @@ class Habit extends DataClass implements Insertable<Habit> {
           ..write('timesPerWeek: $timesPerWeek, ')
           ..write('startDate: $startDate, ')
           ..write('createdAt: $createdAt, ')
-          ..write('archived: $archived, ')
-          ..write('reminderEnabled: $reminderEnabled, ')
-          ..write('reminderMinuteOfDay: $reminderMinuteOfDay')
+          ..write('archived: $archived')
           ..write(')'))
         .toString();
   }
@@ -580,8 +488,6 @@ class Habit extends DataClass implements Insertable<Habit> {
     startDate,
     createdAt,
     archived,
-    reminderEnabled,
-    reminderMinuteOfDay,
   );
   @override
   bool operator ==(Object other) =>
@@ -597,9 +503,7 @@ class Habit extends DataClass implements Insertable<Habit> {
           other.timesPerWeek == this.timesPerWeek &&
           other.startDate == this.startDate &&
           other.createdAt == this.createdAt &&
-          other.archived == this.archived &&
-          other.reminderEnabled == this.reminderEnabled &&
-          other.reminderMinuteOfDay == this.reminderMinuteOfDay);
+          other.archived == this.archived);
 }
 
 class HabitsCompanion extends UpdateCompanion<Habit> {
@@ -614,8 +518,6 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<DateTime> startDate;
   final Value<DateTime> createdAt;
   final Value<bool> archived;
-  final Value<bool> reminderEnabled;
-  final Value<int?> reminderMinuteOfDay;
   const HabitsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -628,8 +530,6 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.startDate = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.archived = const Value.absent(),
-    this.reminderEnabled = const Value.absent(),
-    this.reminderMinuteOfDay = const Value.absent(),
   });
   HabitsCompanion.insert({
     this.id = const Value.absent(),
@@ -643,8 +543,6 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.startDate = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.archived = const Value.absent(),
-    this.reminderEnabled = const Value.absent(),
-    this.reminderMinuteOfDay = const Value.absent(),
   }) : name = Value(name),
        colorValue = Value(colorValue),
        goalType = Value(goalType);
@@ -660,8 +558,6 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<DateTime>? startDate,
     Expression<DateTime>? createdAt,
     Expression<bool>? archived,
-    Expression<bool>? reminderEnabled,
-    Expression<int>? reminderMinuteOfDay,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -675,9 +571,6 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       if (startDate != null) 'start_date': startDate,
       if (createdAt != null) 'created_at': createdAt,
       if (archived != null) 'archived': archived,
-      if (reminderEnabled != null) 'reminder_enabled': reminderEnabled,
-      if (reminderMinuteOfDay != null)
-        'reminder_minute_of_day': reminderMinuteOfDay,
     });
   }
 
@@ -693,8 +586,6 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<DateTime>? startDate,
     Value<DateTime>? createdAt,
     Value<bool>? archived,
-    Value<bool>? reminderEnabled,
-    Value<int?>? reminderMinuteOfDay,
   }) {
     return HabitsCompanion(
       id: id ?? this.id,
@@ -708,8 +599,6 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       startDate: startDate ?? this.startDate,
       createdAt: createdAt ?? this.createdAt,
       archived: archived ?? this.archived,
-      reminderEnabled: reminderEnabled ?? this.reminderEnabled,
-      reminderMinuteOfDay: reminderMinuteOfDay ?? this.reminderMinuteOfDay,
     );
   }
 
@@ -751,12 +640,6 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     if (archived.present) {
       map['archived'] = Variable<bool>(archived.value);
     }
-    if (reminderEnabled.present) {
-      map['reminder_enabled'] = Variable<bool>(reminderEnabled.value);
-    }
-    if (reminderMinuteOfDay.present) {
-      map['reminder_minute_of_day'] = Variable<int>(reminderMinuteOfDay.value);
-    }
     return map;
   }
 
@@ -773,9 +656,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
           ..write('timesPerWeek: $timesPerWeek, ')
           ..write('startDate: $startDate, ')
           ..write('createdAt: $createdAt, ')
-          ..write('archived: $archived, ')
-          ..write('reminderEnabled: $reminderEnabled, ')
-          ..write('reminderMinuteOfDay: $reminderMinuteOfDay')
+          ..write('archived: $archived')
           ..write(')'))
         .toString();
   }
@@ -1379,8 +1260,6 @@ typedef $$HabitsTableCreateCompanionBuilder =
       Value<DateTime> startDate,
       Value<DateTime> createdAt,
       Value<bool> archived,
-      Value<bool> reminderEnabled,
-      Value<int?> reminderMinuteOfDay,
     });
 typedef $$HabitsTableUpdateCompanionBuilder =
     HabitsCompanion Function({
@@ -1395,8 +1274,6 @@ typedef $$HabitsTableUpdateCompanionBuilder =
       Value<DateTime> startDate,
       Value<DateTime> createdAt,
       Value<bool> archived,
-      Value<bool> reminderEnabled,
-      Value<int?> reminderMinuteOfDay,
     });
 
 final class $$HabitsTableReferences
@@ -1489,16 +1366,6 @@ class $$HabitsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<bool> get reminderEnabled => $composableBuilder(
-    column: $table.reminderEnabled,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get reminderMinuteOfDay => $composableBuilder(
-    column: $table.reminderMinuteOfDay,
-    builder: (column) => ColumnFilters(column),
-  );
-
   Expression<bool> habitCompletionsRefs(
     Expression<bool> Function($$HabitCompletionsTableFilterComposer f) f,
   ) {
@@ -1588,16 +1455,6 @@ class $$HabitsTableOrderingComposer
     column: $table.archived,
     builder: (column) => ColumnOrderings(column),
   );
-
-  ColumnOrderings<bool> get reminderEnabled => $composableBuilder(
-    column: $table.reminderEnabled,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get reminderMinuteOfDay => $composableBuilder(
-    column: $table.reminderMinuteOfDay,
-    builder: (column) => ColumnOrderings(column),
-  );
 }
 
 class $$HabitsTableAnnotationComposer
@@ -1647,16 +1504,6 @@ class $$HabitsTableAnnotationComposer
 
   GeneratedColumn<bool> get archived =>
       $composableBuilder(column: $table.archived, builder: (column) => column);
-
-  GeneratedColumn<bool> get reminderEnabled => $composableBuilder(
-    column: $table.reminderEnabled,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get reminderMinuteOfDay => $composableBuilder(
-    column: $table.reminderMinuteOfDay,
-    builder: (column) => column,
-  );
 
   Expression<T> habitCompletionsRefs<T extends Object>(
     Expression<T> Function($$HabitCompletionsTableAnnotationComposer a) f,
@@ -1723,8 +1570,6 @@ class $$HabitsTableTableManager
                 Value<DateTime> startDate = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
-                Value<bool> reminderEnabled = const Value.absent(),
-                Value<int?> reminderMinuteOfDay = const Value.absent(),
               }) => HabitsCompanion(
                 id: id,
                 name: name,
@@ -1737,8 +1582,6 @@ class $$HabitsTableTableManager
                 startDate: startDate,
                 createdAt: createdAt,
                 archived: archived,
-                reminderEnabled: reminderEnabled,
-                reminderMinuteOfDay: reminderMinuteOfDay,
               ),
           createCompanionCallback:
               ({
@@ -1753,8 +1596,6 @@ class $$HabitsTableTableManager
                 Value<DateTime> startDate = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
-                Value<bool> reminderEnabled = const Value.absent(),
-                Value<int?> reminderMinuteOfDay = const Value.absent(),
               }) => HabitsCompanion.insert(
                 id: id,
                 name: name,
@@ -1767,8 +1608,6 @@ class $$HabitsTableTableManager
                 startDate: startDate,
                 createdAt: createdAt,
                 archived: archived,
-                reminderEnabled: reminderEnabled,
-                reminderMinuteOfDay: reminderMinuteOfDay,
               ),
           withReferenceMapper: (p0) => p0
               .map(

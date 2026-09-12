@@ -45,13 +45,22 @@ void main() {
     return raw;
   }
 
-  /// Baut [raw] auf Schema [version] zurück (1 oder 2) und trägt einen
+  /// Baut [raw] auf Schema [version] zurück (1, 2 oder 3) und trägt einen
   /// Bestand ein, wie ihn eine App dieser Fassung hinterlassen hätte.
+  ///
+  /// ⚠️ Seit Phase 28 geht der Rückbau der Erinnerungs-Spalten **andersherum**
+  /// als früher: Phase 7 hatte sie gebracht, Phase 28 hat sie wieder
+  /// entfernt. Das aktuelle Schema kennt sie also nicht mehr — für einen
+  /// echten Schema-3-Bestand müssen sie hier **angelegt** werden.
   void downgradeTo(Database raw, int version) {
-    if (version < 3) {
-      // Phase 7 hat diese beiden Spalten gebracht.
-      raw.execute('ALTER TABLE habits DROP COLUMN reminder_enabled;');
-      raw.execute('ALTER TABLE habits DROP COLUMN reminder_minute_of_day;');
+    if (version == 3) {
+      raw.execute(
+        'ALTER TABLE habits ADD COLUMN reminder_enabled '
+        'INTEGER NOT NULL DEFAULT 0;',
+      );
+      raw.execute(
+        'ALTER TABLE habits ADD COLUMN reminder_minute_of_day INTEGER;',
+      );
     }
     if (version < 2) {
       // Phase 4.5 hat die Kategorien-Tabelle gebracht.
@@ -129,11 +138,10 @@ void main() {
       containsAll(<String>['Sprachenlernen', 'Sport']),
     );
 
-    // Die Migration 2→3 hat die Erinnerungs-Spalten nachgerüstet; ohne sie
-    // würde jede Abfrage auf `habits` nach dem Update werfen.
+    // Seit Phase 28 gibt es die Erinnerungs-Spalten nicht mehr. Ein Bestand
+    // aus Schema 1 hat sie nie gehabt — er darf trotzdem lesbar sein.
     final habit = await db.habitDao.habitById(7);
-    expect(habit!.reminderEnabled, isFalse);
-    expect(habit.reminderMinuteOfDay, isNull);
+    expect(habit!.name, 'Lesen');
   });
 
   test('Schema 2 → aktuell: Bestand und Kategorien bleiben erhalten', () async {
@@ -153,8 +161,41 @@ void main() {
     expect(categories.map((c) => c.name), contains('Achtsamkeit'));
 
     final habit = await db.habitDao.habitById(42);
-    expect(habit!.reminderEnabled, isFalse);
+    expect(habit!.name, 'Laufen');
   });
+
+  test(
+    'Schema 3 → aktuell: die Erinnerungs-Spalten fallen weg, sonst nichts',
+    () async {
+      // ⚠️ Der Fall, den Phase 28 neu eingeführt hat. Eine Migration, die
+      // eine Spalte entfernt, baut in SQLite die ganze Tabelle neu — genau
+      // dabei kann ein Bestand verloren gehen oder IDs können sich
+      // verschieben. Beides träfe jeden Nutzer der Web-Fassung, der heute
+      // schon Daten hat.
+      final raw = await freshCurrentSchema();
+      downgradeTo(raw, 3);
+      seedOldData(raw);
+      // Ein Bestand MIT gesetzter Erinnerung — es soll nicht nur die leere
+      // Spalte wegfallen, sondern eine benutzte.
+      raw.execute(
+        'UPDATE habits SET reminder_enabled = 1, '
+        'reminder_minute_of_day = 450 WHERE id = 7;',
+      );
+
+      final db = reopen(raw);
+      addTearDown(db.close);
+
+      await expectDataSurvived(db);
+
+      // Und die Spalten sind wirklich weg — nicht nur unbenutzt.
+      final spalten = raw
+          .select('PRAGMA table_info(habits);')
+          .map((row) => row['name'] as String)
+          .toList();
+      expect(spalten, isNot(contains('reminder_enabled')));
+      expect(spalten, isNot(contains('reminder_minute_of_day')));
+    },
+  );
 
   test('aktuelles Schema öffnet sich ohne Migration', () async {
     // Der Normalfall jedes Updates ohne Schema-Änderung: Die Datei ist schon
@@ -166,7 +207,7 @@ void main() {
     addTearDown(db.close);
 
     await expectDataSurvived(db);
-    expect(raw.select('PRAGMA user_version;').first.values.first, 3);
+    expect(raw.select('PRAGMA user_version;').first.values.first, 4);
   });
 
   test('schemaVersion und onUpgrade-Zweige passen zusammen', () {
@@ -179,7 +220,7 @@ void main() {
 
     expect(
       db.schemaVersion,
-      3,
+      4,
       reason:
           'schemaVersion wurde erhöht. Ergänze in database.dart einen '
           'onUpgrade-Zweig, erweitere die Tests oben um das neue Schema und '

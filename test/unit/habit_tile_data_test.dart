@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:root_in/core/services/notification_service.dart';
 import 'package:root_in/core/services/settings_service.dart';
 import 'package:root_in/core/services/time_service.dart';
 import 'package:root_in/data/local/database.dart';
@@ -9,7 +8,6 @@ import 'package:root_in/data/models/habit_goal_type.dart';
 import 'package:root_in/data/repositories/habit_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../support/fake_notification_service.dart';
 import '../support/test_database.dart';
 import '../support/test_time_service.dart';
 
@@ -40,7 +38,6 @@ void main() {
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
         appDatabaseProvider.overrideWithValue(db),
-        notificationServiceProvider.overrideWithValue(FakeNotificationService()),
         timeServiceProvider.overrideWithValue(TestTimeService(today)),
       ],
     );

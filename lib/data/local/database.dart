@@ -47,7 +47,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -76,10 +76,22 @@ class AppDatabase extends _$AppDatabase {
           "INSERT OR IGNORE INTO categories (name) VALUES ('Allgemein')",
         );
       }
-      if (from < 3) {
-        // Erinnerungs-Spalten nachrüsten (siehe PLAN.md Phase 7).
-        await m.addColumn(habits, habits.reminderEnabled);
-        await m.addColumn(habits, habits.reminderMinuteOfDay);
+      // Schema 3 rüstete die zwei Erinnerungs-Spalten NACH. Mit Phase 28
+      // sind sie wieder weg — der Sprung 2 → 4 legt sie deshalb gar nicht
+      // erst an, statt sie anzulegen und sofort zu entfernen.
+      if (from < 4) {
+        // ⚠️ Phase 28: Erinnerungen sind vollständig entfernt (die
+        // Web-Fassung kann keinen Wecker stellen). Die beiden Spalten
+        // verschwinden damit aus dem Schema.
+        //
+        // `alterTable` baut die Tabelle neu und überträgt die verbleibenden
+        // Spalten — Drifts einziger sicherer Weg, eine Spalte loszuwerden.
+        // ⚠️ **Nur die zwei Spalten gehen verloren, sonst nichts:** Die IDs
+        // bleiben dieselben, und daran hängt jede Erledigung
+        // (`habitId`). Eine Migration, die Gewohnheiten neu anlegt, statt
+        // sie zu behalten, würde den ganzen Verlauf von seiner Gewohnheit
+        // trennen — genau das prüft `database_migration_test.dart`.
+        await m.alterTable(TableMigration(habits));
       }
     },
   );
