@@ -61,6 +61,26 @@ def call(method, path, payload=None):
         return json.loads(response.read())
 
 
+IN_CI = bool(os.environ.get("GITHUB_ACTIONS"))
+
+
+def melden(stufe, text):
+    """Gibt eine Meldung so aus, dass die Automatik sie als **Anmerkung** zeigt.
+
+    ⚠️ Ohne das ist ein gescheiterter Lauf von außen stumm: Das Protokoll
+    eines Laufs braucht eine Anmeldung (HTTP 403), die Anmerkungen dagegen
+    sind bei einem öffentlichen Repository frei lesbar. Genau daran hing der
+    erste Fehlschlag dieses Durchgangs — er meldete „exit code 1" und sonst
+    nichts, und niemand konnte sagen, woran es lag.
+    """
+    if IN_CI:
+        # Zeilenumbrüche müssen in Arbeitsablauf-Befehlen maskiert werden,
+        # sonst bricht die Meldung nach der ersten Zeile ab.
+        print(f"::{stufe}::{text}".replace("\n", "%0A"), flush=True)
+    else:
+        print(f"  [{stufe}] {text}", flush=True)
+
+
 def chromedriver_pfad():
     """Wo ChromeDriver liegt — auf GitHub-Runnern über `CHROMEWEBDRIVER`."""
     ordner = os.environ.get("CHROMEWEBDRIVER")
@@ -95,7 +115,7 @@ def main():
                 ]},
             }}})["value"]["sessionId"]
         except Exception as error:
-            print(f"ChromeDriver nicht erreichbar: {error}")
+            melden("error", f"ChromeDriver nicht erreichbar: {error}")
             return 2
 
         def js(script):
@@ -200,9 +220,13 @@ def main():
             allen drei Sprachen anbieten."""
             return any(tap(label, wait=wait) for label in labels)
 
+        bestanden = [0]
+
         def check(name, condition, detail=""):
             print(f"  {'✓' if condition else '✗'} {name}{'  ' + detail if detail else ''}")
-            if not condition:
+            if condition:
+                bestanden[0] += 1
+            else:
                 failures.append(name)
 
         print(f"Prüfe: {URL}\n")
@@ -212,7 +236,9 @@ def main():
         # Prüfungen würden sonst dieselbe eine Ursache vielfach melden.
         if not boot():
             check("App startet", False)
-            print(f"\nABBRUCH: {diagnosis()}")
+            grund = diagnosis()
+            print(f"\nABBRUCH: {grund}")
+            melden("error", f"Browser-Durchgang: App kam nicht hoch. {grund}")
             return 1
         check("App startet und zeichnet", True, f"canvas={painted()}")
 
@@ -256,8 +282,11 @@ def main():
         print()
         if failures:
             print(f"FEHLGESCHLAGEN: {len(failures)} — {', '.join(failures)}")
+            melden("error", f"Browser-Durchgang: {len(failures)} von {len(failures) + bestanden[0]} "
+                            f"Prüfungen rot — {', '.join(failures)}")
             return 1
         print("Alles bestanden.")
+        melden("notice", f"Browser-Durchgang: alle {bestanden[0]} Prüfungen grün.")
         return 0
 
     finally:
