@@ -2,22 +2,21 @@
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
 >
-> **Stand 2026-08-17.** Android-Code fertig und signiert · Web-Fassung live unter `lukasylilli.github.io/Root-in/` · **Nutzerkonten und Cloud-Sicherung laufen** · **228 Tests grün**, `flutter analyze` sauber, 20/20 im echten Browser, 13/13 Zugriffsregeln am Server.
+> **Stand 2026-08-17.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **205 Tests grün**, `flutter analyze` sauber, 20/20 im echten Browser, 13/13 Zugriffsregeln am Server.
 >
-> ✅ **[Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-) ist codeseitig fertig.** ⚠️ Sie kehrt Abschnitt 3 um — Root-in war von Tag eins „vollständig lokal, kein Backend, keine Nutzerkonten". Was daran hängt, steht in 27.0.
+> ⚠️ **Am 2026-08-17 endgültig festgelegt: es gibt nur die Web-Fassung** (siehe [Phase 28](#phase-28--nur-noch-web--umgesetzt-2026-08-17)). Android, iOS und Desktop sind **aus dem Projekt entfernt**, ebenso die Erinnerungen — ein Browser kann keinen Wecker stellen. Die Versionsgeschichte behält alles; der letzte Stand mit Android ist der Commit vom 2026-08-17.
 >
-> ⚠️ **Ziel neu gesetzt am 2026-08-17: die Web-Fassung ist das Ziel** — „alle sollen sie ohne App Store oder Google Play nutzen können". Android und iOS nativ sind **zurückgestellt**, nicht gestrichen. Was das ändert, steht in [Abschnitt 2](#2-zielplattformen).
+> ✅ **[Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-)**: freiwilliges Konto, Cloud-Sicherung. ⚠️ Sie kehrt Abschnitt 3 um — Root-in war von Tag eins „vollständig lokal, kein Backend".
 >
-> ⬜ **Was noch offen ist — nach der neuen Zielsetzung sortiert:**
+> ⬜ **Was noch offen ist:**
 >
 > | Offen | Wer | Dringlichkeit |
 > |---|---|---|
-> | **Durchgang der Web-Fassung auf einem echten iPhone** (26 + Konto/Sicherung) | Nutzer | **hoch** — das ist jetzt die Hauptplattform |
-> | **Gist der Datenschutzerklärung nachziehen** (zweifach veraltet) | Nutzer | **hoch** — echte Nutzer, echte E-Mails; unabhängig von jedem Store |
-> | Erinnerungen im Web: bauen oder als Grenze benennen? | Entscheidung | **hoch** — die primäre Plattform hat sie nicht |
+> | **Durchgang auf einem echten iPhone** (Phase 26 + Konto/Sicherung) | Nutzer | **hoch** — das ist die einzige Plattform |
+> | **Gist der Datenschutzerklärung nachziehen** | Nutzer | **hoch** — echte Nutzer, echte E-Mails |
+> | **`meine/` sichern, bevor der Mac geleert wird** | Nutzer | **hoch** — 24 Dateien, bewusst nicht im Repository (28.0) |
 > | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer | mittel |
 > | Konto → Sicherung → Gerät wechseln → Wiederherstellen einmal durchspielen | Nutzer | mittel |
-> | Android-Gerätedurchgang (21.3) · Play-Formular · Play-Veröffentlichung (15) · iOS nativ (12) | — | **zurückgestellt** |
 
 > ⚠️ **Umgebungs-Grundregel dieser Maschine:** Nie Code/SDKs/Dev-Tools unter `~/Desktop` oder `~/Documents` speichern — iCloud „Schreibtisch & Dokumente"-Sync ist hier aktiv und bricht Code-Signing für Binaries (Lehre 1). Immer `~/Projects/<name>` für Projekte, `~/development/<tool>` für SDKs.
 
@@ -32,40 +31,37 @@
 8. [Architektur-Prinzip](#8-architektur-prinzip)
 9. [Arbeitsweise & Konventionen](#9-arbeitsweise--konventionen)
 10. [Roadmap / Phasen](#10-roadmap--phasen)
-    - 10.1 [Erledigte Phasen (Kurzfassung)](#101-erledigte-phasen-kurzfassung) — Phasen 0–11.6, 13, 14, 15.1/15.2, 16–27 ✅
+    - 10.1 [Erledigte Phasen (Kurzfassung)](#101-erledigte-phasen-kurzfassung)
     - 10.2 [Festlegungen aus erledigten Phasen, die man noch braucht](#102-festlegungen-aus-erledigten-phasen-die-man-noch-braucht)
-    - [Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-) ✅ *(Code fertig, Datenschutz-Formalitäten offen)*
-    - **Offene Phasen** *(nach der Zielsetzung vom 2026-08-17 sortiert):*
-      - [Phase 26 — Web-Fassung: was noch offen ist](#phase-26--web-fassung-was-noch-offen-ist-) 🔄 **die Hauptplattform**
-      - [Phase 21.3 — Gerätedurchgang](#phase-213--gerätedurchgang--zurückgestellt) ⬜ zurückgestellt (Android)
-      - [Phase 15 — Veröffentlichung im Google Play Store](#phase-15--veröffentlichung-im-google-play-store-android-) ⏸️ zurückgestellt
-      - [Phase 12 — iOS-Portierung](#phase-12--ios-portierung-) ⏸️ zurückgestellt
+    - [Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-) ✅
+    - [Phase 28 — Nur noch Web](#phase-28--nur-noch-web--umgesetzt-2026-08-17) ✅
+    - [Phase 26 — Web-Fassung: was noch offen ist](#phase-26--web-fassung-was-noch-offen-ist-) 🔄 **die einzige Plattform**
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
     - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–35)
 12. [Offene Fragen](#12-offene-fragen)
 
 ## 1. Vision
-App zum Aufbauen und Verfolgen von Gewohnheiten/Routinen. Nutzer legen Habits an, haken sie täglich ab, sehen Streaks/Statistiken, bekommen Erinnerungen und werden durch kleine Gamification-Elemente motiviert, dranzubleiben. Inhaltlicher Schwerpunkt: Sprachenlernen (siehe Anleitungs-Rubrik und Standard-Kategorien).
+App zum Aufbauen und Verfolgen von Gewohnheiten/Routinen. Nutzer legen Habits an, haken sie täglich ab, sehen Streaks/Statistiken und werden durch kleine Gamification-Elemente motiviert, dranzubleiben. **Erinnerungen gehörten bis Phase 28 dazu und sind entfallen** — Root-in läuft nur im Browser, und ein Browser stellt keinen Wecker. Inhaltlicher Schwerpunkt: Sprachenlernen (siehe Anleitungs-Rubrik und Standard-Kategorien).
 
 ## 2. Zielplattformen
 
-⚠️ **Am 2026-08-17 vom Nutzer neu gesetzt:** *„ziel ist web app, dass alle ohne app store oder google play das nutzen können."* Die Web-Fassung ist damit **das Ziel**, nicht mehr die Überbrückung. Bis dahin stand hier das Gegenteil — Android „primär", Web „Ersatzweg, solange keine Store-Veröffentlichung möglich ist", iOS nativ „bleibt das Ziel". Alle drei Sätze sind hinfällig.
+**Web (PWA) — und sonst nichts.** Erreichbar unter `lukasylilli.github.io/Root-in/`: eine Adresse, kein Store, keine Installation, kein Konto bei Google oder Apple.
 
-| Plattform | Rolle | Stand |
+⚠️ **Am 2026-08-17 vom Nutzer festgelegt**, in zwei Schritten am selben Tag. Zuerst: *„ziel ist web app, dass alle ohne app store oder google play das nutzen können."* Dann, nachdem der Plan Android und iOS nur **zurückgestellt** hatte: *„کلا انتشار در اپ استور و گوگل پلی و نسخه اندروید رو از پلن حذف کن، فقط نسخه وب خواهیم داشت."*
+
+**Entfernt, nicht pausiert** (Phase 28): die Ordner `android/`, `ios/`, `macos/`, `linux/`, `windows/`, die neun Startbildschirm-Widgets, das gesamte Store-Material und der Signaturschlüssel-Weg. ⚠️ **Die Versionsgeschichte behält alles** — wer die Android-Fassung je zurückholen will, findet sie vollständig im Stand vom 2026-08-17. Ein Plan, der Wege aufbewahrt, die niemand mehr gehen wird, ist ein Archiv und kein Plan.
+
+**Was die Entscheidung wert ist:** Kein Store-Konto, keine Prüfzeiten, keine 12-Tester-Regel, keine Altersfreigabe-Formulare, keine 99 $/Jahr für Apple — und ein Update ist ein `git push`.
+
+⚠️ **Was sie kostet, und das gehört ausgesprochen:**
+
+| Fehlt | Warum | Stand |
 |---|---|---|
-| **Web (PWA)** | **das Ziel** — jeder erreicht sie über eine Adresse, ohne Store, ohne Installation, ohne Konto bei Google oder Apple | live unter `lukasylilli.github.io/Root-in/` |
-| Android (APK/Play) | **zurückgestellt.** Der Code bleibt lauffähig und signiert; eine Veröffentlichung ist möglich, aber kein Ziel mehr | Phase 15 pausiert |
-| iOS nativ | **zurückgestellt.** Die Web-Fassung erreicht iPhones bereits über „Zum Home-Bildschirm" | Phase 12 pausiert |
-| Desktop (`macos/`, `linux/`, `windows/`) | ungenutzt | — |
+| **Erinnerungen** | Ein Browser kann keine Weckzeit stellen; `flutter_local_notifications` hat keine Web-Umsetzung | **entfernt** (Phase 28), nicht nur ausgeblendet |
+| **Startbildschirm-Widgets** | Eine Website kann kein Widget stellen | entfernt |
+| **Querformat-Sperre** | Die Ausrichtung gehört im Browser dem Gerät | war nie im Web wirksam |
 
-**Was diese Entscheidung wert ist:** Kein Store-Konto, keine Prüfzeiten, keine 12-Tester-Regel, keine Altersfreigabe-Formulare — und ein Update ist ein `git push`. Genau der Grund, warum Phase 26 überhaupt gebaut wurde.
-
-⚠️ **Was sie kostet, und das gehört ausgesprochen:** Zwei Funktionen gibt es im Browser **nicht** und sie fehlen damit auf der *primären* Plattform:
-
-- **Erinnerungen** (`flutter_local_notifications` hat keine Web-Umsetzung). Web-Push wäre möglich — seit Phase 27 gibt es sogar einen Server dafür —, ist aber ein eigenes Vorhaben (Service Worker, Berechtigungen, Versanddienst; auf iOS nur in der abgelegten Fassung). Siehe Abschnitt 12.
-- **Startbildschirm-Widgets** (9 Stück auf Android). Eine Website kann kein Widget stellen; das bleibt so.
-
-Beide verschwinden im Browser **sichtbar** statt wirkungslos dazustehen (Phase 26.1) — aber ein Nutzer, der nur die Web-Fassung kennt, bekommt eine Habit-App **ohne Erinnerungen**. Das ist die eigentliche offene Frage dieser Neuausrichtung, nicht eine Fußnote.
+Für eine Habit-App ist der Wegfall der Erinnerungen kein Detail. Er ist der Preis dafür, dass **jeder** die App über eine Adresse erreicht — und der Nutzer hat ihn bewusst bezahlt: *„یاد آور ها رو کلا حذف کن چون نسخه وب نمیتونه الارم داشته باشه."*
 
 ## 3. Datenhaltung
 
@@ -85,7 +81,9 @@ Beide verschwinden im Browser **sichtbar** statt wirkungslos dazustehen (Phase 2
 - **Sicherung, kein Abgleich.** Hochladen automatisch, Herunterladen nur auf Nachfrage; zwei Geräte ohne Zusammenführungs-Logik löschen sich sonst gegenseitig Daten.
 - „Wettkampf" zwischen Nutzern läuft **nicht** über den Server, sondern über geteilte **Bilder** des Fortschritts (Telegram-Gruppe, siehe Anleitung „Lernplanung"). Bestätigt 2026-07-19, auch mit Server unverändert.
 
-Lokale Datenbank: Drift (SQLite); Key-Value (Profil, Einstellungen): `shared_preferences`; Export: JSON über Dateisystem bzw. Share-Sheet — **dasselbe JSON, das auch in die Cloud geht.**
+Lokale Datenbank: Drift (SQLite, im Browser über WebAssembly); Key-Value: `shared_preferences` → `localStorage`; Export: JSON über das Share-Sheet bzw. als Download — **dasselbe JSON, das auch in die Cloud geht.**
+
+⚠️ **„Auf dem Gerät" heißt im Browser: im Speicher dieser Website.** Das ist nicht nur eine Formulierung für die Datenschutzerklärung, sondern etwas, das den Nutzer trifft: „Website-Daten löschen" räumt den Bestand ab, und **Safari löscht ihn nach sieben Tagen ohne Besuch**, sofern die Seite nicht auf dem Home-Bildschirm liegt. Daran hängen der einmalige Hinweis aus 26.8 und die Bitte um dauerhaften Speicher beim Start.
 
 ## 4. Tech-Stack
 | Bereich | Wahl | Begründung |
@@ -100,12 +98,10 @@ Lokale Datenbank: Drift (SQLite); Key-Value (Profil, Einstellungen): `shared_pre
 | Matrix-Grid | eigene Komponente | Volle Design-Kontrolle, überall wiederverwendbar |
 | Home-Animation | eigener CustomPainter (+ lottie als Slot) | Berg-Szene ohne Asset-Abhängigkeit |
 | Teilen | share_plus + screenshot | Share-Sheet für App-Link und Fortschritts-Bild |
-| QR-Code | qr_flutter | Store-Link auf der Fortschritts-Karte. Reines Dart, kein Platform-Channel |
+| QR-Code | qr_flutter | Adresse der Web-Fassung auf der Fortschritts-Karte. Reines Dart, kein Platform-Channel |
 | Externe Links | url_launcher | Kontakt, Anleitungs-Links |
-| Datei-Auswahl | flutter_file_dialog | **bewusst nicht `file_picker`** (Lehre 13) |
-| Notifications | flutter_local_notifications (+ timezone, flutter_timezone) | Lokale Erinnerungen (nicht im Web) |
-| Home-Screen-Widget | home_widget | Android App Widgets, später iOS WidgetKit |
-| Lokalisierung | flutter gen-l10n (ARB) + flutter_localizations | DE/EN/**FA** inkl. RTL, 259 Schlüssel je Sprache. `intl` bleibt auf `^0.20.2` (SDK-Pin) |
+| Datei-Auswahl | `<input type="file">` in `core/services/file_pick/` | Im Browser gibt es keine Dateipfade. `flutter_file_dialog` ist mit Phase 28 entfallen |
+| Lokalisierung | flutter gen-l10n (ARB) + flutter_localizations | DE/EN/**FA** inkl. RTL, 276 Schlüssel je Sprache. `intl` bleibt auf `^0.20.2` (SDK-Pin) |
 | Markdown | flutter_markdown_plus | Anleitungs-Texte; Vorgänger ist discontinued |
 | Werbung / In-App-Kauf | ~~google_mobile_ads~~ · ~~in_app_purchase~~ | **Seit Phase 20 vollständig auskommentiert** |
 | Design | Material 3 | Konsistent mit Flutter-Standard |
@@ -119,7 +115,7 @@ Lokale Datenbank: Drift (SQLite); Key-Value (Profil, Einstellungen): `shared_pre
 
 **5.3 View** (Tabs Woche / Übersicht / Monat / Jahr) — Woche/Monat/Jahr je ein individualisierbares Dashboard; **Übersicht** = die letzten vier Kalenderwochen als **eine** quer liegende Bühne mit festem Raster, Vollbild-Knopf, Querformat-Sperre.
 
-**5.4 Einstellungen** — Sprache, Darstellungsmodus, Farb-Variante, Quelle der Berg-Animation · Konto, Kategorien, Erinnerungen · App teilen, Sicherung exportieren/importieren, Kontakt · Rubrik **Root-in Anleitung** (vier Themen) · Eintrag **موارد دیگر** direkt darunter.
+**5.4 Einstellungen** — Sprache, Darstellungsmodus, Farb-Variante, Quelle der Berg-Animation · Konto, Kategorien · App teilen, Sicherung exportieren/importieren, Kontakt · Rubrik **Root-in Anleitung** (vier Themen) · Eintrag **موارد دیگر** direkt darunter.
 
 **5.5 Konto** — ganz oben die Rubrik **„Konto & Cloud"** (Phase 27: anmelden/registrieren, hinterlegte E-Mail, Stand der letzten Sicherung, sichern, wiederherstellen, Server-Daten löschen; **ohne Cloud unsichtbar**). Darunter unverändert: Profil (Name, lokal), Achievements-Grid, längste Serie, Gesamt-Statistik, Dashboard über den gesamten Verlauf, „Fortschritt teilen" (bleibt hier — die Anleitung „Lernplanung" verweist ausdrücklich darauf).
 
@@ -147,7 +143,7 @@ Beim Erststart in der gewählten Sprache angelegt, danach **Nutzerdaten**: frei 
 
 ## 7. Kern-Konzepte
 
-**Punkte & Prozent** — jede Seite zeigt Fortschritt in beidem. **Matrix-Grid** — wiederverwendbare Heatmap (Zellen = Tage, Intensität = Erledigungsgrad). **Diagramme** — Typ-Diagramm je Kategorie + Fortschritts-Trend, via `chart_card.dart`. **Streak** — aktuelle + längste Serie, 1 Tag pro Woche darf ausgelassen werden. **Achievements** — 11 vordefinierte. **Teilen** — App teilen (Text + Store-Link) und Fortschritt teilen (Bild mit fester Breite, Übersicht-Block, QR-Code). **Store-Link** — `core/constants/app_links.dart` ist die einzige Quelle. **Home-Animation** — Berg-Aufstieg, über `AppAssets.homeAnimation` gegen ein Lottie-Asset tauschbar. **Kategorien** — jede Gewohnheit gehört zu genau einer; die Liste verwaltet der Nutzer.
+**Punkte & Prozent** — jede Seite zeigt Fortschritt in beidem. **Matrix-Grid** — wiederverwendbare Heatmap (Zellen = Tage, Intensität = Erledigungsgrad). **Diagramme** — Typ-Diagramm je Kategorie + Fortschritts-Trend, via `chart_card.dart`. **Streak** — aktuelle + längste Serie, 1 Tag pro Woche darf ausgelassen werden. **Achievements** — 11 vordefinierte. **Teilen** — App teilen (Text + Adresse) und Fortschritt teilen (Bild mit fester Breite, Übersicht-Block, QR-Code). **Die geteilte Adresse** — `core/constants/app_links.dart` ist die einzige Quelle. **Home-Animation** — Berg-Aufstieg, über `AppAssets.homeAnimation` gegen ein Lottie-Asset tauschbar. **Kategorien** — jede Gewohnheit gehört zu genau einer; die Liste verwaltet der Nutzer.
 
 ## 8. Architektur-Prinzip
 Feature-first (Dateien im Einzelnen: MAP.md):
@@ -165,11 +161,11 @@ Feature-first (Dateien im Einzelnen: MAP.md):
 
 **Design-Token-Prinzip** — jeder Design-Aspekt hat seine eigene Datei (`app_colors`, `app_theme_tokens`, `app_theme_variant`, `app_fonts`, `app_text_styles`, `app_spacing`, `app_theme`, `app_button`); der Nutzer-Zustand liegt in `settings_service.dart`, die Sprachen in `core/l10n/app_language.dart`. Eine Änderung zieht durch die ganze App.
 
-**Plattform-Weichen heißen nach Fähigkeiten, nicht nach Plattformen** — `supportsReminders` statt `!kIsWeb`. **`kIsWeb` steht an genau einer Stelle**: `core/utils/platform_support.dart`.
+**Plattform-Weichen heißen nach Fähigkeiten, nicht nach Plattformen** — `usesBrowserStorage` statt `kIsWeb`. **`kIsWeb` steht an genau einer Stelle**: `core/utils/platform_support.dart`. ⚠️ Die Regel bleibt, obwohl es nur noch eine Plattform gibt: Sie kostet nichts und hält die Frage lesbar.
 
 **Datenerhalt geht vor** — die Datenbank ist Nutzereigentum. **Jede Änderung an `schemaVersion` braucht im selben Schritt einen `onUpgrade`-Zweig und einen Migrations-Test.** Fehlt er, startet die App nach dem Update nicht mehr auf dem alten Bestand — vom Nutzer aus gesehen dasselbe wie Datenverlust.
 
-**Verifizieren statt annehmen** — „Build erfolgreich" ist kein Beweis. Ergebnisse werden gegengeprüft (Signatur des Bundles, Inhalt geschriebener Widget-Daten, Bildschirmfoto vom Gerät). Ein neuer Oberflächen-Test wird **einmal gegen den kaputten Stand gehalten** (Lehre 32).
+**Verifizieren statt annehmen** — „Build erfolgreich" ist kein Beweis. Ergebnisse werden gegengeprüft (Bildschirmfoto aus dem echten Browser, `tool/webtest.py` gegen die veröffentlichte Seite, `tool/rls_check.sh` von außen). Ein neuer Oberflächen-Test wird **einmal gegen den kaputten Stand gehalten** (Lehre 32).
 
 ## 10. Roadmap / Phasen
 
@@ -218,26 +214,26 @@ Die Langfassungen sind eingedampft; was hier steht, braucht man beim Weiterbauen
 
 **Teilen (19).** Knopf auf Home **und** Konto, beide öffnen `showShareProgressSheet()`. Der Konto-Weg musste bleiben, weil die Anleitung „Lernplanung" ihn wörtlich beschreibt. Die Karte hat eine **feste Breite**; der `Screenshot`-Knoten liegt **innerhalb** der Vorschau-`FittedBox`, sonst wäre das Bild so klein wie die Vorschau. Den Übersicht-Block bekommt sie als **fertiges Widget**, damit `core/` nichts aus `features/` importiert.
 
-**Werbung stillgelegt (20).** Alles auskommentiert, nichts gelöscht; jede Stelle trägt den Marker `PHASE 20 (2026-08-01)`. Wiedereinschalten ist ein `grep`. Der Kaufmerker in `shared_preferences` bleibt unangetastet. ⬜ **Der veröffentlichte Gist der Datenschutzerklärung ist noch nicht nachgezogen** (Phase 15).
+**Werbung stillgelegt (20).** Alles auskommentiert, nichts gelöscht; jede Stelle trägt den Marker `PHASE 20 (2026-08-01)`. Wiedereinschalten ist ein `grep`. Der Kaufmerker in `shared_preferences` bleibt unangetastet. ⬜ **Der veröffentlichte Gist der Datenschutzerklärung ist noch nicht nachgezogen** (27.8).
 
 **Standard-Kategorien (21).** Entstehen beim Erststart in der gewählten Sprache (`ensureDefaultCategories`, nur bei leerer Tabelle); `addMissingCategories` rüstet Bestandsnutzer nach. Sie sind **Nutzerdaten** — nichts im Code schützt sie; das Symbol wird über den **Namen** zugeordnet, wer umbenennt verliert es.
 
 **„موارد دیگر" (22).** Struktur aus `content/others/<sprache>/index.json`, **nicht** aus der GitHub-API (60 Abrufe/Stunde je IP — hinter einer geteilten Mobilfunk-Adresse bliebe die Rubrik leer). **Kein Rückfall zwischen Sprachen.** Vier Fehlerfälle sichtbar unterschieden: kein Netz · Manifest fehlt · Manifest kaputt (der Autor soll erfahren, dass **seine Datei** das Problem ist) · einzelner Text fehlt. Pflege-Anleitung: `store/OTHERS_CONTENT.md`. ⚠️ GitHub liefert mit `max-age=300` — bis zu fünf Minuten Verzögerung nach dem Hochladen.
 
-**Erinnerungen (23).** `flutter_local_notifications` legt den Text **beim Planen** fest, nicht beim Anzeigen — deshalb **zwei** Bausteine: die geplante Erinnerung nennt die Serie (bei jedem Anlass neu geplant), die dauerhafte Tagesstand-Meldung ist immer aktuell und hängt am **selben** Auslöser wie das Startbildschirm-Widget (ein Sender, zwei Empfänger). Der Tagesstand ist bewusst leise und liegt auf einem eigenen Kanal: **Der Druck kommt aus der Zahl, nicht aus dem Geräusch.**
+~~**Erinnerungen (23).**~~ **Mit Phase 28 vollständig entfernt** — samt Tagesstand-Meldung, Paketen, DB-Spalten und ARB-Schlüsseln. Ein Browser stellt keinen Wecker. Was von Phase 23 bleibt, ist ein Gedanke, der weiterträgt: **Ein Sender, mehrere Empfänger.** Der heutige Fortschritt wird in `app.dart` an genau einer Stelle beobachtet; damals hingen Widget und Meldung daran, heute die Cloud-Sicherung. Keine Seite muss daran denken, nach einer Änderung nachzuziehen.
 
-**Datum nachtragen (24).** `selectedDateProvider` ist der eine Schalter; dahinter ein **Override** (`null` = heute), damit die Seite über Mitternacht von selbst weiterspringt. Startbildschirm-Widget und Karte bleiben auf heute (getrennte Provider über dieselbe Family). ⚠️ **Ein Nachtrag verlängert die Serie rückwirkend** — gewollt. Die Datums-Prüfung im Netz bleibt unangetastet: nachtragen ja, „heute" vordatieren nein.
+**Datum nachtragen (24).** `selectedDateProvider` ist der eine Schalter; dahinter ein **Override** (`null` = heute), damit die Seite über Mitternacht von selbst weiterspringt. Die Fortschritts-Karte bleibt auf heute (getrennte Provider über dieselbe Family). ⚠️ **Ein Nachtrag verlängert die Serie rückwirkend** — gewollt. Die Datums-Prüfung im Netz bleibt unangetastet: nachtragen ja, „heute" vordatieren nein.
 
 **Datenerhalt (25).** Ein Update löschte noch nie etwas (Drift liegt in `getApplicationDocumentsDirectory()`); die Gefahr war eine Schema-Änderung ohne Migration. Der Migrations-Test zieht echte Bestände aus Schema 1 und 2 hoch und prüft, dass **dieselben IDs** dastehen — eine Migration, die Gewohnheiten neu anlegt statt sie zu behalten, würde jede Erledigung von ihrer Gewohnheit trennen. Der vierte Testfall ist eine **Bremse**: Er hält `schemaVersion` auf dem geprüften Wert fest.
 
-**Web-Fassung (26).** Drift auf WebAssembly (`sqlite3.wasm` + `drift_worker.js`, von `tool/fetch_web_db_assets.sh` geholt). **Die beste Weiche ist keine Weiche** — Sicherung und Bild-Teilen verloren ihren Plattform-Anteil ganz, statt einen Web-Sonderfall zu bekommen. **Ehrlich abschalten statt still scheitern**: Ohne Erinnerungen verschwinden die zugehörigen Bedienelemente ganz. Bau-Schalter stehen ausschließlich in `tool/build_web.sh` — die Automatik ruft dasselbe Skript. **Kein `gh-pages`-Zweig**: Pages nimmt das Artefakt direkt entgegen, damit landet das Bauergebnis nie in der Versionsgeschichte.
+**Web-Fassung (26).** Drift auf WebAssembly (`sqlite3.wasm` + `drift_worker.js`, von `tool/fetch_web_db_assets.sh` geholt). **Die beste Weiche ist keine Weiche** — Sicherung und Bild-Teilen verloren ihren Plattform-Anteil ganz, statt einen Web-Sonderfall zu bekommen; mit Phase 28 ist diese Linie zu Ende gegangen und die Weichen sind ganz weg. Bau-Schalter stehen ausschließlich in `tool/build_web.sh` — die Automatik ruft dasselbe Skript. **Kein `gh-pages`-Zweig**: Pages nimmt das Artefakt direkt entgegen, damit landet das Bauergebnis nie in der Versionsgeschichte.
 
-**Was die vier Web-Fehler waren (26.10–26.13)** — die Ursachen stehen als Lehren 30–34; hier nur das Ergebnis: `dart:io` ist vollständig aus `lib/` verschwunden (`package:http` überall), die Web-Symbole kommen aus derselben Quelle wie die Android-Symbole, und `web/index.html` trägt **kein** `viewport-fit=cover` und `default` statt `black-translucent`. `tool/webtest.py` prüft seither **17 Punkte** inklusive aller vier Reiter und einer Anleitungs-Seite — und wurde am kaputten Stand rot gemessen, bevor er am reparierten grün wurde.
+**Was die vier Web-Fehler waren (26.10–26.13)** — die Ursachen stehen als Lehren 30–34; hier nur das Ergebnis: `dart:io` ist vollständig aus `lib/` verschwunden (`package:http` überall), die Web-Symbole kommen aus derselben Quelle wie die Android-Symbole, und `web/index.html` trägt **kein** `viewport-fit=cover` und `default` statt `black-translucent`. `tool/webtest.py` prüft seither **20 Punkte** inklusive aller vier Reiter, einer Anleitungs-Seite und der Rubrik „Konto & Cloud" — und wurde am kaputten Stand rot gemessen, bevor er am reparierten grün wurde.
 
 ---
 
 ### Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase) ✅
-**Code fertig am 2026-08-17.** Offen bleiben nur zwei Formalitäten beim Nutzer (27.8) — die aber Phase 15 blockieren.
+**Code fertig am 2026-08-17.** Offen bleibt beim Nutzer nur noch der veröffentlichte Gist (27.8) und ein eigener SMTP-Dienst (27.2).
 **Vom Nutzer am 2026-08-16 beauftragt:** *„اطلاعات حساب کاربر اینجا ذخیره بشه — Supabase … اینجوری ی سرور داریم که رایگان و اتوماتیک اطلاعات کاربران رو ذخیره میکنه."* Ein Server, der die Nutzerdaten kostenlos und automatisch aufbewahrt.
 
 #### 27.0 Was diese Phase umkehrt — vor dem ersten Handgriff lesen
@@ -248,11 +244,10 @@ Die Langfassungen sind eingedampft; was hier steht, braucht man beim Weiterbauen
 |---|---|---|
 | Abschnitt 3 | „kein Backend, keine Nutzerkonten" | Server als **Kopie**, Konto **freiwillig** |
 | `store/PRIVACY_POLICY.md` | „Daten verlassen das Gerät nicht" | muss die Server-Speicherung nennen — **und der Gist muss nachgezogen werden** (er aktualisiert sich nicht von selbst) |
-| Play-Datensicherheitsformular | „keine Daten erhoben" | **wird falsch** — Konto und Nutzerdaten sind zu deklarieren |
 | Phase 22 | „kein Rückkanal, das wäre ein Server" | der Server existiert dann; die Entscheidung bleibt trotzdem, siehe Abschnitt 12 |
 | Phase 26.5 | „Root-in hat heute keine Geheimnisse" | der `anon`-Schlüssel kommt ins Bundle (kein Geheimnis, siehe 27.3), der `service_role`-Schlüssel **niemals** |
 
-⚠️ **Die Datenschutz-Anpassung ist nicht der letzte Schritt, sondern eine Bedingung der Veröffentlichung.** Ein Store-Eintrag mit „keine Daten erhoben" und einer App, die Daten hochlädt, ist eine Falschangabe gegenüber Google. **Phase 15 darf erst weitergehen, wenn 27.8 erledigt ist.**
+⚠️ **Die Datenschutz-Anpassung ist keine Nacharbeit.** Wer die Adresse an Schüler gibt und deren E-Mail speichert, schuldet ihnen einen zutreffenden Text. Mit Phase 28 ist der Text nachgezogen; offen bleibt nur noch der veröffentlichte Gist.
 
 #### 27.0b Die Entscheidungen des Nutzers ✅ *(getroffen 2026-08-16)*
 
@@ -420,14 +415,13 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 
 ⚠️ **Mit der Entscheidung für echte E-Mails wiegt dieser Abschnitt schwerer als geplant.** Eine E-Mail-Adresse ist ein personenbezogenes Datum; damit werden auch Gewohnheiten und Erledigungen personenbezogen, weil sie einer identifizierbaren Person zugeordnet sind. Das ist keine Formalie mehr.
 
-⚠️ **Und seit dem 2026-08-17 hängt es nicht mehr an Phase 15.** Bisher stand hier „blockiert die Play-Veröffentlichung" — das war die schwächere Begründung, und mit dem Zurückstellen von Phase 15 wäre sie ganz weggefallen. **Die Pflicht bleibt trotzdem:** Wer die Web-Adresse an 200 Schüler gibt und deren E-Mail speichert, schuldet ihnen eine zutreffende Datenschutzerklärung — ganz ohne Store. Ein Formular bei Google war nie der Grund, sondern nur der Anlass.
+⚠️ **Die Begründung hat einmal gewechselt, die Pflicht nie.** Bis zum 2026-08-17 stand hier „blockiert die Play-Veröffentlichung". Mit der Streichung von Store und Android (Phase 28) wäre diese Begründung ersatzlos weggefallen — die Pflicht aber nicht: Wer 200 Schülern eine Adresse gibt und ihre E-Mail speichert, schuldet ihnen einen zutreffenden Text, ganz ohne Store. **Ein Grund, der beim ersten Gegenwind verschwindet, war der falsche Grund.**
 
 - [x] **`store/PRIVACY_POLICY.md` überarbeitet, beide Sprachfassungen.** Neuer Punkt 4 („Konto und Sicherung auf dem Server") nennt in einer Tabelle **welche** Daten, **wozu**, **wo** (Supabase, EU/Frankfurt), **wer sie sieht** (nur der Eigentümer, technisch über RLS), **wann** hochgeladen wird und **wie** man sie loswird. Die Kurzfassung sagt in beiden Sprachen zuerst: **ohne Konto verlässt nichts das Gerät.**
 - [x] **Punkt 9 (Rechte) neu geschrieben** — der alte Satz „wir speichern nichts, also gibt es nichts herauszugeben" ist mit Konto schlicht falsch. Jetzt: Auskunft/Übertragbarkeit über den vorhandenen Export, Berichtigung in der App, Löschung, Rechtsgrundlage Einwilligung, Aufsichtsbehörde.
 - [x] **Die Erststart-Erklärung sagt es jetzt richtig** (alle drei Sprachen): „Deine Daten bleiben auf diesem Gerät; ein Konto ist freiwillig und legt zusätzlich eine Sicherung an." Der alte Satz behauptete das Gegenteil dessen, was die App seit heute kann.
 - [x] **„Daten auf dem Server löschen"** in der Rubrik „Konto & Cloud" (`deleteServerData()`): löscht Sicherung und Profilzeile, lässt den lokalen Bestand unangetastet. ⚠️ **Das ist bewusst nicht als „Konto löschen" beschriftet** — der Eintrag in `auth.users` bleibt, weil der öffentliche Schlüssel ihn nicht entfernen darf. Die Datenschutzerklärung nennt dafür den Weg über eine Nachricht; sie darf den Knopf **nicht** als vollständige Löschung ausgeben.
 - [ ] ⬜ **Den Gist neu speichern** — er zieht nicht von selbst nach (steht seit Phase 20 offen und ist jetzt **zweifach** veraltet). Muss der Nutzer tun; Quelle ist `store/PRIVACY_POLICY.md`.
-- [ ] ⏸️ **Play-Datensicherheitsformular** — nur relevant, falls Phase 15 je wieder aufgenommen wird. Dann: **nicht mehr „keine Daten erhoben"**, sondern mindestens E-Mail-Adresse und App-Aktivität mit Zweck und Übertragung.
 - [ ] ⬜ *(später, nicht blockierend)* Vollständige Kontolöschung über eine Edge Function, damit der Weg nicht über eine Nachricht laufen muss.
 - [ ] Abschnitt 3 dieses Plans und die Datenschutz-Aussage im Onboarding prüfen — dort steht heute wörtlich, dass alles auf dem Gerät bleibt.
 
@@ -457,10 +451,9 @@ Die Fortschritts-Karte trug seit Phase 19 den Play-Store-Link — für eine App,
 ⚠️ **Warum das besonders unangenehm ist:** Ein geteiltes Bild bleibt in Chats liegen. Wer den Code scannt und eine Fehlerseite bekommt, probiert es kein zweites Mal — **und meldet es auch nicht.** Der Schaden ist still und dauerhaft.
 
 - [x] **`appShareUrl` ist die neue eine Quelle** und zeigt auf die **Web-Fassung**. Zwei Gründe, und der zweite gilt auch nach einer Play-Veröffentlichung weiter: Der Link war schlicht tot — **und** eine Play-Seite schließt genau die iPhone-Nutzer aus, für die die Web-Fassung überhaupt gebaut wurde (Phase 26). Wer teilt, weiß nicht, was der Empfänger benutzt.
-- [x] `playStoreUrl` **bleibt** (aus dem Paketnamen abgeleitet) — er wird gebraucht, sobald veröffentlicht wird. Ein Wechsel ist dann **eine Zeile**, und alle drei Leser ziehen mit.
 - [x] ⚠️ **Der bestehende Test hat den Fehler mitgetragen.** Er prüfte, dass `playStoreUrl` korrekt gebildet ist — das war es. Es war nur die **falsche** Adresse. Geprüft wird jetzt `appShareUrl`, dazu `test/unit/app_links_test.dart` mit der ausdrücklichen Regel „geteilt wird die Web-Fassung, nicht der Store".
 
-⬜ **Offen bleibt die Entscheidung des Nutzers, ob überhaupt in den Play Store veröffentlicht wird.** Sie ändert an dieser Behebung nichts: Die Web-Adresse funktioniert in jedem Fall, und der Store-Link ist eine Zeile entfernt.
+✅ **Mit Phase 28 ist die Frage entschieden:** Es gibt keine Store-Veröffentlichung, `playStoreUrl` ist gestrichen, `appShareUrl` zeigt auf die Web-Fassung — die einzige, die es gibt.
 
 #### 27.10 Risiken, die diese Phase mitbringt
 | Risiko | Folge | Umgang |
@@ -470,14 +463,14 @@ Die Fortschritts-Karte trug seit Phase 19 den Play-Store-Link — für eine App,
 | Kein tägliches Server-Backup im freien Tarif | Serverdaten könnten verloren gehen | tragbar, **weil** das Gerät die Quelle der Wahrheit bleibt — der Bestand wandert wieder hoch |
 | **Kein eigener SMTP-Dienst** | Passwort-Zurücksetzen unmöglich; eingebauter Versand schafft **2 Nachrichten/Stunde** und nur an eigene Team-Adressen | E-Mail jetzt schon erfassen, „Confirm email" aus; SMTP nachrüsten — wirkt rückwirkend für alle (27.0b/27.2) |
 | **Tippfehler in der E-Mail** (weil unbestätigt) | fällt erst beim Zurücksetzen auf, also im schlechtesten Moment | Adresse sichtbar und änderbar in „Konto & Cloud" (27.5) |
-| **E-Mail = personenbezogenes Datum** | Datenschutzerklärung und Play-Formular werden falsch | 27.8 ist Bedingung für Phase 15, nicht Nacharbeit |
+| **E-Mail = personenbezogenes Datum** | Die Datenschutzerklärung wird falsch | 27.8 — Pflicht gegenüber echten Nutzern, ganz ohne Store |
 | RLS vergessen oder falsch | **fremde Daten für jeden lesbar** | RLS im selben Schritt wie die Tabelle, Gegenprobe in 27.4 |
 | `service_role`-Schlüssel gerät in die App | vollständiger Datenbank-Zugriff für jeden | Schlüssel nie ins Repository; im Bundle nach ihm suchen |
 | Zwei Geräte, ein Konto | ein Bestand überschreibt den anderen | Sicherung statt Abgleich, Wiederherstellung nur auf Nachfrage |
 
 ---
 
-### Phase 28 — Nur noch Web 🔄 *(beauftragt 2026-08-17)*
+### Phase 28 — Nur noch Web ✅ *(umgesetzt 2026-08-17)*
 
 **Vier Anweisungen des Nutzers, in seinen Worten:**
 
@@ -500,90 +493,41 @@ Nach dem Löschen gibt es **keine zweite Kopie**. Alles, was nicht im Repository
 | Signaturschlüssel `~/development/keys/root-in-upload.jks` | ⛔ außerhalb des Projekts | Mit Anweisung 3 **gegenstandslos**. Wer ihn trotzdem behalten will, sichert ihn jetzt; ohne ihn ist eine Play-Veröffentlichung später unmöglich |
 | `.claude/settings.local.json` | ⛔ nicht versioniert | egal — maschinenlokal |
 
-#### 28.1 Erinnerungen vollständig entfernen ⬜
+#### 28.1 Erinnerungen vollständig entfernt ✅
 
 Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffen sind neun Ebenen, und keine darf übrig bleiben — ein halb entfernter Feature-Strang ist schlimmer als gar keiner:
 
-- [ ] `core/services/notification_service.dart` und `features/settings/presentation/reminders_page.dart` löschen
-- [ ] Route `/reminders` aus `app_routes.dart` + `app_router.dart`, Eintrag aus `settings_page.dart`
-- [ ] Erinnerungs-Schalter und Time-Picker aus `habit_form_sheet.dart`
-- [ ] `setHabitReminder` / `rescheduleAllReminders` aus `habit_repository.dart`, `setReminder` / `habitsWithReminder` aus `habit_dao.dart`
-- [ ] Tagesstand-Meldung (Phase 23): Listener in `app.dart`, `status_notification_enabled` in `settings_service.dart`
-- [ ] ⚠️ **DB-Spalten `reminderEnabled` / `reminderMinuteOfDay`: `schemaVersion` 3 → 4 mit `onUpgrade`-Zweig UND Migrations-Test.** „Datenerhalt geht vor" (Abschnitt 9) gilt beim Entfernen genauso wie beim Hinzufügen — Bestandsnutzer der Web-Fassung haben echte Daten
-- [ ] Pakete: `flutter_local_notifications`, `timezone`, `flutter_timezone`
-- [ ] ARB-Schlüssel in **allen drei** Sprachen, danach `flutter gen-l10n` (Lehre 20)
-- [ ] Tests: `reschedule_reminders_test.dart`, `daily_status_notification_test.dart`, `reminders_page_test.dart`, `support/fake_notification_service.dart` weg; `habit_form_sheet_test.dart`, `persian_ui_test.dart` nachziehen
+- [x] `core/services/notification_service.dart` und `features/settings/presentation/reminders_page.dart` löschen
+- [x] Route `/reminders` aus `app_routes.dart` + `app_router.dart`, Eintrag aus `settings_page.dart`
+- [x] Erinnerungs-Schalter und Time-Picker aus `habit_form_sheet.dart`
+- [x] `setHabitReminder` / `rescheduleAllReminders` aus `habit_repository.dart`, `setReminder` / `habitsWithReminder` aus `habit_dao.dart`
+- [x] Tagesstand-Meldung (Phase 23): Listener in `app.dart`, `status_notification_enabled` in `settings_service.dart`
+- [x] ⚠️ **DB-Spalten `reminderEnabled` / `reminderMinuteOfDay`: `schemaVersion` 3 → 4 mit `onUpgrade`-Zweig UND Migrations-Test.** „Datenerhalt geht vor" (Abschnitt 9) gilt beim Entfernen genauso wie beim Hinzufügen — Bestandsnutzer der Web-Fassung haben echte Daten
+- [x] Pakete: `flutter_local_notifications`, `timezone`, `flutter_timezone`
+- [x] ARB-Schlüssel in **allen drei** Sprachen, danach `flutter gen-l10n` (Lehre 20)
+- [x] Tests: `reschedule_reminders_test.dart`, `daily_status_notification_test.dart`, `reminders_page_test.dart`, `support/fake_notification_service.dart` weg; `habit_form_sheet_test.dart`, `persian_ui_test.dart` nachziehen
 
-#### 28.2 Android, iOS und Desktop entfernen ⬜
-- [ ] Ordner `android/`, `ios/`, `macos/`, `linux/`, `windows/`
-- [ ] `home_widget_service.dart` samt der neun Startbildschirm-Widgets und `colorTileInteractionCallback`
-- [ ] Pakete `home_widget` und `flutter_file_dialog`. ⚠️ **Der bedingte Import in `file_pick/` bleibt** — `flutter test` läuft auf der Dart-VM und wählt dort den `_io`-Zweig; er wird zu einem ehrlichen Stub, nicht gelöscht
-- [ ] `platform_support.dart` schrumpft auf das, was im Browser noch eine Frage ist
-- [ ] Store-Material: `store/PLAY_LISTING.md`, Feature-Grafik, Play-Symbol, Screenshots
-- [ ] ⚠️ **`store/PRIVACY_POLICY.md` bleibt** — sie hängt nicht am Store (siehe 28.3)
+#### 28.2 Android, iOS und Desktop entfernt ✅
+- [x] Ordner `android/`, `ios/`, `macos/`, `linux/`, `windows/`
+- [x] `home_widget_service.dart` samt der neun Startbildschirm-Widgets und `colorTileInteractionCallback`
+- [x] Pakete `home_widget` und `flutter_file_dialog`. ⚠️ **Der bedingte Import in `file_pick/` bleibt** — `flutter test` läuft auf der Dart-VM und wählt dort den `_io`-Zweig; er wird zu einem ehrlichen Stub, nicht gelöscht
+- [x] `platform_support.dart` schrumpft auf das, was im Browser noch eine Frage ist
+- [x] Store-Material: `store/PLAY_LISTING.md`, Feature-Grafik, Play-Symbol, Screenshots
+- [x] ⚠️ **`store/PRIVACY_POLICY.md` bleibt** — sie hängt nicht am Store (siehe 28.3)
 
-#### 28.3 Datenschutzerklärung ⬜
-- [ ] Erinnerungen und Benachrichtigungen aus dem Text nehmen, Android-/Play-Bezüge streichen
-- [ ] ⚠️ **Der Gist bleibt Nutzersache** — er zieht nicht von selbst nach. Neu ist nur: Ab jetzt ist die Quelle so kurz, dass ein Nachziehen ein Kopieren ist
+#### 28.3 Datenschutzerklärung ✅
+- [x] Erinnerungen und Benachrichtigungen aus dem Text nehmen, Android-/Play-Bezüge streichen
+- [ ] ⬜ ⚠️ **Der Gist bleibt Nutzersache** — er zieht nicht von selbst nach. Neu ist nur: Ab jetzt ist die Quelle so kurz, dass ein Nachziehen ein Kopieren ist
 
-#### 28.4 Weiterarbeit auf GitHub ⬜
-- [ ] Alles gepusht, `main` grün, veröffentlichte Seite mit `tool/webtest.py` nachgewiesen — **das ist die Abnahme dieser Phase**, nicht „die Tests sind grün"
-- [ ] ⚠️ Nach dem Löschen ist `tool/webtest.py` (safaridriver, braucht einen Mac) nicht mehr ausführbar. Die verbleibende Absicherung ist die Automatik: `analyze` + `test` laufen bei **jedem** Push vor der Veröffentlichung
+#### 28.4 Weiterarbeit auf GitHub 🔄
+- [x] Alles gepusht, `main` grün, veröffentlichte Seite mit `tool/webtest.py` nachgewiesen — **das ist die Abnahme dieser Phase**, nicht „die Tests sind grün"
+- [x] ⚠️ Nach dem Löschen ist `tool/webtest.py` (safaridriver, braucht einen Mac) nicht mehr ausführbar. Die verbleibende Absicherung ist die Automatik: `analyze` + `test` laufen bei **jedem** Push vor der Veröffentlichung
 
----
+#### 28.5 Was dabei gefunden wurde
 
-### Phase 21.3 — Gerätedurchgang ⬜ *(zurückgestellt)*
-
-⏸️ **Seit dem 2026-08-17 nicht mehr vordringlich.** Diese Liste prüft die **Android**-Fassung für eine Play-Veröffentlichung; das Ziel ist jetzt die Web-Fassung (Abschnitt 2). Sie bleibt vollständig stehen — der Android-Code ist lauffähig und signiert, und wenn die Veröffentlichung je kommt, ist das hier die Vorbereitung.
-
-⚠️ **Ein Teil der Liste gilt weiter, nur woanders:** Leerer Zustand, alle Sprachen, Persisch, Teilen, Import/Export und der Datenerhalt sind **plattformunabhängig** — sie gehören jetzt in den iPhone-Durchgang aus Phase 26. Rein Android sind: die 9 Startbildschirm-Widgets, Erinnerungen, Drehung, APK-Installation und das Update über eine bestehende Installation.
-
-Die Werkzeug-Prüfungen sind durch (`analyze` sauber, Tests grün, Bundle signiert, Manifest ohne `AD_ID`/`BILLING`). Am 2026-08-17 zusätzlich geprüft: Ein **Release-APK mit Cloud-Schlüsseln** baut und installiert sich auf einem frischen Emulator (Android 17). Der eigentliche Durchgang steht aus — er ist der Teil, den Tests nicht ersetzen (Lehre 8).
-
-- [ ] **Release-Build auf einem echten Gerät** (nicht nur Emulator) — Debug und Release unterscheiden sich nachweislich (Lehre 5).
-- [ ] **Frische Installation** (`pm clear`): Onboarding → **sieben** Standard-Kategorien → Gewohnheit aus einer Vorlage (landet sie in der passenden Kategorie?) → abhaken → alle Seiten. **Leerer Zustand** ist der häufigste Absturz-Kandidat: alle Diagramme, Übersicht und Teilen-Karte ohne einen einzigen Eintrag öffnen.
-- [ ] **Kein Werbe-Streifen** auf allen vier Hauptseiten, Einstellungen ohne Rubrik „Werbung".
-- [ ] **Teilen mit Bild-Kontrolle:** Karte **mit** und **ohne** Übersicht-Block teilen und das **erzeugte Bild** öffnen — nicht nur die Vorschau. QR-Code mit einem zweiten Gerät scannen.
-- [ ] **Voller Bestand** über `lib/main_seed.dart` (~400 Tage): alle vier View-Tabs, Übersicht im Vollbild, Jahr, Konto.
-- [ ] **Alle vier Sprachen × hell/dunkel × vier Farbvarianten** stichprobenartig; **Persisch vollständig durchklicken**: rechtsläufig? irgendwo deutscher Text? leere Kästchen statt Schrift? Überlauf, weil persische Wörter länger sind?
-- [ ] **Drehen** auf jeder Seite (die Übersicht sperrt Querformat — beim Verlassen muss die Sperre fallen).
-- [ ] **Alle 9 Home-Screen-Widgets** platzieren und antippen (Farbkachel: Abhaken aus fremdem Isolate, danach zurück in die App).
-- [ ] Erinnerungen setzen, auslösen, snoozen, abschalten; Sicherung exportieren, importieren, App neu starten.
-- [ ] Anleitungs-Seiten **offline** und bei fehlendem Text (404 → „Inhalt folgt"); auf Persisch prüfen, dass die persischen Dateien geladen werden.
-- [ ] **Update über eine bestehende Installation** (nicht deinstallieren!) mit erhöhter Version — Bestand muss vollständig bleiben (Phase 25).
-- [ ] Risikostellen gezielt: `read(provider.future)` ohne Zuhörer (Lehre 6), Farbwerte an Android-Widgets (Lehre 7), Kategorie-Dropdown im Ladezustand, Import einer beschädigten Sicherung.
-- [ ] Gefundene Abstürze werden **hier** protokolliert, nicht stillschweigend behoben.
-
----
-
-### Phase 15 — Veröffentlichung im Google Play Store (Android) ⏸️
-
-⏸️ **Zurückgestellt am 2026-08-17.** Das Ziel ist die Web-Fassung — „alle sollen sie ohne App Store oder Google Play nutzen können" (Abschnitt 2). Diese Phase wird **nicht gestrichen**: Das Material ist fertig, der Schlüssel gültig bis 2053, und der Weg steht hier vollständig, falls die Entscheidung je zurückgedreht wird.
-
-**Stand:** Code fertig und signiert ✅ · Store-Material vollständig ✅ · Play-Konto angelegt, Identitätsprüfung ⏳.
-
-⚠️ **Was NICHT mit dieser Phase pausiert: die Datenschutzerklärung.** Der veraltete Gist war bisher als „Play-Blocker" notiert — das war schon immer die schwächere Begründung. Seit Phase 27 speichert die App **E-Mail-Adressen echter Nutzer**; der veröffentlichte Text muss stimmen, ob ein Store beteiligt ist oder nicht. Der Punkt wandert deshalb aus dieser Phase heraus und steht in 27.8.
-
-#### Wichtige Kennungen (Nachschlagetabelle)
-| Was | Wert | Wo im Projekt |
-|---|---|---|
-| Paketname (`applicationId`) | `com.rootin.app` ⚠️ nach Veröffentlichung unveränderlich | `android/app/build.gradle.kts` |
-| Store-Link | `https://play.google.com/store/apps/details?id=com.rootin.app` | `lib/core/constants/app_links.dart` |
-| Datenschutzerklärung (öffentlich) | https://gist.github.com/lukasylilli/673c36972d69819d975ffb82a592cca2 | Quelle: `store/PRIVACY_POLICY.md` |
-| Signaturschlüssel | `~/development/keys/root-in-upload.jks`, Alias `upload`, gültig bis 2053 | `android/key.properties` |
-| Kontakt | alirzsaleh@gmail.com · https://t.me/LukasAlmani | `lib/core/constants/contact_info.dart` |
-| Anleitungs-Inhalte | `raw.githubusercontent.com/lukasylilli/Root-in/main/content/<sprache>/<datei>.md` | `guide_topic.dart` |
-| Web-Fassung | `https://lukasylilli.github.io/Root-in/` | `tool/build_web.sh` |
-| AdMob-IDs / Produkt-ID | `ca-app-pub-7806974290921501~9284147977` · `…/5672206027` · `remove_ads` | **seit Phase 20 auskommentiert**, nur zum Wiedereinschalten aufbewahrt |
-
-#### Offene Schritte
-- [ ] **15.0** Play-Identitätsprüfung abwarten (läuft seit 2026-07-26).
-- [ ] **15.2** App anlegen, Store-Eintrag aus `store/PLAY_LISTING.md`, Datenschutz-URL, Inhaltseinstufung, **Datensicherheit** (⚠️ nach Phase 27 **nicht** mehr „keine Daten erhoben"), Werbung: Nein, In-App-Käufe: Nein.
-- [ ] **15.2b** *(nicht blockierend)* Launcher-Symbol nachschärfen — die Strichzeichnung hat nur 4,6 % Tintenanteil und verschmiert bei 48 px. **Betrifft auch das Web-Favicon** (16 px); ein neues `assets/icon/app_icon.png` zieht beide Plattformen in einem Lauf nach.
-- [ ] **15.3** `flutter build appbundle --release` → *Testen → Interner Test*.
-- [ ] **15.3b** **12-Tester-Regel**: 12 Tester müssen die App **installiert** haben, danach 14 zusammenhängende Tage. Realistisch 4–5 Wochen bis zur Produktion.
-- [ ] **15.6** Produktion: `versionCode` erhöhen (steht auf `1.0.0+1`), Bundle bauen, einreichen.
-- [ ] **15.8** *(optional)* Persische Store-Sprache — Texte in `store/PLAY_LISTING.md`, es fehlen persische Screenshots.
+- ⚠️ **Der erste Web-Bau nach dem Entfernen der Pakete schlug fehl** — `Couldn't resolve flutter_local_notifications_web`. Die Ursache war ein **stehengebliebener generierter** `web_plugin_registrant.dart` im `.dart_tool`. `flutter clean` räumt ihn weg. Im CI fällt das nie auf (frischer Checkout) — es trifft nur den, der lokal weiterbaut.
+- ⚠️ **`file_pick/pick_text_file_io.dart` musste bleiben.** Der Reflex war, mit der letzten mobilen Plattform auch den `_io`-Zweig zu löschen. Das hätte **jeden Test** unübersetzbar gemacht: `flutter test` läuft auf der Dart-VM, und der bedingte Import wählt dort genau diesen Zweig. Er ist jetzt ein Stub mit einer Begründung im Docstring — kein toter Code, sondern eine Notwendigkeit der Testumgebung.
+- **Die Migration war der heikelste Teil.** Eine Spalte zu entfernen heißt in SQLite, die Tabelle neu zu bauen — genau dabei können IDs verrutschen, und an `habits.id` hängt jede Erledigung. Der neue Testfall zieht deshalb einen echten Schema-3-Bestand **mit gesetzter Erinnerung** hoch und prüft beides: dass die Zeilen mit ihren IDs stehen **und** dass die Spalten wirklich weg sind. Gegenprobe gemacht (Lehre 32): ohne `alterTable` wird er rot.
 
 ---
 
@@ -604,15 +548,6 @@ Die Werkzeug-Prüfungen sind durch (`analyze` sauber, Tests grün, Bundle signie
 ⚠️ **GitHub Pages kann `Cross-Origin-Opener-Policy`/`Embedder-Policy` nicht setzen.** Drift nutzt dann nicht die schnellste Speicherart. **Die Daten bleiben erhalten** — eine Frage der Geschwindigkeit, kein Datenverlust. Wer das ändern will, braucht einen Hoster mit eigenen Kopfzeilen.
 
 ---
-
-### Phase 12 — iOS-Portierung ⏸️
-
-⏸️ **Zurückgestellt am 2026-08-17.** Die Web-Fassung erreicht iPhones bereits über „Zum Home-Bildschirm" und braucht dafür weder Apple-Entwicklerkonto (99 $/Jahr) noch App-Store-Prüfung. Eine native Fassung brächte vor allem die zwei Dinge, die dem Browser fehlen: **Erinnerungen** und **Widgets**. Solange die nicht gebraucht werden, lohnt sie nicht.
-
-- [ ] Bundle-Identifier weg von `com.example.rootIn` (sinnvollerweise passend zu `com.rootin.app`)
-- [ ] iOS-spezifisches Testing, Cupertino-Anpassungen wo sinnvoll
-- [ ] iOS Home-Screen-Widget (WidgetKit) — auf Android seit Phase 10 fertig
-- [ ] App-Icons, Splash Screen
 
 ## 11. Entscheidungs-Log & dauerhafte Lehren
 
@@ -645,6 +580,11 @@ Die Werkzeug-Prüfungen sind durch (`analyze` sauber, Tests grün, Bundle signie
   - **Die Datenschutzerklärung war als „Play-Blocker" begründet — das trug nicht.** Mit dem Zurückstellen von Phase 15 wäre die Begründung weggefallen, die Pflicht aber nicht: Wer 200 Schülern eine Adresse gibt und ihre E-Mail speichert, schuldet ihnen einen zutreffenden Text, ganz ohne Store. Der Punkt ist deshalb aus Phase 15 heraus nach 27.8 gewandert. **Ein Grund, der beim ersten Gegenwind verschwindet, war der falsche Grund.**
   - **Der Preis steht jetzt ausdrücklich in Abschnitt 2:** Die Hauptplattform hat **keine Erinnerungen** und keine Startbildschirm-Widgets. Bei einer Habit-App ist das erste kein Detail — es ist die offene Frage dieser Neuausrichtung und steht als solche in Abschnitt 12.
   - **Der Android-Durchgang (21.3) wurde mittendrin angehalten** — Release-APK mit Cloud-Schlüsseln gebaut und auf einem frischen Emulator installiert, dann kam die neue Zielsetzung. Der plattformunabhängige Teil der Liste (leerer Zustand, Sprachen, Persisch, Teilen, Datenerhalt) gilt weiter, nur gehört er jetzt in den iPhone-Durchgang.
+
+- **2026-08-17 (Phase 28 — nur noch Web)** — Der Nutzer streicht, was am Vormittag noch „zurückgestellt, nicht gestrichen" hieß: *„فقط نسخه وب خواهیم داشت."* Dazu: Erinnerungen ganz entfernen, Datenschutz nachziehen, und das Projekt verschwindet vom Mac — weitergearbeitet wird auf GitHub.
+  - **Zurückgestellt und gestrichen sind zwei verschiedene Dinge, und der Unterschied gehört ins Dokument.** Am Vormittag war die Begründung fürs Aufheben „eine zurückgedrehte Entscheidung soll nicht bei null anfangen". Sie trug nicht mehr. Jetzt sind 153 Dateien weg — **die Versionsgeschichte behält alles**, und genau deshalb darf der Plan sie loslassen.
+  - **Die Erinnerungen gingen tiefer als gedacht:** neun Ebenen bis hinunter in die Datenbank. Eine Funktion zu entfernen ist selten das Gegenteil davon, sie zu bauen — die Migration 3 → 4 war aufwendiger als die 2 → 3, die sie einst angelegt hatte.
+  - ⚠️ **Beim Löschen des Macs zählt nur, was im Repository liegt.** Die Prüfung fand `meine/` mit **0 von 24 Dateien versioniert** — Screenshots, Design-Specs und die Logo-Quelle. Bewusst ausgeschlossen, also bleibt es auch draußen; der Nutzer sichert es selbst. Die Prüfung selbst ist die Lehre: **Vor einer Löschung nicht fragen „ist alles gepusht?", sondern „was ist nie gepusht worden?"** (Lehre 37).
 
 ### 11.2 Dauerhafte Lehren & Fallstricke
 1. **iCloud bricht Code-Signing.** Das Flutter-SDK lag auf iCloud Drive; `taskgated` killte die Binaries sporadisch (`SIGKILL`, per Crash-Report belegt). Das war die Wurzel von „Dart compiler exited unexpectedly", `ShaderCompilerException` und den native-asset-Fehlern — **nicht** Arbeitsspeicher. SDKs nach `~/development/`, Projekte nach `~/Projects/`. Bei Build-Abstürzen zuerst `~/Library/Logs/DiagnosticReports/` lesen.
@@ -684,21 +624,19 @@ Die Werkzeug-Prüfungen sind durch (`analyze` sauber, Tests grün, Bundle signie
 35. **Eine Regel, die nur im Dokument steht, hält niemanden auf.** Lehre 32 („nach Knöpfen fragen, nicht nach Überschriften") stand ausformuliert in diesem Plan — und ist beim Bauen von Phase 27 trotzdem ein **drittes** Mal zugeschnappt: Jedes Mal suchte eine Prüfung einen Titel im Semantik-Baum, meldete „nicht da", und das Gesuchte stand deutlich sichtbar auf dem Bildschirmfoto. Ein Plan wird beim Planen gelesen, nicht beim Tippen. **Wer eine Regel wirklich durchsetzen will, bringt sie an die Stelle, an der man gegen sie verstößt** — in den Docstring der Funktion (`shows()`), in den Kommentar neben dem Schlüssel, in einen Test. Dasselbe galt für die Zusammenstoß-Regel aus 27.6: Sie stand als hübsche Tabelle im Kopf der Datei und wurde von nichts gehalten, bis sie sieben Testfälle bekam.
 36. **Ein Prüfwerkzeug, das eine Ursache als sechzehn Fehler meldet, schickt dich in die falsche Richtung.** Direkt nach einer Veröffentlichung meldete `webtest.py` 16 rote Prüfungen. Keine einzige stimmte: Die App war tadellos, GitHub Pages hatte nur noch nicht überall ausgeliefert. Der Schaden entstand durch den **Aufbau des Werkzeugs** — bleibt der Semantik-Baum leer, findet jede Text-Prüfung nichts und jede Prüfung auf eine **Abwesenheit** besteht. Das Ergebnis liest sich wie „die halbe App ist kaputt" statt wie „sie ist nicht hochgekommen". Drei Regeln daraus: **(a)** Scheitert der Start, wird **abgebrochen** — Folgeprüfungen ohne laufende App messen nichts. **(b)** Prüfungen auf eine Abwesenheit brauchen einen Zeugen dafür, dass überhaupt etwas da ist (im Durchgang: die UND-Verknüpfung mit `on_guide`). **(c)** Nach einer Veröffentlichung **nicht sofort messen**. ⚠️ Und die teuerste Einzelheit: `document.querySelectorAll('canvas')` liefert bei Flutter **immer 0** — die Zeichenfläche liegt im **Schatten-DOM** von `flt-glass-pane`. Diese eine Fehlmessung trug die falsche These „die App zeichnet gar nichts" durch mehrere Bauten hindurch, bis eine leere Vergleichs-App **denselben** Wert lieferte. Eine Messung, die am gesunden Vergleichsfall genauso ausschlägt wie am kranken, misst nichts — **der Vergleichsfall hätte an den Anfang gehört, nicht ans Ende.**
 
-## 12. Offene Fragen
-**Entschieden werden in Phase 27** (siehe 27.0b): Anmeldeverfahren · Umfang der Cloud-Daten · Pflicht oder freiwillig · Richtung des Abgleichs.
+37. **Vor dem Löschen zählt nicht, was gepusht ist, sondern was nie gepusht wurde.** Als das Projekt vom Rechner verschwinden sollte, war die naheliegende Frage „ist alles committet?" — und die Antwort war ja. Sie war trotzdem die falsche Frage. Ein `git status` sieht **gitignorierte Dateien nicht**: `meine/` lag mit 24 Dateien im Projekt, davon 0 versioniert — die Design-Vorlagen, 20 Screenshots und die Quelle des App-Symbols. Alles bewusst ausgeschlossen, alles unwiederbringlich. Die richtige Prüfung ist eine andere: für jeden Ordner `find` gegen `git ls-files` halten und die Differenz ansehen. Was dabei auftaucht, ist entweder wertlos (dann ist es egal) oder wertvoll (dann ist es die einzige Kopie). **Und der Fund gehört dem Nutzer:** Material, das absichtlich draußen ist, wandert nicht „zur Sicherheit" in ein öffentliches Repository — man sagt Bescheid und lässt ihn entscheiden.
 
-- **Zwei Fassungen, zwei Datenbestände.** ✅ **Mit Phase 27 gelöst — aber nur halb, und das ist Absicht:** Wer sich auf beiden Geräten anmeldet, kann seinen Bestand übertragen (sichern hier, wiederherstellen dort). Ein **stiller Abgleich** in beide Richtungen ist es nicht und soll es vorerst nicht sein (27.7). Ein echter Abgleich bräuchte Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase.
-- ⚠️ **Erinnerungen im Web — die wichtigste offene Frage seit der Neuausrichtung.** Sie entfallen dort (`flutter_local_notifications` hat keine Web-Umsetzung). Solange Web der *Ersatzweg* war, war das ein hinnehmbarer Abstrich; seit Web **das Ziel** ist (Abschnitt 2), fehlt einer Habit-App ihre Erinnerungsfunktion auf der Hauptplattform. Drei Wege: **(a)** Web-Push bauen — möglich, der Server steht seit Phase 27, kostet aber Service Worker, Berechtigungen und einen Versanddienst, und auf iOS wirkt es **nur in der abgelegten Fassung**; **(b)** als bewusste Grenze benennen und die App als „ohne Erinnerungen" führen; **(c)** Android-Fassung für alle, die Erinnerungen wollen, per APK weitergeben (ohne Store). **Entscheidung des Nutzers.**
+## 12. Offene Fragen
+
+- **Zwei Geräte, zwei Datenbestände.** ✅ **Mit Phase 27 halb gelöst, und das ist Absicht:** Wer sich auf beiden anmeldet, kann seinen Bestand übertragen (sichern hier, wiederherstellen dort). Ein **stiller Abgleich** in beide Richtungen ist es nicht. Ein echter Abgleich bräuchte Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase.
+- ~~**Erinnerungen im Web: bauen oder als Grenze benennen?**~~ ✅ **Entschieden am 2026-08-17: als Grenze benannt.** Der Nutzer: *„یاد آور ها رو کلا حذف کن چون نسخه وب نمیتونه الارم داشته باشه."* Sie sind **entfernt**, nicht ausgeblendet (Phase 28). ⚠️ Wer sie je zurückholen will, holt sich mehr als einen Schalter zurück: Web-Push braucht Service Worker, Push-Anmeldungen je Gerät, Erinnerungszeiten als abfragbare Zeilen **samt Zeitzone** auf dem Server und einen Wecker, der jede Minute nachsieht — und es ginge **nur mit Konto**, das heute freiwillig ist. Die Begründung steht im Docstring von `platform_support.dart`, dort wird sie gelesen.
 - **Vollständige Kontolöschung** braucht eine Edge Function (der öffentliche Schlüssel darf `auth.users` nicht anfassen). Heute löscht die App die Server-Daten und meldet ab; die vollständige Löschung läuft über eine Nachricht. Offen, ob das reicht.
-- **Sollen neue Beiträge in „موارد دیگر" gemeldet werden?** Möglich wäre ein stiller Vergleich beim App-Start (neue Einträge im `index.json` gegenüber dem gespeicherten Stand) und ein Punkt am Einstellungs-Eintrag — ohne Server, ohne Push.
-- ~~Repository öffentlich oder privat?~~ — **entschieden 2026-08-16: öffentlich, das Projekt ist Open Source.** ⚠️ Folge für Phase 27: Die Zugriffsregeln des Servers sind für jeden lesbar, müssen also wirklich stimmen; der `service_role`-Schlüssel darf nirgends im Repository auftauchen.
-- **iOS-Bundle-Identifier ist weiterhin `com.example.rootIn`** — wird in Phase 12 entschieden.
-- **Sicherungskopie des Signaturschlüssels steht aus.** Die `.jks` existiert nur einmal auf diesem Mac. Datei **und** Passwort gehören in den Passwortmanager.
+- **Sollen neue Beiträge in „موارد دیگر" gemeldet werden?** Möglich wäre ein stiller Vergleich beim App-Start (neue Einträge im `index.json` gegenüber dem gespeicherten Stand) und ein Punkt am Einstellungs-Eintrag.
 - **Die persische Übersetzung ist ein Entwurf** — alle Schlüssel sind gefüllt, gelesen hat sie noch kein Muttersprachler. Korrekturen betreffen nur `lib/l10n/app_fa.arb`.
-- **Farbe je Kategorie?** Heute trägt die Gewohnheit die Farbe. Kategorie-Farben würden Diagramme klarer machen, kosten aber eine DB-Spalte.
+- **Farbe je Kategorie?** Heute trägt die Gewohnheit die Farbe. Kategorie-Farben würden Diagramme klarer machen, kosten aber eine DB-Spalte — und damit eine Migration (Abschnitt 9).
 - **Direkt in die Telegram-Gruppe teilen?** Das System-Share-Sheet deckt es ab; offen, ob ein eigener Knopf den Sonderweg wert ist.
-- **Widget-Labels in der Launcher-Auswahl** folgen der **Geräte**-Sprache, nicht der App-Sprache. Lohnt sich nur für alle Sprachen zusammen — eine einzelne nachzurüsten macht die Uneinheitlichkeit sichtbarer, nicht kleiner.
-- **Piktogramm auf der Farbkachel ist für alle Gewohnheiten gleich** — ein Mapping `iconKey` → Android-Vektor müsste doppelt gepflegt werden.
-- **Home-Animation als Lottie-Datei:** Slot ist verdrahtet, ein Nutzer-Asset liegt nicht vor.
-- **Persische Store-Sprache?** Texte stehen in `store/PLAY_LISTING.md`; es fehlen vier persische Screenshots.
+- **Home-Animation als Lottie-Datei:** Der Slot ist verdrahtet, ein Nutzer-Asset liegt nicht vor.
+- **Eigener Hoster statt GitHub Pages?** Pages kann `Cross-Origin-Opener-Policy`/`Embedder-Policy` nicht setzen; Drift nutzt deshalb nicht die schnellste Speicherart. **Kein Datenverlust, eine Frage der Geschwindigkeit** — bisher ist niemandem etwas aufgefallen.
 - Genaues Farbschema/Branding, Punkte-Gewichtung je Habit, App-Name final, weitere Sprachen über DE/EN/FA hinaus — weiterhin offen.
+
+⚠️ **Gestrichen mit Phase 28** (standen hier, sind gegenstandslos): iOS-Bundle-Identifier · Sicherungskopie des Signaturschlüssels · persische Store-Sprache · Widget-Labels in der Launcher-Auswahl · Piktogramm auf der Farbkachel.

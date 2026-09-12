@@ -2,35 +2,30 @@
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
 >
-> **Stand 2026-08-17.** Android-Code fertig · Web-Fassung live unter `lukasylilli.github.io/Root-in/` · **228 Tests grün**, 20/20 im echten Browser, 13/13 Zugriffsregeln am Server.
+> **Stand 2026-08-17.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **205 Tests grün**, 20/20 im echten Browser, 13/13 Zugriffsregeln am Server.
 >
-> ✅ **Phase 27 gebaut: Nutzerkonten & Cloud-Speicher (Supabase).** Neu: `supabase/schema.sql`, `core/services/{auth_service, cloud_backup_service, cloud_auto_backup, profile_cloud_sync, username_rules}.dart`, `features/auth/presentation/` (zwei Dateien), `tool/rls_check.sh`, fünf Test-Dateien. Neue Abhängigkeit `supabase_flutter`. ⚠️ **Diese Phase kehrt die älteste Festlegung des Projekts um** („kein Backend, keine Nutzerkonten") — was daran hängt, steht in PLAN.md 27.0.
+> ⚠️ **Phase 28 hat das Projekt auf Web-only zurückgebaut.** Entfernt: die Ordner `android/`, `ios/`, `macos/`, `linux/`, `windows/` (153 Dateien), `home_widget_service.dart` samt den neun Startbildschirm-Widgets, `notification_service.dart` und `reminders_page.dart` samt allem, was daran hing (bis hinunter in die Datenbank — Schema 4), das Play-Material unter `store/`. Pakete raus: `flutter_local_notifications`, `timezone`, `flutter_timezone`, `home_widget`, `flutter_file_dialog`. **Die Versionsgeschichte behält alles.**
 >
-> ⚠️ **Ohne Supabase-Schlüssel im Bau verhält sich die App exakt wie vorher** — keine Anmeldung, keine Rubrik, kein Netzverkehr (`supportsCloudSync`).
->
-> ⚠️ **Ziel neu gesetzt am 2026-08-17: die Web-Fassung ist das Ziel**, nicht mehr der Ersatzweg („alle sollen sie ohne App Store oder Google Play nutzen können"). Android- und iOS-Anteile bleiben vollständig im Projekt, sind aber **zurückgestellt**. Einzelheiten in PLAN.md Abschnitt 2.
->
-> Zuvor **26.13**: `web/index.html` ohne `viewport-fit=cover`, Statusleiste `default` (⬜ Bestätigung auf einem echten iPhone steht aus). **26.11**: `dart:io` ist aus `lib/` verschwunden (`package:http` überall), Web-Symbole aus derselben Quelle wie die Android-Symbole.
+> ✅ **Phase 27: Nutzerkonten & Cloud-Speicher (Supabase).** `supabase/schema.sql`, `core/services/{auth_service, cloud_backup_service, cloud_auto_backup, profile_cloud_sync, username_rules}.dart`, `features/auth/presentation/`, `tool/rls_check.sh`. ⚠️ **Ohne Supabase-Schlüssel im Bau verhält sich die App exakt wie vorher** — keine Anmeldung, keine Rubrik, kein Netzverkehr (`supportsCloudSync`).
 
 ## Inhaltsverzeichnis
 1. [Legende](#legende)
 2. [Root-Verzeichnis](#root-verzeichnis)
 3. [lib/ (App-Code)](#lib-app-code)
 4. [test/](#test)
-5. [Release-Artefakte (Android)](#release-artefakte-android)
-6. [Web-Fassung & Automatik](#web-fassung--automatik)
-7. [Nutzerkonten & Cloud (Supabase)](#nutzerkonten--cloud-supabase) ✅ *(Phase 27)*
-8. [Inhalts-Repository (GitHub)](#inhalts-repository-github)
-9. [Hinweise](#hinweise)
+5. [Web-Fassung & Automatik](#web-fassung--automatik)
+6. [Nutzerkonten & Cloud (Supabase)](#nutzerkonten--cloud-supabase)
+7. [Inhalts-Repository (GitHub)](#inhalts-repository-github)
+8. [Hinweise](#hinweise)
 
 ## Legende
 - ✅ vorhanden
-- 🚧 geplant, noch nicht angelegt *(zurzeit nichts — Phase 27 ist gebaut)*
-- ⏸️ vorhanden, aber **zurückgestellt** (Android-/iOS-Anteile seit der Zielsetzung vom 2026-08-17)
 - ⚙️ generiert (nie von Hand ändern)
 - 🕯️ **stillgelegt in Phase 20** — vollständig auskommentiert, nicht gelöscht. Jede Stelle trägt den Marker
   `PHASE 20 (2026-08-01): Werbung deaktiviert — zum Wiederaktivieren diesen Block einkommentieren.`
   Das Wiedereinschalten ist damit ein `grep`, keine Suche.
+
+⚠️ **Die Markierungen 🚧 (geplant) und ⏸️ (zurückgestellt) gibt es nicht mehr.** Es ist nichts geplant, was nicht gebaut wäre, und nichts zurückgestellt — was gestrichen war, ist entfernt (PLAN.md Phase 28).
 
 ## Root-Verzeichnis
 ```
@@ -38,71 +33,40 @@
 ├── PLAN.md                          ✅ Gesamtplan/Roadmap der App
 ├── MAP.md                           ✅ Diese Datei — Struktur-Übersicht
 ├── README.md                        ✅ Standard-Flutter-README
-├── pubspec.yaml                     ✅ Paket-Definition & Dependencies (am Dateiende: flutter_launcher_icons —
-│                                        seit Phase 26.11 mit `web:`, erzeugt also auch die Web-Symbole)
+├── pubspec.yaml                     ✅ Paket-Definition & Dependencies (am Dateiende: flutter_launcher_icons,
+│                                        seit Phase 28 nur noch mit `web:`)
 ├── pubspec.lock                     ✅ Gesperrte Dependency-Versionen
 ├── analysis_options.yaml            ✅ Lint-Regeln
 ├── .metadata                        ⚙️ Von Flutter gepflegt (Projekt-Herkunft, migrierte Plattformen) —
-│                                        nie von Hand ändern
+│                                        nie von Hand ändern. Nennt noch die entfernten Plattformen; das
+│                                        ist folgenlos und wird beim nächsten Flutter-Werkzeuglauf richtig
 ├── Root-in.code-workspace           ✅ VS-Code-Arbeitsbereich
 ├── l10n.yaml                        ✅ gen-l10n: ARB in lib/l10n, Ausgabe lib/l10n/gen, Vorlage Deutsch
-├── assets/icon/app_icon.png         ✅ EINZIGE Quelle des App-Symbols (1024×1024). Alle Android-Auflösungen +
-│                                        Adaptive Icon entstehen daraus per `dart run flutter_launcher_icons`.
-│                                        Nicht in der `assets:`-Liste — wird nur beim Generieren gelesen
+├── assets/icon/app_icon.png         ✅ EINZIGE Quelle des App-Symbols (1024×1024). Favicon und PWA-Symbole
+│                                        entstehen daraus per `dart run flutter_launcher_icons`.
+│                                        Nicht in der `assets:`-Liste — wird nur beim Generieren gelesen.
+│                                        ⚠️ Versioniert; die Vorlage `meine/Logo.jpeg` ist es NICHT
 ├── lib/                             ✅ App-Quellcode (siehe unten)
 ├── test/                            ✅ Tests (siehe unten)
-├── store/                           ✅ Material für die Veröffentlichung (PLAN.md Phase 15) — kein Code
+├── store/                           ✅ Begleitende Dokumente — kein Code
 │   ├── PRIVACY_POLICY.md                Datenschutzerklärung DE+EN, aus dem tatsächlichen Verhalten der App
 │   │                                    abgeleitet. **Quelle** der veröffentlichten Gist-Fassung — Änderungen
-│   │                                    müssen dort von Hand nachgezogen werden. Stand Phase 20: ohne AdMob/
-│   │                                    Billing, dafür **neu** mit dem GitHub-Abruf der Anleitungs-Texte.
-│   │                                    Stand Phase 27.8: neuer Punkt 4 (Konto und Server-Sicherung,
-│   │                                    Supabase EU/Frankfurt) und neu geschriebene Rechte —
-│   │                                    „wir speichern nichts" war mit Konto schlicht falsch.
-│   │                                    ⚠️ Der Gist ist noch NICHT nachgezogen und damit inzwischen
-│   │                                    ZWEIFACH veraltet (Phase 20 und 27.8)
+│   │                                    müssen dort von Hand nachgezogen werden.
+│   │                                    Stand Phase 28: Web-only. Abschnitte zu Android-Sicherung und
+│   │                                    Benachrichtigungen sind GESTRICHEN, neu ist Punkt 5 „Wo deine
+│   │                                    Daten im Browser liegen" (Website-Daten löschen, Safaris
+│   │                                    Sieben-Tage-Regel, jedes Gerät ein eigener Bestand).
+│   │                                    ⚠️ Der Gist ist noch NICHT nachgezogen
 │   ├── OTHERS_CONTENT.md                Pflege-Anleitung für die Rubrik „موارد دیگر" (Phase 22): wo die
 │   │                                    Dateien liegen, Felder des Manifests, was der Nutzer sieht, wenn
 │   │                                    etwas fehlt, häufige Fehler
-│   ├── others_index_beispiel.json       Gültige Vorlage zum Hochladen — ein Test prüft sie mit, damit die
-│   │                                    Anleitung nicht in die Irre führt
-│   ├── PLAY_LISTING.md                  Store-Texte DE+EN+**FA** (persisch optional, PLAN.md Phase 18.7),
-│   │                                    Längen gegen Googles Limits geprüft, Pflichtangaben-Checkliste
-│   │                                    (seit Phase 20: Werbung Nein, keine Daten, keine Käufe)
-│   ├── feature_graphic_1024x500.png     Store-Banner: weißes Strich-Logo auf Markengrün, ohne Text
-│   ├── make_feature_graphic.py          Erzeugt ebendiese Datei aus meine/Logo.jpeg (liest/schreibt PNG selbst,
-│   │                                    da weder ImageMagick noch PIL auf dieser Maschine; Helligkeit = Deckkraft)
-│   ├── play_store_icon_512.png          Store-Symbol 512×512, echtes 32-Bit-PNG
-│   └── screenshots/de|en/               Je 4 Telefon-Screenshots (Home, Heute, Monat, Konto), 1080×2160 —
-│                                        Emulator liefert 2,24:1, Play erlaubt höchstens 2:1
+│   └── others_index_beispiel.json       Gültige Vorlage zum Hochladen — ein Test prüft sie mit, damit die
+│                                        Anleitung nicht in die Irre führt
 ├── meine/                           ✅ Referenzmaterial des Nutzers: 20 Screenshots, „Berg-Animation"
 │                                        (React/SVG-Vorlage, Phase 8.6), zwei Design-Specs (Phase 10.6),
 │                                        Logo.jpeg (Quelle des App-Symbols)
-├── android/                         ✅ Android-Plattformcode; zusätzlich zum Standard-Gerüst:
-│   └── app/src/main/
-│       ├── kotlin/com/rootin/app/        Paketverzeichnis — MUSS zur applicationId passen, weil home_widget
-│       │                                 seine Widget-Klassen über context.packageName auflöst (Phase 15.1)
-│       │   ├── RootInWidgetProvider.kt       Fortschritts-Widget: Prozent + „x/y erledigt" (Phase 10)
-│       │   ├── ChartWidgetProvider.kt        Basis der Bild-Widgets: zeigt das gerenderte PNG (Phase 10.7)
-│       │   ├── ChartWidgetProviders.kt       5 Diagramm-Widgets + Ring + Checklist (nur je ein dataKey)
-│       │   ├── ColorTileWidgetProvider.kt    Farbkachel je Gewohnheit mit antippbarem Log-Button — einziges
-│       │   │                                 Widget mit echten RemoteViews statt PNG (Phase 10.6d)
-│       │   └── ColorTileConfigActivity.kt    Auswahl beim Platzieren: welche Gewohnheit? Liest den Katalog aus
-│       │                                     den Widget-Preferences → weder Flutter-Engine noch DB nötig
-│       ├── AndroidManifest.xml           INTERNET (Phase 17.1 — stand vorher NUR im Debug-/Profile-Manifest),
-│       │                                 Notification-Receiver (Phase 7), https-queries für url_launcher
-│       │                                 (Phase 6), 9 Widget-Receiver + HomeWidgetBackgroundReceiver,
-│       │                                 🕯️ AdMob-meta-data + AD_ID-/BILLING-Berechtigung (Phase 14).
-│       │                                 ⚠️ Der Manifest-Merger übernimmt Kommentare wortgetreu — ein
-│       │                                 `grep AD_ID` im Merge-Ergebnis findet auch den STILLGELEGTEN Block.
-│       │                                 XML-bewusst prüfen oder im AAB (dort ist es Protobuf, ohne Kommentare)
-│       ├── res/mipmap-*/, res/drawable-*/, res/values/colors.xml  ⚙️ Generiert (flutter_launcher_icons)
-│       └── res/{layout,drawable,xml,values}/  Layouts (Fortschritt, Diagramm, Farbkachel + Konfiguration),
-│                                          9 Provider-Infos, Drawables, Texte; values/strings.xml hält
-│                                          zusätzlich 🕯️ `admob_app_id`
-├── ios/                             ✅ iOS-Plattformcode (Standard-Gerüst; Bundle-ID noch com.example.rootIn)
-├── web/                             ✅ Web-Fassung (PLAN.md Phase 26) — seit 2026-08-07 IM UMFANG, nicht mehr
-│   │                                    ungenutztes Gerüst. Sie ist der Ersatzweg auf das iPhone
+├── web/                             ✅ **Die App** (PLAN.md Phase 26/28) — seit Phase 28 die einzige
+│   │                                    Plattform des Projekts
 │   ├── index.html                   ✅ Einstiegsseite, Markenfarbe schon vor dem ersten Frame + iOS-Meta-Tags.
 │   │                                    ⚠️ Safari liest fürs Ablegen apple-mobile-web-app-*, NICHT
 │   │                                    manifest.json — ohne sie öffnet die Verknüpfung eine Browser-Seite
@@ -115,8 +79,8 @@
 │   ├── sqlite3.wasm                 ⚙️ NICHT versioniert — tool/fetch_web_db_assets.sh holt sie. Ohne diese
 │   │                                    Datei wirft driftDatabase() im Browser, die App startet gar nicht
 │   ├── drift_worker.js              ⚙️ NICHT versioniert — dieselbe Quelle, Version aus pubspec.lock
-│   ├── favicon.png, icons/          ⚙️ Aus assets/icon/app_icon.png erzeugt (Phase 26.11) — dieselbe eine
-│   │                                    Quelle wie die Android-Symbole, `dart run flutter_launcher_icons`.
+│   ├── favicon.png, icons/          ⚙️ Aus assets/icon/app_icon.png erzeugt (Phase 26.11) — EINE Quelle,
+│   │                                    `dart run flutter_launcher_icons` (seit Phase 28 nur noch Web).
 │   │                                    Bis dahin lagen hier die Symbole der Flutter-Vorlage: das blaue
 │   │                                    „F" stand als App-Symbol auf dem Home-Bildschirm (PLAN.md 26.10).
 │   │                                    ⚠️ favicon.png ist 16 px — von der Strichzeichnung bleibt dort
@@ -133,30 +97,36 @@
 ├── supabase/schema.sql              ✅ Phase 27.4 — Server-Schema + Zugriffsregeln, versioniert
 ├── .claude/
 │   ├── settings.json                ✅ Freigabeliste für Claude Code (Phase 26.9): weniger Rückfragen bei
-│   │                                    flutter-/git-/adb-Befehlen, `defaultMode: acceptEdits`.
+│   │                                    flutter-/git-Befehlen, `defaultMode: acceptEdits`.
 │   │                                    ⚠️ Bewusst OHNE Muster wie `for *`/`awk *` — die sähen eng aus,
 │   │                                    erlauben aber jeden beliebigen Befehl. Wer gar keine Rückfrage
 │   │                                    will, nimmt den Modus-Umschalter, nicht eine getarnte Liste
 │   └── settings.local.json          ⛔ NICHT versioniert — maschinenlokal, enthält hunderte absolute
 │                                        Pfade unter /Users/<name>/
-├── .git/                            ✅ Seit 2026-08-07 ein Git-Repository (Zweig `main`; Quellcode und
-│                                        Inhalts-Repository zusammengeführt). ⚠️ NICHT im Repository:
-│                                        meine/, .claude/settings.local.json, key.properties, *.jks,
-│                                        build/, .env, web/sqlite3.wasm, web/drift_worker.js
-└── macos/, linux/, windows/         ✅ Desktop-Gerüst (ungenutzt, nicht im Fokus)
+└── .git/                            ✅ Seit 2026-08-07 ein Git-Repository (Zweig `main`; Quellcode und
+                                         Inhalts-Repository zusammengeführt).
+                                         ⚠️ **NICHT im Repository** — und das zählt, seit das Projekt nur
+                                         noch auf GitHub weiterlebt (PLAN.md 28.0):
+                                         **meine/** (24 Dateien, 0 versioniert — Screenshots, Design-Specs,
+                                         Logo-Quelle; der Nutzer sichert sie selbst), .env (Werte liegen
+                                         als GitHub-Secrets), .claude/settings.local.json, build/,
+                                         web/sqlite3.wasm, web/drift_worker.js
 ```
 
 ## lib/ (App-Code)
 
-**Funktionsstand:** Home mit Berg-Animation, individualisierbarem Dashboard und Teilen-Knopf · Heute-Seite mit Tagesring, Abhaken, Bearbeiten/Löschen · View mit vier Tabs (Woche/Übersicht/Monat/Jahr, Übersicht zusätzlich im Vollbild) · Konto mit **Rubrik „Konto & Cloud"**, Profil, Achievements, lebenslanger Statistik und Fortschritt-Teilen · Kategorien: sieben Standard-Kategorien beim Erststart, danach frei verwaltbar · tägliche Erinnerungen je Gewohnheit inkl. Snooze · Sicherung exportieren/importieren **und optional in die Cloud** · Rubrik „Root-in Anleitung" mit vier Seiten aus dem Repository · neun Home-Screen-Widgets inkl. antippbarer Farbkachel · Darstellungsmodus, Farb-Variante und Sprache (**DE/EN/FA, Persisch inkl. RTL**) über je **einen** Schalter · Erststart-Erklärung · Fortschritts-Karte mit Übersicht-Block und QR-Code **zur Web-Fassung** · **keine Werbung, keine In-App-Käufe** (🕯️ in Phase 20 stillgelegt).
+**Funktionsstand:** Home mit Berg-Animation, individualisierbarem Dashboard und Teilen-Knopf · Heute-Seite mit Tagesring, Abhaken, Bearbeiten/Löschen · View mit vier Tabs (Woche/Übersicht/Monat/Jahr, Übersicht zusätzlich im Vollbild) · Konto mit **Rubrik „Konto & Cloud"**, Profil, Achievements, lebenslanger Statistik und Fortschritt-Teilen · Kategorien: sieben Standard-Kategorien beim Erststart, danach frei verwaltbar · Sicherung exportieren/importieren **und optional in die Cloud** · Rubrik „Root-in Anleitung" mit vier Seiten aus dem Repository · Darstellungsmodus, Farb-Variante und Sprache (**DE/EN/FA, Persisch inkl. RTL**) über je **einen** Schalter · dreiteilige Erststart-Erklärung · Fortschritts-Karte mit Übersicht-Block und QR-Code · **keine Werbung, keine In-App-Käufe** (🕯️ Phase 20).
+
+⚠️ **Was es NICHT gibt (PLAN.md Phase 28):** Erinnerungen, Tagesstand-Meldung, Startbildschirm-Widgets, Querformat-Sperre. Nicht „im Browser ausgeblendet" — **entfernt**, bis hinunter in die Datenbank (Schema 4).
 
 **Freiwilliges Nutzerkonto (Phase 27):** E-Mail + Passwort + Benutzername, Cloud-Sicherung im vorhandenen Backup-Format. ⚠️ **Ohne Konto und ohne Schlüssel im Bau ändert sich nichts** — die App bleibt vollständig lokal benutzbar.
 
 ```
 lib/
-├── main.dart                                 ✅ Einstiegspunkt: SharedPreferences, Notification-Init mit der
-│                                                 gespeicherten Sprache, Startkategorie in ebendieser Sprache,
-│                                                 dann UncontrolledProviderScope (expliziter ProviderContainer,
+├── main.dart                                 ✅ Einstiegspunkt: SharedPreferences, Bitte um dauerhaften
+│                                                 Browser-Speicher, Supabase-Start (nur mit Schlüsseln),
+│                                                 Standard-Kategorien in der gespeicherten Sprache, dann
+│                                                 UncontrolledProviderScope (expliziter ProviderContainer,
 │                                                 weil der Kategorie-Seed vor dem ersten Frame laufen muss).
 │                                                 🕯️ Enthält den Start des Werbe-SDKs (Phase 14)
 ├── main_seed.dart                            ✅ Zweiter Einstiegspunkt, NUR für Store-Screenshots und um eine
@@ -167,17 +137,17 @@ lib/
 │                                                 ruft danach main.dart. Säht in einem eigenen Container, der vor
 │                                                 dem App-Start geschlossen wird. Nie in einen Release-Build
 ├── app.dart                                  ✅ MaterialApp.router; ThemeMode/Farb-Variante/Sprache aus Providern.
-│                                                 Zwei Listener an genau einer Stelle: Fortschritt →
-│                                                 Home-Screen-Widget **und** Tagesstand-Meldung (Phase 23 — ein
-│                                                 Sender, zwei Empfänger; dazu ein dritter Listener auf den
-│                                                 Tagesstand-Schalter), Sprachwechsel → Erinnerungen neu planen +
-│                                                 iOS-Kategorie + Widgets. Dazu ein AppLifecycleListener, der beim
-│                                                 Zurückkehren die Drift-Streams neu lesen lässt (sonst bliebe ein
-│                                                 Abhaken über die Widget-Kachel unsichtbar)
+│                                                 Vier Listener an genau EINER Stelle: Fortschritt und
+│                                                 Gewohnheiten → Cloud-Sicherung (entprellt), Anmelden →
+│                                                 Namensabgleich, lokaler Namenswechsel → hochladen.
+│                                                 ⚠️ Bis Phase 28 hingen hier auch Startbildschirm-Widget und
+│                                                 Tagesstand-Meldung („ein Sender, mehrere Empfänger",
+│                                                 Phase 10/23). Der Gedanke trägt weiter, die zwei Empfänger
+│                                                 sind weg
 ├── l10n/
-│   ├── app_de.arb                            ✅ Vorlage-Sprache, 259 Schlüssel. Neue Strings **hier zuerst**
+│   ├── app_de.arb                            ✅ Vorlage-Sprache, 276 Schlüssel. Neue Strings **hier zuerst**
 │   ├── app_en.arb                            ✅ Englische Fassung derselben Schlüssel
-│   ├── app_fa.arb                            ✅ Persisch (Phase 18) — alle 259 Schlüssel, Reihenfolge wie
+│   ├── app_fa.arb                            ✅ Persisch (Phase 18) — alle 276 Schlüssel, Reihenfolge wie
 │   │                                             app_de.arb. Fehlt einer, fällt gen-l10n STILL auf Deutsch
 │   │                                             zurück; `persian_ui_test.dart` prüft das stichprobenartig.
 │   │                                             ⚠️ Entwurf — der Nutzer geht ihn als Muttersprachler durch
@@ -198,7 +168,7 @@ lib/
 │   │                                             Flächen kommen von dort → alle Seiten ziehen automatisch nach)
 │   ├── routing/
 │   │   ├── app_routes.dart                   ✅ Einzige Quelle für Routen-Pfade (/account, /categories,
-│   │   │                                         /reminders, /onboarding, /view/overview-fullscreen,
+│   │   │                                         /onboarding, /view/overview-fullscreen,
 │   │   │                                         /guide-Präfix — die vier Themen-Pfade baut GuideTopic)
 │   │   └── app_router.dart                   ✅ go_router: ShellRoute (4 Hauptseiten) + Detailseiten außerhalb
 │   │                                             der Shell. Bewusst eine Funktion createAppRouter(showOnboarding:)
@@ -208,7 +178,7 @@ lib/
 │   │   │                                         ist Persisch vollwertig: `locale` liefert `fa` für Oberfläche
 │   │   │                                         UND Inhalte, der Zwischenstands-Begriff `contentLanguageCode`
 │   │   │                                         ist ersatzlos entfallen. Dazu resolveLocale() für Texte ohne
-│   │   │                                         BuildContext (Notifications)
+│   │   │                                         BuildContext (Standard-Kategorien, Teilen-Texte)
 │   │   └── app_numbers.dart                  ✅ Einzige Zahlen-Formatierung (Phase 18.4). Hält die Entscheidung
 │   │                                             fest: **westliche Ziffern in allen Sprachen**, mit vier
 │   │                                             Gründen. Eine Umstellung auf persische Ziffern betrifft nur
@@ -232,13 +202,13 @@ lib/
 │   │   │                                         dort, wo jemand den ersten Schlüssel eintragen würde
 │   │   ├── app_links.dart                    ✅ Einzige Quelle der öffentlichen Adressen (Phase 19).
 │   │   │                                         Drei Leser: QR-Code auf der Karte, Share-Begleittext,
-│   │   │                                         „App teilen" in den Einstellungen.
-│   │   │                                         ⚠️ Sie lesen `appShareUrl` = die WEB-FASSUNG, nicht
-│   │   │                                         `playStoreUrl` (Phase 27.11): Die Store-Seite gibt es
-│   │   │                                         nicht (HTTP 404 nachgemessen), jeder geteilte QR-Code
-│   │   │                                         führte dorthin. Und sie schlösse iPhone-Nutzer aus.
-│   │   │                                         Der Play-Link bleibt für später — ein Wechsel ist EINE
-│   │   │                                         Zeile
+│   │   │                                         „App teilen" in den Einstellungen. Sie lesen
+│   │   │                                         `appShareUrl` = `webAppUrl`.
+│   │   │                                         ⚠️ `appShareUrl` ist bewusst eine EIGENE Konstante,
+│   │   │                                         obwohl identisch: Ihr Name sagt, wofür die Adresse da
+│   │   │                                         ist. Bis 27.11 zeigte sie auf eine Play-Seite mit
+│   │   │                                         HTTP 404 — jeder geteilte QR-Code lief ins Leere.
+│   │   │                                         `playStoreUrl`/`appPackageName` sind mit Phase 28 weg
 │   │   ├── ad_config.dart                    🕯️ Ad-Unit-IDs + Test-Geräte + Not-Schalter adsDisabledForEveryone
 │   │   └── app_assets.dart                   ✅ Asset-Pfade; AppAssets.homeAnimation = Lottie-Slot (null →
 │   │                                             eingebaute gemalte Animation)
@@ -247,19 +217,18 @@ lib/
 │   │   ├── streak_calculator.dart            ✅ Reine Streak-Logik inkl. 1-Frei-Tag/Woche (unit-getestet)
 │   │   ├── achievement_evaluator.dart        ✅ Reine Freischalt-Logik (unit-getestet)
 │   │   └── platform_support.dart             ✅ **Die einzige Stelle im Projekt, an der `kIsWeb` steht.**
-│   │                                             isMobilePlatform + fünf nach FÄHIGKEIT benannte Abfragen:
-│   │                                             supportsReminders, supportsHomeScreenWidgets,
-│   │                                             supportsOrientationLock, usesBrowserStorage (26.8),
+│   │                                             Nach Phase 28 nur noch vier Abfragen:
+│   │                                             usesBrowserStorage (26.8), supportsOrientationLock,
 │   │                                             canReadForeignResponseHeaders (26.11 — fremde Kopfzeilen
 │   │                                             gibt der Browser nur soweit frei, wie CORS es erlaubt,
-│   │                                             und `Date` gehört nicht dazu).
+│   │                                             und `Date` gehört nicht dazu),
 │   │                                             supportsCloudSync (Phase 27 — nur true, wenn BEIDE
 │   │                                             Supabase-Werte gesetzt sind; ein Bau ohne Schlüssel
 │   │                                             verhält sich exakt wie vor Phase 27).
-│   │                                             ⚠️ Zwei Abfragen, die im Browser dasselbe liefern, aber
-│   │                                             Verschiedenes MEINEN, bleiben getrennt (usesBrowserStorage
-│   │                                             vs. supportsHomeScreenWidgets) — sonst erschiene auf einem
-│   │                                             Desktop-Bau der Safari-Hinweis.
+│   │                                             ⚠️ supportsReminders und supportsHomeScreenWidgets sind
+│   │                                             mit Phase 28 ENTFALLEN — es gibt nichts mehr abzufragen.
+│   │                                             Die Regel bleibt trotzdem: nach FÄHIGKEIT benennen, nicht
+│   │                                             nach Plattform, und `kIsWeb` steht nur hier
 │   │                                             🕯️ isStorePlatform ist mit Phase 20 auskommentiert
 │   ├── services/
 │   │   ├── time_service.dart                 ✅ Aktuelles Datum (HTTP-Date-Header + Offline-Fallback), über
@@ -268,13 +237,13 @@ lib/
 │   │   │                                         Zwischenspeicher) — fremde Kopfzeilen sind dort nicht lesbar
 │   │   ├── settings_service.dart             ✅ Persistiert ThemeMode, AppThemeVariant, AppLanguage, AscentSource,
 │   │   │                                         onboarding_seen, share_include_overview (Phase 19) und
-│   │   │                                         status_notification_enabled (Phase 23);
+│   │   │                                         share_include_overview;
 │   │   │                                         dazu appLocaleProvider (MaterialApp.locale) und
 │   │   │                                         resolvedLocaleProvider (Texte ohne BuildContext)
 │   │   ├── profile_service.dart              ✅ Persistiert UserProfile (Name). Phase 27.6 spiegelt ihn
 │   │   │                                         auf den Server — lokal bleibt er die Quelle der Anzeige
 │   │   ├── auth_service.dart                 ✅ **Phase 27.5** — die EINZIGE Stelle für `supabase_flutter`
-│   │   │                                         (Bauart wie notification_service/share_service). Anmelden,
+│   │   │                                         (Bauart wie share_service). Anmelden,
 │   │   │                                         Registrieren, Abmelden, Sitzungs-Zustand, Benutzername.
 │   │   │                                         ⚠️ Fehler kommen als Grund-Code heraus, nicht als
 │   │   │                                         englischer Server-Text (Muster: backup_data.dart)
@@ -288,7 +257,7 @@ lib/
 │   │   ├── share_service.dart                ✅ Einzige Stelle für share_plus: shareApp (Text) und
 │   │   │                                         shareProgressImage (Bytes → Share-Sheet). Beide Texte tragen
 │   │   │                                         `appShareUrl` aus app_links.dart — seit 27.11 die
-│   │   │                                         WEB-Fassung, vorher der tote Play-Link.
+│   │   │                                         Web-Fassung, vorher der tote Play-Link (27.11).
 │   │   │                                         Seit Phase 26.1 OHNE dart:io/path_provider: XFile.fromData
 │   │   │                                         übergibt die Bytes direkt, share_plus legt selbst eine
 │   │   │                                         Temp-Datei an. Dadurch auf allen drei Plattformen ein Weg.
@@ -302,7 +271,10 @@ lib/
 │   │   │   │                                     im Browser gibt es keine Pfade). Bedingter Import, damit in
 │   │   │   │                                     keinem Bau Code der anderen Plattform steckt (Phase 26.1)
 │   │   │   ├── pick_text_file.dart               Weiche: export io … if (dart.library.js_interop) web
-│   │   │   ├── pick_text_file_io.dart            Android/iOS: flutter_file_dialog + dart:io
+│   │   │   ├── pick_text_file_io.dart            ⚠️ Seit Phase 28 ein STUB, der `null` liefert — und zwar
+│   │   │   │                                      mit Absicht: `flutter test` läuft auf der Dart-VM und
+│   │   │   │                                      wählt genau diesen Zweig. Ohne ihn liesse sich
+│   │   │   │                                      backup_service.dart nicht übersetzen
 │   │   │   └── pick_text_file_web.dart           Browser: <input type="file"> + FileReader.
 │   │   │                                         ⚠️ `oncancel` ist Pflicht: Bricht der Nutzer ab, feuert
 │   │   │                                         `onchange` NIE — das Future bliebe für immer offen
@@ -310,7 +282,7 @@ lib/
 │   │   │   │                                     (Phase 26.8). Dieselbe Bauart wie file_pick/.
 │   │   │   │                                     ⚠️ Eine Bitte, keine Garantie — der Browser entscheidet
 │   │   │   ├── request_persistent_storage.dart      Weiche (bedingter Export)
-│   │   │   ├── …_io.dart                            Android/iOS: sofort `false`, es gibt nichts zu erbitten
+│   │   │   ├── …_io.dart                            Nicht-Web: sofort `false` (nur die Dart-VM im Test)
 │   │   │   └── …_web.dart                           navigator.storage.persisted() → persist()
 │   │   ├── repo_content_service.dart         ✅ **Einziger** Weg an Repository-Inhalte (Anleitung + „موارد دیگر").
 │   │   │                                         Lädt jeden Pfad unter `content/` als Text und legt
@@ -321,27 +293,11 @@ lib/
 │   │   │                                         Phase 26.11 `package:http` statt `dart:io` — letzteres warf
 │   │   │                                         im Browser, weshalb alle fünf Anleitungs-Seiten „kein
 │   │   │                                         Internet" zeigten (PLAN.md 26.10, Lehre 30)
-│   │   ├── home_widget_service.dart          ✅ Einzige Stelle für home_widget: Fortschritt schreiben, 7 PNGs
-│   │   │                                         rendern (5 Diagramme + Ring + Checkliste) und die Farbkachel-
-│   │   │                                         Werte setzen. Schlüssel müssen zu den Kotlin-Klassen passen.
-│   │   │                                         Setzt Localizations von Hand (offscreen gibt es keine
-│   │   │                                         MaterialApp). Enthält colorTileInteractionCallback (eigenes
-│   │   │                                         Isolate) und _awaitAlive (siehe Hinweise)
 │   │   ├── dashboard_layout_service.dart     ✅ Persistiert je Seite (pageId) die aktive Widget-Liste;
 │   │   │                                         dashboardLayoutProvider (Family), toggle/reorder
 │   │   ├── ads_service.dart                  🕯️ Einzige Stelle für google_mobile_ads (idempotenter Start,
 │   │   │                                         adaptives Banner; Fehler werden geschluckt und geloggt)
-│   │   ├── purchase_service.dart             🕯️ Einzige Stelle für in_app_purchase/Play Billing + adsRemovedProvider
-│   │   └── notification_service.dart         ✅ Einzige Stelle für flutter_local_notifications: initialize (inkl.
-│   │                                             Zeitzone), requestPermission, scheduleForHabit (täglich, seit
-│   │                                             Phase 23 mit dem Serien-Stand im Text), cancelForHabit;
-│   │                                             Snooze über Top-Level-Handler (Background-Isolate) — die
-│   │                                             Sprache reist im Payload mit.
-│   │                                             **Phase 23:** showDailyStatus/cancelDailyStatus (dauerhafte
-│   │                                             Meldung, eigener Kanal, leise) + DailyStatusMessage — ein
-│   │                                             reines Wertobjekt, das entscheidet OB gemahnt wird und WAS
-│   │                                             dort steht (null = abräumen). Herausgezogen, weil der Plugin-
-│   │                                             Konstruktor privat und der Kanal im Test nicht auflösbar ist
+│   │   └── purchase_service.dart             🕯️ Einzige Stelle für in_app_purchase/Play Billing + adsRemovedProvider
 │   └── widgets/
 │       ├── main_shell.dart                   ✅ Bottom-Nav-Rahmen (Home/Heute/View/Einstellungen). 🕯️ Der
 │       │                                         BannerAdSlot darüber ist mit Phase 20 entfallen; die Column,
@@ -383,9 +339,10 @@ lib/
 │       │                                         Phase 13 entfallen (die Y-Achse zeigt jetzt nur noch 0 und den
 │       │                                         Höchstwert, ein Intervall genügte nicht: fl_chart beschriftet
 │       │                                         zusätzlich immer den Rand maxY).
-│       │                                         ⚠️ _chartHeight = 180 ist FEST — das Home-Screen-Widget rendert
-│       │                                         dieselben Diagramme in 320×200 (home_widget_service.dart); ein
-│       │                                         mitwachsendes Diagramm wäre dort abgeschnitten.
+│       │                                         _chartHeight = 180 ist fest. ⚠️ Der Grund dafür ist mit
+│       │                                         Phase 28 entfallen (die Widgets rendern dieselben
+│       │                                         Diagramme nicht mehr in 320×200) — die feste Höhe bleibt,
+│       │                                         weil die Seiten darauf ausgelegt sind.
 │       │                                         ⚠️ Beschriftungen neben einem Diagramm IMMER mit
 │       │                                         Alignment.centerRight/TextAlign.right, nie richtungsabhängig:
 │       │                                         fl_chart kennt keine Textrichtung, die Y-Achse liegt in jeder
@@ -401,7 +358,7 @@ lib/
 │       │                                         Übersicht-Block bekommt sie als fertiges Widget, damit core/
 │       │                                         nichts aus features/ importieren muss
 │       └── dashboard/                        ✅ Individualisierbares Widget-Dashboard
-│           ├── dashboard_widget_type.dart        Katalog-Enum (5 Typen) + Label + androidWidgetProvider
+│           ├── dashboard_widget_type.dart        Katalog-Enum (5 Typen) + Label
 │           ├── dashboard_widget_builder.dart     Einzige Typ+Zeitraum → Widget-Zuordnung
 │           └── dashboard_section.dart            Anpassen-Modus: ReorderableListView, Hinzufügen/Entfernen-Chips
 ├── data/
@@ -410,12 +367,13 @@ lib/
 │   │   │                                         schemaVersion 3, onCreate (nur Tabellen — Kategorien legt der
 │   │   │                                         App-Start sprachabhängig an), onUpgrade 1→2 / 2→3
 │   │   ├── database.g.dart                   ⚙️ build_runner
-│   │   ├── tables/{habits,habit_completions,categories}_table.dart ✅ Habits (inkl. Reminder-Spalten),
-│   │   │                                         HabitCompletions (unique habitId+date), Categories (name unique)
+│   │   ├── tables/{habits,habit_completions,categories}_table.dart ✅ Habits,
+│   │   │                                         HabitCompletions (unique habitId+date), Categories (name unique).
+│   │   │                                         ⚠️ Die zwei Reminder-Spalten sind mit Phase 28 (Schema 4) weg
 │   │   └── daos/
 │   │       ├── habit_dao.dart                ✅ CRUD/Watch inkl. updateHabit (Teil-Update via `.write()`,
 │   │       │                                     bewusst kein `.replace()`), deleteHabit (transaktional),
-│   │       │                                     setReminder, habitsWithReminder
+│   │       │                                     archiveHabit
 │   │       ├── habit_completion_dao.dart     ✅ CRUD/Watch + watchAllCompletions (lebenslang)
 │   │       ├── category_dao.dart             ✅ getOrCreateCategory, renameCategory (kaskadiert auf Habits),
 │   │       │                                     deleteCategory → DeleteCategoryOutcome (Status + Anzahl der
@@ -455,8 +413,7 @@ lib/
 │                                                 monthlyBreakdown, allCompletions, firstActivityDate,
 │                                                 lifetimeStats, unlockedAchievementIds, categoriesProvider;
 │                                                 add/update/deleteHabit, add/rename/deleteCategory,
-│                                                 setHabitReminder (DB + Notification an einer Stelle),
-│                                                 ensureDefaultCategory, rescheduleAllReminders, habitTileData
+│                                                 ensureDefaultCategory, habitTileData
 ├── features/
 │   ├── home/presentation/
 │   │   ├── home_page.dart                    ✅ Berg-Animation + Fortschritts-Header + Knopf „Fortschritt
@@ -495,14 +452,13 @@ lib/
 │   │   └── year/year_tab.dart                ✅ Letzte 52 Wochen (pageId „year", einzige Seite mit Monatsübersicht)
 │   ├── habits/presentation/habit_form_sheet.dart ✅ Bottom Sheet für Anlegen **und** Bearbeiten (ein Formular):
 │   │                                             Vorlage/eigene Gewohnheit, Kategorie-Dropdown mit „+ Neue
-│   │                                             Kategorie", Erinnerungs-Schalter + Time-Picker, Löschen
+│   │                                             Kategorie", Löschen
 │   ├── settings/presentation/
 │   │   ├── settings_page.dart                ✅ Darstellungsmodus, Farb-Variante, Animations-Quelle, Sprache;
-│   │   │                                         Links zu Konto/Kategorien/Erinnerungen, App teilen, Sicherung
+│   │   │                                         Links zu Konto/Kategorien, App teilen, Sicherung
 │   │   │                                         exportieren/importieren, Kontakt uns, Rubrik „Root-in Anleitung"
 │   │   │                                         (Einträge kommen aus GuideTopic); 🕯️ Abschnitt „Werbung"
-│   │   ├── remove_ads_tile.dart              🕯️ Kauf-Kachel + „Käufe wiederherstellen" (Phase 14, stillgelegt)
-│   │   └── reminders_page.dart               ✅ Alle Gewohnheiten mit Uhrzeit, direkt änderbar/abschaltbar
+│   │   └── remove_ads_tile.dart              🕯️ Kauf-Kachel + „Käufe wiederherstellen" (Phase 14, stillgelegt)
 │   ├── guide/presentation/                   ✅ Rubrik „Root-in Anleitung" — vier Seiten, Inhalt im Repository
 │   │   ├── guide_topic.dart                  ✅ Enum der vier Themen mit Titel, Untertitel, Symbol, Route **und**
 │   │   │                                         Markdown-Dateiname JE SPRACHE (fileName(languageCode) — die
@@ -555,7 +511,7 @@ lib/
 │       └── account_cloud_card.dart               Die Rubrik „Konto & Cloud" auf der Konto-Seite.
 │                                                 ⚠️ VERSCHWINDET vollständig, wenn supportsCloudSync
 │                                                 falsch ist — ehrlich abschalten statt Knöpfe ohne
-│                                                 Wirkung (dieselbe Regel wie bei den Erinnerungen)
+│                                                 Wirkung — ehrlich abschalten statt still scheitern
 ```
 
 ## test/
@@ -572,8 +528,7 @@ test/
 │   │                                        Phase 22: Übernahme des alten Zwischenspeicher-Schlüssels, und dass
 │   │                                        neue Pfade KEINEN alten Schlüssel erben)
 │   ├── achievement_evaluator_test.dart  ✅ 4 Fälle (keine ohne Aktivität, drei Meilenstein-Arten, Schwelle >=)
-│   ├── habit_tile_data_test.dart        ✅ 2 Fälle (Farbkachel-Daten, archivierte ausgeschlossen)
-│   ├── reschedule_reminders_test.dart   ✅ 3 Fälle (neue Sprache, ohne Erinnerung unangetastet, archivierte)
+│   ├── habit_tile_data_test.dart        ✅ 2 Fälle (Kachel-Daten, archivierte ausgeschlossen)
 │   ├── others_manifest_test.dart        ✅ 10 Fälle (Phase 22): Ordner/Dateien lesen, Sortierung nach `order`
 │   │                                        (stabil bei Gleichstand), fehlendes `order`, leerer Ordner, vier
 │   │                                        Fehlerformen mit Grund-Code — und „das mitgelieferte Beispiel ist
@@ -589,12 +544,6 @@ test/
 │   ├── backup_data_test.dart            ✅ 5 Fälle (verlustfreie Runde, neuere Version/Fremd-JSON/beschädigt
 │   │                                        abgelehnt — geprüft wird der Grund-Code, fehlende Listen als leer)
 │   ├── backup_restore_test.dart         ✅ 2 Fälle (replaceAll erhält habitId-Verweise, archivierte dabei)
-│   ├── home_widget_service_test.dart    ✅ 7 Fälle: mockt den MethodChannel und hält den Vertrag zur Kotlin-Seite
-│   │                                        fest (Schlüssel/Werte, Provider-Namen, chartKeyFor, Farbe vorzeichenbeh.);
-│   │                                        seit Phase 23 auch der Untertitel „Noch N offen"/„alles erledigt"
-│   ├── daily_status_notification_test.dart ✅ 9 Fälle (Phase 23): Serie landet im geplanten Erinnerungstext,
-│   │                                        Neuplanen zieht sie nach; DailyStatusMessage mahnt bei offenen und
-│   │                                        schweigt bei erledigten/keinen Gewohnheiten; Schalter persistiert
 │   ├── remove_ads_test.dart             🕯️ 8 Fälle (Phase 14), stillgelegt — plus EIN aktiver, mit `skip:`
 │   │                                        übersprungener Platzhalter: ohne `main()` meldet flutter test
 │   │                                        die Datei als Ladefehler
@@ -645,7 +594,7 @@ test/
 │   ├── remove_ads_tile_test.dart    🕯️ 2 Fälle (Phase 14), stillgelegt — mit demselben Platzhalter wie oben
 │   ├── account_page_test.dart       ✅ 3 Fälle (Profil/Statistik/Achievements, Name persistiert, Teilen öffnet)
 │   ├── categories_page_test.dart    ✅ Kategorie anlegen, umbenennen, löschen
-│   ├── habit_form_sheet_test.dart   ✅ 2 Fälle (Bearbeiten/Löschen inkl. Notification-Cancel, Erinnerung setzen)
+│   ├── habit_form_sheet_test.dart   ✅ 1 Fall (Bearbeiten-Modus zeigt die Werte und kann löschen)
 │   ├── share_card_test.dart         ✅ 6 Fälle (heute/Monat/Jahr; Kopfzeile mit Name+Datum, Punkte/Streak/
 │   │                                     Achievements; Grid ohne Überlauf; QR + Store-Link; Übersicht-Block
 │   │                                     ohne Überlauf bei fester Breite; ohne Block bleibt sie schmal)
@@ -653,19 +602,17 @@ test/
 │   │                                     Übersicht-Block weg und bricht nicht) — Phase 19
 │   ├── persian_ui_test.dart         ✅ 5 Fälle (Oberfläche persisch + Directionality.rtl, Sprachauswahl selbst
 │   │                                     persisch, persische Standard-Kategorien, Schlüssel-Stichprobe quer
-│   │                                     durch die App, fa als unterstützte Locale inkl. Notification) — Phase 18
-│   ├── reminders_page_test.dart     ✅ 3 Fälle (keine Erinnerung, Uhrzeit sichtbar, Abschalten cancelt)
+│   │                                     durch die App, fa als unterstützte Locale) — Phase 18
 │   ├── home_progress_animation_test.dart ✅ 4 Fälle (Prozent + Quelle, Gipfel bei 100 %, nächstes Camp, Clamping)
 │   ├── dashboard_section_test.dart  ✅ Anpassen-Modus: hinzufügen, entfernen, beides persistiert
 │   └── web_storage_hint_test.dart   ✅ 4 Fälle (Phase 26.8). ⚠️ Laufen auf der Dart-VM, also NIE im
-│                                        Browser — prüfbar ist deshalb das Wichtigste: dass der Hinweis
-│                                        auf Android/iOS NICHT erscheint und den Merker dort NICHT
-│                                        verbraucht. Sonst verlöre ein Nutzer, der zuerst auf Android
-│                                        startet, den Hinweis in der Web-Fassung stillschweigend
+│                                        Browser — prüfbar ist deshalb, dass der Hinweis dort NICHT
+│                                        erscheint und den Merker NICHT verbraucht. Der ursprüngliche
+│                                        Anlass (ein Nutzer startet auf Android und verliert den
+│                                        Hinweis im Web) ist mit Phase 28 weg, die Zusage bleibt
 └── support/
     ├── test_database.dart           ✅ Isolierte In-Memory-Test-DB — nie die echte App-DB
     ├── test_time_service.dart       ✅ Festes Datum, kein Netzwerkzugriff in Tests
-    ├── fake_notification_service.dart ✅ Protokolliert geplante/abgebrochene Erinnerungen + zuletzt genutzte Sprache
     ├── fake_auth_service.dart       ✅ **Phase 27.5** — Anmeldung ohne Server. ⚠️ KEIN Test spricht mit
     │                                    dem echten Supabase-Projekt: Tests müssen ohne Netz und ohne
     │                                    Schlüssel laufen (derselbe Grund wie bei RepoFetcher)
@@ -677,32 +624,11 @@ test/
     └── dispose_and_flush.dart       ✅ Räumt den Widget-Baum ab und flusht Drifts Nulldauer-Timer
 ```
 
-## Release-Artefakte (Android)
-
-Zwei Dateien liegen **bewusst außerhalb des Projekts** — sie enthalten Geheimnisse und dürfen nie in ein Repository oder in die iCloud-Synchronisierung geraten:
-```
-~/development/keys/root-in-upload.jks   ✅ Upload-Signaturschlüssel (Alias `upload`, gültig bis 2053).
-                                           Geht die Datei verloren, lässt sich die veröffentlichte App nie wieder
-                                           aktualisieren — Sicherheitskopie im Passwortmanager steht noch aus
-
-android/
-├── key.properties.example           ✅ Vorlage mit den vier Feldern — darf im Repository liegen
-├── key.properties                   ✅ Die Kopie mit den ECHTEN Werten; in .gitignore (mit *.jks/*.keystore)
-├── gradle.properties                ✅ `-Duser.language=en -Duser.country=US` in org.gradle.jvmargs — die
-│                                        Systemsprache fa_AT gab der JVM persische Ziffern, wodurch bundletool
-│                                        `classes۲.dex` erwartete und NUR der AAB-Release-Build abbrach
-└── app/build.gradle.kts             ✅ applicationId + namespace = com.rootin.app; signingConfigs liest
-                                         key.properties, sonst Debug-Schlüssel mit sichtbarer Warnung
-
-build/app/outputs/bundle/release/app-release.aab  ⚙️ DAS ist die Datei für die Play Console
-build/app/outputs/flutter-apk/app-debug.apk       ⚙️ Nur zum lokalen Prüfen
-```
-
 ## Web-Fassung & Automatik
 
 ✅ **Gebaut in PLAN.md Phase 26 — und seit dem 2026-08-17 die HAUPTPLATTFORM** (PLAN.md Abschnitt 2). Nicht mehr „der Zugang zum iPhone, solange es keine Store-Veröffentlichung gibt": Sie **ist** das Ziel, weil sie jeden ohne Store, ohne Installation und ohne Konto bei Google oder Apple erreicht.
 
-⚠️ **Was der Hauptplattform fehlt:** Erinnerungen und Startbildschirm-Widgets gibt es im Browser nicht (Phase 26.1). Bei einer Habit-App ist das erste kein Detail — die offene Entscheidung dazu steht in PLAN.md Abschnitt 12.
+⚠️ **Was fehlt, und zwar endgültig:** Erinnerungen und Startbildschirm-Widgets. Sie sind mit Phase 28 **entfernt**, nicht ausgeblendet — ein Browser stellt keinen Wecker, und eine Website kann kein Widget stellen. Für eine Habit-App ist das erste kein Detail; der Nutzer hat den Preis bewusst bezahlt (PLAN.md Abschnitt 2).
 
 ```
 tool/                                ✅ Skripte — von Hand UND von der Automatik aufgerufen
@@ -776,7 +702,7 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 
 | Was | Wo | Kern |
 |---|---|---|
-| Plattform-Weichen | `core/utils/platform_support.dart` | `supportsReminders`, `supportsHomeScreenWidgets`, `supportsOrientationLock`, `usesBrowserStorage`, `canReadForeignResponseHeaders`. **`kIsWeb` steht NUR hier** |
+| Plattform-Weichen | `core/utils/platform_support.dart` | `usesBrowserStorage`, `supportsOrientationLock`, `canReadForeignResponseHeaders`, `supportsCloudSync`. **`kIsWeb` steht NUR hier** |
 | Datenbank im Browser | `data/local/database.dart` | `DriftWebOptions` — ohne den Parameter wirft `driftDatabase()` im Web |
 | Sicherung einlesen | `core/services/file_pick/` | Bedingter Import: mobil Dateipfad, im Browser `<input type="file">` |
 | Netzzugriff | `package:http` in `time_service.dart` + `repo_content_service.dart` | **Kein `dart:io`** — es übersetzt für den Browser und wirft dort (Lehre 30) |
@@ -804,7 +730,7 @@ xcrun simctl io booted screenshot --type=png <datei>
 
 Die **Serie wird nirgends gespeichert** — sie entsteht bei jedem Aufruf neu aus den Erledigungen (`StreakCalculator`). ⚠️ Beide Orte gehören zu **einem Browser auf einem Gerät**: Ein zweites Gerät hat einen eigenen Bestand, und „Website-Daten löschen" räumt beides ab. Deshalb der Hinweis aus 26.8 und die Bitte um dauerhaften Speicher beim Start.
 
-**Was im Browser bewusst fehlt** (PLAN.md Phase 26.1): Erinnerungen und Tagesstand-Meldung, Startbildschirm-Widgets, die Querformat-Sperre der Übersicht. Die zugehörigen Bedienelemente verschwinden dort ganz — ein Schalter, der nichts bewirkt, ist schlimmer als kein Schalter. Eine gespeicherte Erinnerungs-Uhrzeit bleibt in der Datenbank **unangetastet**, damit dieselbe Sicherung auf Android wieder vollständig ist.
+**Was es nicht gibt** (PLAN.md Phase 28): Erinnerungen, Tagesstand-Meldung, Startbildschirm-Widgets, Querformat-Sperre. Bis Phase 26.1 waren sie im Browser nur **ausgeblendet** und die gespeicherte Erinnerungs-Uhrzeit blieb in der Datenbank stehen, damit dieselbe Sicherung auf Android wieder vollständig wäre. Dieses Argument ist mit dem Wegfall von Android hinfällig — die Spalten sind mit Schema 4 entfernt.
 
 ## Nutzerkonten & Cloud (Supabase)
 
@@ -899,7 +825,7 @@ test/widget/account_cloud_card_test.dart ✅ 6 Fälle, u. a. „ohne Cloud ist d
 
 ## Inhalts-Repository (GitHub)
 
-⚠️ **Seit Phase 26.2 ist das DASSELBE Repository wie der Quellcode.** Bis dahin lag unter `lukasylilli/Root-in` ausschließlich der Ordner `content/`. Beim Anlegen des lokalen Git-Repositories fiel auf: Ein Push des Quellcodes hätte diese Dateien überschrieben — und die **bereits veröffentlichte Android-App** lädt sie zur Laufzeit von genau dieser Adresse. Beide Historien wurden deshalb zusammengeführt; `content/` liegt jetzt im Projekt und wird mitversioniert.
+⚠️ **Seit Phase 26.2 ist das DASSELBE Repository wie der Quellcode.** Bis dahin lag unter `lukasylilli/Root-in` ausschließlich der Ordner `content/`. Beim Anlegen des lokalen Git-Repositories fiel auf: Ein Push des Quellcodes hätte diese Dateien überschrieben — und die App lädt sie zur Laufzeit von genau dieser Adresse. Beide Historien wurden deshalb zusammengeführt; `content/` liegt jetzt im Projekt und wird mitversioniert.
 
 **Die Inhalte wirken weiterhin ohne App-Update** — sie werden zur Laufzeit geladen, nicht mitgeliefert. Neu ist nur, dass sie auch lokal im Projekt liegen und über denselben Push aktualisiert werden:
 
@@ -932,19 +858,16 @@ Manifest (siehe Hinweise).
 - Bei jeder neuen Datei/jedem neuen Ordner: hier ergänzen. Bei Löschung/Umbenennung: hier korrigieren.
 - `*.g.dart` sind generiert (`dart run build_runner build`) und werden hier nicht einzeln aufgeführt.
 - **Kommando-Aufruf auf dieser Maschine:** immer den vollen SDK-Pfad, `"$HOME/development/flutter/bin/flutter" analyze` / `test` / … — die Bash-Tool-Shell sourct `~/.zshenv`/`~/.zshrc` nicht neu und zeigt sonst auf die alte iCloud-SDK-Kopie (PLAN.md Abschnitt 11, Lehre 1–2).
-- `adb` ist ebenfalls **nicht im PATH**: `"$HOME/Library/Android/sdk/platform-tools/adb"`. Eine Seite wirklich ansehen: `flutter run -t lib/main_seed.dart`, dann `adb shell input tap X Y` / `swipe` und `adb exec-out screencap -p > bild.png`. Koordinaten gelten für die **aktuelle** Ausrichtung; ein `input tap` auf einen Tab kommt gelegentlich nicht an — ein `swipe` über den Inhalt wechselt zuverlässig.
-- `keytool`, `jarsigner` und `java` sind nicht im PATH — das JDK gehört zu Android Studio: `/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/`.
-- Jeder Widget-Test, der DB-gestützte Provider berührt, überschreibt `appDatabaseProvider` und `timeServiceProvider` und ruft `disposeAndFlush(tester)` als letzte Zeile. Tests, die Gewohnheiten anlegen/löschen oder Erinnerungen setzen, überschreiben zusätzlich `notificationServiceProvider`. Der frühere `purchaseServiceProvider`-Override ist mit Phase 20 entfallen.
+- **Eine Seite wirklich ansehen:** lokal bauen (`tool/build_web.sh` oder `flutter build web --dart-define-from-file=.env`), `python3 -m http.server` über `build/web/` und `python3 tool/webtest.py http://localhost:8765/`. Für einen Blick mit echten Daten: `lib/main_seed.dart` als Einstiegspunkt.
+- Jeder Widget-Test, der DB-gestützte Provider berührt, überschreibt `appDatabaseProvider` und `timeServiceProvider` und ruft `disposeAndFlush(tester)` als letzte Zeile. Die früheren Overrides für `notificationServiceProvider` (Phase 28) und `purchaseServiceProvider` (Phase 20) sind entfallen.
 - Tests, die die Home-Seite rendern, dürfen **kein** `pumpAndSettle()` verwenden — die funkelnden Sterne laufen dauerhaft. Stattdessen `tester.pump(const Duration(seconds: 1))`; für einen **Wechsel** auf Home braucht es drei aufeinanderfolgende `pump()` (Tipp → Speichern → Routen-Übergang, siehe `settleNavigation`).
 - Tests, die die ganze App starten, müssen `onboarding_seen` in den gemockten Prefs setzen — sonst landen sie auf der Erststart-Erklärung.
 - Widgets am unteren Ende einer `ListView`/`GridView` sind im Test-Viewport noch nicht gemountet — erst `tester.scrollUntilVisible(...)`. Bei mehreren verschachtelten Scrollables `find.byType(Scrollable).first` nehmen.
 - **Datenbank-Abfragen mitten im Widget-Test** brauchen `await tester.runAsync(() async { … })`. Drift liefert Stream-Ergebnisse über einen Timer, und im Widget-Test steht die Uhr still — ein blankes `await stream.first` hängt bis zum Timeout (dieselbe Ursache wie bei `disposeAndFlush`). Wo kein Widget-Baum nötig ist, ist ein reines `test(...)` mit `ProviderContainer` der einfachere Weg.
 - Ein **Render-Test** beweist Geometrie und Ausrichtung, aber **nicht** den verfügbaren Platz auf einem echten Gerät und nichts, was an einem Konfigurationswechsel hängt (Drehung, Theme). Wer ein Bild erzeugt: `FontLoader` und `boundary.toImage()` **müssen** in `tester.runAsync(...)` laufen, sonst hängt der Test bis zum Timeout.
 - **Kein `dart:io` in `lib/`** — es übersetzt für den Browser und wirft dort erst zur Laufzeit (PLAN.md Lehre 30). Netzzugriffe über `package:http`; was wirklich Plattform braucht, kommt hinter einen bedingten Import (`*_io.dart` / `*_web.dart`, Vorbild `core/services/file_pick/`). `test/unit/no_dart_io_in_lib_test.dart` hält die Regel.
-- **Netzzugriff braucht `INTERNET` im *Haupt*-Manifest.** Flutter legt sie nur in `src/debug/` und `src/profile/` an — neue Netz-Funktionen deshalb **im Release-Build** gegenprüfen.
-- `AndroidManifest.xml` hat einen `<queries>`-Eintrag für `https`-`VIEW`-Intents (Android-11-Package-Visibility) — nötig für `url_launcher`.
-- **Provider abwarten:** `container.read(streamProvider.future)` **ohne** gleichzeitigen Zuhörer hängt für immer (Riverpod verwirft den Provider und bricht die Drift-Subscription ab). Außerhalb des Widget-Baums `_awaitAlive` aus `home_widget_service.dart` nehmen oder selbst eine `container.listen`-Subscription halten.
-- **Zahlen an Android-Widgets:** Werte über `Int.MAX_VALUE` (ARGB-Farben) landen als `Long` in den Preferences und lassen Kotlins `getInt` abstürzen — immer `.toSigned(32)` schreiben.
-- **Neue UI-Texte** gehören in **alle drei** ARB-Dateien — `app_de.arb` (Vorlage), `app_en.arb`, `app_fa.arb` —, nie als Literal in den Code. Nach dem Ändern `flutter gen-l10n` laufen lassen (oder einfach bauen). ⚠️ **`flutter analyze` löst gen-l10n NICHT aus**: Wer nur analysiert, sieht neue Schlüssel als „undefined getter", obwohl die ARB stimmt. Fehlt ein Schlüssel in einer Nicht-Vorlage-Sprache, fällt er **still** auf Deutsch zurück — die App liefe, sähe aber gemischt aus; `persian_ui_test.dart` prüft das stichprobenartig. Texte außerhalb des Widget-Baums (Notifications, Home-Screen-Widgets) bekommen die Sprache übergeben.
+- **Provider abwarten:** `container.read(streamProvider.future)` **ohne** gleichzeitigen Zuhörer hängt für immer (Riverpod verwirft den Provider und bricht die Drift-Subscription ab). Außerhalb des Widget-Baums selbst eine `container.listen`-Subscription halten. ⚠️ Das Vorbild `_awaitAlive` lag in `home_widget_service.dart` und ist mit Phase 28 entfallen — die Falle nicht.
+- **Neue UI-Texte** gehören in **alle drei** ARB-Dateien — `app_de.arb` (Vorlage), `app_en.arb`, `app_fa.arb` —, nie als Literal in den Code. Nach dem Ändern `flutter gen-l10n` laufen lassen (oder einfach bauen). ⚠️ **`flutter analyze` löst gen-l10n NICHT aus**: Wer nur analysiert, sieht neue Schlüssel als „undefined getter", obwohl die ARB stimmt. Fehlt ein Schlüssel in einer Nicht-Vorlage-Sprache, fällt er **still** auf Deutsch zurück — die App liefe, sähe aber gemischt aus; `persian_ui_test.dart` prüft das stichprobenartig. Texte außerhalb des Widget-Baums (Standard-Kategorien beim Erststart) bekommen die Sprache übergeben.
 - **Prozentwerte** kommen aus `core/l10n/app_numbers.dart`, nicht aus `'${x * 100}%'` im Widget. Dort steht auch die Entscheidung, in allen Sprachen westliche Ziffern zu verwenden. Einzige bewusste Ausnahme: das Übersicht-Board, dessen Spaltenbreiten auf seine eigene Schreibweise (mit Leerzeichen) ausgelegt sind.
-- **Werbung wieder einschalten** (Phase 20 rückgängig): `grep -rn "PHASE 20 (2026-08-01)"` über `lib/`, `test/`, `pubspec.yaml` und `android/` findet jede Stelle. Danach `flutter pub get` und den Marker entfernen.
+- **Werbung wieder einschalten** (Phase 20 rückgängig): `grep -rn "PHASE 20 (2026-08-01)"` über `lib/`, `test/` und `pubspec.yaml` findet jede Stelle. ⚠️ Beide Pakete gibt es nur für Android/iOS — ohne diese Plattformen (Phase 28) ist das kein `grep` mehr, sondern eine neue Phase.
+- ⚠️ **Nach dem Entfernen eines Plugins einmal `flutter clean`.** Der generierte `web_plugin_registrant.dart` bleibt sonst stehen und der Web-Bau bricht mit „Couldn't resolve package" ab. Im CI fällt das nie auf (frischer Checkout) — nur lokal.
