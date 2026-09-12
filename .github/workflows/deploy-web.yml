@@ -84,16 +84,18 @@ jobs:
       # Phase 26 drei kaputte Hauptseiten durchgelassen (Lehre 31), und mit
       # dem Wegfall des Entwicklungsrechners war sie wieder offen (Lehre 39).
       #
-      # ⚠️ `continue-on-error: true` ist ABSICHT und vorläufig: Dieser Schritt
-      # konnte vor seinem ersten Lauf nirgends erprobt werden (auf dem
-      # Entwicklungsrechner gab es keinen ChromeDriver, und Chrome headless
-      # zeichnet Flutter nicht). Ein ungeprüftes Werkzeug darf keine
-      # Veröffentlichung blockieren — es darf aber sehr wohl berichten.
-      # ➜ **Sobald er einmal grün gelaufen ist, gehört diese Zeile weg**;
-      #   dann wird aus dem Bericht ein Tor. Steht sie in einem halben Jahr
-      #   noch hier, prüft dieser Schritt nichts, was jemanden aufhält.
-      - name: Browser-Durchgang (vorläufig nicht blockierend)
-        continue-on-error: true
+      # ⚠️ **Dieser Schritt BLOCKIERT die Veröffentlichung — mit Absicht.**
+      # Beim ersten Einbau lief er mit `continue-on-error: true`, weil er
+      # vorher nirgends erprobt werden konnte. Genau daran fiel auf, dass
+      # diese Zeile die Prüfung wertlos macht: Ein Schritt mit
+      # `continue-on-error` meldet auch dann „success", wenn er
+      # fehlgeschlagen ist — von außen ist beides nicht zu unterscheiden,
+      # und ohne Zugriff auf das Protokoll war die Zusage „grün gelaufen"
+      # nicht überprüfbar. Ein Tor, das immer offen steht, ist eine Tür im
+      # Feld.
+      # ➜ Bleibt so. Wer ihn wieder auf „nicht blockierend" stellt, schaltet
+      #   die einzige Browser-Prüfung des Projekts ab, ohne dass es auffällt.
+      - name: Browser-Durchgang
         run: |
           # Unter demselben Unterpfad ausliefern wie GitHub Pages — sonst
           # sucht die Seite ihre Dateien eine Ebene zu hoch (Lehre 28).
