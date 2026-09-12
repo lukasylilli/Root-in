@@ -1,0 +1,4339 @@
+{
+  "library": "Habit Tracker – Widget Design Specifications",
+  "file": "habit_tracker_WIDGET_specs.json",
+  "version": "1.0",
+  "created": "2026-07-22",
+  "target_framework": "Flutter",
+  "language_of_notes": "de",
+  "usage": "Enthaelt alle Spezifikationen, die Home-Screen-Widgets beschreiben. Beim Nachbau eine spec_id nennen; der Aufbau erfolgt exakt nach der Spezifikation ohne eigene UI-Aenderungen.",
+  "conventions": {
+    "estimated": "true = Wert aus dem Bild abgeleitet, nicht abgelesen",
+    "critical_component": "true = praegendes Merkmal, darf nicht vereinfacht werden",
+    "ignore_layer": "Elemente, die NICHT nachgebaut werden (System-, Marketing- oder Fremdkontext)",
+    "units": "Alle Groessen in logischen Punkten (pt / Flutter dp)",
+    "placeholder_syntax": "<...> = variabler Inhalt, wird zur Laufzeit gefuellt"
+  },
+  "widget_families": {
+    "heatmap": {
+      "specs": [
+        "SCREEN_01",
+        "SCREEN_11",
+        "SCREEN_15"
+      ],
+      "principle": "Neutraler Hintergrund, Verlauf ueber Wochen als Zellraster"
+    },
+    "ring": {
+      "specs": [
+        "SCREEN_10",
+        "SCREEN_13",
+        "SCREEN_17"
+      ],
+      "principle": "Fortschrittsringe, mehrere Habits pro Widget moeglich"
+    },
+    "checklist": {
+      "specs": [
+        "SCREEN_12",
+        "SCREEN_14"
+      ],
+      "principle": "Wochenraster oder Liste mit Zustandsmarkierungen"
+    },
+    "color_tile": {
+      "specs": [
+        "SCREEN_16"
+      ],
+      "principle": "Akzentfarbe als Widget-Flaeche, interaktive Log-Buttons"
+    }
+  },
+  "cell_shape_disambiguation": {
+    "note": "Drei Heatmap-Varianten mit unterschiedlicher Zellform – nicht verwechseln.",
+    "SCREEN_01": "abgerundetes Quadrat, binaer (an/aus)",
+    "SCREEN_11": "Kreis, mehrstufig ueber Deckkraft",
+    "SCREEN_15": "Kreis, mehrstufig ueber Deckkraft, zwei Themes",
+    "SCREEN_16": "abgerundetes Quadrat, binaer"
+  },
+  "index": [
+    {
+      "spec_id": "SCREEN_01",
+      "name": "iOS-Widgets – Habit Heatmap",
+      "type": "widgets_only",
+      "confidence": "MITTEL"
+    },
+    {
+      "spec_id": "SCREEN_10",
+      "name": "Ring-Grid App + Home-Screen-Widgets (Streaks-Stil)",
+      "type": "mixed",
+      "confidence": "MITTEL-HOCH",
+      "duplicate_in": "APP_SCREEN_specs"
+    },
+    {
+      "spec_id": "SCREEN_11",
+      "name": "Dot-Heatmap-Widgets pro Habit (HabitKit-Stil, dunkel)",
+      "type": "widgets_only",
+      "confidence": "HOCH"
+    },
+    {
+      "spec_id": "SCREEN_12",
+      "name": "Wochen-Checkliste mit Zustandskreisen (hell)",
+      "type": "widget_only",
+      "confidence": "HOCH"
+    },
+    {
+      "spec_id": "SCREEN_13",
+      "name": "Today-Screen mit Tagesring + Widget-Set (Multi-Theme)",
+      "type": "mixed",
+      "confidence": "MITTEL",
+      "duplicate_in": "APP_SCREEN_specs"
+    },
+    {
+      "spec_id": "SCREEN_14",
+      "name": "Pastell-Habit-Tracker – 4-Panel-Set (Panel 3 = Widgets)",
+      "type": "mixed",
+      "confidence": "NIEDRIG",
+      "duplicate_in": "APP_SCREEN_specs"
+    },
+    {
+      "spec_id": "SCREEN_15",
+      "name": "Widget-Themes – Dark vs. Light Variante",
+      "type": "widgets_only",
+      "confidence": "MITTEL-HOCH"
+    },
+    {
+      "spec_id": "SCREEN_16",
+      "name": "Farbkacheln, Tagesliste, Streak & Charts (iPad + iPhone)",
+      "type": "widgets_only",
+      "confidence": "MITTEL"
+    },
+    {
+      "spec_id": "SCREEN_17",
+      "name": "Statistiken & Diagramme (Streaks-Stil, Dark/Blau)",
+      "type": "widgets_only",
+      "confidence": "MITTEL"
+    }
+  ],
+  "specs": [
+    {
+      "spec_id": "SCREEN_01",
+      "spec_version": "1.0",
+      "screen_name": "Widgets – Habit Heatmap Widgets (iOS Home Screen)",
+      "source_image": "vorlage_von_diagram_und_widgets-1.jpeg",
+      "target_framework": "Flutter",
+      "note": "Marketing-Mockup. Nur der Inhalt INNERHALB der Widget-Karten ist App-UI. Wallpaper + iPhone-Rahmen + Statusbar = Mockup-Kontext, nicht nachbauen (ausser fuer Preview-Screen).",
+      "canvas": {
+        "device_reference": "iPhone 15 Pro (393 x 852 pt)",
+        "safe_horizontal_margin": 22,
+        "widget_vertical_gap": 16,
+        "background": {
+          "type": "linear_gradient_wallpaper",
+          "estimated": true,
+          "angle_deg": 150,
+          "stops": [
+            {
+              "offset": 0.0,
+              "color": "#F5A3B8"
+            },
+            {
+              "offset": 0.18,
+              "color": "#F7B26A"
+            },
+            {
+              "offset": 0.42,
+              "color": "#9B8FC7"
+            },
+            {
+              "offset": 0.7,
+              "color": "#2E5A8C"
+            },
+            {
+              "offset": 1.0,
+              "color": "#0E2036"
+            }
+          ]
+        }
+      },
+      "color_tokens": {
+        "widget_surface": "#141416",
+        "widget_surface_alt": "#1C1C1E",
+        "cell_empty": "#2E2E31",
+        "cell_today_marker": "#8E8E93",
+        "text_primary": "#FFFFFF",
+        "text_secondary": "#8E8E93",
+        "text_tertiary": "#636366",
+        "accent_read": "#C24CF7",
+        "accent_running": "#FF9F0A",
+        "accent_strength": "#32D74B",
+        "accent_red": "#FF3B30",
+        "divider": "#2C2C2E"
+      },
+      "typography": {
+        "widget_title": {
+          "family": "SF Pro Text / Inter",
+          "size": 12,
+          "weight": 700,
+          "color": "#FFFFFF",
+          "letter_spacing": -0.1
+        },
+        "axis_label_weekday": {
+          "size": 7,
+          "weight": 500,
+          "color": "#8E8E93",
+          "letter_spacing": 0
+        },
+        "axis_label_month": {
+          "size": 8,
+          "weight": 500,
+          "color": "#8E8E93"
+        },
+        "calendar_weekday": {
+          "size": 10,
+          "weight": 700,
+          "color": "#FF3B30",
+          "letter_spacing": 0.4,
+          "transform": "uppercase"
+        },
+        "calendar_daynumber": {
+          "size": 34,
+          "weight": 700,
+          "color": "#FFFFFF",
+          "line_height": 1.0
+        },
+        "calendar_event_text": {
+          "size": 12,
+          "weight": 400,
+          "color": "#8E8E93"
+        },
+        "percent_value": {
+          "size": 36,
+          "weight": 600,
+          "color": "#FFFFFF",
+          "letter_spacing": -0.5
+        }
+      },
+      "components": [
+        {
+          "id": "heatmap_widget",
+          "type": "medium_widget",
+          "count_on_screen": 3,
+          "size": {
+            "width": 349,
+            "height": 106,
+            "estimated": true
+          },
+          "corner_radius": 22,
+          "background": "#141416",
+          "padding": {
+            "top": 10,
+            "right": 10,
+            "bottom": 8,
+            "left": 12
+          },
+          "shadow": {
+            "color": "#00000055",
+            "blur": 12,
+            "y_offset": 4
+          },
+          "children": [
+            {
+              "id": "header",
+              "layout": "row",
+              "align": "start",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "token": "widget_title",
+                  "content": "<habit_name>"
+                },
+                {
+                  "type": "emoji",
+                  "size": 11,
+                  "content": "<habit_emoji>"
+                }
+              ]
+            },
+            {
+              "id": "grid_area",
+              "margin_top": 8,
+              "layout": "row",
+              "children": [
+                {
+                  "id": "heatmap_grid",
+                  "flex": 1,
+                  "type": "contribution_grid",
+                  "rows": 7,
+                  "row_meaning": "Wochentag Mo->So (oben nach unten)",
+                  "column_meaning": "Kalenderwoche (links = aelteste)",
+                  "month_groups": 3,
+                  "columns_per_group": 5,
+                  "estimated": true,
+                  "cell": {
+                    "width": 8,
+                    "height": 8,
+                    "corner_radius": 1.5,
+                    "gap_x": 2,
+                    "gap_y": 2
+                  },
+                  "group_gap_x": 10,
+                  "states": {
+                    "empty": {
+                      "fill": "#2E2E31"
+                    },
+                    "completed": {
+                      "fill": "<accent_color_of_habit>"
+                    },
+                    "today_empty": {
+                      "fill": "#8E8E93"
+                    }
+                  },
+                  "note": "Nur binaer: erledigt / nicht erledigt. KEINE Intensitaetsstufen wie bei GitHub. Genau eine Zelle im Grid ist 'today_empty' (heller Grau-Marker)."
+                },
+                {
+                  "id": "weekday_axis",
+                  "position": "right_of_grid",
+                  "margin_left": 8,
+                  "layout": "column",
+                  "distribution": "space_between",
+                  "align_to": "grid_rows",
+                  "labels": [
+                    "M",
+                    "T",
+                    "W",
+                    "T",
+                    "F",
+                    "S",
+                    "S"
+                  ],
+                  "token": "axis_label_weekday"
+                }
+              ]
+            },
+            {
+              "id": "month_axis",
+              "margin_top": 4,
+              "align": "under_grid_only",
+              "layout": "row",
+              "labels": [
+                "Nov",
+                "Dec",
+                "Jan"
+              ],
+              "label_alignment": "center_of_each_month_group",
+              "token": "axis_label_month"
+            }
+          ],
+          "instances": [
+            {
+              "habit_name": "Read",
+              "habit_emoji": "book",
+              "accent": "#C24CF7"
+            },
+            {
+              "habit_name": "Running",
+              "habit_emoji": "shoe",
+              "accent": "#FF9F0A"
+            },
+            {
+              "habit_name": "Strength Training",
+              "habit_emoji": "weightlifter",
+              "accent": "#32D74B"
+            }
+          ]
+        },
+        {
+          "id": "calendar_widget",
+          "type": "small_widget",
+          "size": {
+            "width": 158,
+            "height": 106,
+            "estimated": true
+          },
+          "corner_radius": 22,
+          "background": "#141416",
+          "padding": {
+            "top": 12,
+            "right": 12,
+            "bottom": 12,
+            "left": 12
+          },
+          "children": [
+            {
+              "type": "text",
+              "token": "calendar_weekday",
+              "content": "MONDAY"
+            },
+            {
+              "type": "text",
+              "token": "calendar_daynumber",
+              "content": "6",
+              "margin_top": 2
+            },
+            {
+              "type": "divider",
+              "color": "#2C2C2E",
+              "thickness": 0.5,
+              "margin_top": 10,
+              "margin_bottom": 8
+            },
+            {
+              "type": "text",
+              "token": "calendar_event_text",
+              "content": "No events today"
+            }
+          ]
+        },
+        {
+          "id": "progress_ring_widget",
+          "type": "small_widget",
+          "size": {
+            "width": 158,
+            "height": 106,
+            "estimated": true
+          },
+          "corner_radius": 22,
+          "background": "#141416",
+          "padding": {
+            "top": 14,
+            "right": 14,
+            "bottom": 14,
+            "left": 14
+          },
+          "layout": "column",
+          "align": "center",
+          "children": [
+            {
+              "id": "ring",
+              "type": "circular_progress",
+              "outer_diameter": 46,
+              "stroke_width": 4,
+              "stroke_cap": "round",
+              "start_angle_deg": -90,
+              "direction": "clockwise",
+              "track_color": "#2E2E31",
+              "progress_color": "#32D74B",
+              "value": 1.0,
+              "glow": {
+                "color": "#32D74B",
+                "opacity": 0.35,
+                "blur": 8,
+                "estimated": true
+              }
+            },
+            {
+              "type": "text",
+              "token": "percent_value",
+              "content": "100%",
+              "margin_top": 8
+            }
+          ]
+        }
+      ],
+      "layout_order": [
+        {
+          "row": 1,
+          "widgets": [
+            "heatmap_widget[Read]"
+          ]
+        },
+        {
+          "row": 2,
+          "widgets": [
+            "heatmap_widget[Running]"
+          ]
+        },
+        {
+          "row": 3,
+          "widgets": [
+            "heatmap_widget[Strength Training]"
+          ]
+        },
+        {
+          "row": 4,
+          "widgets": [
+            "calendar_widget",
+            "progress_ring_widget"
+          ],
+          "gap_x": 16
+        }
+      ],
+      "rebuild_rules": [
+        "Grid-Zellen sind exakt quadratisch, nicht skalieren – Breite wird ueber Anzahl Spalten bestimmt.",
+        "Wochentags-Achse steht RECHTS vom Grid, Monats-Achse UNTEN – niemals tauschen.",
+        "Buchstaben der Wochentage sind englisch einbuchstabig (M T W T F S S), auch bei anderer App-Sprache.",
+        "Widget-Hintergrund ist nahezu schwarz (#141416), NICHT reines Schwarz und NICHT #1C1C1E-hell.",
+        "Der Titel steht linksbuendig oben, Emoji direkt dahinter mit 4pt Abstand.",
+        "Keine zusaetzlichen Elemente hinzufuegen (keine Streak-Counter, keine Prozentzahlen in den Heatmap-Widgets)."
+      ],
+      "uncertain_values": [
+        "Exakte Spaltenanzahl pro Monatsgruppe (5 geschaetzt aus Bildaufloesung)",
+        "Emoji bei 'Running' – koennte Schuh oder Laeufer sein",
+        "Glow-Effekt am Progress-Ring – evtl. nur JPEG-Artefakt",
+        "Widget-Hoehen: im Mockup gestaucht, echte iOS-Medium-Widgets sind 158pt hoch"
+      ]
+    },
+    {
+      "spec_id": "SCREEN_10",
+      "spec_version": "1.0",
+      "screen_name": "Ring-Grid App + Home-Screen-Widgets (Streaks-Stil, iOS)",
+      "source_image": "vorlage_von_diagram_und_widgets-9.jpeg",
+      "target_framework": "Flutter",
+      "type": "in_app_screen + widgets",
+      "confidence": "MITTEL-HOCH",
+      "duplicate_note": "Diese Spezifikation steht vollstaendig auch in habit_tracker_APP_SCREEN_specs.json, da sie App-Screen und Widgets zugleich beschreibt. Fuer Widgets sind P2_medium_widget und P3_small_widget relevant.",
+      "note": "Drei Panels aus einem Vergleichsbild. Panel 1 = App-Hauptscreen. Panel 2 = Home-Screen mit Medium-Widget. Panel 3 = Home-Screen mit zwei Small-Widgets.",
+      "ignore_layer": {
+        "items": [
+          "Alle fremden App-Icons auf den Home-Screens (Panel 2 und 3)",
+          "Dock, Seiten-Indikator-Punkte, iOS-Statusbar, Geraeterahmen",
+          "Wetter-Widget und andere Drittanbieter-Widgets in Panel 2"
+        ],
+        "instruction": "Nicht nachbauen. Diese Elemente sind iOS-System- oder Fremd-App-Inhalte und dienen nur als Umgebungskontext des Screenshots."
+      },
+      "color_tokens": {
+        "app_bg_lime": "#A4E024",
+        "widget_bg_black": "#000000",
+        "widget_bg_dark": "#0A0A0A",
+        "ring_track_dark": "#2A3D08",
+        "ring_track_widget": "#1F1F1F",
+        "ring_progress_white": "#FFFFFF",
+        "ring_progress_lime": "#A4E024",
+        "circle_fill_white": "#FFFFFF",
+        "icon_black": "#000000",
+        "icon_white": "#FFFFFF",
+        "text_on_lime": "#1A1A1A",
+        "text_on_lime_muted": "#5E7A12",
+        "text_on_dark": "#FFFFFF",
+        "text_on_dark_muted": "#8A8A8E",
+        "accent_lime_text": "#A4E024",
+        "estimated": true
+      },
+      "typography": {
+        "task_label": {
+          "family": "SF Pro Text / Inter",
+          "size": 9,
+          "weight": 700,
+          "letter_spacing": 0.3,
+          "transform": "uppercase",
+          "line_height": 1.25,
+          "align": "center",
+          "max_lines": 2
+        },
+        "task_meta": {
+          "size": 8,
+          "weight": 500,
+          "transform": "uppercase",
+          "note": "Zeit- oder Zaehlwert direkt neben/unter dem Label, z. B. '2:00:00', '15:00', '1', '83'"
+        },
+        "streak_counter": {
+          "size": 9,
+          "weight": 600,
+          "note": "Erscheint mit vorangestelltem Haekchen/Herz-Glyph vor dem Label"
+        },
+        "widget_footer": {
+          "size": 8,
+          "weight": 500,
+          "color": "#8A8A8E",
+          "note": "App-Name unterhalb des Widgets – iOS-System-Label, nicht Teil des Widgets"
+        }
+      },
+      "components": [
+        {
+          "id": "P1_app_main_screen",
+          "panel": 1,
+          "type": "in_app_screen",
+          "background": "#A4E024",
+          "layout": "grid",
+          "grid": {
+            "columns": 2,
+            "rows": 3,
+            "gap_x": 18,
+            "gap_y": 22,
+            "padding": {
+              "top": 30,
+              "left": 22,
+              "right": 22,
+              "bottom": 20
+            },
+            "note": "Auf einem echten Geraet vermutlich 2x3 pro Seite; horizontal blaetterbar fuer weitere Habits."
+          },
+          "children": [
+            "habit_ring_tile"
+          ],
+          "bottom_bar": {
+            "height": 44,
+            "bg": "transparent",
+            "layout": "row",
+            "distribution": "space_between",
+            "padding": {
+              "left": 22,
+              "right": 22
+            },
+            "items": [
+              {
+                "icon": "gear",
+                "size": 15,
+                "color": "#1A1A1A",
+                "position": "left"
+              },
+              {
+                "icon": "grid_dots_2x3",
+                "size": 14,
+                "color": "#1A1A1A",
+                "position": "center"
+              },
+              {
+                "icon": "star_filled",
+                "size": 14,
+                "color": "#1A1A1A",
+                "position": "right"
+              }
+            ]
+          }
+        },
+        {
+          "id": "habit_ring_tile",
+          "critical_component": true,
+          "type": "circular_habit_tile",
+          "size": {
+            "width": 74,
+            "height": 74
+          },
+          "structure": {
+            "ring": {
+              "outer_diameter": 74,
+              "stroke_width": 6,
+              "stroke_cap": "butt",
+              "start_angle_deg": -90,
+              "direction": "clockwise",
+              "track_color": "#2A3D08",
+              "progress_color": "#FFFFFF",
+              "note": "Der Ring ist bei Teilerfuellung sichtbar unterbrochen – Luecke zeigt den offenen Anteil."
+            },
+            "center": {
+              "diameter": 62,
+              "variants": {
+                "completed": {
+                  "fill": "#FFFFFF",
+                  "icon_color": "#000000",
+                  "ring": "vollstaendig geschlossen, weiss",
+                  "description": "Vollflaechig weisser Kreis mit schwarzem Icon – Zustand 'heute erledigt'"
+                },
+                "pending": {
+                  "fill": "transparent",
+                  "icon_color": "#FFFFFF",
+                  "ring": "teilweise gefuellt",
+                  "description": "Kein Fuellkreis, nur Ring + weisses Icon auf Limegruen – Zustand 'offen'"
+                }
+              }
+            },
+            "icon": {
+              "size": 26,
+              "style": "solid_glyph",
+              "note": "Piktogramm-Stil, flaechig gefuellt, keine Outline-Icons."
+            },
+            "play_button": {
+              "present_on": "Timer-basierte Habits",
+              "position": "unten rechts am Ringrand, ca. 4-Uhr-Position",
+              "shape": "triangle_right",
+              "size": 9,
+              "container": {
+                "diameter": 18,
+                "fill": "#1A1A1A",
+                "note": "dunkler Kreis, ueberlappt den Ring"
+              }
+            }
+          },
+          "label_block": {
+            "position": "unterhalb des Rings",
+            "margin_top": 6,
+            "align": "center",
+            "layout": "row_wrap",
+            "children": [
+              {
+                "type": "glyph",
+                "content": "check_or_heart",
+                "size": 8,
+                "color": "#1A1A1A"
+              },
+              {
+                "type": "text",
+                "token": "task_label"
+              },
+              {
+                "type": "text",
+                "token": "task_meta",
+                "color": "#5E7A12"
+              }
+            ],
+            "note": "Haekchen/Herz + Label + optionaler Zahlenwert stehen in EINER Textzeile, umbrechend."
+          },
+          "instances": [
+            {
+              "label": "DECREASE SCREEN TIME",
+              "meta": "2:00:00",
+              "state": "completed",
+              "icon": "smartphone",
+              "counter": "345",
+              "has_play": true
+            },
+            {
+              "label": "MINDFUL MINUTES",
+              "meta": "15:00",
+              "state": "pending",
+              "icon": "wind",
+              "has_play": true
+            },
+            {
+              "label": "TAKE A PHOTO",
+              "meta": "1",
+              "state": "completed",
+              "icon": "camera",
+              "has_play": false
+            },
+            {
+              "label": "DRINK 6 CUPS OF WATER",
+              "meta": "",
+              "state": "pending",
+              "icon": "water_drop",
+              "has_play": false
+            },
+            {
+              "label": "BURN 250 CALORIES",
+              "meta": "",
+              "state": "completed",
+              "icon": "flame",
+              "counter": "83",
+              "has_play": false
+            },
+            {
+              "label": "TIDY UP",
+              "meta": "20:00",
+              "state": "pending",
+              "icon": "broom",
+              "has_play": true
+            }
+          ]
+        },
+        {
+          "id": "P2_medium_widget",
+          "panel": 2,
+          "type": "medium_widget",
+          "size": {
+            "width": 329,
+            "height": 155,
+            "reference": "iOS Medium Widget"
+          },
+          "corner_radius": 22,
+          "background": "#000000",
+          "padding": {
+            "top": 14,
+            "right": 14,
+            "bottom": 12,
+            "left": 14
+          },
+          "layout": "grid",
+          "grid": {
+            "columns": 2,
+            "rows": 2,
+            "gap_x": 28,
+            "gap_y": 14
+          },
+          "cell": {
+            "type": "widget_ring_item",
+            "layout": "column",
+            "align": "center",
+            "children": [
+              {
+                "id": "widget_ring",
+                "type": "circular_progress",
+                "outer_diameter": 42,
+                "stroke_width": 4,
+                "stroke_cap": "butt",
+                "start_angle_deg": -90,
+                "direction": "clockwise",
+                "track_color": "#1F1F1F",
+                "progress_color": "#A4E024",
+                "center_icon": {
+                  "size": 17,
+                  "color": "#FFFFFF",
+                  "style": "solid_glyph"
+                },
+                "note": "Im Widget ist die Fortschrittsfarbe LIMEGRUEN auf schwarzem Track – umgekehrt zur App, wo Weiss auf Dunkelgruen laeuft."
+              },
+              {
+                "id": "widget_label",
+                "margin_top": 6,
+                "layout": "row",
+                "align": "center",
+                "gap": 3,
+                "children": [
+                  {
+                    "type": "glyph",
+                    "content": "check_small",
+                    "size": 7,
+                    "color": "#A4E024"
+                  },
+                  {
+                    "type": "text",
+                    "token": "task_label",
+                    "color": "#A4E024"
+                  }
+                ],
+                "note": "Erledigte Eintraege werden limegruen beschriftet, offene weiss."
+              }
+            ]
+          },
+          "instances": [
+            {
+              "label": "DRINK 6 CUPS OF WATER",
+              "icon": "water_drop",
+              "state": "completed",
+              "label_color": "#A4E024"
+            },
+            {
+              "label": "SLEEP 7 HOURS",
+              "icon": "bed",
+              "state": "completed",
+              "label_color": "#A4E024"
+            },
+            {
+              "label": "MINDFUL MINUTES, 15:00",
+              "icon": "wind",
+              "state": "completed",
+              "label_color": "#A4E024"
+            },
+            {
+              "label": "10 SITUPS",
+              "icon": "situp",
+              "state": "pending",
+              "label_color": "#FFFFFF"
+            }
+          ]
+        },
+        {
+          "id": "P3_small_widget",
+          "panel": 3,
+          "type": "small_widget",
+          "size": {
+            "width": 155,
+            "height": 155,
+            "reference": "iOS Small Widget"
+          },
+          "corner_radius": 22,
+          "background": "#000000",
+          "padding": 12,
+          "layout": "grid",
+          "grid": {
+            "columns": 2,
+            "rows": 2,
+            "gap_x": 14,
+            "gap_y": 14
+          },
+          "cell": {
+            "type": "circular_progress",
+            "outer_diameter": 46,
+            "stroke_width": 4,
+            "track_color": "#1F1F1F",
+            "progress_color": "#A4E024",
+            "center_icon": {
+              "size": 18,
+              "color": "#FFFFFF",
+              "style": "solid_glyph"
+            },
+            "label": "none"
+          },
+          "note": "Kompakte Variante OHNE Textlabels – nur vier Ringe mit Icons. Zwei Instanzen nebeneinander im Bild.",
+          "instances_left": [
+            "water_drop",
+            "sleep",
+            "situp",
+            "wind"
+          ],
+          "instances_right": [
+            "situp",
+            "wind",
+            "sleep",
+            "water_drop"
+          ],
+          "estimated": true
+        },
+        {
+          "id": "app_icon",
+          "type": "app_icon",
+          "size": 60,
+          "corner_radius": 13.5,
+          "background": "#F2542B",
+          "content": {
+            "type": "glyph",
+            "content": "S_lettermark",
+            "color": "#FFFFFF",
+            "size": 40
+          },
+          "note": "Nur als Referenz dokumentiert. Fuer eigene App eigenes Icon entwerfen – dieses gehoert zu einer bestehenden App."
+        }
+      ],
+      "rebuild_rules": [
+        "Zwei Farbwelten: App-Screen = kraeftiges Limegruen mit weissen Elementen, Widgets = Schwarz mit limegruenen Ringen. Nicht vermischen.",
+        "Der Erfuellungszustand wird PRIMAER ueber die Kreisfuellung kommuniziert: gefuellt weiss = erledigt, leer = offen. Der Ring zeigt zusaetzlich den Fortschrittsanteil.",
+        "Alle Labels sind VERSALIEN, fett und sehr klein (9pt) – dies ist ein praegendes Stilmerkmal.",
+        "Icons sind flaechige Piktogramme, niemals Outline-Stil.",
+        "Der Play-Button erscheint NUR bei Habits mit Timer und ueberlappt den Ring an der unteren rechten Flanke.",
+        "Ring-Enden sind gerade abgeschnitten (butt cap), nicht abgerundet.",
+        "Keine Karten, keine Schatten, keine Trennlinien – die Kacheln stehen frei auf der Flaeche.",
+        "Im Widget bekommen erledigte Eintraege limegruene Beschriftung, offene weisse."
+      ],
+      "uncertain_values": [
+        "Exakter Limegruen-Ton (#A4E024 geschaetzt, Screenshot wirkt leicht uebersaettigt)",
+        "Bedeutung der Zahlen neben den Labels (345, 1, 83) – vermutlich Streak-Laenge, koennte aber Gesamtzahl sein",
+        "Ob das vorangestellte Glyph ein Haekchen, Herz oder Flammensymbol ist (zu klein aufgeloest)",
+        "Ob der App-Screen horizontal blaetterbar ist oder scrollt",
+        "Genaue Icon-Formen (Besen, Situp-Figur, Bett) – nur grob erkennbar",
+        "Ring-Strichstaerke im Verhaeltnis zum Durchmesser",
+        "Ob die beiden Small-Widgets in Panel 3 unterschiedliche Habits zeigen oder dasselbe Widget zweimal"
+      ]
+    },
+    {
+      "spec_id": "SCREEN_11",
+      "spec_version": "1.0",
+      "screen_name": "Home-Screen-Widgets – Dot-Heatmap pro Habit (HabitKit-Stil, iOS)",
+      "source_image": "vorlage_von_diagram_und_widgets-10.jpeg",
+      "target_framework": "Flutter",
+      "type": "widgets_only",
+      "confidence": "HOCH",
+      "note": "Alle fuenf Widgets stammen aus derselben App. Zwei Widget-Groessen sichtbar: Small (quadratisch) und Medium (breit). Beide teilen denselben Aufbau, das Medium-Widget hat zusaetzlich Untertitel und Aktions-Button.",
+      "ignore_layer": {
+        "items": [
+          "Wallpaper (Farbverlauf Rot/Magenta -> Blau/Violett)",
+          "iOS-Statusbar (12:08, WLAN, Batterie)",
+          "System-Label 'HabitKit' unter jedem Widget – wird von iOS automatisch gesetzt",
+          "Such-Pille am unteren Rand",
+          "Dock mit Safari und Nachrichten",
+          "Geraeterahmen"
+        ],
+        "instruction": "Nicht nachbauen. Nur der Inhalt innerhalb der abgerundeten Widget-Flaechen ist App-UI."
+      },
+      "canvas": {
+        "device_reference": "iPhone 15 Pro (393 x 852 pt)",
+        "widget_horizontal_margin": 26,
+        "widget_gap_x": 20,
+        "widget_gap_y": 30,
+        "wallpaper": {
+          "type": "linear_gradient",
+          "angle_deg": 165,
+          "estimated": true,
+          "stops": [
+            {
+              "offset": 0.0,
+              "color": "#8B1538"
+            },
+            {
+              "offset": 0.22,
+              "color": "#E62E4D"
+            },
+            {
+              "offset": 0.45,
+              "color": "#C4265C"
+            },
+            {
+              "offset": 0.7,
+              "color": "#5B3FBF"
+            },
+            {
+              "offset": 1.0,
+              "color": "#2B4FCC"
+            }
+          ]
+        }
+      },
+      "color_tokens": {
+        "widget_surface": "#1A1A1C",
+        "icon_tile_bg": "#2C2C2E",
+        "cell_empty": "#2A2A2C",
+        "text_primary": "#FFFFFF",
+        "text_secondary": "#8E8E93",
+        "checkbox_active": "#3E7BFA",
+        "checkbox_inactive": "#2C2C2E",
+        "accent_meditation": "#C74BE8",
+        "accent_side_hustle": "#F5B800",
+        "accent_play_drums": "#5B8DEF",
+        "accent_running": "#34C759",
+        "accent_coffee": "#F0587A",
+        "estimated": true
+      },
+      "typography": {
+        "widget_title": {
+          "family": "SF Pro Text / Inter",
+          "size": 11,
+          "weight": 600,
+          "color": "#FFFFFF",
+          "letter_spacing": -0.1,
+          "max_lines": 2,
+          "line_height": 1.15
+        },
+        "widget_subtitle": {
+          "size": 9,
+          "weight": 400,
+          "color": "#8E8E93",
+          "max_lines": 1,
+          "overflow": "ellipsis",
+          "note": "Nur im Medium-Widget vorhanden."
+        }
+      },
+      "components": [
+        {
+          "id": "small_widget",
+          "type": "small_widget",
+          "size": {
+            "width": 155,
+            "height": 155,
+            "reference": "iOS Small Widget"
+          },
+          "corner_radius": 22,
+          "background": "#1A1A1C",
+          "padding": {
+            "top": 12,
+            "right": 12,
+            "bottom": 12,
+            "left": 12
+          },
+          "shadow": "none",
+          "layout": "column",
+          "children": [
+            {
+              "id": "header",
+              "layout": "row",
+              "align": "center",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "icon_tile",
+                  "size": 22,
+                  "corner_radius": 6,
+                  "bg": "#2C2C2E",
+                  "content": {
+                    "type": "icon",
+                    "size": 12,
+                    "color": "#FFFFFF",
+                    "style": "line_or_solid_glyph"
+                  }
+                },
+                {
+                  "type": "text",
+                  "token": "widget_title",
+                  "content": "<habit_name>",
+                  "flex": 1
+                }
+              ]
+            },
+            {
+              "id": "dot_heatmap",
+              "ref": "dot_heatmap_grid",
+              "margin_top": 10,
+              "flex": 1,
+              "columns": 11,
+              "rows": 7
+            }
+          ]
+        },
+        {
+          "id": "medium_widget",
+          "type": "medium_widget",
+          "size": {
+            "width": 329,
+            "height": 155,
+            "reference": "iOS Medium Widget"
+          },
+          "corner_radius": 22,
+          "background": "#1A1A1C",
+          "padding": {
+            "top": 12,
+            "right": 12,
+            "bottom": 12,
+            "left": 12
+          },
+          "layout": "column",
+          "children": [
+            {
+              "id": "header",
+              "layout": "row",
+              "align": "center",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "icon_tile",
+                  "size": 24,
+                  "corner_radius": 6,
+                  "bg": "#2C2C2E",
+                  "content": {
+                    "type": "icon",
+                    "size": 13,
+                    "color": "#FFFFFF"
+                  }
+                },
+                {
+                  "type": "column",
+                  "flex": 1,
+                  "gap": 1,
+                  "children": [
+                    {
+                      "type": "text",
+                      "token": "widget_title",
+                      "content": "<habit_name>",
+                      "max_lines": 1
+                    },
+                    {
+                      "type": "text",
+                      "token": "widget_subtitle",
+                      "content": "<habit_description>"
+                    }
+                  ]
+                },
+                {
+                  "id": "complete_button",
+                  "type": "checkbox_button",
+                  "size": 26,
+                  "corner_radius": 7,
+                  "states": {
+                    "completed": {
+                      "bg": "#3E7BFA",
+                      "icon": "check",
+                      "icon_color": "#FFFFFF",
+                      "icon_size": 14
+                    },
+                    "pending": {
+                      "bg": "#2C2C2E",
+                      "icon": "check",
+                      "icon_color": "#8E8E93",
+                      "icon_size": 14
+                    }
+                  },
+                  "note": "Interaktiver Button zum direkten Abhaken vom Home-Screen. Nur im Medium-Widget vorhanden. Die Fuellfarbe entspricht der Akzentfarbe des Habits."
+                }
+              ]
+            },
+            {
+              "id": "dot_heatmap",
+              "ref": "dot_heatmap_grid",
+              "margin_top": 10,
+              "flex": 1,
+              "columns": 25,
+              "rows": 7
+            }
+          ]
+        },
+        {
+          "id": "dot_heatmap_grid",
+          "critical_component": true,
+          "type": "contribution_grid",
+          "cell_shape": "circle",
+          "cell": {
+            "diameter": 8,
+            "gap_x": 2.5,
+            "gap_y": 2.5,
+            "estimated": true
+          },
+          "rows": 7,
+          "row_meaning": "Wochentag (oben nach unten)",
+          "column_meaning": "Kalenderwoche (links = aelteste, rechts = aktuellste)",
+          "fill_direction": "column_major",
+          "states": {
+            "empty": {
+              "fill": "#2A2A2C"
+            },
+            "level_1": {
+              "fill": "<accent>",
+              "opacity": 0.3
+            },
+            "level_2": {
+              "fill": "<accent>",
+              "opacity": 0.55
+            },
+            "level_3": {
+              "fill": "<accent>",
+              "opacity": 0.8
+            },
+            "level_4": {
+              "fill": "<accent>",
+              "opacity": 1.0
+            }
+          },
+          "note": "WICHTIG: Zellen sind KREISE, keine Quadrate – das unterscheidet dieses Widget von SCREEN_01 (abgerundete Quadrate) und SCREEN_09 (Rechtecke). Mehrstufige Intensitaet ueber Deckkraft DERSELBEN Akzentfarbe, nicht ueber verschiedene Farbtoene.",
+          "sizing_rule": "Die Spaltenanzahl richtet sich nach der Widget-Breite; die Zellgroesse bleibt konstant. Aeltere Wochen werden links abgeschnitten, wenn der Platz nicht reicht."
+        }
+      ],
+      "instances": [
+        {
+          "widget": "small_widget",
+          "position": "Reihe 1 links",
+          "habit_name": "Meditation",
+          "icon": "person_meditating_or_circle_glyph",
+          "accent": "#C74BE8",
+          "density": "mittel, verteilte Treffer"
+        },
+        {
+          "widget": "small_widget",
+          "position": "Reihe 1 rechts",
+          "habit_name": "Side Hustle",
+          "icon": "code_brackets",
+          "accent": "#F5B800",
+          "density": "mittel, blockweise gehaeuft"
+        },
+        {
+          "widget": "medium_widget",
+          "position": "Reihe 2, volle Breite",
+          "habit_name": "Play Drums",
+          "habit_description": "Exercise drumming for at least 30 min…",
+          "icon": "music_note",
+          "accent": "#5B8DEF",
+          "checkbox_state": "completed",
+          "density": "hoch, mit deutlichen Luecken"
+        },
+        {
+          "widget": "small_widget",
+          "position": "Reihe 3 links",
+          "habit_name": "Running",
+          "icon": "person_running",
+          "accent": "#34C759",
+          "density": "hoch"
+        },
+        {
+          "widget": "small_widget",
+          "position": "Reihe 3 rechts",
+          "habit_name": "Limit Coffee Intake",
+          "icon": "coffee_cup_or_droplet",
+          "accent": "#F0587A",
+          "density": "sehr hoch, fast durchgehend",
+          "note": "Zweizeiliger Titel – der Header waechst nach unten, das Grid rueckt entsprechend nach."
+        }
+      ],
+      "layout_order": [
+        {
+          "row": 1,
+          "widgets": [
+            "small_widget[Meditation]",
+            "small_widget[Side Hustle]"
+          ],
+          "gap_x": 20
+        },
+        {
+          "row": 2,
+          "widgets": [
+            "medium_widget[Play Drums]"
+          ]
+        },
+        {
+          "row": 3,
+          "widgets": [
+            "small_widget[Running]",
+            "small_widget[Limit Coffee Intake]"
+          ],
+          "gap_x": 20
+        }
+      ],
+      "rebuild_rules": [
+        "Jedes Widget zeigt GENAU EINEN Habit – niemals mehrere Habits in einem Widget kombinieren.",
+        "Die Akzentfarbe wird pro Habit vergeben und gilt fuer Heatmap-Zellen UND den Abhak-Button.",
+        "Intensitaetsstufen entstehen ausschliesslich ueber die Deckkraft der Akzentfarbe auf dunklem Grund – niemals ueber Farbwechsel.",
+        "Zellen sind exakt kreisrund. Kein abgerundetes Quadrat, kein Rechteck.",
+        "Widget-Hintergrund ist ein sehr dunkles Grau (#1A1A1C), NICHT reines Schwarz – der Unterschied ist auf dem Wallpaper sichtbar.",
+        "Icon-Kacheln sind neutral grau (#2C2C2E), NICHT in der Akzentfarbe eingefaerbt.",
+        "Keine Achsenbeschriftungen, keine Monatslabels, keine Zahlen, keine Streak-Anzeige im Widget.",
+        "Der Untertitel erscheint ausschliesslich im Medium-Widget und wird einzeilig mit Auslassungspunkten gekuerzt.",
+        "Das Grid fuellt den verbleibenden Platz unter dem Header vollstaendig aus."
+      ],
+      "uncertain_values": [
+        "Exakte Spaltenanzahl (11 bei Small, 25 bei Medium – geschaetzt aus der Aufloesung)",
+        "Ob es wirklich 4 Intensitaetsstufen gibt oder nur 2–3",
+        "Icon-Formen bei 'Meditation' und 'Limit Coffee Intake' (zu klein aufgeloest)",
+        "Vollstaendiger Untertiteltext des Medium-Widgets (abgeschnitten)",
+        "Ob die Checkbox-Farbe immer der Habit-Akzentfarbe entspricht oder fix blau ist",
+        "Ob eine Large-Widget-Variante existiert"
+      ]
+    },
+    {
+      "spec_id": "SCREEN_12",
+      "spec_version": "1.0",
+      "screen_name": "Medium-Widget – Wochen-Checkliste mit Zustandskreisen (Hell, iOS)",
+      "source_image": "vorlage_von_diagram_und_widgets-11.jpeg",
+      "target_framework": "Flutter",
+      "type": "widget_only",
+      "confidence": "HOCH",
+      "note": "Nahaufnahme eines iOS-Medium-Widgets. Sehr gut aufgeloest – wenige Schaetzwerte. Das praegende Merkmal ist ein REICHHALTIGES Zustandssystem mit mindestens fuenf unterscheidbaren Kreiszustaenden.",
+      "ignore_layer": {
+        "items": [
+          "Wallpaper (Farbverlauf Orange/Rosa oben -> Cyan/Violett unten)",
+          "System-Label 'Habits' unterhalb des Widgets – von iOS gesetzt, nicht Teil des Widgets"
+        ],
+        "instruction": "Nicht nachbauen."
+      },
+      "canvas": {
+        "widget_size": {
+          "width": 329,
+          "height": 155,
+          "reference": "iOS Medium Widget"
+        },
+        "wallpaper": {
+          "type": "multi_gradient",
+          "estimated": true,
+          "description": "Diagonale Farbflaechen: Pfirsich/Orange oben links, Rosa oben rechts, Cyan unten links, Violett unten rechts",
+          "stops_approx": [
+            "#F5A87A",
+            "#E8A8C8",
+            "#3BB8E0",
+            "#B58BD8"
+          ]
+        }
+      },
+      "color_tokens": {
+        "widget_surface": "#FFFFFF",
+        "text_primary": "#1C1C1E",
+        "weekday_label": "#1C1C1E",
+        "circle_empty_border": "#C7C7CC",
+        "circle_skipped_fill": "#C7C7CC",
+        "circle_skipped_glyph": "#FFFFFF",
+        "accent_blue": "#3A9BDC",
+        "accent_red": "#D93025",
+        "today_underline": "#1C1C1E",
+        "estimated": true
+      },
+      "typography": {
+        "habit_name": {
+          "family": "SF Pro Text / Inter",
+          "size": 17,
+          "weight": 700,
+          "color": "#1C1C1E",
+          "letter_spacing": -0.3,
+          "max_lines": 1,
+          "overflow": "ellipsis"
+        },
+        "weekday_header": {
+          "size": 14,
+          "weight": 500,
+          "color": "#1C1C1E",
+          "align": "center",
+          "transform": "uppercase"
+        }
+      },
+      "components": [
+        {
+          "id": "widget_container",
+          "type": "medium_widget",
+          "corner_radius": 26,
+          "background": "#FFFFFF",
+          "padding": {
+            "top": 12,
+            "right": 16,
+            "bottom": 14,
+            "left": 16
+          },
+          "shadow": "none",
+          "layout": "column",
+          "note": "Sehr grosser Eckradius (~26pt) im Verhaeltnis zur Widget-Hoehe – praegendes Merkmal."
+        },
+        {
+          "id": "weekday_header_row",
+          "layout": "row",
+          "align": "center",
+          "height": 20,
+          "children": [
+            {
+              "id": "label_spacer",
+              "flex": 1,
+              "content": "leer",
+              "note": "Der Kopfbereich ueber der Habit-Spalte bleibt leer – KEINE Ueberschrift wie 'Habits' oder 'Name'."
+            },
+            {
+              "id": "weekday_labels",
+              "layout": "row",
+              "width": "matches_circle_column_area",
+              "column_count": 7,
+              "labels": [
+                "T",
+                "W",
+                "T",
+                "F",
+                "S",
+                "S",
+                "M"
+              ],
+              "token": "weekday_header",
+              "align_each": "center_over_its_circle",
+              "note": "Einbuchstabige englische Wochentagskuerzel. Reihenfolge ist ROLLIEREND, nicht fix Mo–So: der aktuelle Tag steht ganz RECHTS, die sechs vorherigen Tage links davon."
+            }
+          ]
+        },
+        {
+          "id": "habit_row",
+          "type": "list_row",
+          "repeat": 4,
+          "height": 34,
+          "layout": "row",
+          "align": "center",
+          "children": [
+            {
+              "id": "emoji_icon",
+              "type": "emoji",
+              "size": 22,
+              "width": 28,
+              "align": "center",
+              "note": "Farbige Emoji-Glyphen, keine Icon-Kacheln, kein Hintergrund."
+            },
+            {
+              "id": "habit_label",
+              "type": "text",
+              "token": "habit_name",
+              "margin_left": 8,
+              "flex": 1
+            },
+            {
+              "id": "state_circle_row",
+              "layout": "row",
+              "gap": 6,
+              "children": "7x state_circle"
+            }
+          ]
+        },
+        {
+          "id": "state_circle",
+          "critical_component": true,
+          "type": "status_indicator",
+          "diameter": 22,
+          "shape": "circle",
+          "states": {
+            "empty": {
+              "fill": "transparent",
+              "border": {
+                "color": "#C7C7CC",
+                "thickness": 2
+              },
+              "glyph": "none",
+              "meaning": "kein Eintrag / offen"
+            },
+            "skipped": {
+              "fill": "#C7C7CC",
+              "border": "none",
+              "glyph": {
+                "type": "x",
+                "color": "#FFFFFF",
+                "size": 10,
+                "stroke": 2
+              },
+              "meaning": "bewusst ausgelassen / nicht erfuellt"
+            },
+            "completed_blue": {
+              "fill": "#3A9BDC",
+              "border": "none",
+              "glyph": {
+                "type": "check",
+                "color": "#FFFFFF",
+                "size": 11,
+                "stroke": 2.2
+              },
+              "meaning": "erfuellt (Habit-Akzentfarbe Blau)"
+            },
+            "completed_red": {
+              "fill": "#D93025",
+              "border": "none",
+              "glyph": {
+                "type": "check",
+                "color": "#FFFFFF",
+                "size": 11,
+                "stroke": 2.2
+              },
+              "meaning": "erfuellt (Habit-Akzentfarbe Rot)"
+            },
+            "partial_ring": {
+              "fill": "transparent",
+              "border": {
+                "color": "<accent>",
+                "thickness": 2.5
+              },
+              "arc_gap": {
+                "present": true,
+                "position": "rechte Flanke, ca. 3-Uhr-Position",
+                "sweep_deg": 40,
+                "estimated": true
+              },
+              "glyph": "none",
+              "meaning": "teilweise erfuellt – der offene Ringabschnitt zeigt den fehlenden Anteil"
+            }
+          },
+          "note": "Mindestens fuenf unterscheidbare Zustaende. Das ist deutlich reichhaltiger als die uebrigen Vorlagen, die meist nur an/aus kennen."
+        },
+        {
+          "id": "today_marker",
+          "type": "underline",
+          "position": "unterhalb des Kreises in der letzten (rechten) Spalte",
+          "width": 14,
+          "thickness": 2,
+          "color": "#1C1C1E",
+          "corner_radius": 1,
+          "margin_top": 2,
+          "applies_to": "alle vier Zeilen der letzten Spalte",
+          "note": "Der aktuelle Tag wird durch einen kurzen Unterstrich unter JEDEM Kreis dieser Spalte markiert – nicht durch Farbe oder Rahmen."
+        }
+      ],
+      "instances": [
+        {
+          "row": 1,
+          "habit_name": "Focus",
+          "emoji": "gluehbirne",
+          "accent": "#3A9BDC",
+          "day_states": [
+            "empty",
+            "empty",
+            "empty",
+            "empty",
+            "empty",
+            "empty",
+            "completed_blue"
+          ]
+        },
+        {
+          "row": 2,
+          "habit_name": "Eat healthy",
+          "emoji": "apfel",
+          "accent": "#D93025",
+          "day_states": [
+            "empty",
+            "empty",
+            "skipped",
+            "skipped",
+            "empty",
+            "empty",
+            "partial_ring"
+          ]
+        },
+        {
+          "row": 3,
+          "habit_name": "Drink water",
+          "emoji": "wasserflasche",
+          "accent": "#3A9BDC",
+          "day_states": [
+            "empty",
+            "empty",
+            "skipped",
+            "empty",
+            "empty",
+            "empty",
+            "partial_ring"
+          ]
+        },
+        {
+          "row": 4,
+          "habit_name": "No smoking",
+          "emoji": "rauchen_verboten",
+          "accent": "#D93025",
+          "day_states": [
+            "completed_red",
+            "completed_red",
+            "completed_red",
+            "completed_red",
+            "completed_red",
+            "completed_red",
+            "completed_red"
+          ]
+        }
+      ],
+      "rebuild_rules": [
+        "Heller Modus mit reinweisser Widget-Flaeche – KEIN Grau, KEIN Dark Mode.",
+        "Jeder Habit hat eine eigene Akzentfarbe, die fuer alle Zustandskreise dieser Zeile gilt.",
+        "Der aktuelle Tag steht IMMER in der rechten Spalte; die Wochentagskuerzel rollieren entsprechend mit. Niemals fix bei Montag beginnen.",
+        "Der Heute-Marker ist ein Unterstrich UNTER dem Kreis, keine Umrandung und keine Hintergrundflaeche.",
+        "Der 'uebersprungen'-Zustand ist ein VOLLFLAECHIG grauer Kreis mit weissem X, kein grauer Rahmen.",
+        "Der 'teilweise'-Zustand ist ein offener Ring in der Akzentfarbe mit sichtbarer Luecke – nicht als voller Kreis darstellen.",
+        "Icons sind Emoji, keine gezeichneten oder vektorisierten Symbole.",
+        "Habit-Namen sind fett (700) und mit 17pt vergleichsweise gross – dieses Widget ist bewusst gut lesbar gestaltet.",
+        "Kreise sind exakt rund und alle gleich gross; die Zustandsunterscheidung erfolgt nur ueber Fuellung, Rahmen und Glyph.",
+        "Maximal 4 Zeilen im Medium-Widget – bei mehr Habits muss die App auswaehlen oder auf ein Large-Widget wechseln."
+      ],
+      "uncertain_values": [
+        "Exakte Bedeutung des offenen Rings (partial_ring) – koennte auch 'heute noch offen' statt 'teilweise erfuellt' heissen",
+        "Ob der Ring wirklich eine Luecke hat oder es ein JPEG-Artefakt ist",
+        "Emoji bei 'Drink water' – Flasche oder Tropfen",
+        "Ob das Widget interaktiv ist (Antippen zum Abhaken)",
+        "Ob die Akzentfarbe pro Habit frei waehlbar ist oder aus einer festen Palette stammt",
+        "Genaue Kreisgroesse und Spaltenabstand (aus Proportion abgeleitet)"
+      ]
+    },
+    {
+      "spec_id": "SCREEN_13",
+      "spec_version": "1.0",
+      "screen_name": "Today-Screen mit Tagesring + Widget-Set (Multi-Theme, iOS)",
+      "source_image": "vorlage_von_diagram_und_widgets-12.jpeg",
+      "target_framework": "Flutter",
+      "type": "in_app_screen + widgets",
+      "confidence": "MITTEL",
+      "duplicate_note": "Diese Spezifikation steht vollstaendig auch in habit_tracker_APP_SCREEN_specs.json. Fuer Widgets sind widget_large_ring und widget_ring_grid relevant.",
+      "warning": "Aufloesung gering (~380px fuer 6 Panels). Struktur ist klar erkennbar, aber alle Schriftgroessen, Abstaende und Sekundaertexte sind geschaetzt.",
+      "panel_map": {
+        "1_top_left": {
+          "type": "app_screen",
+          "theme": "dark_orange"
+        },
+        "2_top_center": {
+          "type": "app_screen",
+          "theme": "dark_blue"
+        },
+        "3_top_right": {
+          "type": "home_screen",
+          "widget_layout": "A"
+        },
+        "4_bottom_left": {
+          "type": "app_screen",
+          "theme": "dark_purple"
+        },
+        "5_bottom_center": {
+          "type": "app_screen",
+          "theme": "light_mono"
+        },
+        "6_bottom_right": {
+          "type": "home_screen",
+          "widget_layout": "B"
+        }
+      },
+      "key_insight": "Panels 1, 2, 4, 5 zeigen DENSELBEN Screen in vier Themes. Layout, Abstaende und Komponenten sind identisch – nur Akzentfarbe und Hintergrundhelligkeit aendern sich. Beim Nachbau also EIN Screen mit austauschbarem Theme, nicht vier Screens.",
+      "ignore_layer": {
+        "items": [
+          "Geraeterahmen und Schatten der Mockups",
+          "Wallpaper der Home-Screens (violetter Verlauf)",
+          "iOS-Statusbar, Dock, Seiten-Indikator, Such-Pille",
+          "Platzhalter-Icons im Dock (unscharfe Farbflaechen)"
+        ],
+        "instruction": "Nicht nachbauen."
+      },
+      "themes": {
+        "dark_orange": {
+          "screen_bg": "#000000",
+          "card_bg": "#1A1A1C",
+          "accent": "#F2621F",
+          "accent_secondary": "#FF8A4C",
+          "text_primary": "#FFFFFF",
+          "text_secondary": "#8E8E93",
+          "ring_track": "#2A2A2C"
+        },
+        "dark_blue": {
+          "screen_bg": "#000000",
+          "card_bg": "#1A1A1C",
+          "accent": "#5B6FE8",
+          "accent_secondary": "#7B8CF0",
+          "text_primary": "#FFFFFF",
+          "text_secondary": "#8E8E93",
+          "ring_track": "#2A2A2C"
+        },
+        "dark_purple": {
+          "screen_bg": "#0A0A0C",
+          "card_bg": "#1C1A22",
+          "accent": "#8B5CF6",
+          "accent_secondary": "#A78BFA",
+          "text_primary": "#FFFFFF",
+          "text_secondary": "#8E8E93",
+          "ring_track": "#2A2830"
+        },
+        "light_mono": {
+          "screen_bg": "#FFFFFF",
+          "card_bg": "#F5F5F7",
+          "accent": "#1C1C1E",
+          "accent_secondary": "#48484A",
+          "text_primary": "#1C1C1E",
+          "text_secondary": "#8E8E93",
+          "ring_track": "#E5E5EA"
+        },
+        "estimated": true,
+        "note": "Die Akzentfarbe faerbt: Tagesring, Habit-Icons, Statusringe und den Aktiv-Zustand der Tab-Bar. Sonst nichts."
+      },
+      "typography": {
+        "screen_title": {
+          "family": "SF Pro Display / Inter",
+          "size": 26,
+          "weight": 700,
+          "letter_spacing": -0.5,
+          "note": "Grosser linksbuendiger Titel im iOS-Large-Title-Stil."
+        },
+        "nav_action": {
+          "size": 13,
+          "weight": 400
+        },
+        "ring_percent": {
+          "size": 30,
+          "weight": 700,
+          "letter_spacing": -1.0
+        },
+        "ring_percent_symbol": {
+          "size": 15,
+          "weight": 500,
+          "note": "Prozentzeichen deutlich kleiner als die Zahl, oben ausgerichtet"
+        },
+        "habit_name": {
+          "size": 13,
+          "weight": 600
+        },
+        "habit_subtitle": {
+          "size": 10,
+          "weight": 400
+        },
+        "tab_label": {
+          "size": 9,
+          "weight": 500
+        }
+      },
+      "components": [
+        {
+          "id": "nav_bar",
+          "height": 44,
+          "bg": "transparent",
+          "layout": "row",
+          "align": "center",
+          "padding": {
+            "left": 18,
+            "right": 18
+          },
+          "children": [
+            {
+              "type": "text",
+              "token": "screen_title",
+              "content": "Today",
+              "flex": 1
+            },
+            {
+              "type": "text_button",
+              "token": "nav_action",
+              "content": "Edit",
+              "color": "<accent>"
+            },
+            {
+              "type": "icon_button",
+              "icon": "plus",
+              "size": 17,
+              "color": "<accent>",
+              "margin_left": 14
+            }
+          ],
+          "note": "Titel und Aktionen stehen auf EINER Zeile, nicht als iOS-Large-Title untereinander."
+        },
+        {
+          "id": "daily_progress_ring",
+          "critical_component": true,
+          "type": "circular_progress",
+          "margin_top": 14,
+          "align": "center",
+          "geometry": {
+            "outer_diameter": 96,
+            "stroke_width": 9,
+            "stroke_cap": "round",
+            "start_angle_deg": -90,
+            "direction": "clockwise",
+            "estimated": true
+          },
+          "track_color": "<theme.ring_track>",
+          "progress_color": "<theme.accent>",
+          "value": 0.72,
+          "center_label": {
+            "layout": "row",
+            "align": "baseline",
+            "gap": 2,
+            "children": [
+              {
+                "type": "text",
+                "token": "ring_percent",
+                "content": "72",
+                "color": "<theme.text_primary>"
+              },
+              {
+                "type": "text",
+                "token": "ring_percent_symbol",
+                "content": "%",
+                "color": "<theme.text_primary>"
+              }
+            ]
+          },
+          "note": "Zeigt die Tageserfuellung ueber alle Habits. Ring-Enden abgerundet, Luecke bei unvollstaendigem Fortschritt deutlich sichtbar."
+        },
+        {
+          "id": "habit_list",
+          "margin_top": 20,
+          "layout": "column",
+          "gap": 8,
+          "padding": {
+            "left": 14,
+            "right": 14
+          },
+          "children": "habit_row_card"
+        },
+        {
+          "id": "habit_row_card",
+          "critical_component": true,
+          "type": "list_card",
+          "height": 46,
+          "corner_radius": 12,
+          "background": "<theme.card_bg>",
+          "padding": {
+            "left": 10,
+            "right": 10
+          },
+          "layout": "row",
+          "align": "center",
+          "children": [
+            {
+              "id": "habit_icon",
+              "type": "icon",
+              "size": 16,
+              "color": "<theme.accent>",
+              "container": "none",
+              "note": "Freistehendes Icon in der Akzentfarbe, KEINE farbige Kachel dahinter."
+            },
+            {
+              "id": "text_block",
+              "margin_left": 10,
+              "flex": 1,
+              "layout": "column",
+              "gap": 1,
+              "children": [
+                {
+                  "type": "text",
+                  "token": "habit_name",
+                  "content": "<habit_name>",
+                  "color": "<theme.text_primary>"
+                },
+                {
+                  "type": "text",
+                  "token": "habit_subtitle",
+                  "content": "<goal_and_frequency>",
+                  "color": "<theme.text_secondary>"
+                }
+              ]
+            },
+            {
+              "id": "status_indicator",
+              "type": "circular_progress_small",
+              "diameter": 22,
+              "stroke_width": 2.5,
+              "stroke_cap": "round",
+              "track_color": "<theme.ring_track>",
+              "progress_color": "<theme.accent>",
+              "variants": {
+                "in_progress": {
+                  "value": "<0..1>",
+                  "center_glyph": "none"
+                },
+                "completed": {
+                  "value": 1.0,
+                  "center_glyph": {
+                    "type": "check",
+                    "size": 9,
+                    "color": "<theme.accent>"
+                  }
+                },
+                "counter": {
+                  "value": "<0..1>",
+                  "center_glyph": {
+                    "type": "number",
+                    "size": 8,
+                    "color": "<theme.accent>"
+                  },
+                  "note": "Bei zaehlbaren Habits steht die Restzahl im Ring"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "tab_bar",
+          "position": "bottom",
+          "height": 48,
+          "bg": "<theme.card_bg>",
+          "top_border": {
+            "color": "<theme.ring_track>",
+            "thickness": 0.5
+          },
+          "items": [
+            {
+              "icon": "circle_or_home",
+              "state": "active"
+            },
+            {
+              "icon": "bar_chart",
+              "state": "inactive"
+            },
+            {
+              "icon": "calendar",
+              "state": "inactive"
+            },
+            {
+              "icon": "gear",
+              "state": "inactive"
+            }
+          ],
+          "icon_size": 17,
+          "active_color": "<theme.accent>",
+          "inactive_color": "<theme.text_secondary>",
+          "labels": "vorhanden, aber unleserlich",
+          "confidence": "niedrig"
+        },
+        {
+          "id": "widget_large_ring",
+          "type": "small_widget",
+          "size": {
+            "width": 155,
+            "height": 155
+          },
+          "corner_radius": 22,
+          "background": "#FFFFFF",
+          "layout": "column",
+          "align": "center",
+          "justify": "center",
+          "children": [
+            {
+              "type": "circular_progress",
+              "outer_diameter": 78,
+              "stroke_width": 8,
+              "stroke_cap": "round",
+              "track_color": "#E5E5EA",
+              "progress_color": "#1C1C1E",
+              "value": 0.88,
+              "center_label": {
+                "content": "88 %",
+                "size": 20,
+                "weight": 700,
+                "color": "#1C1C1E"
+              }
+            }
+          ],
+          "note": "Zeigt NUR die Gesamterfuellung des Tages, keine einzelnen Habits. Heller Widget-Hintergrund auch bei dunklem App-Theme."
+        },
+        {
+          "id": "widget_ring_grid",
+          "critical_component": true,
+          "type": "widget_variable_size",
+          "corner_radius": 22,
+          "background": "#0A0A0C",
+          "padding": 10,
+          "layout": "grid",
+          "cell": {
+            "type": "circular_progress",
+            "outer_diameter": 26,
+            "stroke_width": 3,
+            "stroke_cap": "round",
+            "track_color": "#2A2A2C",
+            "progress_color": "<habit_accent>",
+            "center_icon": {
+              "size": 11,
+              "color": "<habit_accent>"
+            },
+            "gap_x": 8,
+            "gap_y": 8
+          },
+          "size_variants": {
+            "small": {
+              "grid": "2x2",
+              "capacity": 4
+            },
+            "medium": {
+              "grid": "4x2",
+              "capacity": 8
+            },
+            "large": {
+              "grid": "4x4",
+              "capacity": 16
+            }
+          },
+          "note": "EIN Ring pro Habit. Jeder Ring hat eine eigene Farbe – hier erscheint die volle Palette (Orange, Gruen, Blau, Violett, Gelb, Rot, Cyan, Magenta), nicht nur die Theme-Akzentfarbe.",
+          "estimated": true
+        }
+      ],
+      "widget_layouts": {
+        "A": {
+          "panel": 3,
+          "description": "Reihe 1: helles Ring-Widget (88 %) + dunkles 2x2-Ring-Widget. Darunter: grosses dunkles Widget mit 4x4-Ringraster.",
+          "wallpaper": "violetter Verlauf"
+        },
+        "B": {
+          "panel": 6,
+          "description": "Reihe 1: zwei dunkle 2x2-Ring-Widgets. Darunter: helles Widget mit grossem Ring (88 %) und Ringraster darunter.",
+          "note": "Gleiche Bausteine, andere Anordnung – zeigt die Kombinierbarkeit der Widget-Groessen."
+        }
+      },
+      "instances": {
+        "habit_rows": [
+          {
+            "name": "Eat vegetables",
+            "subtitle": "Goal: 3 portions",
+            "status": "in_progress"
+          },
+          {
+            "name": "Active energy",
+            "subtitle": "Goal: 300 kcal",
+            "status": "counter"
+          },
+          {
+            "name": "Read",
+            "subtitle": "Goal: 30 min",
+            "status": "completed"
+          },
+          {
+            "name": "Meditate",
+            "subtitle": "Goal: 10 min",
+            "status": "completed"
+          }
+        ],
+        "note": "Untertitel nur teilweise lesbar – Werte sind plausible Platzhalter, keine exakten Ablesungen."
+      },
+      "rebuild_rules": [
+        "EIN Screen, vier Themes – Theme ueber einen zentralen Token-Satz umschalten, nicht ueber kopierte Layouts.",
+        "Der grosse Tagesring ist das dominante Element und steht immer zentriert direkt unter der Titelzeile.",
+        "Habit-Icons stehen frei in der Akzentfarbe – KEINE farbigen Icon-Kacheln (im Unterschied zu SCREEN_09).",
+        "Jede Habit-Zeile endet rechts mit einem kleinen Ring, nicht mit einer Checkbox oder einem Haken allein.",
+        "Ring-Enden sind durchgehend abgerundet (round cap) – im Unterschied zu SCREEN_10 (butt cap).",
+        "Karten haben einen moderaten Radius (12pt) und keinen Rand, nur Flaechenkontrast.",
+        "In der App gilt EINE Akzentfarbe fuer alles; in den Widgets bekommt jeder Habit eine EIGENE Farbe. Dieser Unterschied ist beabsichtigt.",
+        "Die Widget-Hintergruende folgen NICHT dem App-Theme – helle und dunkle Widgets werden gemischt eingesetzt.",
+        "Keine Schatten, keine Verlaeufe."
+      ],
+      "uncertain_values": [
+        "Alle Untertitel der Habit-Zeilen (nicht lesbar)",
+        "Tab-Bar-Beschriftungen und exakte Icon-Formen",
+        "Ob der Tagesring antippbar ist / zu einer Detailansicht fuehrt",
+        "Exakte Ringdurchmesser und Strichstaerken (aus Proportion abgeleitet)",
+        "Ob im hellen Theme die Akzentfarbe wirklich Schwarz ist oder nur stark entsaettigt wirkt",
+        "Anzahl der Habits pro Widget-Groesse",
+        "Ob es weitere Themes gibt als die vier gezeigten",
+        "Bedeutung der Zahl im Statusring bei 'Active energy'"
+      ]
+    },
+    {
+      "spec_id": "SCREEN_14",
+      "spec_version": "1.0",
+      "screen_name": "Pastell-Habit-Tracker – 4-Panel-Set (iOS, Rosa/Mint)",
+      "source_image": "vorlage_von_diagram_und_widgets-13.jpeg",
+      "target_framework": "Flutter",
+      "type": "in_app_screens + widgets",
+      "confidence": "NIEDRIG",
+      "duplicate_note": "Diese Spezifikation steht vollstaendig auch in habit_tracker_APP_SCREEN_specs.json. Fuer Widgets ist Panel 3 (home_screen_widgets) relevant.",
+      "warning": "App-Store-Marketingstreifen, ~130px pro Panel. Layoutstruktur ist verlaesslich, ALLE Texte, Zahlen, Farbwerte und Masse sind geschaetzt. Fuer einen echten Nachbau bitte hochaufloesende Einzelscreenshots nachreichen.",
+      "marketing_layer_ignore": {
+        "panel_backgrounds": [
+          "#FCE8EC (rosa)",
+          "#E4F2E9 (mint)"
+        ],
+        "headlines": [
+          {
+            "panel": 1,
+            "title": "Create Habits",
+            "subtitle": "Reach Your Goals"
+          },
+          {
+            "panel": 2,
+            "title": "Habit Reports",
+            "subtitle": "Review your habits"
+          },
+          {
+            "panel": 3,
+            "title": "Home Widgets",
+            "subtitle": "Multiple useful widgets"
+          },
+          {
+            "panel": 4,
+            "title": "Track Habits",
+            "subtitle": "Useful Stats & Charts"
+          }
+        ],
+        "headline_style": {
+          "size": 15,
+          "weight": 600,
+          "color": "#3A3A3A",
+          "align": "center"
+        },
+        "subtitle_style": {
+          "size": 11,
+          "weight": 400,
+          "color": "#7A7A7A",
+          "align": "center"
+        },
+        "instruction": "Panel-Hintergruende und Ueberschriften sind Store-Aufsatz – beim App-Nachbau weglassen."
+      },
+      "color_tokens": {
+        "screen_bg": "#FFFFFF",
+        "surface": "#FFFFFF",
+        "row_track": "#F5F5F7",
+        "accent_pink": "#F5A0B5",
+        "accent_pink_strong": "#EE7C99",
+        "accent_rose": "#F7B8C4",
+        "accent_peach": "#F9C9A8",
+        "accent_mint": "#A8DCC4",
+        "accent_blue": "#9FC7E8",
+        "accent_lavender": "#C3B3E0",
+        "accent_yellow": "#F7D98A",
+        "text_primary": "#2C2C2E",
+        "text_secondary": "#8E8E93",
+        "text_tertiary": "#C7C7CC",
+        "separator": "#F0F0F2",
+        "estimated": true,
+        "note": "Durchgehend PASTELL und entsaettigt. Jede Farbe wird pro Habit vergeben, nicht semantisch (kein Rot=schlecht / Gruen=gut)."
+      },
+      "typography": {
+        "nav_title": {
+          "size": 15,
+          "weight": 600,
+          "color": "#2C2C2E"
+        },
+        "nav_action": {
+          "size": 12,
+          "weight": 400,
+          "color": "#EE7C99"
+        },
+        "weekday_letter": {
+          "size": 8,
+          "weight": 500,
+          "color": "#8E8E93"
+        },
+        "day_number": {
+          "size": 10,
+          "weight": 500
+        },
+        "habit_name": {
+          "size": 11,
+          "weight": 500,
+          "color": "#2C2C2E"
+        },
+        "habit_value": {
+          "size": 9,
+          "weight": 400,
+          "color": "#8E8E93"
+        },
+        "section_header": {
+          "size": 10,
+          "weight": 600,
+          "color": "#2C2C2E"
+        },
+        "stat_value": {
+          "size": 15,
+          "weight": 700,
+          "color": "#2C2C2E"
+        },
+        "stat_label": {
+          "size": 7,
+          "weight": 400,
+          "color": "#8E8E93"
+        },
+        "report_title_script": {
+          "family": "Handschrift-Font (Caveat / Pacifico)",
+          "size": 16,
+          "weight": 400,
+          "color": "#EE7C99",
+          "note": "Nur auf dem Report-Screen – dekorativer Schriftzug mit Zierelementen."
+        },
+        "estimated": true
+      },
+      "panels": [
+        {
+          "panel": 1,
+          "id": "screen_today",
+          "screen_name": "Today – Habit-Liste mit Fortschrittsbalken",
+          "confidence": "mittel",
+          "children": [
+            {
+              "id": "nav_bar",
+              "height": 38,
+              "layout": "row",
+              "align": "center",
+              "padding": {
+                "left": 12,
+                "right": 12
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "token": "nav_title",
+                  "content": "Today",
+                  "flex": 1
+                },
+                {
+                  "type": "icon_button",
+                  "icon": "star_or_settings",
+                  "size": 12,
+                  "color": "#F7D98A"
+                }
+              ]
+            },
+            {
+              "id": "week_strip",
+              "critical_component": true,
+              "type": "horizontal_day_selector",
+              "margin_top": 4,
+              "height": 34,
+              "columns": 7,
+              "distribution": "space_between",
+              "padding": {
+                "left": 10,
+                "right": 10
+              },
+              "cell": {
+                "layout": "column",
+                "align": "center",
+                "gap": 2,
+                "children": [
+                  {
+                    "type": "text",
+                    "token": "weekday_letter"
+                  },
+                  {
+                    "type": "circle",
+                    "diameter": 18,
+                    "states": {
+                      "selected": {
+                        "fill": "#EE7C99",
+                        "text_color": "#FFFFFF"
+                      },
+                      "unselected": {
+                        "fill": "transparent",
+                        "border": {
+                          "color": "#F0F0F2",
+                          "thickness": 1
+                        },
+                        "text_color": "#2C2C2E"
+                      },
+                      "completed": {
+                        "fill": "#F7B8C4",
+                        "text_color": "#FFFFFF"
+                      }
+                    }
+                  }
+                ]
+              },
+              "note": "Wochenleiste zum Datumswechsel. Der ausgewaehlte Tag ist vollflaechig eingefaerbt."
+            },
+            {
+              "id": "habit_progress_row",
+              "critical_component": true,
+              "type": "progress_bar_row",
+              "repeat": 6,
+              "height": 26,
+              "margin": {
+                "left": 10,
+                "right": 10
+              },
+              "margin_bottom": 6,
+              "corner_radius": 6,
+              "structure": {
+                "track": {
+                  "fill": "#F5F5F7",
+                  "full_width": true
+                },
+                "fill_bar": {
+                  "fill": "<habit_accent>",
+                  "width_pct": "<completion_ratio>",
+                  "corner_radius": 6,
+                  "align": "left",
+                  "note": "Der Fortschrittsbalken IST der Zeilenhintergrund – kein separates Balkenelement unter dem Text."
+                },
+                "content": {
+                  "layout": "row",
+                  "align": "center",
+                  "padding": {
+                    "left": 8,
+                    "right": 8
+                  },
+                  "children": [
+                    {
+                      "type": "icon",
+                      "size": 11,
+                      "color": "#FFFFFF"
+                    },
+                    {
+                      "type": "text",
+                      "token": "habit_name",
+                      "margin_left": 6,
+                      "flex": 1
+                    },
+                    {
+                      "type": "text",
+                      "token": "habit_value",
+                      "content": "<current/goal>"
+                    }
+                  ]
+                }
+              },
+              "note": "PRAEGENDES MERKMAL dieser App: die gesamte Zeile ist ein Fortschrittsbalken. Bei 100 % ist die Zeile vollstaendig eingefaerbt, bei 0 % nur grau."
+            },
+            {
+              "id": "tab_bar",
+              "position": "bottom",
+              "height": 36,
+              "bg": "#FFFFFF",
+              "top_border": {
+                "color": "#F0F0F2",
+                "thickness": 0.5
+              },
+              "items": [
+                {
+                  "icon": "circle_target",
+                  "state": "active",
+                  "color": "#EE7C99"
+                },
+                {
+                  "icon": "chart",
+                  "state": "inactive",
+                  "color": "#C7C7CC"
+                },
+                {
+                  "icon": "people",
+                  "state": "inactive",
+                  "color": "#C7C7CC"
+                },
+                {
+                  "icon": "gear",
+                  "state": "inactive",
+                  "color": "#C7C7CC"
+                }
+              ],
+              "icon_size": 14
+            }
+          ],
+          "instances": [
+            {
+              "name": "Eat Yoga?",
+              "accent": "#F5F5F7",
+              "progress": 0.0,
+              "value": "0",
+              "unreadable": true
+            },
+            {
+              "name": "Sleep early",
+              "accent": "#F5F5F7",
+              "progress": 0.0,
+              "value": "1"
+            },
+            {
+              "name": "Stand",
+              "accent": "#F9C9A8",
+              "progress": 0.35,
+              "value": "3"
+            },
+            {
+              "name": "Drink water",
+              "accent": "#9FC7E8",
+              "progress": 0.75,
+              "value": "2278 ml"
+            },
+            {
+              "name": "Yoga",
+              "accent": "#F7B8C4",
+              "progress": 0.55,
+              "value": "20 m"
+            },
+            {
+              "name": "Swim",
+              "accent": "#F5F5F7",
+              "progress": 1.0,
+              "value": "erledigt"
+            }
+          ],
+          "estimated": true
+        },
+        {
+          "panel": 2,
+          "id": "screen_report",
+          "screen_name": "Habit Report – Monatsuebersicht als Punktraster",
+          "confidence": "niedrig",
+          "children": [
+            {
+              "id": "segmented_control",
+              "type": "ios_segmented",
+              "margin_top": 6,
+              "height": 18,
+              "corner_radius": 9,
+              "bg": "#F5F5F7",
+              "segments": [
+                "Weekly",
+                "Monthly",
+                "Yearly"
+              ],
+              "active_index": 1,
+              "active_style": {
+                "bg": "#FFFFFF",
+                "text_color": "#2C2C2E",
+                "shadow": "subtle"
+              },
+              "inactive_style": {
+                "text_color": "#8E8E93"
+              },
+              "text_size": 7,
+              "estimated": true
+            },
+            {
+              "id": "decorative_title",
+              "type": "text_with_ornaments",
+              "margin_top": 8,
+              "align": "center",
+              "token": "report_title_script",
+              "content": "Habit Tracker",
+              "ornaments": {
+                "present": true,
+                "description": "Kleine gezeichnete Zierelemente links und rechts sowie ein Datumsstempel darunter",
+                "color": "#F5A0B5"
+              },
+              "note": "Dekorativer Kopfbereich im Journal-Stil – deutlich verspielter als der Rest der App."
+            },
+            {
+              "id": "habit_dot_matrix",
+              "critical_component": true,
+              "type": "dot_matrix_list",
+              "margin_top": 8,
+              "layout": "row",
+              "children": [
+                {
+                  "id": "habit_label_column",
+                  "width": 40,
+                  "align": "left",
+                  "padding_left": 8,
+                  "rows": 12,
+                  "row_height": 11,
+                  "children": [
+                    {
+                      "type": "icon",
+                      "size": 8,
+                      "color": "<habit_accent>"
+                    },
+                    {
+                      "type": "text",
+                      "token": "habit_value",
+                      "margin_left": 3
+                    }
+                  ]
+                },
+                {
+                  "id": "dot_grid",
+                  "flex": 1,
+                  "type": "contribution_grid",
+                  "cell_shape": "circle",
+                  "cell": {
+                    "diameter": 4,
+                    "gap_x": 1.5,
+                    "gap_y": 3
+                  },
+                  "columns": 31,
+                  "column_meaning": "Kalendertag des Monats",
+                  "rows": 12,
+                  "row_meaning": "ein Habit pro Zeile",
+                  "states": {
+                    "completed": {
+                      "fill": "<habit_accent>"
+                    },
+                    "empty": {
+                      "fill": "#F0F0F2"
+                    }
+                  },
+                  "note": "Binaer, KEINE Intensitaetsstufen. Jede Zeile in der Farbe ihres Habits – die Zeilen sind dadurch farblich klar getrennt."
+                }
+              ],
+              "row_labels_example": [
+                "Yoga",
+                "Swim",
+                "Stand",
+                "Drink water",
+                "Sleep early",
+                "Read",
+                "Meditate",
+                "Walk",
+                "Run",
+                "Stretch",
+                "Journal",
+                "No sugar"
+              ],
+              "estimated": true,
+              "unreadable": true
+            },
+            {
+              "id": "stat_row",
+              "margin_top": 10,
+              "layout": "row",
+              "distribution": "space_around",
+              "items": [
+                {
+                  "value": "90",
+                  "label": "<unleserlich>",
+                  "color": "#EE7C99"
+                },
+                {
+                  "value": "8",
+                  "label": "<unleserlich>",
+                  "color": "#F9C9A8"
+                },
+                {
+                  "value": "48",
+                  "label": "<unleserlich>",
+                  "color": "#A8DCC4"
+                },
+                {
+                  "value": "7",
+                  "label": "<unleserlich>",
+                  "color": "#9FC7E8"
+                }
+              ],
+              "item_layout": "column",
+              "item_align": "center",
+              "value_token": "stat_value",
+              "label_token": "stat_label",
+              "note": "Vier farbige Kennzahlen in einer Reihe. Bedeutungen nicht lesbar – vermutlich Gesamt/Streak/Erfuellt/Wochen."
+            },
+            {
+              "id": "tab_bar",
+              "same_as": "panel_1.tab_bar",
+              "active_index": 1
+            }
+          ]
+        },
+        {
+          "panel": 3,
+          "id": "home_screen_widgets",
+          "screen_name": "Home-Screen mit Widget-Set",
+          "confidence": "niedrig",
+          "ignore_layer": {
+            "items": [
+              "Wallpaper (bunter Verlauf)",
+              "Fremde App-Icons",
+              "Dock",
+              "iOS-Statusbar",
+              "Seiten-Indikator"
+            ],
+            "instruction": "Nicht nachbauen."
+          },
+          "widgets": [
+            {
+              "id": "widget_habit_list",
+              "type": "small_widget",
+              "size": {
+                "width": 155,
+                "height": 155
+              },
+              "corner_radius": 22,
+              "background": "#FFFFFF",
+              "padding": 10,
+              "layout": "column",
+              "gap": 5,
+              "content": {
+                "type": "checklist",
+                "rows": 6,
+                "row": {
+                  "layout": "row",
+                  "align": "center",
+                  "gap": 5,
+                  "children": [
+                    {
+                      "type": "checkbox_circle",
+                      "diameter": 8,
+                      "border": "<habit_accent>",
+                      "checked_fill": "<habit_accent>"
+                    },
+                    {
+                      "type": "text",
+                      "size": 6,
+                      "color": "#2C2C2E"
+                    }
+                  ]
+                }
+              },
+              "row_labels_example": [
+                "Mind. Clearing",
+                "Sleep early",
+                "Read a book",
+                "Drink water",
+                "Burn Calories",
+                "Walk"
+              ],
+              "note": "Kompakte Abhak-Liste. Jede Zeile ein Habit mit eigenem Farbpunkt.",
+              "estimated": true
+            },
+            {
+              "id": "widget_dot_grid",
+              "type": "small_widget",
+              "size": {
+                "width": 155,
+                "height": 155
+              },
+              "corner_radius": 22,
+              "background": "#FFFFFF",
+              "padding": 10,
+              "content": {
+                "type": "contribution_grid",
+                "cell_shape": "circle",
+                "cell": {
+                  "diameter": 5,
+                  "gap": 2
+                },
+                "columns": 12,
+                "rows": 8,
+                "states": {
+                  "completed": {
+                    "fill": "<accent>"
+                  },
+                  "empty": {
+                    "fill": "#F0F0F2"
+                  }
+                },
+                "multicolor": true,
+                "note": "Mehrere Habits in einem Raster, farblich unterschieden."
+              },
+              "estimated": true
+            },
+            {
+              "id": "widget_medium_list",
+              "type": "medium_widget",
+              "size": {
+                "width": 329,
+                "height": 155
+              },
+              "corner_radius": 22,
+              "background": "#FFFFFF",
+              "content": {
+                "type": "progress_bar_list",
+                "rows": 4,
+                "row": {
+                  "same_as": "panel_1.habit_progress_row",
+                  "height": 22
+                }
+              },
+              "note": "Uebernimmt die Fortschrittsbalken-Zeilen aus dem Today-Screen.",
+              "estimated": true
+            },
+            {
+              "id": "widget_ring_pair",
+              "type": "small_widget",
+              "size": {
+                "width": 155,
+                "height": 155
+              },
+              "corner_radius": 22,
+              "background": "#FFFFFF",
+              "content": {
+                "type": "ring_grid",
+                "grid": "2x2",
+                "cell": {
+                  "type": "circular_progress",
+                  "diameter": 44,
+                  "stroke_width": 5,
+                  "stroke_cap": "round",
+                  "track_color": "#F0F0F2",
+                  "progress_color": "<habit_accent>",
+                  "center_icon": {
+                    "size": 16,
+                    "color": "<habit_accent>"
+                  }
+                }
+              },
+              "estimated": true,
+              "confidence": "sehr niedrig"
+            }
+          ],
+          "note": "Vier Widget-Typen erkennbar: Checkliste, Punktraster, Balkenliste, Ringraster. Details nicht aufloesbar."
+        },
+        {
+          "panel": 4,
+          "id": "screen_habit_detail",
+          "screen_name": "Habit-Detail – Yoga mit Kalender und Records",
+          "confidence": "mittel",
+          "children": [
+            {
+              "id": "nav_bar",
+              "height": 34,
+              "layout": "row",
+              "align": "center",
+              "padding": {
+                "left": 10,
+                "right": 10
+              },
+              "children": [
+                {
+                  "type": "icon_button",
+                  "icon": "chevron_left",
+                  "size": 12,
+                  "color": "#EE7C99"
+                },
+                {
+                  "type": "icon",
+                  "icon": "yoga_glyph",
+                  "size": 11,
+                  "color": "#EE7C99",
+                  "margin_left": 4
+                },
+                {
+                  "type": "text",
+                  "token": "nav_title",
+                  "content": "Yoga",
+                  "margin_left": 4,
+                  "flex": 1
+                },
+                {
+                  "type": "icon_button",
+                  "icon": "edit_or_more",
+                  "size": 12,
+                  "color": "#EE7C99"
+                }
+              ]
+            },
+            {
+              "id": "month_calendar",
+              "critical_component": true,
+              "type": "month_grid",
+              "margin_top": 6,
+              "margin_x": 10,
+              "header": {
+                "layout": "row",
+                "align": "center",
+                "children": [
+                  {
+                    "type": "icon_button",
+                    "icon": "chevron_left",
+                    "size": 9,
+                    "color": "#C7C7CC"
+                  },
+                  {
+                    "type": "text",
+                    "content": "March 2020",
+                    "size": 10,
+                    "weight": 600,
+                    "flex": 1,
+                    "align": "center"
+                  },
+                  {
+                    "type": "icon_button",
+                    "icon": "chevron_right",
+                    "size": 9,
+                    "color": "#C7C7CC"
+                  }
+                ]
+              },
+              "weekday_header": {
+                "labels": [
+                  "S",
+                  "M",
+                  "T",
+                  "W",
+                  "T",
+                  "F",
+                  "S"
+                ],
+                "token": "weekday_letter",
+                "margin_top": 4
+              },
+              "day_grid": {
+                "columns": 7,
+                "rows": 6,
+                "cell": {
+                  "diameter": 16,
+                  "gap_x": 4,
+                  "gap_y": 4
+                },
+                "day_states": {
+                  "completed": {
+                    "shape": "circle",
+                    "fill": "#F5A0B5",
+                    "text_color": "#FFFFFF"
+                  },
+                  "completed_light": {
+                    "shape": "circle",
+                    "fill": "#F7B8C4",
+                    "text_color": "#FFFFFF",
+                    "note": "Moeglicherweise Teilerfuellung"
+                  },
+                  "empty": {
+                    "shape": "circle",
+                    "fill": "#F5F5F7",
+                    "text_color": "#8E8E93"
+                  },
+                  "outside_month": {
+                    "shape": "none",
+                    "text_color": "#E5E5EA"
+                  }
+                },
+                "note": "EINZELNE Kreise pro Tag – KEIN verschmelzender Pill-Effekt wie in SCREEN_09. Dieser Unterschied ist wichtig."
+              }
+            },
+            {
+              "id": "yearly_status",
+              "margin_top": 10,
+              "margin_x": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "token": "section_header",
+                  "content": "Yearly Status"
+                },
+                {
+                  "type": "year_heatmap",
+                  "margin_top": 5,
+                  "cell_shape": "square",
+                  "cell": {
+                    "width": 3,
+                    "height": 3,
+                    "gap": 1
+                  },
+                  "columns": 53,
+                  "rows": 7,
+                  "states": {
+                    "completed": {
+                      "fill": "#F5A0B5"
+                    },
+                    "empty": {
+                      "fill": "#F5F5F7"
+                    }
+                  },
+                  "confidence": "niedrig",
+                  "note": "Sehr schmaler Streifen, evtl. auch ein Balkendiagramm statt Heatmap."
+                }
+              ]
+            },
+            {
+              "id": "records_section",
+              "margin_top": 10,
+              "margin_x": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "token": "section_header",
+                  "content": "Records"
+                },
+                {
+                  "id": "record_grid",
+                  "type": "grid_2x2",
+                  "margin_top": 5,
+                  "gap_x": 8,
+                  "gap_y": 8,
+                  "item": {
+                    "type": "card",
+                    "height": 34,
+                    "corner_radius": 8,
+                    "background": "#FFFFFF",
+                    "border": {
+                      "color": "#F0F0F2",
+                      "thickness": 1
+                    },
+                    "padding": {
+                      "left": 8,
+                      "right": 8
+                    },
+                    "layout": "row",
+                    "align": "center",
+                    "children": [
+                      {
+                        "type": "column",
+                        "flex": 1,
+                        "gap": 1,
+                        "children": [
+                          {
+                            "type": "text",
+                            "token": "stat_value",
+                            "content": "<value>"
+                          },
+                          {
+                            "type": "text",
+                            "token": "stat_label",
+                            "content": "<label>"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "icon",
+                        "size": 12,
+                        "color": "<accent>"
+                      }
+                    ]
+                  },
+                  "items": [
+                    {
+                      "value": "18",
+                      "label": "Days a Month",
+                      "icon": "calendar",
+                      "accent": "#F5A0B5"
+                    },
+                    {
+                      "value": "18",
+                      "label": "Total Days Done",
+                      "icon": "check",
+                      "accent": "#A8DCC4"
+                    },
+                    {
+                      "value": "0",
+                      "label": "Current Streak",
+                      "icon": "flame",
+                      "accent": "#F9C9A8"
+                    },
+                    {
+                      "value": "18",
+                      "label": "Best Streak",
+                      "icon": "trophy",
+                      "accent": "#9FC7E8"
+                    }
+                  ],
+                  "estimated": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "rebuild_rules": [
+        "Durchgehend heller Modus mit weissem Hintergrund und PASTELLFARBEN – niemals gesaettigte Farben verwenden.",
+        "Farben sind DEKORATIV pro Habit vergeben, nicht semantisch. Es gibt kein Rot=schlecht/Gruen=gut.",
+        "Die Fortschrittsbalken-Zeile (Panel 1) ist das praegende Element: Balken und Zeilenhintergrund sind dasselbe Objekt.",
+        "Kalendertage sind EINZELNE Kreise – kein verschmelzender Pill-Balken ueber aufeinanderfolgende Tage.",
+        "Der Report-Screen bricht bewusst mit dem Systemstil (Handschrift-Font, Zierelemente) – dieser Kontrast ist Absicht, nicht vereinheitlichen.",
+        "Punktraster verwenden KREISE und sind binaer (an/aus), ohne Intensitaetsstufen.",
+        "Karten haben duenne hellgraue Konturen und keinen Schatten.",
+        "Ecken sind moderat gerundet: Karten 8pt, Zeilen 6pt, Widgets 22pt.",
+        "Tab-Bar mit vier Eintraegen, aktiver Zustand nur ueber Farbe."
+      ],
+      "uncertain_values": [
+        "ALLE Habit-Namen und Zahlenwerte (nicht lesbar, Platzhalter)",
+        "Die vier Kennzahlen im Report-Screen (90 / 8 / 48 / 7) und ihre Bedeutung",
+        "Ob der Yearly-Status eine Heatmap oder ein Balkendiagramm ist",
+        "Anzahl der Habits im Report-Raster (12 geschaetzt)",
+        "Alle Widget-Inhalte in Panel 3 – nur Umrisse erkennbar",
+        "Tab-Bar-Icons und -Beschriftungen",
+        "Ob im Kalender zwei Erfuellungsstufen existieren oder es ein Kompressionsartefakt ist",
+        "Exakte Pastellfarbwerte – der Screenshot ist farblich stark komprimiert",
+        "Ob der dekorative Report-Kopf konfigurierbar ist oder fest"
+      ]
+    },
+    {
+      "spec_id": "SCREEN_15",
+      "spec_version": "1.0",
+      "screen_name": "Widget-Themes – Dark vs. Light Variante (HabitKit-Stil, iOS)",
+      "source_image": "vorlage_von_diagram_und_widgets-14.jpeg",
+      "target_framework": "Flutter",
+      "type": "widgets_only",
+      "confidence": "MITTEL-HOCH",
+      "extends": "SCREEN_11",
+      "note": "Linkes Telefon = derselbe Home-Screen wie SCREEN_11 (Meditation / Side Hustle / Play Drums / Running / Limit Coffee Intake). Rechtes Telefon = DIESELBEN Widget-Komponenten in heller Ausfuehrung mit anderen Habits. Struktur, Masse und Aufbau sind identisch – nur das Farbschema wechselt.",
+      "key_insight": "Das Widget unterstuetzt (mindestens) zwei Hintergrund-Modi: 'dark' und 'light'. Der Modus ist offenbar PRO WIDGET waehlbar, nicht global – beide Varianten erscheinen im selben Screenshot-Set. Beim Nachbau also EIN Widget mit Theme-Parameter, nicht zwei getrennte Widgets.",
+      "ignore_layer": {
+        "items": [
+          "Wallpaper beider Telefone (Magenta/Rot/Blau-Verlauf)",
+          "iOS-Statusbar (12:08 bzw. 5:19)",
+          "System-Label 'HabitKit' unter jedem Widget",
+          "Such-Pille am unteren Rand",
+          "Geraeterahmen und Studio-Hintergrund"
+        ],
+        "instruction": "Nicht nachbauen."
+      },
+      "inherited_from_SCREEN_11": {
+        "components": [
+          "small_widget (Aufbau, Masse, Padding)",
+          "medium_widget (Aufbau, Masse, Padding, Untertitel, Aktions-Button)",
+          "dot_heatmap_grid (Kreiszellen, Zeilen = Wochentage, Spalten = Wochen)",
+          "Header-Struktur (Icon-Kachel + Titel, optional Untertitel + Button)",
+          "Eckradius 22pt, Ein Habit pro Widget",
+          "Intensitaetsstufen ueber Deckkraft der Akzentfarbe"
+        ],
+        "instruction": "Alle Masse und Layoutregeln aus SCREEN_11 uebernehmen. Nur die untenstehenden Farb-Tokens werden pro Theme ausgetauscht."
+      },
+      "widget_themes": {
+        "dark": {
+          "widget_surface": "#1A1A1C",
+          "icon_tile_bg": "#2C2C2E",
+          "icon_color": "#FFFFFF",
+          "cell_empty": "#2A2A2C",
+          "text_primary": "#FFFFFF",
+          "text_secondary": "#8E8E93",
+          "note": "Entspricht SCREEN_11. Die Akzentfarbe leuchtet auf dunklem Grund."
+        },
+        "light": {
+          "widget_surface": "#FFFFFF",
+          "icon_tile_bg": "<accent>",
+          "icon_tile_bg_alt": "#F2F2F5",
+          "icon_color": "#FFFFFF",
+          "cell_empty": "#EDEDF0",
+          "text_primary": "#1C1C1E",
+          "text_secondary": "#8E8E93",
+          "estimated": true,
+          "note": "WICHTIGER UNTERSCHIED: In der hellen Variante ist die Icon-Kachel in der AKZENTFARBE eingefaerbt mit weissem Icon. In der dunklen Variante ist sie neutral grau. Das ist kein Zufall, sondern noetig, damit das Widget auf hellem Grund farblich zugeordnet bleibt."
+        }
+      },
+      "components": [
+        {
+          "id": "widget_container",
+          "ref": "SCREEN_11.small_widget / SCREEN_11.medium_widget",
+          "background": "<theme.widget_surface>",
+          "corner_radius": 22,
+          "note": "Unveraendert gegenueber SCREEN_11."
+        },
+        {
+          "id": "icon_tile",
+          "size": 22,
+          "corner_radius": 6,
+          "variants": {
+            "dark_theme": {
+              "bg": "#2C2C2E",
+              "icon_color": "#FFFFFF"
+            },
+            "light_theme": {
+              "bg": "<accent>",
+              "icon_color": "#FFFFFF"
+            }
+          },
+          "critical": true,
+          "note": "Der einzige Baustein, dessen LOGIK sich zwischen den Themes aendert – nicht nur der Farbwert."
+        },
+        {
+          "id": "dot_heatmap_grid",
+          "ref": "SCREEN_11.dot_heatmap_grid",
+          "cell_shape": "circle",
+          "states": {
+            "empty": {
+              "fill": "<theme.cell_empty>"
+            },
+            "level_1": {
+              "fill": "<accent>",
+              "opacity": 0.3
+            },
+            "level_2": {
+              "fill": "<accent>",
+              "opacity": 0.55
+            },
+            "level_3": {
+              "fill": "<accent>",
+              "opacity": 0.8
+            },
+            "level_4": {
+              "fill": "<accent>",
+              "opacity": 1.0
+            }
+          },
+          "note": "Deckkraft-Logik in beiden Themes identisch. Auf hellem Grund wirken die niedrigen Stufen dadurch pastellig, auf dunklem Grund gedaempft – das ist korrekt und beabsichtigt."
+        },
+        {
+          "id": "complete_button",
+          "ref": "SCREEN_11.complete_button",
+          "size": 26,
+          "corner_radius": 7,
+          "variants": {
+            "dark_theme_pending": {
+              "bg": "#2C2C2E",
+              "glyph": "check",
+              "glyph_color": "#8E8E93"
+            },
+            "dark_theme_completed": {
+              "bg": "<accent>",
+              "glyph": "check",
+              "glyph_color": "#FFFFFF"
+            },
+            "light_theme_pending": {
+              "bg": "<accent>",
+              "glyph": "plus",
+              "glyph_color": "#FFFFFF"
+            }
+          },
+          "note": "Im hellen Widget zeigt der Button ein PLUS statt eines Hakens – vermutlich der Zustand 'heute noch offen' bei einem zaehlbaren Habit. In SCREEN_11 war der entsprechende Button ein blauer Haken (bereits erledigt)."
+        }
+      ],
+      "instances": {
+        "left_phone_dark": {
+          "ref": "SCREEN_11.instances",
+          "note": "Identisch – keine erneute Dokumentation noetig."
+        },
+        "right_phone_light": [
+          {
+            "widget": "small_widget",
+            "position": "Reihe 1 links",
+            "habit_name": "Learn Norwegian",
+            "icon": "book_or_flag",
+            "accent": "#8B7BE8",
+            "theme": "light",
+            "density": "mittel"
+          },
+          {
+            "widget": "small_widget",
+            "position": "Reihe 1 rechts",
+            "habit_name": "Walk around the block",
+            "icon": "footprints_or_tree",
+            "accent": "#34C759",
+            "theme": "light",
+            "density": "hoch"
+          },
+          {
+            "widget": "medium_widget",
+            "position": "Reihe 2, volle Breite",
+            "habit_name": "Deep breathing exercise",
+            "habit_description": "Calm your mind with a quick exercise",
+            "icon": "leaf",
+            "accent": "#4CAF50",
+            "theme": "light",
+            "button_state": "plus",
+            "density": "sehr hoch, fast durchgehend"
+          },
+          {
+            "widget": "small_widget",
+            "position": "Reihe 3 links",
+            "habit_name": "Stretch for 5 minutes",
+            "icon": "clock_or_stretch_figure",
+            "accent": "#E8453C",
+            "theme": "light",
+            "density": "hoch"
+          },
+          {
+            "widget": "small_widget",
+            "position": "Reihe 3 rechts",
+            "habit_name": "Eat a piece of fruit",
+            "icon": "apple_or_fruit",
+            "accent": "#EC4899",
+            "theme": "light",
+            "density": "mittel-hoch"
+          }
+        ]
+      },
+      "layout_order": {
+        "note": "Identisch auf beiden Telefonen – bestaetigt, dass es sich um dieselbe Widget-Familie handelt.",
+        "rows": [
+          {
+            "row": 1,
+            "widgets": [
+              "small",
+              "small"
+            ],
+            "gap_x": 20
+          },
+          {
+            "row": 2,
+            "widgets": [
+              "medium"
+            ]
+          },
+          {
+            "row": 3,
+            "widgets": [
+              "small",
+              "small"
+            ],
+            "gap_x": 20
+          }
+        ]
+      },
+      "rebuild_rules": [
+        "EIN Widget-Bauplan mit Theme-Parameter ('dark' | 'light') – nicht zwei getrennte Implementierungen.",
+        "Der Theme-Modus wird PRO WIDGET gesetzt, nicht global fuer die App.",
+        "In der hellen Variante ist die Icon-Kachel in der Akzentfarbe eingefaerbt; in der dunklen Variante neutral grau. Diese Regel nicht vertauschen.",
+        "Die Deckkraft-Stufen der Heatmap bleiben in beiden Themes identisch – nur die Leerzellenfarbe wechselt.",
+        "Zellen bleiben in beiden Themes exakt kreisrund.",
+        "Jedes Widget zeigt weiterhin GENAU EINEN Habit.",
+        "Keine Raender, keine Schatten, keine Verlaeufe in beiden Varianten.",
+        "Der Eckradius bleibt bei 22pt, unabhaengig vom Theme."
+      ],
+      "uncertain_values": [
+        "Ob die helle Variante wirklich reinweiss (#FFFFFF) ist oder ein sehr helles Grau",
+        "Exakte Leerzellenfarbe im hellen Theme (#EDEDF0 geschaetzt)",
+        "Icon-Formen der rechten Widgets (zu klein aufgeloest)",
+        "Ob der Plus-Button ein eigener Zustand ist oder eine andere Habit-Art (zaehlbar vs. binaer)",
+        "Ob es weitere Theme-Varianten gibt (z. B. getoente Hintergruende in der Akzentfarbe)",
+        "Vollstaendiger Untertiteltext des hellen Medium-Widgets",
+        "Ob die Akzentfarbe im hellen Theme identisch gewaehlt wird oder automatisch abgedunkelt"
+      ]
+    },
+    {
+      "spec_id": "SCREEN_16",
+      "spec_version": "1.0",
+      "screen_name": "Widget-Familie – Farbkacheln, Tagesliste, Streak & Charts (iPad + iPhone)",
+      "source_image": "vorlage_von_diagram_und_widgets-15.jpeg",
+      "target_framework": "Flutter",
+      "type": "widgets_only",
+      "confidence": "MITTEL",
+      "note": "Apple-Marketingbild mit iPad und iPhone. Beide zeigen DIESELBE Widget-Familie in unterschiedlicher Rasterbreite. Das iPad-Panel ist besser aufgeloest und dient als Referenz; das iPhone bestaetigt nur, dass die Bausteine groessenuebergreifend identisch bleiben.",
+      "key_insight": "Erste Vorlage mit VOLLFLAECHIG eingefaerbten Widgets. Bei SCREEN_11/15 war die Flaeche neutral und nur der Inhalt farbig – hier ist die Akzentfarbe der Widget-Hintergrund selbst. Das ist ein grundlegend anderer Ansatz und sollte nicht mit den Heatmap-Widgets gemischt werden.",
+      "ignore_layer": {
+        "items": [
+          "Wallpaper (blaues Sonoma-artiges Muster)",
+          "iPadOS-/iOS-Statusbar (10:07 Tue Aug 26)",
+          "Dock beider Geraete und alle fremden App-Icons",
+          "Seiten-Indikator-Punkte",
+          "Geraeterahmen"
+        ],
+        "instruction": "Nicht nachbauen – reiner Systemkontext."
+      },
+      "color_tokens": {
+        "widget_orange": "#F5822A",
+        "widget_red": "#E8404A",
+        "widget_green": "#3E8E5A",
+        "widget_purple": "#B84BD6",
+        "widget_white": "#FFFFFF",
+        "widget_light": "#F2F2F5",
+        "text_on_color": "#FFFFFF",
+        "text_on_color_muted": "#FFFFFFCC",
+        "text_primary": "#1C1C1E",
+        "text_secondary": "#8E8E93",
+        "button_overlay": "#FFFFFF33",
+        "pill_blue": "#4A5BD6",
+        "pill_cyan": "#2AA8D6",
+        "chart_grid": "#E5E5EA",
+        "streak_empty": "#E5E5EA",
+        "estimated": true
+      },
+      "typography": {
+        "tile_habit_name": {
+          "family": "SF Pro Text / Inter",
+          "size": 11,
+          "weight": 600,
+          "color": "#FFFFFF",
+          "line_height": 1.2,
+          "max_lines": 2
+        },
+        "tile_streak_number": {
+          "size": 12,
+          "weight": 700,
+          "color": "#FFFFFF"
+        },
+        "widget_header": {
+          "size": 12,
+          "weight": 600,
+          "color": "#1C1C1E"
+        },
+        "widget_header_count": {
+          "size": 17,
+          "weight": 700,
+          "color": "#1C1C1E"
+        },
+        "pill_label": {
+          "size": 10,
+          "weight": 500,
+          "color": "#FFFFFF"
+        },
+        "pill_count": {
+          "size": 10,
+          "weight": 600,
+          "color": "#FFFFFF"
+        },
+        "chart_axis": {
+          "size": 7,
+          "weight": 400,
+          "color": "#8E8E93"
+        },
+        "log_button": {
+          "size": 9,
+          "weight": 600,
+          "color": "#FFFFFF"
+        },
+        "estimated": true
+      },
+      "components": [
+        {
+          "id": "color_tile_widget_small",
+          "critical_component": true,
+          "type": "small_widget",
+          "size": {
+            "width": 155,
+            "height": 155,
+            "reference": "iOS Small Widget"
+          },
+          "corner_radius": 22,
+          "background": "<habit_accent>",
+          "padding": {
+            "top": 12,
+            "right": 12,
+            "bottom": 12,
+            "left": 12
+          },
+          "layout": "column",
+          "distribution": "space_between",
+          "children": [
+            {
+              "id": "tile_header",
+              "layout": "row",
+              "align": "start",
+              "children": [
+                {
+                  "type": "icon",
+                  "size": 20,
+                  "style": "solid_glyph_white",
+                  "color": "#FFFFFF",
+                  "container": "none",
+                  "note": "Freistehendes weisses Piktogramm oben links, keine Kachel dahinter."
+                },
+                {
+                  "type": "spacer",
+                  "flex": 1
+                },
+                {
+                  "id": "add_button",
+                  "type": "icon_button",
+                  "shape": "circle",
+                  "diameter": 22,
+                  "bg": "#FFFFFF33",
+                  "icon": "plus",
+                  "icon_size": 11,
+                  "icon_color": "#FFFFFF",
+                  "note": "Interaktiver Button zum Erhoehen des Zaehlers direkt vom Home-Screen. Halbtransparentes Weiss auf der Akzentfarbe."
+                }
+              ]
+            },
+            {
+              "id": "tile_footer",
+              "layout": "column",
+              "gap": 4,
+              "children": [
+                {
+                  "id": "streak_row",
+                  "layout": "row",
+                  "align": "center",
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "text",
+                      "token": "tile_streak_number",
+                      "content": "<streak_count>"
+                    },
+                    {
+                      "type": "emoji",
+                      "content": "flamme",
+                      "size": 11
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "token": "tile_habit_name",
+                  "content": "<habit_name>"
+                }
+              ]
+            }
+          ],
+          "note": "PRAEGENDES ELEMENT dieser Familie. Die Akzentfarbe fuellt das gesamte Widget; alle Inhalte sind weiss."
+        },
+        {
+          "id": "color_tile_widget_medium",
+          "type": "medium_widget",
+          "size": {
+            "width": 329,
+            "height": 155
+          },
+          "corner_radius": 22,
+          "background": "<habit_accent>",
+          "padding": {
+            "top": 12,
+            "right": 12,
+            "bottom": 12,
+            "left": 12
+          },
+          "layout": "column",
+          "distribution": "space_between",
+          "children": [
+            {
+              "id": "tile_header",
+              "layout": "row",
+              "align": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "size": 20,
+                  "color": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "token": "tile_streak_number",
+                  "content": "<streak_count>",
+                  "margin_left": 8
+                },
+                {
+                  "type": "emoji",
+                  "content": "flamme",
+                  "size": 11,
+                  "margin_left": 3
+                },
+                {
+                  "type": "spacer",
+                  "flex": 1
+                },
+                {
+                  "id": "log_button",
+                  "type": "pill_button",
+                  "height": 22,
+                  "corner_radius": 11,
+                  "bg": "#FFFFFF33",
+                  "padding": {
+                    "x": 9
+                  },
+                  "layout": "row",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "icon",
+                      "icon": "plus",
+                      "size": 9,
+                      "color": "#FFFFFF"
+                    },
+                    {
+                      "type": "text",
+                      "token": "log_button",
+                      "content": "Log"
+                    }
+                  ],
+                  "note": "Im Medium-Widget wird der runde Plus-Button zu einem beschrifteten Pill-Button erweitert."
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "token": "tile_habit_name",
+              "content": "<habit_name>",
+              "size": 13
+            }
+          ],
+          "note": "Gleiche Bausteine wie die Small-Variante, nur horizontal aufgefaechert. Kein zusaetzlicher Inhalt."
+        },
+        {
+          "id": "completed_today_widget",
+          "critical_component": true,
+          "type": "medium_widget",
+          "size": {
+            "width": 329,
+            "height": 155
+          },
+          "corner_radius": 22,
+          "background": "#FFFFFF",
+          "padding": {
+            "top": 12,
+            "right": 12,
+            "bottom": 12,
+            "left": 12
+          },
+          "layout": "column",
+          "children": [
+            {
+              "id": "header",
+              "layout": "row",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "token": "widget_header",
+                  "content": "Completed today",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "token": "widget_header_count",
+                  "content": "<count>"
+                }
+              ]
+            },
+            {
+              "id": "completed_list",
+              "margin_top": 10,
+              "layout": "column",
+              "gap": 6,
+              "children": "completed_pill_row"
+            }
+          ]
+        },
+        {
+          "id": "completed_pill_row",
+          "type": "pill_row",
+          "height": 24,
+          "corner_radius": 12,
+          "background": "<habit_accent>",
+          "padding": {
+            "left": 6,
+            "right": 10
+          },
+          "layout": "row",
+          "align": "center",
+          "children": [
+            {
+              "type": "icon_circle",
+              "diameter": 17,
+              "bg": "#FFFFFF33",
+              "icon_size": 9,
+              "icon_color": "#FFFFFF"
+            },
+            {
+              "type": "text",
+              "token": "pill_label",
+              "content": "<habit_name>",
+              "margin_left": 7,
+              "flex": 1
+            },
+            {
+              "type": "text",
+              "token": "pill_count",
+              "content": "<count>"
+            },
+            {
+              "type": "emoji",
+              "content": "flamme",
+              "size": 8,
+              "margin_left": 2
+            }
+          ],
+          "note": "Vollflaechig eingefaerbte Pille pro erledigtem Habit. Zaehlerwert und Flamme rechtsbuendig."
+        },
+        {
+          "id": "streak_bar_widget",
+          "critical_component": true,
+          "type": "medium_widget",
+          "size": {
+            "width": 329,
+            "height": 155
+          },
+          "corner_radius": 22,
+          "background": "#FFFFFF",
+          "padding": {
+            "top": 12,
+            "right": 12,
+            "bottom": 10,
+            "left": 12
+          },
+          "children": [
+            {
+              "id": "header",
+              "layout": "row",
+              "align": "center",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "icon_circle",
+                  "diameter": 18,
+                  "bg": "#8E8E93",
+                  "icon": "flame",
+                  "icon_size": 10,
+                  "icon_color": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "token": "widget_header",
+                  "content": "Streak"
+                }
+              ]
+            },
+            {
+              "id": "stacked_bar_chart",
+              "margin_top": 10,
+              "type": "segmented_stacked_bars",
+              "height": 74,
+              "bar": {
+                "width": 26,
+                "gap": 10,
+                "corner_radius": 6,
+                "align": "bottom",
+                "note": "Jeder Balken steht fuer einen Tag und ist vertikal in farbige Segmente unterteilt – ein Segment pro erfuelltem Habit."
+              },
+              "segment": {
+                "height": "gleichmaessig aufgeteilt",
+                "gap_y": 1.5,
+                "colors": "<habit_accents>",
+                "empty_color": "#E5E5EA",
+                "note": "Segmentfarben entsprechen den Habit-Farben. Nicht erfuellte Anteile bleiben hellgrau."
+              },
+              "x_axis": {
+                "labels": [
+                  "Aug 20",
+                  "Aug 22",
+                  "Aug 24",
+                  "Aug 26"
+                ],
+                "token": "chart_axis",
+                "margin_top": 5
+              }
+            }
+          ],
+          "note": "Zeigt die Tageserfuellung als gestapelte Balken. Deutlich anders als eine Heatmap – hier ist die vertikale Achse die Anzahl der Habits."
+        },
+        {
+          "id": "streak_bar_widget_small",
+          "type": "small_widget",
+          "size": {
+            "width": 155,
+            "height": 155
+          },
+          "corner_radius": 22,
+          "background": "#FFFFFF",
+          "same_structure_as": "streak_bar_widget",
+          "differences": {
+            "bar_count": 4,
+            "bar_width": 20,
+            "x_axis_labels": [
+              "Aug 20",
+              "Aug 26"
+            ],
+            "note": "Kompakte Variante mit weniger Balken – gleiche Logik."
+          }
+        },
+        {
+          "id": "performed_habits_chart_widget",
+          "type": "medium_widget",
+          "size": {
+            "width": 329,
+            "height": 155
+          },
+          "corner_radius": 22,
+          "background": "#FFFFFF",
+          "padding": {
+            "top": 12,
+            "right": 12,
+            "bottom": 10,
+            "left": 12
+          },
+          "children": [
+            {
+              "id": "header",
+              "layout": "row",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "token": "widget_header",
+                  "content": "Performed habits - Day",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "token": "chart_axis",
+                  "content": "1",
+                  "note": "Wert rechts oben, evtl. Y-Maximum oder Legende"
+                }
+              ]
+            },
+            {
+              "id": "multi_line_chart",
+              "margin_top": 8,
+              "type": "line_chart",
+              "height": 70,
+              "series": {
+                "count": "<n_habits>",
+                "line_color": "<habit_accent>",
+                "line_width": 1.2,
+                "curve": "monotone_cubic",
+                "point_marker": {
+                  "shape": "circle",
+                  "radius": 2,
+                  "fill": "<habit_accent>",
+                  "border": {
+                    "color": "#FFFFFF",
+                    "thickness": 1
+                  }
+                },
+                "fill_below": "none",
+                "note": "EINE Linie pro Habit in dessen Farbe. Die Linien ueberlagern sich und schwingen zwischen 0 und 1 – vermutlich erledigt/nicht erledigt pro Tag."
+              },
+              "x_axis": {
+                "labels": [
+                  "Aug 20",
+                  "Aug 22",
+                  "Aug 24",
+                  "Aug 26"
+                ],
+                "token": "chart_axis"
+              },
+              "y_axis": {
+                "visible": false,
+                "grid_lines": "none"
+              }
+            }
+          ],
+          "confidence": "niedrig",
+          "note": "Am schwersten lesbares Widget. Struktur (mehrfarbige Linienschar) ist klar, die genaue Datenlogik nicht."
+        },
+        {
+          "id": "dot_grid_widget",
+          "type": "medium_widget",
+          "size": {
+            "width": 329,
+            "height": 155
+          },
+          "corner_radius": 22,
+          "background": "#FFFFFF",
+          "padding": {
+            "top": 12,
+            "right": 12,
+            "bottom": 12,
+            "left": 12
+          },
+          "children": [
+            {
+              "id": "header",
+              "layout": "row",
+              "align": "center",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "icon",
+                  "size": 13,
+                  "color": "#3E8E5A"
+                },
+                {
+                  "type": "text",
+                  "token": "widget_header",
+                  "content": "Sleep before 11 PM"
+                }
+              ]
+            },
+            {
+              "id": "dot_heatmap",
+              "margin_top": 10,
+              "type": "contribution_grid",
+              "cell_shape": "rounded_square",
+              "cell": {
+                "width": 7,
+                "height": 7,
+                "corner_radius": 2,
+                "gap_x": 2,
+                "gap_y": 2
+              },
+              "rows": 7,
+              "columns": 30,
+              "states": {
+                "completed": {
+                  "fill": "#3E8E5A"
+                },
+                "empty": {
+                  "fill": "#E5E5EA"
+                }
+              },
+              "binary": true,
+              "note": "Binaer, KEINE Intensitaetsstufen. Zellen sind abgerundete Quadrate, nicht Kreise – im Unterschied zu SCREEN_11/15."
+            }
+          ],
+          "estimated": true
+        }
+      ],
+      "instances": {
+        "color_tiles": [
+          {
+            "habit_name": "Read 20 pages",
+            "accent": "#F5822A",
+            "streak": 4,
+            "icon": "book"
+          },
+          {
+            "habit_name": "Gym workout",
+            "accent": "#E8404A",
+            "streak": 2,
+            "icon": "dumbbell_or_figure"
+          },
+          {
+            "habit_name": "Study a new language",
+            "accent": "#3E8E5A",
+            "streak": 22,
+            "icon": "speech_bubble"
+          },
+          {
+            "habit_name": "Meditation",
+            "accent": "#B84BD6",
+            "streak": 3,
+            "icon": "person_meditating"
+          },
+          {
+            "habit_name": "Stretching",
+            "accent": "#E8404A",
+            "streak": 2,
+            "icon": "figure_stretch"
+          }
+        ],
+        "completed_today": {
+          "count": 3,
+          "pills": [
+            {
+              "habit_name": "Call parents",
+              "accent": "#4A5BD6",
+              "count": 87
+            },
+            {
+              "habit_name": "Declutter workspace",
+              "accent": "#2AA8D6",
+              "count": 7
+            },
+            {
+              "habit_name": "Drink water",
+              "accent": "#2AA8D6",
+              "count": 1
+            }
+          ]
+        },
+        "dot_grid": {
+          "habit_name": "Sleep before 11 PM",
+          "accent": "#3E8E5A"
+        }
+      },
+      "layout_notes": {
+        "ipad": "Breites Raster, gemischte Widget-Groessen nebeneinander. Kleine Farbkacheln werden zu zweit oder viert gruppiert.",
+        "iphone": "Dieselben Widgets in schmalerem Raster gestapelt. Bestaetigt: die Bausteine sind identisch, nur die Anordnung passt sich an.",
+        "instruction": "Fuer eine Flutter-App ist nur die iPhone-Anordnung relevant, sofern kein Tablet-Support geplant ist."
+      },
+      "rebuild_rules": [
+        "Zwei Widget-Familien in einem System: FARBKACHELN (Akzentfarbe als Hintergrund, weisse Inhalte) und DATEN-WIDGETS (weisser Hintergrund, farbige Inhalte). Beide Ansaetze parallel unterstuetzen, aber niemals innerhalb EINES Widgets mischen.",
+        "Auf Farbkacheln sind ALLE Inhalte weiss – Text, Icons, Buttons. Buttons sind halbtransparentes Weiss (#FFFFFF33) auf der Akzentfarbe.",
+        "Der Streak-Zaehler steht immer mit vorangestellter Zahl und nachfolgender Flamme – nie umgekehrt.",
+        "Die Farbkachel-Widgets sind INTERAKTIV: Plus-Button bzw. Log-Button erhoehen den Zaehler direkt vom Home-Screen.",
+        "Der Plus-Button ist im Small-Widget ein Kreis, im Medium-Widget ein beschrifteter Pill-Button ('Log').",
+        "Im Streak-Balkendiagramm entspricht jedes Segment einem Habit – die Balkenhoehe ist also die Anzahl erfuellter Habits, nicht ein Prozentwert.",
+        "Zellen im Punktraster sind abgerundete QUADRATE und binaer – nicht mit den Kreis-Heatmaps aus SCREEN_11/15 verwechseln.",
+        "Eckradius durchgehend 22pt bei Widgets, 12pt bei Pillen, 6pt bei Balken.",
+        "Keine Schatten, keine Verlaeufe, keine Raender."
+      ],
+      "uncertain_values": [
+        "Exakte Akzentfarbwerte (Marketingbild, farblich leicht ueberzeichnet)",
+        "Icon-Formen auf den Farbkacheln (klein aufgeloest)",
+        "Datenlogik des 'Performed habits'-Liniendiagramms",
+        "Bedeutung der Zahl rechts oben im Liniendiagramm",
+        "Ob die Zaehlerwerte in den Pillen (87, 7, 1) Streaks oder Gesamtzahlen sind",
+        "Genaue Spalten-/Zeilenzahl des Punktrasters",
+        "Ob es eine Large-Widget-Variante gibt",
+        "Ob die Farbkacheln auch ein Dark-Theme haben"
+      ],
+      "technical_note": "Dies ist die einzige Widget-Familie mit echter Home-Screen-Interaktion (Log-Button). In Flutter erfordert das native Widget-Extensions (WidgetKit / App Widgets) – nicht in Dart allein loesbar."
+    },
+    {
+      "spec_id": "SCREEN_17",
+      "spec_version": "1.0",
+      "screen_name": "Widget-Set – Statistiken & Diagramme (Streaks-Stil, Dark/Blau, iOS)",
+      "source_image": "vorlage_von_diagram_und_widgets-16.jpeg",
+      "target_framework": "Flutter",
+      "type": "widgets_only",
+      "confidence": "MITTEL",
+      "related_to": "SCREEN_10",
+      "note": "Zwei iPhones mit derselben Widget-Familie in unterschiedlicher Anordnung. Sieben verschiedene Widget-Typen erkennbar. Gleiche App wie SCREEN_10, aber anderes Farbthema und anderer Widget-Satz – die Akzentfarbe ist also nutzerseitig waehlbar.",
+      "key_insight": "Diese Widget-Familie zeigt AUSWERTUNGEN, keine Abhak-Oberflaeche. Im Unterschied zu SCREEN_10 (Ringe zum Erledigen) und SCREEN_16 (Kacheln mit Log-Button) sind diese Widgets rein informativ – keine interaktiven Elemente erkennbar.",
+      "ignore_layer": {
+        "items": [
+          "iOS-Statusbar (9:41, Signal, WLAN, Batterie)",
+          "System-Label 'Streaks' unter jedem Widget",
+          "Dock mit vier fremden App-Icons",
+          "Seiten-Indikator-Punkte",
+          "Geraeterahmen",
+          "Schwarzer Home-Screen-Hintergrund (reines Schwarz, kein Wallpaper)"
+        ],
+        "instruction": "Nicht nachbauen."
+      },
+      "color_tokens": {
+        "widget_surface": "#0D0D0F",
+        "widget_surface_alt": "#121214",
+        "screen_bg": "#000000",
+        "accent_blue": "#2E9BE0",
+        "accent_blue_bright": "#4AB4F0",
+        "accent_blue_dim": "#1B6FA8",
+        "icon_tile_bg": "#2E9BE0",
+        "icon_tile_glyph": "#FFFFFF",
+        "track_dark": "#1F1F22",
+        "text_primary": "#FFFFFF",
+        "text_secondary": "#8A8A8E",
+        "text_accent": "#2E9BE0",
+        "chart_line": "#4AB4F0",
+        "chart_fill": "#2E9BE033",
+        "estimated": true,
+        "note": "Monochromes Blau-Schema auf nahezu schwarzem Grund. NUR eine Akzentfarbe – keine zweite Semantikfarbe."
+      },
+      "typography": {
+        "stat_label": {
+          "family": "SF Pro Text / Inter",
+          "size": 8,
+          "weight": 600,
+          "color": "#FFFFFF",
+          "letter_spacing": 0.4,
+          "transform": "uppercase"
+        },
+        "stat_value": {
+          "size": 9,
+          "weight": 700,
+          "color": "#FFFFFF"
+        },
+        "stat_percent": {
+          "size": 8,
+          "weight": 600,
+          "color": "#FFFFFF"
+        },
+        "axis_label": {
+          "size": 7,
+          "weight": 500,
+          "color": "#8A8A8E",
+          "transform": "uppercase"
+        },
+        "habit_label_accent": {
+          "size": 9,
+          "weight": 700,
+          "color": "#2E9BE0",
+          "letter_spacing": 0.6,
+          "transform": "uppercase"
+        },
+        "weekday_letter": {
+          "size": 7,
+          "weight": 500,
+          "color": "#8A8A8E"
+        },
+        "estimated": true
+      },
+      "components": [
+        {
+          "id": "widget_base",
+          "type": "widget_container",
+          "sizes": {
+            "small": {
+              "width": 155,
+              "height": 155
+            },
+            "medium": {
+              "width": 329,
+              "height": 155
+            }
+          },
+          "corner_radius": 22,
+          "background": "#0D0D0F",
+          "padding": {
+            "top": 11,
+            "right": 11,
+            "bottom": 11,
+            "left": 11
+          },
+          "shadow": "none",
+          "border": "none",
+          "note": "Einheitlicher Container fuer alle Varianten. Hintergrund ist sehr dunkles Grau, NICHT reines Schwarz – auf dem schwarzen Home-Screen sind die Kanten dadurch gerade noch sichtbar."
+        },
+        {
+          "id": "icon_badge",
+          "type": "icon_tile",
+          "size": 22,
+          "corner_radius": 6,
+          "background": "#2E9BE0",
+          "content": {
+            "type": "glyph",
+            "size": 12,
+            "color": "#FFFFFF",
+            "style": "solid"
+          },
+          "position": "oben links im Widget",
+          "note": "Erscheint bei fast allen Widget-Typen als Kennzeichnung des Habits. Immer vollflaechig in der Akzentfarbe mit weissem Piktogramm."
+        },
+        {
+          "id": "W1_area_chart_widget",
+          "critical_component": true,
+          "type": "small_widget",
+          "description": "Tagesverlauf als weiches Flaechendiagramm",
+          "children": [
+            {
+              "ref": "icon_badge"
+            },
+            {
+              "id": "area_chart",
+              "margin_top": 12,
+              "type": "area_line_chart",
+              "height": 72,
+              "series": {
+                "line_color": "#4AB4F0",
+                "line_width": 2,
+                "curve": "monotone_cubic",
+                "fill_below": {
+                  "color": "#2E9BE0",
+                  "opacity": 0.2
+                },
+                "point_marker": "none"
+              },
+              "y_axis": {
+                "visible": false
+              },
+              "x_axis": {
+                "labels": [
+                  "6 AM",
+                  "6 PM"
+                ],
+                "token": "axis_label",
+                "position": "bottom",
+                "alignment": "erste Beschriftung linksbuendig, zweite mittig-rechts"
+              },
+              "baseline": "none",
+              "note": "Stark geglaettete Kurve mit zwei bis drei Maxima. Zeigt vermutlich die Aktivitaetsverteilung ueber den Tag."
+            }
+          ]
+        },
+        {
+          "id": "W2_stats_widget",
+          "critical_component": true,
+          "type": "small_widget",
+          "description": "Kennzahlen mit Fortschrittsbalken",
+          "children": [
+            {
+              "id": "header_row",
+              "layout": "row",
+              "align": "center",
+              "children": [
+                {
+                  "ref": "icon_badge",
+                  "size": 18
+                },
+                {
+                  "type": "text",
+                  "token": "stat_label",
+                  "content": "STREAK",
+                  "margin_left": 6
+                },
+                {
+                  "type": "text",
+                  "token": "stat_value",
+                  "content": "114",
+                  "margin_left": 4
+                },
+                {
+                  "type": "spacer",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "token": "stat_label",
+                  "content": "BEST"
+                },
+                {
+                  "type": "text",
+                  "token": "stat_value",
+                  "content": "359",
+                  "margin_left": 4
+                }
+              ],
+              "note": "Aktuelle und beste Serie stehen in EINER Zeile nebeneinander."
+            },
+            {
+              "id": "progress_block",
+              "margin_top": 10,
+              "layout": "column",
+              "gap": 8,
+              "repeat": 2,
+              "item": {
+                "layout": "column",
+                "gap": 3,
+                "children": [
+                  {
+                    "layout": "row",
+                    "children": [
+                      {
+                        "type": "text",
+                        "token": "stat_label",
+                        "content": "<zeitraum>",
+                        "flex": 1
+                      },
+                      {
+                        "type": "text",
+                        "token": "stat_percent",
+                        "content": "<prozent>"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "progress_bar",
+                    "type": "linear_progress",
+                    "height": 5,
+                    "corner_radius": 2.5,
+                    "track_color": "#1F1F22",
+                    "fill_color": "#2E9BE0",
+                    "value": "<0..1>"
+                  }
+                ]
+              },
+              "instances": [
+                {
+                  "zeitraum": "LAST 7 DAYS",
+                  "prozent": "100%",
+                  "value": 1.0
+                },
+                {
+                  "zeitraum": "LAST 30 DAYS",
+                  "prozent": "100%",
+                  "value": 1.0
+                }
+              ]
+            }
+          ],
+          "note": "Dichtestes Informations-Widget der Familie: vier Kennzahlen plus zwei Balken auf kleiner Flaeche."
+        },
+        {
+          "id": "W3_icon_ring_widget",
+          "type": "small_widget",
+          "description": "Grosses Habit-Symbol mit umlaufendem Fortschrittsring",
+          "layout": "column",
+          "align": "center",
+          "justify": "center",
+          "children": [
+            {
+              "id": "ring_with_glyph",
+              "type": "circular_progress",
+              "outer_diameter": 74,
+              "stroke_width": 4,
+              "stroke_cap": "butt",
+              "start_angle_deg": -90,
+              "direction": "clockwise",
+              "track_color": "#1F1F22",
+              "progress_color": "#2E9BE0",
+              "value": 1.0,
+              "center_content": {
+                "type": "glyph",
+                "size": 34,
+                "color": "#FFFFFF",
+                "style": "line_art",
+                "note": "Grosses Piktogramm (hier eine gedehnte Figur), deutlich groesser als in allen anderen Widgets."
+              }
+            },
+            {
+              "id": "label_block",
+              "margin_top": 8,
+              "layout": "column",
+              "align": "center",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "token": "habit_label_accent",
+                  "content": "STRETCH"
+                },
+                {
+                  "type": "text",
+                  "size": 6,
+                  "weight": 500,
+                  "color": "#8A8A8E",
+                  "content": "100 %",
+                  "note": "Kleiner Zusatzwert unter dem Namen, schwer lesbar"
+                }
+              ]
+            }
+          ],
+          "note": "Einziges Widget mit blau eingefaerbtem Habit-Namen – alle anderen Beschriftungen sind weiss oder grau."
+        },
+        {
+          "id": "W4_step_line_widget",
+          "type": "small_widget",
+          "description": "Langzeitverlauf als ansteigende Stufenkurve",
+          "children": [
+            {
+              "id": "step_chart",
+              "type": "line_chart",
+              "height": 84,
+              "series": {
+                "line_color": "#4AB4F0",
+                "line_width": 1.6,
+                "curve": "monotone_cubic",
+                "point_marker": {
+                  "shape": "circle",
+                  "radius": 1.8,
+                  "fill": "#4AB4F0"
+                },
+                "fill_below": "none",
+                "shape": "steiler Anstieg links, dann flaches Plateau bis rechts",
+                "note": "Kumulativer Verlauf – die Kurve faellt nie."
+              },
+              "x_axis": {
+                "labels": [
+                  "MAY 13, 20",
+                  "TODAY"
+                ],
+                "token": "axis_label",
+                "position": "bottom",
+                "alignment": "space_between"
+              },
+              "y_axis": {
+                "visible": false
+              },
+              "grid_lines": "none"
+            }
+          ],
+          "note": "Kein Icon-Badge – dieses Widget zeigt nur das Diagramm ueber die volle Flaeche."
+        },
+        {
+          "id": "W5_weekday_bar_widget",
+          "critical_component": true,
+          "type": "small_widget",
+          "description": "Wochenverteilung als Balkendiagramm",
+          "children": [
+            {
+              "ref": "icon_badge"
+            },
+            {
+              "id": "bar_chart",
+              "margin_top": 10,
+              "type": "bar_chart",
+              "height": 66,
+              "bar": {
+                "count": 7,
+                "width": 12,
+                "gap": 5,
+                "corner_radius": 1,
+                "fill": "#2E9BE0",
+                "align": "bottom",
+                "note": "Alle Balken nahezu gleich hoch, leichte Variation – zeigt die Erfuellung je Wochentag."
+              },
+              "x_axis": {
+                "labels": [
+                  "S",
+                  "M",
+                  "T",
+                  "W",
+                  "T",
+                  "F",
+                  "S"
+                ],
+                "token": "weekday_letter",
+                "margin_top": 4,
+                "alignment": "center_under_each_bar",
+                "note": "Woche beginnt SONNTAG."
+              },
+              "y_axis": {
+                "visible": false
+              },
+              "baseline": "none"
+            }
+          ]
+        },
+        {
+          "id": "W6_progress_ring_widget",
+          "type": "small_widget",
+          "description": "Fortschrittsring mit Symbol und Habit-Name",
+          "layout": "column",
+          "align": "center",
+          "justify": "center",
+          "children": [
+            {
+              "id": "ring",
+              "type": "circular_progress",
+              "outer_diameter": 62,
+              "stroke_width": 3,
+              "stroke_cap": "butt",
+              "start_angle_deg": -90,
+              "direction": "clockwise",
+              "track_color": "#1F1F22",
+              "progress_color": "#FFFFFF",
+              "value": 1.0,
+              "center_content": {
+                "type": "glyph",
+                "icon": "water_drop",
+                "size": 24,
+                "color": "#FFFFFF"
+              },
+              "note": "Ring hier WEISS statt blau – vermutlich der Zustand 'erledigt'."
+            },
+            {
+              "id": "label",
+              "margin_top": 8,
+              "layout": "row",
+              "align": "center",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "glyph",
+                  "content": "check_or_heart",
+                  "size": 7,
+                  "color": "#2E9BE0"
+                },
+                {
+                  "type": "text",
+                  "token": "habit_label_accent",
+                  "content": "DRINK 6 CUPS OF WATER",
+                  "max_lines": 2,
+                  "align": "center"
+                }
+              ]
+            }
+          ],
+          "note": "Entspricht strukturell der Ring-Kachel aus SCREEN_10, hier aber im blauen Theme und mit zweizeiligem Label."
+        },
+        {
+          "id": "W7_icon_grid_widget",
+          "type": "medium_widget",
+          "description": "Kompaktes Raster aus Habit-Symbolen",
+          "padding": 12,
+          "layout": "grid",
+          "grid": {
+            "columns": 5,
+            "rows": 2,
+            "gap_x": 10,
+            "gap_y": 10,
+            "note": "Erste Zeile voll besetzt, zweite Zeile teilweise – die Anzahl richtet sich nach den vorhandenen Habits."
+          },
+          "cell": {
+            "type": "icon_tile",
+            "size": 26,
+            "corner_radius": 7,
+            "variants": {
+              "completed": {
+                "bg": "#2E9BE0",
+                "glyph_color": "#FFFFFF"
+              },
+              "pending": {
+                "bg": "#1F1F22",
+                "glyph_color": "#FFFFFF"
+              }
+            },
+            "glyph_size": 14,
+            "note": "Erfuellte Habits sind blau gefuellt, offene dunkelgrau. Reine Uebersicht ohne Text."
+          },
+          "estimated": true,
+          "confidence": "niedrig",
+          "note": "Nur auf dem rechten Telefon vorhanden. Sehr kompakt – die Zuordnung der Symbole ist nicht aufloesbar."
+        }
+      ],
+      "layout_variants": {
+        "phone_left": {
+          "description": "3 Reihen a 2 Small-Widgets",
+          "rows": [
+            {
+              "row": 1,
+              "widgets": [
+                "W1_area_chart",
+                "W2_stats"
+              ]
+            },
+            {
+              "row": 2,
+              "widgets": [
+                "W3_icon_ring",
+                "W4_step_line"
+              ]
+            },
+            {
+              "row": 3,
+              "widgets": [
+                "W6_progress_ring",
+                "W5_weekday_bar"
+              ]
+            }
+          ]
+        },
+        "phone_right": {
+          "description": "Ein Medium-Widget oben, darunter zwei Reihen a 2 Small-Widgets",
+          "rows": [
+            {
+              "row": 1,
+              "widgets": [
+                "W7_icon_grid"
+              ]
+            },
+            {
+              "row": 2,
+              "widgets": [
+                "W1_area_chart",
+                "W2_stats"
+              ]
+            },
+            {
+              "row": 3,
+              "widgets": [
+                "W4_step_line",
+                "W5_weekday_bar"
+              ]
+            }
+          ]
+        },
+        "note": "Beide Anordnungen nutzen dieselben Bausteine – bestaetigt, dass es sich um eine frei kombinierbare Widget-Familie handelt."
+      },
+      "rebuild_rules": [
+        "Monochromes Farbschema: EINE Akzentfarbe (hier Blau) auf nahezu schwarzem Grund. Keine zweite Semantikfarbe, kein Rot/Gruen.",
+        "Die Akzentfarbe ist nutzerseitig waehlbar – vgl. SCREEN_10, wo dieselbe App limegruen ist. Farbe daher als Theme-Token fuehren, nicht fest verdrahten.",
+        "Widget-Hintergrund ist #0D0D0F, NICHT reines Schwarz – sonst verschwinden die Kanten auf dunklem Home-Screen.",
+        "Alle Beschriftungen sind VERSALIEN in sehr kleinem Schriftgrad (7–9pt) mit leicht erhoehtem Buchstabenabstand.",
+        "Icon-Kacheln sind vollflaechig in der Akzentfarbe mit weissem Piktogramm – nicht umgekehrt.",
+        "Diagramme haben KEINE Gitterlinien, KEINE Y-Achse und maximal zwei X-Achsenbeschriftungen.",
+        "Ring-Enden sind gerade abgeschnitten (butt cap), passend zu SCREEN_10.",
+        "Diese Widgets sind rein informativ – keine Buttons, keine Abhak-Interaktion einbauen.",
+        "Keine Schatten, keine Verlaeufe, keine Raender."
+      ],
+      "uncertain_values": [
+        "Exakter Blauton (#2E9BE0 geschaetzt)",
+        "Datenbedeutung des Flaechendiagramms (Tagesverlauf vermutet)",
+        "Ob die Stufenkurve kumulativ oder ein gleitender Durchschnitt ist",
+        "Alle Icon-Formen (klein aufgeloest)",
+        "Inhalt und Logik des Icon-Rasters im rechten Medium-Widget",
+        "Der kleine Zusatzwert unter 'STRETCH'",
+        "Ob der weisse Ring in W6 einen anderen Zustand bedeutet als der blaue in W3",
+        "Ob es Medium-Varianten der Diagramm-Widgets gibt"
+      ]
+    }
+  ],
+  "spec_count": 9
+}

@@ -1,0 +1,357 @@
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
+//alles muss deutsch werden, auch persische oder farsi wörter müssen deutsch werden und A1, A2, B1, B2, C1, C2 zu (prozent) ändern, man sieht nur prozent und keine A1 bis C2 Niveau! 
+/*
+  VOX — Ascent Progress
+  A mountain-climb progress animation tied to a percentage diagram.
+  Camps map to CEFR levels (A1 … C2). Summit = mastery (100%).
+
+  Drive it with a single number: <AscentProgress progress={0..100} />
+  The demo controls below the card are for preview only.
+*/
+
+// ---- Trail geometry (viewBox 0 0 380 540, bottom -> top) ----
+const WAYPOINTS = [
+  [190, 500], [100, 448], [280, 412], [92, 356], [286, 320],
+  [112, 268], [276, 236], [138, 192], [252, 160], [176, 122],
+  [200, 88], [190, 66],
+];
+
+// CEFR camps as fractions along the trail
+const LEVELS = [
+  { frac: 0.15, code: "A1", fa: "مبتدی" },
+  { frac: 0.31, code: "A2", fa: "پایه" },
+  { frac: 0.50, code: "B1", fa: "متوسط" },
+  { frac: 0.68, code: "B2", fa: "مستقل" },
+  { frac: 0.85, code: "C1", fa: "پیشرفته" },
+  { frac: 1.0,  code: "C2", fa: "تسلط" },
+];
+
+// Catmull-Rom -> cubic bezier smooth path
+function smoothPath(pts) {
+  const d = [`M ${pts[0][0]} ${pts[0][1]}`];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] || p2;
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6;
+    const c1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const c2x = p2[0] - (p3[0] - p1[0]) / 6;
+    const c2y = p2[1] - (p3[1] - p1[1]) / 6;
+    d.push(`C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2[0]} ${p2[1]}`);
+  }
+  return d.join(" ");
+}
+
+const TRAIL_D = smoothPath(WAYPOINTS);
+
+const STARS = [
+  [60, 90, 1.2], [110, 60, 0.9], [300, 80, 1.3], [250, 130, 0.8],
+  [40, 150, 1.0], [330, 160, 1.1], [180, 70, 0.9], [150, 130, 0.7],
+  [210, 180, 0.8], [90, 200, 0.9], [320, 220, 0.8],
+];
+
+export default function AscentProgress() {
+  const [progress, setProgress] = useState(0);
+  const [pathLen, setPathLen] = useState(0);
+  const [camps, setCamps] = useState([]);
+  const [climber, setClimber] = useState({ x: 190, y: 500, flip: false });
+  const [reduced, setReduced] = useState(false);
+  const trailRef = useRef(null);
+  const rafRef = useRef(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const on = () => setReduced(mq.matches);
+    mq.addEventListener?.("change", on);
+    return () => mq.removeEventListener?.("change", on);
+  }, []);
+
+  // measure trail + place camps once
+  useEffect(() => {
+    const el = trailRef.current;
+    if (!el) return;
+    const L = el.getTotalLength();
+    setPathLen(L);
+    setCamps(
+      LEVELS.map((lv) => {
+        const pt = el.getPointAtLength(L * lv.frac);
+        return { ...lv, x: pt.x, y: pt.y };
+      })
+    );
+  }, []);
+
+  // move climber along the trail with progress
+  useEffect(() => {
+    const el = trailRef.current;
+    if (!el || !pathLen) return;
+    const at = pathLen * (progress / 100);
+    const pt = el.getPointAtLength(at);
+    const ahead = el.getPointAtLength(Math.min(pathLen, at + 4));
+    setClimber({ x: pt.x, y: pt.y, flip: ahead.x < pt.x });
+  }, [progress, pathLen]);
+
+  const animateTo = useCallback((target) => {
+    cancelAnimationFrame(rafRef.current);
+    if (reduced) { setProgress(target); return; }
+    const start = progress;
+    const dur = 1500 * (Math.abs(target - start) / 100) + 350;
+    const t0 = performance.now();
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+    const step = (now) => {
+      const t = Math.min(1, (now - t0) / dur);
+      setProgress(Math.round((start + (target - start) * ease(t)) * 10) / 10);
+      if (t < 1) rafRef.current = requestAnimationFrame(step);
+    };
+    rafRef.current = requestAnimationFrame(step);
+  }, [progress, reduced]);
+
+  useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
+
+  const p = progress / 100;
+  const reachedCount = LEVELS.filter((l) => p >= l.frac - 0.0001).length;
+  const current = reachedCount > 0 ? LEVELS[reachedCount - 1] : null;
+  const next = LEVELS[reachedCount] || null;
+  const summit = progress >= 99.9;
+  const dashOffset = pathLen * (1 - progress / 100);
+
+  const statusFa = summit
+    ? "به قله رسیدی — C2"
+    : next
+    ? `${Math.max(0, Math.round(next.frac * 100 - progress))}٪ تا اردوگاه ${next.code}`
+    : "";
+
+  return (
+    <div dir="rtl" style={S.wrap}>
+      <style>{CSS}</style>
+
+      <div style={S.card}>
+        {/* ---------- Mountain scene ---------- */}
+        <div style={S.scene}>
+          <svg viewBox="0 0 380 540" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style={{ display: "block" }}>
+            <defs>
+              <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#F4A96A" />
+                <stop offset="0.16" stopColor="#B0729E" />
+                <stop offset="0.42" stopColor="#3C4877" />
+                <stop offset="1" stopColor="#0A1029" />
+              </linearGradient>
+              <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stopColor="#FFE7B3" />
+                <stop offset="0.45" stopColor="#FFC066" />
+                <stop offset="1" stopColor="#FF9E5E" stopOpacity="0" />
+              </radialGradient>
+              <linearGradient id="rock" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#3B4A80" />
+                <stop offset="1" stopColor="#161E3C" />
+              </linearGradient>
+              <linearGradient id="trailGrad" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0" stopColor="#FFC24D" />
+                <stop offset="1" stopColor="#FFE9A8" />
+              </linearGradient>
+              <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="6" />
+              </filter>
+              <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+                <feGaussianBlur stdDeviation="3" result="b" />
+                <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+            </defs>
+
+            {/* sky */}
+            <rect x="0" y="0" width="380" height="540" fill="url(#sky)" />
+
+            {/* stars — fade as dawn arrives */}
+            <g style={{ opacity: 0.9 * (1 - p) }}>
+              {STARS.map((s, i) => (
+                <circle key={i} cx={s[0]} cy={s[1]} r={s[2]} fill="#EAF0FB"
+                  className={reduced ? "" : "twinkle"} style={{ animationDelay: `${i * 0.4}s` }} />
+              ))}
+            </g>
+
+            {/* sunrise glow behind summit — intensifies with progress */}
+            <circle cx="250" cy={120 - p * 18} r="120" fill="url(#sun)"
+              style={{ opacity: 0.2 + 0.8 * p }} />
+
+            {/* distant ridges (parallax depth) */}
+            <path d="M0 540 L0 372 L90 322 L180 366 L262 318 L380 374 L380 540 Z" fill="#2A3766" opacity="0.55" />
+            <path d="M0 540 L0 416 L74 356 L150 408 L232 348 L322 398 L380 356 L380 540 Z" fill="#212C55" opacity="0.8" />
+
+            {/* main mountain */}
+            <path d="M-10 545 L26 350 L78 402 L128 300 L190 62 L252 300 L302 402 L352 350 L392 545 Z" fill="url(#rock)" />
+            {/* snow cap */}
+            <path d="M190 62 L150 168 L172 150 L190 178 L210 150 L232 168 Z" fill="#EAF1FB" opacity="0.92" />
+            <path d="M190 62 L172 110 L190 128 L210 110 Z" fill="#FFFFFF" opacity="0.5" />
+
+            {/* dim full trail */}
+            <path d={TRAIL_D} fill="none" stroke="#0C1330" strokeWidth="7" strokeLinecap="round" opacity="0.55" />
+            <path d={TRAIL_D} fill="none" stroke="#8FA0C8" strokeWidth="2.4" strokeLinecap="round"
+              strokeDasharray="1 9" opacity="0.5" />
+
+            {/* completed trail (glowing, revealed from bottom) */}
+            <path ref={trailRef} d={TRAIL_D} fill="none" stroke="url(#trailGrad)" strokeWidth="5"
+              strokeLinecap="round" filter="url(#glow)"
+              style={{ strokeDasharray: pathLen, strokeDashoffset: dashOffset }} />
+
+            {/* camps */}
+            {camps.map((c) => {
+              const reached = p >= c.frac - 0.0001;
+              const isSummit = c.frac === 1;
+              return (
+                <g key={c.code} transform={`translate(${c.x} ${c.y})`}>
+                  {isSummit && summit && (
+                    <g className={reduced ? "" : "pop"}>
+                      <line x1="0" y1="-6" x2="0" y2="-26" stroke="#EAF0FB" strokeWidth="2" />
+                      <path d="M0 -26 L16 -21 L0 -15 Z" fill="#FF7A6B" className={reduced ? "" : "wave"} />
+                    </g>
+                  )}
+                  <circle r={reached ? 6.5 : 4.5} fill={reached ? "#FFD37E" : "#141C3A"}
+                    stroke={reached ? "#FFF3D6" : "#5C6B96"} strokeWidth="2"
+                    filter={reached ? "url(#glow)" : undefined} />
+                  {reached && <circle r="2.4" fill="#7A4E12" />}
+                  <text x="0" y={c.y > 120 ? -12 : 20} textAnchor="middle"
+                    fontSize="10" fontWeight="700" fill={reached ? "#FFF3D6" : "#8293BC"}
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{c.code}</text>
+                </g>
+              );
+            })}
+
+            {/* climber marker */}
+            <g transform={`translate(${climber.x} ${climber.y})`}>
+              <circle r="15" fill="#FF7A6B" opacity="0.28"
+                className={reduced ? "" : "halo"} />
+              <g transform={`scale(${climber.flip ? -1 : 1} 1)`}>
+                {/* pack */}
+                <rect x="-6.5" y="-13" width="7" height="9" rx="2.2" fill="#FFB84D" />
+                {/* body */}
+                <path d="M-1 -3 L1.5 -12 L4 -12 L2 -3 Z" fill="#FF7A6B" />
+                {/* head */}
+                <circle cx="3" cy="-15" r="3.1" fill="#FFE1C4" />
+                {/* leg */}
+                <path d="M-1 -3 L-2 4 M2 -3 L4 4" stroke="#243056" strokeWidth="2.2"
+                  strokeLinecap="round" fill="none" />
+                {/* pole */}
+                <line x1="6" y1="-11" x2="8" y2="5" stroke="#EAF0FB" strokeWidth="1.4" strokeLinecap="round" />
+              </g>
+            </g>
+          </svg>
+
+          {/* HUD: big percentage */}
+          <div style={S.hud}>
+            <div style={S.pctBox}>
+              <span style={S.pctNum}>{Math.round(progress)}</span>
+              <span style={S.pctSign}>%</span>
+            </div>
+            <div style={S.hudSub}>
+              <span style={S.levelPill}>{current ? current.code : "شروع"}</span>
+              <span style={S.hudFa}>{current ? current.fa : "آغاز مسیر"}</span>
+            </div>
+          </div>
+
+          {summit && <div style={S.summitBadge} className={reduced ? "" : "pop"}>به قله رسیدی! 🏔️</div>}
+        </div>
+
+        {/* ---------- Diagram panel (synced to the climb) ---------- */}
+        <div style={S.panel}>
+          <div style={S.statusRow}>
+            <span style={S.statusFa}>{statusFa}</span>
+            <span style={S.panelTitle}>مسیر یادگیری</span>
+          </div>
+
+          <div style={S.track}>
+            <div style={{ ...S.trackFill, width: `${progress}%` }} />
+          </div>
+
+          <div style={S.chips}>
+            {LEVELS.map((l) => {
+              const reached = p >= l.frac - 0.0001;
+              const isCurrent = current && current.code === l.code;
+              return (
+                <div key={l.code} style={{
+                  ...S.chip,
+                  background: reached ? "linear-gradient(180deg,#FFD880,#FFB84D)" : "rgba(255,255,255,0.05)",
+                  color: reached ? "#3A2607" : "#8293BC",
+                  boxShadow: isCurrent ? "0 0 0 2px #FF7A6B" : "none",
+                }}>{l.code}</div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ---------- Preview controls (remove in production) ---------- */}
+      <div style={S.controls}>
+        <div style={S.controlHead}>پیش‌نمایش · برای اپ حذف می‌شه</div>
+        <input type="range" min="0" max="100" step="1" value={progress}
+          onChange={(e) => setProgress(Number(e.target.value))} style={S.range} className="vox-range" />
+        <div style={S.btnRow}>
+          <button style={S.primaryBtn} onClick={() => animateTo(100)}>شبیه‌سازی صعود</button>
+          {[0, 25, 50, 75, 100].map((v) => (
+            <button key={v} style={S.chipBtn} onClick={() => animateTo(v)}>{v}٪</button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const CSS = `
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Vazirmatn:wght@400;500;700&display=swap');
+@keyframes twinkle { 0%,100%{opacity:.25} 50%{opacity:1} }
+.twinkle { animation: twinkle 3.2s ease-in-out infinite; }
+@keyframes halo { 0%,100%{transform:scale(1);opacity:.28} 50%{transform:scale(1.5);opacity:.05} }
+.halo { animation: halo 2.4s ease-in-out infinite; transform-origin:center; transform-box:fill-box; }
+@keyframes wave { 0%,100%{transform:scaleX(1)} 50%{transform:scaleX(0.7)} }
+.wave { animation: wave 0.9s ease-in-out infinite; transform-origin:left; transform-box:fill-box; }
+@keyframes pop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.15)} 100%{transform:scale(1);opacity:1} }
+.pop { animation: pop .5s cubic-bezier(.34,1.56,.64,1) both; transform-box:fill-box; transform-origin:center; }
+.vox-range { -webkit-appearance:none; appearance:none; height:6px; border-radius:999px;
+  background:linear-gradient(90deg,#FFB84D,#FF7A6B); outline:none; }
+.vox-range::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%;
+  background:#fff; border:3px solid #FF7A6B; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.35); }
+.vox-range::-moz-range-thumb { width:22px; height:22px; border-radius:50%; background:#fff;
+  border:3px solid #FF7A6B; cursor:pointer; }
+`;
+
+const font = "'Vazirmatn', sans-serif";
+const S = {
+  wrap: { fontFamily: font, maxWidth: 440, margin: "0 auto", padding: 16, boxSizing: "border-box" },
+  card: { borderRadius: 28, overflow: "hidden", background: "#0A1029",
+    boxShadow: "0 24px 60px rgba(6,10,30,.55), inset 0 0 0 1px rgba(255,255,255,.06)" },
+  scene: { position: "relative", width: "100%", aspectRatio: "380 / 540", background: "#0A1029" },
+  hud: { position: "absolute", top: 18, right: 18, textAlign: "right" },
+  pctBox: { display: "flex", alignItems: "baseline", justifyContent: "flex-end", gap: 2,
+    fontFamily: "'Space Grotesk', sans-serif", color: "#fff", lineHeight: 1,
+    textShadow: "0 2px 12px rgba(0,0,0,.4)" },
+  pctNum: { fontSize: 52, fontWeight: 700, letterSpacing: -1 },
+  pctSign: { fontSize: 22, fontWeight: 600, opacity: 0.85 },
+  hudSub: { display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8, marginTop: 4 },
+  levelPill: { fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 700, color: "#3A2607",
+    background: "linear-gradient(180deg,#FFD880,#FFB84D)", padding: "2px 10px", borderRadius: 999 },
+  hudFa: { fontSize: 13, color: "#D6DEF3", fontWeight: 500 },
+  summitBadge: { position: "absolute", top: 90, left: "50%", transform: "translateX(-50%)",
+    background: "rgba(255,122,107,.95)", color: "#fff", fontWeight: 700, fontSize: 15,
+    padding: "8px 16px", borderRadius: 999, boxShadow: "0 8px 24px rgba(255,122,107,.4)", whiteSpace: "nowrap" },
+  panel: { padding: "16px 18px 18px", background: "linear-gradient(180deg,#0A1029,#0E1638)",
+    borderTop: "1px solid rgba(255,255,255,.06)" },
+  statusRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
+  panelTitle: { fontSize: 13, fontWeight: 700, color: "#8293BC" },
+  statusFa: { fontSize: 13, fontWeight: 500, color: "#FFD37E" },
+  track: { height: 8, borderRadius: 999, background: "rgba(255,255,255,.07)", overflow: "hidden" },
+  trackFill: { height: "100%", borderRadius: 999,
+    background: "linear-gradient(90deg,#FFB84D,#FF7A6B)", transition: "width .25s ease" },
+  chips: { display: "flex", gap: 6, marginTop: 12, justifyContent: "space-between" },
+  chip: { flex: 1, textAlign: "center", fontFamily: "'Space Grotesk', sans-serif", fontSize: 12,
+    fontWeight: 700, padding: "6px 0", borderRadius: 10, transition: "all .25s ease" },
+  controls: { marginTop: 18, padding: "16px 18px", borderRadius: 20, background: "#141C3A",
+    boxShadow: "inset 0 0 0 1px rgba(255,255,255,.05)" },
+  controlHead: { fontSize: 12, color: "#8293BC", marginBottom: 12, fontWeight: 500 },
+  range: { width: "100%", margin: "4px 0 16px" },
+  btnRow: { display: "flex", gap: 8, flexWrap: "wrap" },
+  primaryBtn: { flex: "1 1 100%", padding: "12px", borderRadius: 14, border: "none", cursor: "pointer",
+    fontFamily: font, fontSize: 15, fontWeight: 700, color: "#fff",
+    background: "linear-gradient(180deg,#FF8C6B,#FF6B6B)", boxShadow: "0 6px 18px rgba(255,107,107,.35)" },
+  chipBtn: { flex: 1, padding: "9px 0", borderRadius: 12, border: "1px solid rgba(255,255,255,.1)",
+    cursor: "pointer", background: "transparent", color: "#D6DEF3", fontFamily: font, fontSize: 13, fontWeight: 600 },
+};

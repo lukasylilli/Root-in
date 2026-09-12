@@ -76,4 +76,10 @@ app.*.map.json
 # ⚠️ Bewusste Entscheidung, siehe PLAN.md Phase 26.2: Der Ordner gehört zur
 # Arbeitsumgebung, nicht zum Quellcode — und in einem öffentlichen
 # Repository wäre er für jeden sichtbar.
-/meine/
+# /meine/ — ⚠️ AUFGEHOBEN am 2026-08-17 (PLAN.md Phase 29).
+# Der Ordner war bewusst ausgeschlossen (Referenzmaterial, kein Code). Mit dem
+# Wegfall des Entwicklungsrechners war das Repository aber die einzige
+# verbliebene Kopie — und Vorlagen, aus denen das Erscheinungsbild abgeleitet
+# wurde, sind nicht wiederherstellbar. Auf Anweisung des Nutzers aufgenommen.
+# Ausgenommen bleibt nur der macOS-Systemmüll:
+meine/.DS_Store
