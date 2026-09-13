@@ -2,7 +2,7 @@
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
 >
-> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **214 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 10/10 in der Automatik** (29.3), 13/13 Zugriffsregeln am Server.
+> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **224 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 23/23 in der Automatik** und eine **Gegenprobe bei jedem Push** (31.2), 13/13 Zugriffsregeln am Server (18 Prüfungen, sobald `schema.sql` nach 31.3 eingespielt ist).
 >
 > ⚠️ **Ab dem 2026-08-17 gibt es keinen Entwicklungsrechner mehr.** Der Nutzer löscht alles, was nicht auf GitHub liegt — inklusive VS Code. **Jede weitere Änderung entsteht auf GitHub.** Was das für die Prüfung bedeutet, steht in [Abschnitt 9](#9-arbeitsweise--konventionen) und [Phase 29](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17).
 >
@@ -19,8 +19,10 @@
 > | # | Offen | Wer | Warum in dieser Reihenfolge |
 > |---|---|---|---|
 > | 1 | ~~**Benutzername nachtragen können**~~ ✅ (31.1) | Claude | erledigt 2026-09-13 |
-> | 2 | **Browser-Durchgang erweitern** (31.2) | Claude | 10 statt früher 20 Punkte; Konto-Rubrik, Anleitung und `privacy.html` sind ungeprüft |
-> | 3 | **Konto vollständig löschen** (31.3) | Claude, dann Nutzer | Heute nur per Nachricht; der Nutzer spielt danach `schema.sql` einmal ein |
+> | 2 | ~~**Browser-Durchgang erweitern**~~ ✅ (31.2) | Claude | erledigt — die Gegenprobe fand dabei einen echten Fehler in der App (31.2b) |
+> | 3 | **`supabase/schema.sql` einmal im SQL-Editor ausführen**, danach *Actions → Server-Zugriffsregeln prüfen → Run workflow* (31.3) | **Nutzer** | „Konto löschen" ist gebaut; ohne die Funktion auf dem Server löscht die App nur die Daten und sagt das ehrlich |
+> | 3b | ~~**Automatik auf Node 24**~~ ✅ (31.4) | Claude | erledigt |
+> | 3c | ~~**Kein geheimer Schlüssel im Bundle**~~ ✅ (31.5) | Claude | erledigt |
 > | 4 | **Alten Gist löschen** (29.5) | Nutzer | Überflüssig, aber auffindbar — und veraltet |
 > | 5 | **Durchgang auf einem echten iPhone** (Phase 26, 27.9) | Nutzer | Chrome in der Automatik sieht weder Safari noch die abgelegte Fassung |
 > | 6 | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer, dann Claude | Ohne ihn ist die E-Mail gespeichert, aber nutzlos. Der Knopf kommt **erst danach** — ungeprüft gebaut wäre er ein Knopf ins Leere |
@@ -44,9 +46,9 @@
     - [Phase 26 — Web-Fassung: was noch offen ist](#phase-26--web-fassung-was-noch-offen-ist-) 🔄
     - [Phase 29 — Arbeiten und Prüfen ohne Rechner](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17) ✅
     - [Phase 30 — Ein Konto für Root-in und Vox](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte) ⬜
-    - [Phase 31 — Was ohne den Nutzer noch geht](#phase-31--was-ohne-den-nutzer-noch-geht--beauftragt-2026-09-13) 🔄
+    - [Phase 31 — Was ohne den Nutzer noch geht](#phase-31--was-ohne-den-nutzer-noch-geht--beauftragt-2026-09-13) ✅
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
-    - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–39)
+    - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–41)
 12. [Offene Fragen](#12-offene-fragen)
 
 ## 1. Vision
@@ -187,10 +189,12 @@ Feature-first (Dateien im Einzelnen: MAP.md):
 | Prüfung | Wo | Nach dem Löschen |
 |---|---|---|
 | `flutter analyze` | GitHub-Action, **vor** jeder Veröffentlichung | ✅ bleibt |
-| `flutter test` (210 Fälle) | GitHub-Action, **vor** jeder Veröffentlichung | ✅ bleibt |
+| `flutter test` (224 Fälle) | GitHub-Action, **vor** jeder Veröffentlichung | ✅ bleibt |
 | Bau der Web-Fassung | GitHub-Action | ✅ bleibt |
 | **`tool/rls_check.sh`** — Zugriffsregeln von außen | GitHub-Action `rls-check.yml`, **von Hand** auszulösen | ✅ **gerettet** (29.2) — nach jeder Änderung an `schema.sql` auslösen |
-| **Echter Browser** — früher `tool/webtest.py` (Safari, macOS) | `tool/webtest_ci.py` (Chrome) in `deploy-web.yml`, **vor** jeder Veröffentlichung, **blockierend** | ✅ **ersetzt** (29.3). ⚠️ Chrome, nicht Safari |
+| **Echter Browser** — früher `tool/webtest.py` (Safari, macOS) | `tool/webtest_ci.py` (Chrome) in `deploy-web.yml`, **vor** jeder Veröffentlichung, **blockierend** | ✅ **ersetzt** (29.3), 23 Prüfungen (31.2). ⚠️ Chrome, nicht Safari |
+| **Gegenprobe des Browser-Durchgangs** | `webtest-gegenprobe.yml`, **bei jedem Push**, veröffentlicht nichts | ✅ **neu** (31.2) — beweist, dass der Durchgang rot werden kann, und fand beim ersten Lauf einen echten Fehler (31.2b) |
+| **Kein geheimer Schlüssel im Bundle** | `tool/check_bundle_secrets.py` in `deploy-web.yml`, nach dem Bau, **blockierend** | ✅ **neu** (31.5) — mit Zeugen: findet sie den erlaubten Schlüssel nicht, ist sie blind und wird rot |
 | iOS-Simulator | macOS | ⛔ fällt weg |
 | **Echtes iPhone** | beim Nutzer | ✅ **bleibt — und ist damit der einzige verbliebene Blick auf die echte Oberfläche** |
 
@@ -239,8 +243,9 @@ Feature-first (Dateien im Einzelnen: MAP.md):
 | 27.11 Geteilter Link | QR-Code und Share-Text zeigten auf eine Play-Seite mit **HTTP 404**; jetzt auf die Web-Fassung | 08-17 |
 | 28 Nur noch Web | Erinnerungen bis in die Datenbank entfernt (Schema 4), Android/iOS/Desktop und Store-Material gestrichen | 08-17 |
 | 29 Arbeiten ohne Rechner | Server-Prüfung als Action, Browser-Durchgang (Chrome) **blockiert** die Veröffentlichung, `meine/` versioniert, `privacy.html` entsteht bei jedem Bau | 09-12 |
+| 31 Was ohne Nutzer geht | Benutzername nachtragen · Browser-Durchgang 23 Punkte + **Gegenprobe** (fand 40 s Ladekreis statt „Kein Internet") · Konto vollständig löschen · Automatik auf Node 24 · kein geheimer Schlüssel im Bundle | 09-13 |
 
-**Stand nach Phase 29: 210 Tests grün** (+2 bewusst übersprungen), darunter neu `privacy_page_test.dart`. **Stand nach Phase 28: 205 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, 13/13 Zugriffsregeln am Server. ⚠️ Die Zahl ist **kleiner** als die 228 von Phase 27 — mit Erinnerungen und Startbildschirm-Widgets sind auch deren 23 Tests entfallen. Weniger Tests sind hier kein Rückschritt, sondern die Folge von weniger Funktion.
+**Stand nach Phase 31: 224 Tests grün** (+2 bewusst übersprungen). **Stand nach Phase 29: 210 Tests grün** (+2 bewusst übersprungen), darunter neu `privacy_page_test.dart`. **Stand nach Phase 28: 205 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, 13/13 Zugriffsregeln am Server. ⚠️ Die Zahl ist **kleiner** als die 228 von Phase 27 — mit Erinnerungen und Startbildschirm-Widgets sind auch deren 23 Tests entfallen. Weniger Tests sind hier kein Rückschritt, sondern die Folge von weniger Funktion.
 
 ### 10.2 Festlegungen aus erledigten Phasen, die man noch braucht
 
@@ -389,7 +394,7 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
   | B nimmt A's Benutzernamen | ✅ abgewiesen (HTTP 409, eindeutiger Index) |
 
 - [x] **`tool/rls_check.sh` bleibt im Projekt** und liest die Zugangsdaten aus `.env`. ⚠️ **Nach jeder Änderung an `schema.sql` erneut laufen lassen** — eine Regel, die man nicht gegengeprüft hat, ist eine Hoffnung. Die zwei Testkonten liegen auf `@example.com` (per RFC 2606 reserviert, dort gibt es niemanden) und dürfen stehen bleiben.
-- [ ] ⚠️ **Offen und nicht zu vergessen:** „Konto löschen" kann der `anon`-Schlüssel nicht auslösen — der Eintrag in `auth.users` braucht erhöhte Rechte (Edge Function). Solange es die nicht gibt, löscht die App nur Daten und meldet ab; der leere Auth-Eintrag bleibt. **Für 27.8 zu klären.** ➜ Wird in **31.3** gebaut.
+- [x] ⚠️ **Offen und nicht zu vergessen:** „Konto löschen" kann der `anon`-Schlüssel nicht auslösen — der Eintrag in `auth.users` braucht erhöhte Rechte (Edge Function). Solange es die nicht gibt, löscht die App nur Daten und meldet ab; der leere Auth-Eintrag bleibt. **Für 27.8 zu klären.** ✅ **In 31.3 gebaut** (`delete_own_account()`) — wirksam, sobald `schema.sql` eingespielt ist.
 
 #### 27.5 Anmelden in der App *(E-Mail + Passwort + Benutzername)*
 
@@ -420,7 +425,7 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] Texte in **allen drei** ARB-Dateien, `flutter gen-l10n` gelaufen (Lehre 20).
 - [x] **Fehlermeldungen sprachneutral** durchgereicht und erst in der Oberfläche übersetzt.
 - [x] `test/support/fake_auth_service.dart` + `test/widget/account_cloud_card_test.dart` (6 Fälle, darunter **„ohne Cloud ist die Rubrik gar nicht da"**, das Konto ohne Benutzernamen und die persische Fassung). ⚠️ **Kein Test spricht mit dem echten Server.**
-- [ ] „Konto löschen" — hängt an 27.8 (der `anon`-Schlüssel kann `auth.users` nicht löschen). ➜ 31.3.
+- [x] „Konto löschen" — ✅ gebaut in 31.3.
 
 #### 27.6 Profil in der Cloud ✅ *(gebaut 2026-08-17)*
 - [x] **`profile_cloud_sync.dart`** — beim Anmelden abgleichen, bei lokaler Änderung hochladen. Angehängt an dieselbe Listener-Stelle in `app.dart` wie Widget und Tagesstand.
@@ -447,7 +452,7 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] ⚠️ **Eine Sicherung aus einer neueren App-Fassung wird abgelehnt** (`tooNew`), nicht halb eingespielt: Ein älterer Leser verlöre Felder, die er nicht kennt — und das fiele erst viel später auf.
 - [ ] ⚠️ **Die Grenze bleibt:** Das ist eine **Sicherung**, kein Abgleich. Wer auf zwei Geräten arbeitet, hat zwei Bestände; die Wiederherstellung überschreibt. Ein echter Abgleich braucht Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase, keine Fußnote.
 
-#### 27.8 Datenschutz nachziehen 🔄
+#### 27.8 Datenschutz nachziehen ✅
 
 ⚠️ **Mit der Entscheidung für echte E-Mails wiegt dieser Abschnitt schwerer als geplant.** Eine E-Mail-Adresse ist ein personenbezogenes Datum; damit werden auch Gewohnheiten und Erledigungen personenbezogen, weil sie einer identifizierbaren Person zugeordnet sind. Das ist keine Formalie mehr.
 
@@ -458,7 +463,7 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] **Die Erststart-Erklärung sagt es jetzt richtig** (alle drei Sprachen): „Deine Daten bleiben auf diesem Gerät; ein Konto ist freiwillig und legt zusätzlich eine Sicherung an." Der alte Satz behauptete das Gegenteil dessen, was die App seit heute kann.
 - [x] **„Daten auf dem Server löschen"** in der Rubrik „Konto & Cloud" (`deleteServerData()`): löscht Sicherung und Profilzeile, lässt den lokalen Bestand unangetastet. ⚠️ **Das ist bewusst nicht als „Konto löschen" beschriftet** — der Eintrag in `auth.users` bleibt, weil der öffentliche Schlüssel ihn nicht entfernen darf. Die Datenschutzerklärung nennt dafür den Weg über eine Nachricht; sie darf den Knopf **nicht** als vollständige Löschung ausgeben.
 - [x] ~~**Den Gist neu speichern**~~ — **gegenstandslos seit 29.5:** Die Erklärung entsteht bei jedem Bau als `privacy.html`. Dem Nutzer bleibt nur, den alten Gist zu löschen.
-- [ ] ⬜ Vollständige Kontolöschung, damit der Weg nicht über eine Nachricht laufen muss ➜ **31.3** (über eine Datenbank-Funktion statt einer Edge Function, Begründung dort).
+- [x] **Vollständige Kontolöschung in der App** ✅ 31.3 — wirksam, sobald `schema.sql` eingespielt ist.
 - [x] **Abschnitt 3 und die Datenschutz-Aussage im Onboarding geprüft** (2026-09-13): Abschnitt 3 beschreibt Gerät + freiwillige Kopie; `onboardingWelcomeBody` sagt „Deine Daten bleiben auf diesem Gerät; ein Konto ist freiwillig und legt zusätzlich eine Sicherung an." — beides stimmt.
 
 #### 27.9 Prüfen
@@ -501,7 +506,7 @@ Die Fortschritts-Karte trug seit Phase 19 den Play-Store-Link — für eine App,
 | **Tippfehler in der E-Mail** (weil unbestätigt) | fällt erst beim Zurücksetzen auf, also im schlechtesten Moment | Adresse sichtbar und änderbar in „Konto & Cloud" (27.5) |
 | **E-Mail = personenbezogenes Datum** | Die Datenschutzerklärung wird falsch | 27.8 — Pflicht gegenüber echten Nutzern, ganz ohne Store |
 | RLS vergessen oder falsch | **fremde Daten für jeden lesbar** | RLS im selben Schritt wie die Tabelle, Gegenprobe in 27.4 |
-| `service_role`-Schlüssel gerät in die App | vollständiger Datenbank-Zugriff für jeden | Schlüssel nie ins Repository; im Bundle nach ihm suchen |
+| `service_role`-Schlüssel gerät in die App | vollständiger Datenbank-Zugriff für jeden | Schlüssel nie ins Repository; im Bundle nach ihm suchen — ✅ **seit 31.5 bei jedem Bau automatisch** (`tool/check_bundle_secrets.py`, blockierend) |
 | Zwei Geräte, ein Konto | ein Bestand überschreibt den anderen | Sicherung statt Abgleich, Wiederherstellung nur auf Nachfrage |
 
 ---
@@ -663,7 +668,8 @@ Ein Konto ist bei Supabase eine Zeile in `auth.users`, und die gehört **einem P
 
 ---
 
-### Phase 31 — Was ohne den Nutzer noch geht 🔄 *(beauftragt 2026-09-13)*
+### Phase 31 — Was ohne den Nutzer noch geht ✅ *(beauftragt 2026-09-13)*
+**Umgesetzt am 2026-09-13**, jeder Schritt einzeln gepusht und in der Automatik grün. Beim Nutzer bleibt aus dieser Phase nur: `schema.sql` einspielen (31.3).
 
 **Vom Nutzer:** *„mach alles weiter, laut plan und map bis ende, es bleibt nur was ich tun muss und du kannst nicht."* Dazu der Hinweis, dass auf seinem Rechner nichts mehr liegt — **jede Änderung geht auf GitHub**, geprüft wird von der Automatik.
 
@@ -679,19 +685,47 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 - [x] Tests: `auth_sheet_test.dart` (3 Fälle, darunter der Wettlauf) und ein neuer Fall in `account_cloud_card_test.dart`. ⚠️ **`FakeAuthService.signUp` legt jetzt wie der echte Dienst erst das Konto, dann den Namen an** — vorher tat er beides in einem Schritt und hätte die Sackgasse nie zeigen können. Ein Fake, der bequemer ist als das Original, testet das Original nicht.
 - [x] ⚠️ **Nebenbei:** `dart format` hat drei lange einzeilige `if … return …;` in `auth_service.dart` umgebrochen und damit drei `curly_braces_in_flow_control_structures`-Hinweise erzeugt. `flutter analyze` wertet auch Hinweise als Fehler — die Automatik wäre rot geworden. Klammern ergänzt, lokal gegengeprüft.
 
-#### 31.2 Browser-Durchgang erweitern (29.3) ⬜
-- [ ] **Rubrik „Konto & Cloud"** bietet „Anmelden" an — das belegt nebenbei, dass die Supabase-Schlüssel im Bau angekommen sind. ⚠️ Ohne Secrets ist die fehlende Rubrik **richtig**; das muss der Durchgang unterscheiden, wie `webtest.py` es tat.
-- [ ] **Eine Anleitungs-Seite** öffnet sich und zeigt Text — sie lädt aus dem Repository, also über das Netz.
-- [ ] **`privacy.html`** ist erreichbar, enthält beide Sprachfassungen und **nicht** die interne Notiz.
-- [ ] Nicht anmelden — dieselbe Regel wie bisher.
+#### 31.2 Browser-Durchgang erweitern (29.3) ✅ *(2026-09-13)*
+- [x] **23 statt 11 Prüfungen** — alles, was `webtest.py` zusätzlich konnte: Anleitungs-Seite offen (UND-Verknüpfung: Thema da, Bottom-Navigation weg), Text geladen (Eintrag im Browser-Speicher), kein „Erneut versuchen"; Neuladen mit Erststart-Merker; Konto-Seite und „Anmelden"; `privacy.html` erreichbar, beide Sprachen, ohne interne Notiz. ⚠️ Die Zahl „10" in diesem Plan war falsch — es waren 11, nachgezählt an der Anmerkung eines Laufs.
+- [x] **`WEBTEST_EXPECT_CLOUD`:** Ist das Secret gesetzt, ist eine fehlende Konto-Rubrik ein **Fehler** und nicht „ohne Schlüssel gebaut". Vorher hätte eine Änderung, die die Rubrik versehentlich versteckt, grün bestanden.
+- [x] **`tool/webtest_serve.sh`** — die eine Stelle für „ausliefern wie GitHub Pages und prüfen"; beide Arbeitsabläufe rufen sie.
+- [x] ⚠️ **Die Gegenprobe (`webtest-gegenprobe.yml`)** baut absichtlich beschädigt — ohne Supabase-Schlüssel, `raw.githubusercontent.com` im Browser gesperrt, `privacy.html` gelöscht — und ist nur grün, wenn **genau** die sechs dafür zuständigen Prüfungen rot sind und alle übrigen grün. Welche das sind, steht an einer Stelle (`GEGENPROBE_ROT` in `webtest_ci.py`). Sie veröffentlicht nichts und läuft bei **jedem** Push. Damit ist Lehre 32 kein Vorsatz mehr, sondern ein Lauf.
+- [x] Nicht angemeldet — dieselbe Regel wie bisher.
 
-#### 31.3 Konto vollständig löschen (27.4 · 27.8) ⬜
-- [ ] **Datenbank-Funktion `delete_own_account()`** in `schema.sql` statt einer Edge Function. ⚠️ **Die Abweichung gehört begründet:** Eine Edge Function bräuchte eine eigene Bereitstellung (Supabase-CLI plus Zugangs-Token als Secret) — ein zweiter Weg auf den Server neben dem SQL-Editor. Die Funktion geht denselben Weg wie der Rest von `schema.sql` und lässt sich mit `rls_check.sh` von außen prüfen. Sie löscht **ausschließlich** `auth.uid()`; `on delete cascade` räumt Profil und Sicherung mit ab.
-- [ ] **Knopf „Konto löschen"** in „Konto & Cloud", mit einer Rückfrage, die ausspricht, was verschwindet und was bleibt (der Bestand auf dem Gerät).
-- [ ] ⚠️ **Solange die Funktion auf dem Server fehlt, darf der Knopf nicht ins Leere greifen** und nicht mehr behaupten, als geschehen ist.
-- [ ] `rls_check.sh`: ein Wegwerf-Konto löscht sich selbst, danach scheitert seine Anmeldung; ohne Anmeldung ist die Funktion nicht aufrufbar.
-- [ ] Datenschutzerklärung (beide Sprachen): Löschen geht in der App, nicht mehr per Nachricht.
-- [ ] ⬜ **Nutzer:** `supabase/schema.sql` einmal im SQL-Editor ausführen, danach *Actions → Server-Zugriffsregeln prüfen → Run workflow*.
+#### 31.2b Was die Gegenprobe beim ersten Lauf gefunden hat ✅ *(2026-09-13)*
+
+⚠️ **Ohne Netz zeigten Anleitung und „موارد دیگر" rund 40 Sekunden lang nur einen Ladekreis** statt „Kein Internet" mit „Erneut versuchen". Der erste Lauf der Gegenprobe war **rot**: Fünf der sechs Prüfungen wurden wie erwartet rot, aber „kein ‚Erneut versuchen'-Knopf" blieb **grün**, obwohl das Netz gesperrt war.
+
+- [x] **Ursache — gemessen, nicht vermutet:** Riverpod 3 wiederholt einen Provider, der eine Exception wirft, **von selbst** — bis zu zehnmal, 0,2 bis 6,4 Sekunden Pause (nachgelesen in `riverpod-3.3.2`, `ProviderContainer.defaultRetry`). Während der Wiederholungen ist der Zustand „lädt", nicht „Fehler"; der Knopf erscheint erst nach dem letzten Versuch. Nebenbei liefen still zehn weitere Abrufe.
+- [x] **Warum kein Test es sah:** Die Widget-Tests warten mit `pumpAndSettle`, und das spult die Pausen in **virtueller** Zeit vor. Am Ende stand der Knopf da — der Test war grün, ein Nutzer hätte 40 Sekunden gewartet.
+- [x] **Erst rot, dann repariert:** Zwei Regressionstests (`guide_page_test.dart`, `others_page_test.dart`) warten bewusst **ohne** `pumpAndSettle` eine Sekunde und verlangen den Knopf **und genau einen** Abrufversuch. Beide waren vor der Behebung rot.
+- [x] **Behebung an einer Stelle:** `lib/core/utils/no_retry.dart` (`noAutomaticRetry`), angewendet am Container in `main.dart` (für alle Provider der App) **und** an den drei Providern mit Fehlerzustand — Tests bauen ihren eigenen `ProviderScope` und sähen den Container sonst nie.
+- [x] **Die Gegenprobe danach: grün** — genau die sechs erwarteten Prüfungen rot, alle übrigen grün.
+
+#### 31.3 Konto vollständig löschen (27.4 · 27.8) ✅ Code *(2026-09-13)* · ⬜ Nutzer: einspielen
+- [x] **`delete_own_account()`** in `supabase/schema.sql` statt einer Edge Function. ⚠️ **Die Abweichung ist begründet:** Eine Edge Function bräuchte eine eigene Bereitstellung (Supabase-CLI plus Zugangs-Token als Secret) — ein zweiter Weg auf den Server. Die Funktion geht denselben Weg wie der Rest der Datei und lässt sich von außen prüfen. `security definer`, **kein Parameter** (sie löscht ausschließlich `auth.uid()`), `search_path` leer, Ausführung nur für `authenticated` — `anon` und `PUBLIC` ausdrücklich entzogen, weil Supabase neuen Funktionen sonst von selbst `anon`-Rechte gibt.
+- [x] **`AuthService.deleteAccount()`** unterscheidet drei Ausgänge: gelöscht · **Funktion fehlt** (`PGRST202`) · Fehler. ⚠️ „Fehlt" ist bewusst nicht „Fehler": Die Oberfläche soll dann tun, was ohne sie geht, statt „Server nicht erreichbar" zu behaupten.
+- [x] **„Konto löschen" ersetzt „Daten auf dem Server löschen"** in „Konto & Cloud" — mit einer Rückfrage, die ausspricht, was **bleibt** (der Bestand auf dem Gerät).
+- [x] ⚠️ **Fehlt die Funktion auf dem Server**, löscht die App Sicherung und Profil, **meldet ab** und sagt ehrlich, dass der Anmelde-Eintrag bleibt. **Dabei gefunden:** Der alte Knopf „Daten auf dem Server löschen" meldete **nicht** ab — die automatische Sicherung hätte beim nächsten Häkchen alles wieder hochgeladen. 27.4 behauptete „löscht die Daten und meldet ab"; der Code tat nur das Erste.
+- [x] ⚠️ **Die Rückmeldung wird vor dem Löschen vorbereitet** (Messenger, Dienste, Texte): Mit dem Abmelden verschwindet die Ansicht, danach wären `context` und `ref` nicht mehr benutzbar. Abmelden nach dem Löschen ist sicher: `gotrue` 2.27 verwirft die Sitzung zuerst lokal und nimmt die Absage des Servers („Nutzer gibt es nicht") hin — nachgelesen, nicht angenommen.
+- [x] **`rls_check.sh`:** Wegwerf-Konto C löscht sich selbst · danach scheitert seine Anmeldung · ohne Anmeldung löscht die Funktion nichts · A's Sicherung bleibt. ⚠️ **Erst C, dann die Abweisung ohne Anmeldung** — fehlt die Funktion, wäre jede Abweisung ein 404 und bewiese nichts. Fehlt sie, sagt das Skript genau das, samt Hinweis auf `schema.sql`.
+- [x] **Datenschutzerklärung** (beide Sprachen, Punkt 4 und 8): Löschen geht in der App; die E-Mail bleibt nur für den Fall, dass die App meldet, es habe nicht ganz geklappt. Stand „September 2026".
+- [x] Tests: drei neue Fälle in `account_cloud_card_test.dart` — Rückfrage mit Abbrechen und Löschen · Funktion fehlt · kein Netz.
+- [ ] ⬜ **Nutzer:** `supabase/schema.sql` einmal im SQL-Editor ausführen, danach *Actions → Server-Zugriffsregeln prüfen → Run workflow*. Erwartet: **18 von 18**. ⚠️ Erst dieser Lauf zeigt, ob der Eigentümer der Funktion in diesem Projekt `auth.users` löschen darf. Scheitert „C löscht sein EIGENES Konto", bleibt die App beim ehrlichen Rückfall — kaputt geht nichts.
+
+#### 31.4 Automatik auf Node 24 ✅ *(2026-09-13)*
+- [x] **Anlass:** Jeder Lauf warnte „Node.js 20 is deprecated" für `checkout@v4`, `configure-pages@v5`, `upload-pages-artifact@v3` und `deploy-pages@v4`. ⚠️ **Ohne Rechner ist das kein Schönheitsfehler:** Wird Node 20 abgeschaltet, steht die Veröffentlichung — und niemand kann sie ersatzweise von Hand erledigen.
+- [x] **Angehoben in allen drei Arbeitsabläufen:** `checkout@v7`, `configure-pages@v6`, `upload-pages-artifact@v5`, `deploy-pages@v5`. `subosito/flutter-action@v2` läuft ohne Node und blieb.
+- [x] **Versionshinweise der großen Sprünge gelesen, nicht geraten:** checkout v5 (Node 24) · v6 (Zugangsdaten in eigener Datei) · v7 (Fork-PRs bei `pull_request_target` gesperrt) · deploy-pages v5 (Node 24) · upload-pages-artifact v4 (**Dateien mit Punkt am Anfang kommen nicht mehr ins Artefakt** — die Seite braucht keine) · v5 (`upload-artifact@v7`). Keine Änderung betrifft diese Abläufe.
+- [x] **Nachgewiesen am ersten Lauf danach:** gebaut, geprüft, veröffentlicht — ohne Node-20-Warnung.
+
+#### 31.5 Kein geheimer Schlüssel im Bundle (27.10) ✅ *(2026-09-13)*
+- [x] **Anlass:** 27.10 nennt als gefährlichstes Risiko der Konto-Phase, dass der `service_role`-Schlüssel in die App gerät — er umgeht jede Zugriffsregel, und das Bundle ist öffentlich lesbar (Lehre 26). Als Gegenmaßnahme stand dort „im Bundle nach ihm suchen". **Getan hat es niemand** — eine Regel, die nur im Dokument steht (Lehre 35).
+- [x] **`tool/check_bundle_secrets.py`** läuft in `deploy-web.yml` nach dem Bau und **blockiert** die Veröffentlichung: rot bei einem JWT mit `role=service_role` und bei `sb_secret_…`; der erlaubte `anon`- bzw. `sb_publishable_`-Schlüssel ist grün. Die Schlüssel selbst werden nie ausgegeben, nur der Fundort.
+- [x] ⚠️ **Der Zeuge (Lehre 32):** Ist ein Supabase-Secret hinterlegt, bekommt das Skript `--expect-anon`. Findet es dann **keinen** erlaubten Schlüssel, ist es blind und wird rot — ein Suchlauf, der nichts findet, wäre sonst auch dann grün, wenn er an der falschen Stelle sucht.
+- [x] **Gegen einen echten Bau gemessen**, nicht nur gegen Testdateien: der lokale Web-Bau vom 2026-09-12 (4,6 MB `main.dart.js`, mit Schlüsseln) — genau **ein** erlaubter Schlüssel, kein verbotener. Damit ist belegt, dass die Suchmuster das minifizierte Bundle wirklich lesen.
+- [x] `test/unit/bundle_secrets_test.dart` (5 Fälle) ruft das echte Skript: anon grün · `service_role` rot und nicht ausgegeben · `sb_secret_` rot · blinder Suchlauf rot · ohne Erwartung grün.
+- [x] **In der Automatik:** erster Lauf grün, der erlaubte Schlüssel gefunden.
 
 ---
 
@@ -741,6 +775,11 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
   - **Der Browser-Durchgang war zuerst nicht blockierend — und damit wertlos.** `continue-on-error` meldet „success" auch beim Scheitern. Beim Umstellen auf blockierend war der erste Lauf **rot** (6/10): Beim Abschreiben aus `webtest.py` war das Wegklicken des Speicher-Hinweises verloren gegangen. Unfreiwillig, aber genau die Gegenprobe, die Lehre 32 verlangt.
   - **„Schreib die Datenschutzerklärung in PLAN und MAP" wurde nach seinem Zweck umgesetzt, nicht wörtlich:** Eine weitere Kopie hätte den Fehler wiederholt, an dem der Gist zweimal veraltet ist. Stattdessen **eine** Quelle, die sich selbst veröffentlicht — und PLAN/MAP sagen, **wo** sie steht und **wie** man sie ändert.
 - **2026-09-13 (Phase 31 beauftragt)** — *„mach alles weiter … bis ende."* Gesammelt, was ohne Nutzer geht: Benutzername nachtragen (ein echter Sackgassen-Zustand, beim Durchsehen von 27.5 gefunden — der Dienst konnte es, die Oberfläche nie), Browser-Durchgang erweitern, Konto vollständig löschen. „Passwort vergessen" bewusst **nicht**: ohne SMTP nicht prüfbar.
+- **2026-09-13 (Phase 31 umgesetzt)** — 31.1 bis 31.5, jeder Schritt einzeln gepusht und in der Automatik grün.
+  - **Die Gegenprobe hat sich beim ersten Lauf bezahlt gemacht** (31.2b): ein echter Fehler in der App, den über 200 grüne Tests und ein 23/23-Browser-Durchgang übersehen hatten. Lehren 40 und 41.
+  - **Zweimal stand im Plan, was der Code nicht tat:** „löscht die Daten und meldet ab" (der alte Knopf meldete nicht ab) und „10 Prüfungen" (es waren 11). Beides fiel beim Bauen auf, nicht beim Lesen — noch ein Grund, Zusagen in Tests zu halten statt in Prosa (Lehre 35).
+  - **`FakeAuthService.signUp` war bequemer als das Original** — Konto und Name in einem Schritt — und hätte die Sackgasse aus 31.1 nie zeigen können. Ein Fake, der bequemer ist als das Original, testet das Original nicht.
+  - **„Im Bundle nach ihm suchen" stand seit Phase 27 als Gegenmaßnahme im Plan — und niemand suchte.** Jetzt sucht die Automatik, mit Zeugen: Findet sie nicht einmal den erlaubten Schlüssel, ist sie blind und wird rot (31.5).
 
 ### 11.2 Dauerhafte Lehren & Fallstricke
 
@@ -789,13 +828,17 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 
 39. **Wer den Rechner abschafft, schafft auch die Hälfte seiner Beweise ab — und merkt es erst, wenn er sie braucht.** Beim Umzug auf „nur noch GitHub" war der erste Gedanke, welche *Befehle* fehlen würden. Die richtige Frage war eine andere: **welche Aussagen** danach niemand mehr treffen kann. Die Antwort war unangenehm: `flutter analyze` und 205 Tests laufen weiter in der Automatik, aber **kein einziger davon öffnet einen Browser** — und Root-in ist eine Web-App. Der Prüfstand, der als einziger „die Seite startet und ist bedienbar" belegen konnte, hing an macOS. ⚠️ Vor jeder Werkzeug-Abschaffung deshalb nicht die Werkzeuge auflisten, sondern die **Zusagen**: Was behaupte ich heute über dieses Projekt, und welches Werkzeug trägt diese Behauptung? Fällt das Werkzeug weg, fällt die Behauptung mit — bis ein Ersatz steht, ist sie eine Hoffnung. Und: **Ein Werkzeug, das nur auf einem Rechner läuft, ist geliehen.** Was tragen soll, gehört dorthin, wo das Projekt lebt.
 
+40. **Eine Bibliothek kann einen Fehlerzustand verstecken — und `pumpAndSettle` versteckt, dass sie es tut.** Mit Riverpod 3 kam still eine automatische Wiederholung fehlgeschlagener Provider dazu: bis zu zehn Versuche, rund 40 Sekunden „lädt" statt „Fehler". Jede Seite mit „Kein Internet" und „Erneut versuchen" zeigte offline stattdessen einen Ladekreis — und alle Widget-Tests blieben grün, weil `pumpAndSettle` die Pausen in virtueller Zeit vorspult und am Ende den Knopf findet. Zwei Regeln daraus: **(a)** Ein Test für einen Fehlerzustand wartet **eine kurze, feste Zeit** und zählt die Versuche — nicht „bis Ruhe ist". **(b)** Nach einem großen Versionssprung einer Kern-Bibliothek nicht nur „baut, Tests grün" prüfen, sondern ihr **neues Standardverhalten** nachlesen. Abgeschaltet an einer Stelle: `lib/core/utils/no_retry.dart`; ein neuer Provider mit eigenem Fehlerzustand bekommt `retry: noAutomaticRetry`.
+
+41. **Eine Gegenprobe prüft nicht nur den Test, sondern auch die App.** Die Gegenprobe des Browser-Durchgangs (31.2) sollte belegen, dass sechs neue Prüfungen rot werden können. Eine blieb grün — und der Grund lag nicht im Test, sondern in der App (Lehre 40). Deshalb läuft sie bei **jedem** Push, nicht nur bei Änderungen am Test: Ob die App ihren Fehlerzustand noch zeigt, kann jede Code-Änderung neu in Frage stellen. ⚠️ **Und die Form zählt:** Sie ist nur grün, wenn **genau** die erwarteten Prüfungen rot sind. „Irgendetwas ist rot" hätte den Fund verschluckt — fünf von sechs sehen aus wie Erfolg.
+
 ## 12. Offene Fragen
 
 - **Zwei Geräte, zwei Datenbestände.** ✅ **Mit Phase 27 halb gelöst, und das ist Absicht:** Wer sich auf beiden anmeldet, kann seinen Bestand übertragen (sichern hier, wiederherstellen dort). Ein **stiller Abgleich** in beide Richtungen ist es nicht. Ein echter Abgleich bräuchte Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase.
 - ~~**Erinnerungen im Web: bauen oder als Grenze benennen?**~~ ✅ **Entschieden am 2026-08-17: als Grenze benannt.** Der Nutzer: *„یاد آور ها رو کلا حذف کن چون نسخه وب نمیتونه الارم داشته باشه."* Sie sind **entfernt**, nicht ausgeblendet (Phase 28). ⚠️ Wer sie je zurückholen will, holt sich mehr als einen Schalter zurück: Web-Push braucht Service Worker, Push-Anmeldungen je Gerät, Erinnerungszeiten als abfragbare Zeilen **samt Zeitzone** auf dem Server und einen Wecker, der jede Minute nachsieht — und es ginge **nur mit Konto**, das heute freiwillig ist. Die Begründung steht im Docstring von `platform_support.dart`, dort wird sie gelesen.
-- ~~**Wie wird die veröffentlichte Seite künftig geprüft?**~~ ✅ **Seit 29.3 durch einen echten Chrome in der Automatik**, vor jeder Veröffentlichung und blockierend. Offen bleibt, was Chrome nicht sieht: Safari und die abgelegte Fassung — dafür das iPhone des Nutzers.
+- ~~**Wie wird die veröffentlichte Seite künftig geprüft?**~~ ✅ **Seit 29.3 durch einen echten Chrome in der Automatik**, vor jeder Veröffentlichung und blockierend — seit 31.2 mit einer Gegenprobe bei jedem Push. Offen bleibt, was Chrome nicht sieht: Safari und die abgelegte Fassung — dafür das iPhone des Nutzers.
 - ⚠️ **Ein Konto für Root-in und Vox** — die Anweisung steht, die Voraussetzungen sind offen (Phase 30). Die wichtigste Frage ist nicht technisch, sondern zeitlich: **vor** dem ersten echten Nutzer ist der Umbau billig, danach nicht mehr.
-- **Vollständige Kontolöschung** ➜ wird in **31.3** gebaut, über eine Datenbank-Funktion statt einer Edge Function. Bis dahin löscht die App die Server-Daten, und die vollständige Löschung läuft über eine Nachricht.
+- ~~**Vollständige Kontolöschung**~~ ✅ **In 31.3 gebaut** (Datenbank-Funktion statt Edge Function). Offen bleibt nur, dass der Nutzer `schema.sql` einspielt.
 - **Sollen neue Beiträge in „موارد دیگر" gemeldet werden?** Möglich wäre ein stiller Vergleich beim App-Start (neue Einträge im `index.json` gegenüber dem gespeicherten Stand) und ein Punkt am Einstellungs-Eintrag.
 - **Die persische Übersetzung ist ein Entwurf** — alle Schlüssel sind gefüllt, gelesen hat sie noch kein Muttersprachler. Korrekturen betreffen nur `lib/l10n/app_fa.arb`.
 - **Farbe je Kategorie?** Heute trägt die Gewohnheit die Farbe. Kategorie-Farben würden Diagramme klarer machen, kosten aber eine DB-Spalte — und damit eine Migration (Abschnitt 9).

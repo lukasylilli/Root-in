@@ -2,7 +2,7 @@
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
 >
-> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **214 Tests grün**, Browser-Durchgang 10/10 in der Automatik, 13/13 Zugriffsregeln am Server.
+> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **224 Tests grün**, Browser-Durchgang 23/23 in der Automatik, Gegenprobe bei jedem Push, 13/13 Zugriffsregeln am Server (18, sobald `schema.sql` nach 31.3 eingespielt ist).
 >
 > ⚠️ **Es gibt keinen Entwicklungsrechner mehr** (PLAN.md Phase 29). Alles, was nicht in diesem Repository liegt, ist gelöscht — auch VS Code. **Diese Datei beschreibt damit nicht mehr „was auf dem Rechner liegt", sondern „was das Repository enthält".** Wer etwas sucht, das hier nicht steht, sucht etwas, das es nicht gibt.
 >
@@ -11,6 +11,8 @@
 > ✅ **Phase 27: Nutzerkonten & Cloud (Supabase).** `supabase/schema.sql`, `core/services/{auth_service, cloud_backup_service, cloud_auto_backup, profile_cloud_sync, username_rules}.dart`, `features/auth/presentation/`, `tool/rls_check.sh`. ⚠️ **Ohne Supabase-Schlüssel im Bau verhält sich die App exakt wie vorher** — keine Anmeldung, keine Rubrik, kein Netzverkehr (`supportsCloudSync`).
 >
 > ✅ **Phase 29: Arbeiten und Prüfen ohne Rechner.** `tool/webtest_ci.py` (echter Chrome, blockiert die Veröffentlichung), `.github/workflows/rls-check.yml` (Server-Prüfung, von Hand), `tool/build_privacy_page.py` → `privacy.html`, `meine/` jetzt im Repository, `Root-in.code-workspace` entfernt.
+>
+> ✅ **Phase 31: Was ohne den Nutzer geht.** `auth_sheet.dart` mit Nur-Name-Modus, `accountUsernameProvider`, „Konto löschen" (`delete_own_account()` in `schema.sql`, `AuthService.deleteAccount()`), `tool/webtest_serve.sh`, `.github/workflows/webtest-gegenprobe.yml`, `lib/core/utils/no_retry.dart`, `tool/check_bundle_secrets.py`, Actions auf Node 24.
 >
 > 📄 **Datenschutzerklärung:** Text in `store/PRIVACY_POLICY.md` → bei jedem Bau online unter `https://lukasylilli.github.io/Root-in/privacy.html` → in der App unter *Einstellungen → Datenschutzerklärung*. **Ändern = die Datei auf GitHub bearbeiten**, sonst nichts. Schritt für Schritt im Abschnitt [Datenschutzerklärung](#datenschutzerklärung).
 
@@ -109,6 +111,8 @@ github.com/lukasylilli/Root-in  (öffentlich, Zweig main)
 ├── tool/                            ✅ Bau-Skripte (siehe Abschnitt „Web-Fassung & Automatik")
 ├── .github/workflows/deploy-web.yml ✅ Push auf main → analyze + test → build_web.sh → Browser-Durchgang → GitHub Pages
 ├── .github/workflows/rls-check.yml  ✅ Server-Zugriffsregeln von außen — NUR von Hand (Actions → Run workflow)
+├── .github/workflows/webtest-gegenprobe.yml ✅ Gegenprobe: baut absichtlich beschädigt und muss GENAU die
+│                                        erwarteten Prüfungen rot sehen — bei jedem Push, veröffentlicht nichts
 ├── .env.example                     ✅ Vorlage für --dart-define-from-file (die echte .env ist ausgeschlossen);
 │                                        seit Phase 27.3 mit SUPABASE_URL und SUPABASE_ANON_KEY
 ├── supabase/schema.sql              ✅ Phase 27.4 — Server-Schema + Zugriffsregeln, versioniert
@@ -142,6 +146,7 @@ lib/
 │                                                 Standard-Kategorien in der gespeicherten Sprache, dann
 │                                                 UncontrolledProviderScope (expliziter ProviderContainer,
 │                                                 weil der Kategorie-Seed vor dem ersten Frame laufen muss).
+│                                                 ⚠️ Der Container trägt `retry: noAutomaticRetry` (31.2b)
 │                                                 🕯️ Enthält den Start des Werbe-SDKs (Phase 14)
 ├── main_seed.dart                            ✅ Zweiter Einstiegspunkt, NUR für Store-Screenshots und um eine
 │                                                 Seite mit echtem Bestand anzusehen: sät ~400 Tage (je
@@ -231,6 +236,11 @@ lib/
 │   │   ├── date_utils.dart                   ✅ dateOnly, addDays (DST-sicher), weekStartOf
 │   │   ├── streak_calculator.dart            ✅ Reine Streak-Logik inkl. 1-Frei-Tag/Woche (unit-getestet)
 │   │   ├── achievement_evaluator.dart        ✅ Reine Freischalt-Logik (unit-getestet)
+│   │   ├── no_retry.dart                     ✅ noAutomaticRetry (PLAN.md 31.2b) — schaltet Riverpods
+│   │   │                                         automatische Wiederholung ab. Ohne sie zeigte eine Seite
+│   │   │                                         ohne Netz ~40 s einen Ladekreis statt „Kein Internet".
+│   │   │                                         Gilt am Container in main.dart UND an jedem Provider mit
+│   │   │                                         eigenem Fehlerzustand (Tests sehen den Container nie)
 │   │   └── platform_support.dart             ✅ **Die einzige Stelle im Projekt, an der `kIsWeb` steht.**
 │   │                                             Nach Phase 28 nur noch vier Abfragen:
 │   │                                             usesBrowserStorage (26.8), supportsOrientationLock,
@@ -483,7 +493,7 @@ lib/
 │   │   ├── guide_document.dart               ✅ guideDocumentProvider (Family) + Sprachcode der Inhalts-Adresse +
 │   │   │                                         Laufrichtung (RTL bei fa/ar/he/ur). Hängt seit Phase 18 ohne
 │   │   │                                         Sonderweg an der App-Sprache — der Persisch-Sonderfall aus
-│   │   │                                         Phase 17.2 ist ersatzlos entfallen
+│   │   │                                         Phase 17.2 ist ersatzlos entfallen. `retry: noAutomaticRetry`
 │   │   └── guide_page.dart                   ✅ EINE Seite für alle vier Themen: Kopf mit Akzent-Verlauf, darunter
 │   │                                             Markdown bzw. Ladekreis, Offline-Hinweis oder „Inhalt folgt"
 │   ├── account/presentation/
@@ -510,7 +520,8 @@ lib/
 │   │   │                                         Sortiert nach `order`, bei Gleichstand stabil nach Datei-Reihenfolge
 │   │   └── presentation/
 │   │       ├── others_providers.dart         ✅ Pfade (others/<sprache>/…), Manifest-Provider, Ordner-Nachschlag,
-│   │       │                                     Text-Provider. Sprache = die der Anleitungen
+│   │       │                                     Text-Provider. Sprache = die der Anleitungen.
+│   │       │                                     Manifest- und Text-Provider: `retry: noAutomaticRetry`
 │   │       ├── others_folders_page.dart      ✅ Ordner als Karten; unterscheidet kein Netz / fehlendes Manifest /
 │   │       │                                     kaputtes Manifest sichtbar voneinander
 │   │       └── others_folder_page.dart       ✅ Beiträge eines Ordners, klappen an Ort und Stelle auf — der Text
@@ -531,6 +542,7 @@ lib/
 │                                                 ⚠️ VERSCHWINDET vollständig, wenn supportsCloudSync
 │                                                 falsch ist — ehrlich abschalten statt Knöpfe ohne
 │                                                 Wirkung. Ohne Benutzernamen: Knopf „Benutzernamen festlegen" (31.1)
+│                                                 „Konto löschen" statt „Daten auf dem Server löschen" (31.3)
 ```
 
 ## test/
@@ -572,10 +584,14 @@ test/
 │   │                                        ⚠️ Prüft QUELLTEXT, nicht Verhalten — und das mit Absicht:
 │   │                                        Tests laufen auf der Dart-VM, wo `dart:io` funktioniert. Kein
 │   │                                        Verhaltenstest hätte den Fehler aus 26.10 finden können
-│   └── privacy_page_test.dart           ✅ 4 Fälle (Phase 29.5), ruft das ECHTE tool/build_privacy_page.py:
-│                                            tragende Abschnitte stehen auf der Seite · die INTERNE NOTIZ
-│                                            nicht · vollständige eigenständige Seite · Tabellen und
-│                                            Auszeichnungen umgewandelt statt durchgereicht
+│   ├── privacy_page_test.dart           ✅ 4 Fälle (Phase 29.5), ruft das ECHTE tool/build_privacy_page.py:
+│   │                                        tragende Abschnitte stehen auf der Seite · die INTERNE NOTIZ
+│   │                                        nicht · vollständige eigenständige Seite · Tabellen und
+│   │                                        Auszeichnungen umgewandelt statt durchgereicht
+│   └── bundle_secrets_test.dart         ✅ 5 Fälle (Phase 31.5), ruft das ECHTE tool/check_bundle_secrets.py
+│                                            mit gefälschten Schlüsseln: anon grün · service_role rot und nicht
+│                                            ausgegeben · sb_secret_ rot · blinder Suchlauf rot · ohne
+│                                            Erwartung grün
 ├── widget/
 │   ├── matrix_grid_test.dart        ✅ 2 Fälle (eine Zelle je Tag; fitToWidth passt ein Jahr ohne Überlauf)
 │   ├── progress_ring_test.dart      ✅ 3 Fälle (Prozent, Clamping, centerLabel)
@@ -606,12 +622,14 @@ test/
 │   │                                     Navigation durch alle vier Tabs, leerer Bestand bricht keinen
 │   │                                     davon, Jahr-Tab zeigt den Trend als Wochenmittel
 │   ├── monthly_bar_chart_test.dart  ✅ 3 Fälle (Monatsnamen+Werte, Kürzel folgen der Sprache, Leer-Zustand)
-│   ├── others_page_test.dart        ✅ 8 Fälle (Phase 22): Reihenfolge aus dem Manifest, kaputtes Manifest
+│   ├── others_page_test.dart        ✅ 9 Fälle (Phase 22): Reihenfolge aus dem Manifest, kaputtes Manifest
 │   │                                     meldet den Grund (nicht „kein Internet"), 404 = leerer Kanal, ohne
 │   │                                     Netz Wiederholen-Knopf, Text lädt ERST beim Aufklappen, unbekannter
-│   │                                     Ordner bricht nicht, Eintrag steht UNTER „Wichtige Links"
-│   ├── guide_page_test.dart         ✅ 8 Fälle (Rubrik, vier Routen, vier Dateinamen JE SPRACHE + Rückfall auf
+│   │                                     Ordner bricht nicht, Eintrag steht UNTER „Wichtige Links".
+│   │                                     31.2b: Knopf kommt SOFORT, genau ein Abrufversuch — ohne pumpAndSettle
+│   ├── guide_page_test.dart         ✅ 9 Fälle (Rubrik, vier Routen, vier Dateinamen JE SPRACHE + Rückfall auf
 │   │                                     Deutsch, Ladekreis → Text, Offline-Hinweis, 404, persisch = RTL)
+│   │                                     31.2b: Knopf kommt SOFORT, genau ein Abrufversuch — ohne pumpAndSettle
 │   ├── settings_theme_test.dart     ✅ 5 Fälle (Modus, Farbe, Sprache, Animations-Quelle persistiert; Kontakt).
 │   │                                     Der Persisch-Fall prüft seit Phase 18 Oberfläche UND Inhalte auf `fa`
 │   ├── remove_ads_tile_test.dart    🕯️ 2 Fälle (Phase 14), stillgelegt — mit demselben Platzhalter wie oben
@@ -664,14 +682,22 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        Chrome über ChromeDriver, WebDriver-Protokoll über `urllib` —
 │                                        keine Abhängigkeit. Läuft in deploy-web.yml gegen den GERADE
 │                                        gebauten Stand, VOR der Veröffentlichung, und BLOCKIERT sie.
-│                                        10 Punkte: zeichnet · Erststart · Speicher-Hinweis · Merker ·
-│                                        Datenbank · drei Reiter MIT Inhalt.
+│                                        23 Punkte (31.2): zeichnet · Erststart · Speicher-Hinweis · Merker ·
+│                                        Datenbank · drei Reiter MIT Inhalt · Anleitung offen, Text geladen,
+│                                        kein „Erneut versuchen" · Neuladen · Konto-Seite, „Anmelden" ·
+│                                        privacy.html (erreichbar, beide Sprachen, ohne interne Notiz).
+│                                        WEBTEST_EXPECT_CLOUD=1: fehlende Konto-Rubrik ist ein FEHLER.
+│                                        --gegenprobe: sperrt raw.githubusercontent.com und ist nur
+│                                        grün, wenn GENAU die Prüfungen aus GEGENPROBE_ROT rot sind
 │                                        ⚠️ Meldet seine Diagnose als Arbeitsablauf-Anmerkung
 │                                        (`::error::`) — die ist ohne Anmeldung lesbar, das Protokoll nicht
 │                                        ⚠️ Der Speicher-Hinweis ist modal und MUSS weggeklickt werden,
 │                                        sonst ist kein Reiter erreichbar (erster Lauf: 6/10 rot)
 │                                        ⚠️ `chrome --headless --screenshot` taugt NICHT als Ersatz:
 │                                        blankes Bild bzw. endloser Lauf (PLAN.md 29.3)
+├── webtest_serve.sh                 ✅ Liefert build/web unter /<repository>/ aus und startet
+│                                        webtest_ci.py dagegen (31.2) — EINE Stelle für deploy-web.yml
+│                                        und webtest-gegenprobe.yml
 ├── webtest.py                       🕰️ **Nicht mehr ausführbar** — braucht safaridriver, also macOS.
 │                                        Bleibt als Vorlage, aus der webtest_ci.py entstanden ist, und
 │                                        wegen der Erkenntnisse unten, die für beide gelten.
@@ -711,7 +737,9 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        fehlschlägt); Zustände an KNÖPFEN ablesen, nicht an Texten —
 │                                        reine Texte stehen unzuverlässig im Semantik-Baum
 ├── rls_check.sh                     ✅ Gegenprobe der Server-Zugriffsregeln von AUSSEN (Phase 27.4):
-│                                        13 Prüfungen mit zwei echten Testkonten.
+│                                        13 Prüfungen mit zwei echten Testkonten, seit 31.3 18 mit drei:
+│                                        Wegwerf-Konto C löscht sich selbst (delete_own_account). Fehlt
+│                                        die Funktion auf dem Server, sagt das Skript genau das.
 │                                        Läuft seit 29.2 als Action `rls-check.yml` (von Hand). Braucht
 │                                        nur `bash`, `curl` und SUPABASE_URL/SUPABASE_ANON_KEY aus den
 │                                        Secrets; `.env` liest es nur, FALLS vorhanden
@@ -720,6 +748,10 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        dem öffentlichen Schlüssel prüft, was ein Fremder sieht.
 │                                        ⚠️ Nach JEDER Änderung an supabase/schema.sql erneut laufen
 │                                        lassen — eine ungeprüfte Regel ist eine Hoffnung
+├── check_bundle_secrets.py          ✅ Kein geheimer Supabase-Schlüssel im Bundle (PLAN.md 31.5). Rot bei
+│                                        JWT role=service_role und sb_secret_…; anon/sb_publishable_ ist
+│                                        erlaubt. --expect-anon: findet es den erlaubten Schlüssel NICHT,
+│                                        ist es blind → rot (Lehre 32). Gibt nie einen Schlüssel aus
 ├── build_web.sh                     ✅ **Einzige Stelle der Bau-Schalter**: --no-source-maps, -O4, --csp,
 │                                        --base-href, Version aus pubspec.yaml, Baunummer aus
 │                                        GITHUB_RUN_NUMBER. Die Automatik ruft DIESES Skript auf —
@@ -747,12 +779,23 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
                                          Seit 29.3: Schritt „Browser-Durchgang" (webtest_ci.py) nach dem
                                          Bau, VOR der Veröffentlichung — ⚠️ blockierend, OHNE
                                          continue-on-error (mit dieser Zeile meldete er „success" auch
-                                         beim Scheitern). Seit 29.5 liegt privacy.html im selben Artefakt
+                                         beim Scheitern). Seit 29.5 liegt privacy.html im selben Artefakt.
+                                         Seit 31.2 über tool/webtest_serve.sh, mit WEBTEST_EXPECT_CLOUD.
+                                         Seit 31.4 Actions auf Node-24-Fassungen (checkout@v7,
+                                         configure-pages@v6, upload-pages-artifact@v5, deploy-pages@v5).
+                                         Seit 31.5: Schritt „Kein geheimer Schlüssel im Bundle" nach dem
+                                         Bau, blockierend, mit --expect-anon, wenn das Secret gesetzt ist
 
 .github/workflows/rls-check.yml      ✅ Server-Zugriffsregeln prüfen (PLAN.md 29.2) — workflow_dispatch,
                                          NICHT bei jedem Push (legt echte Testkonten an). Auslösen nach
                                          jeder Änderung an supabase/schema.sql. Reicht NUR den
                                          anon-Schlüssel durch — mit service_role bewiese sie nichts
+
+.github/workflows/webtest-gegenprobe.yml ✅ Gegenprobe des Browser-Durchgangs (PLAN.md 31.2) — bei JEDEM
+                                         Push, veröffentlicht nichts, keine Secrets. Baut ohne Schlüssel,
+                                         löscht privacy.html, `--gegenprobe` sperrt die Anleitungs-Texte.
+                                         ⚠️ Fand beim ersten Lauf einen echten App-Fehler: 40 s Ladekreis
+                                         statt „Kein Internet" (Riverpod-Wiederholung, PLAN.md 31.2b)
 
 .env.example                         ✅ Vorlage für --dart-define-from-file. Die echte `.env` ist
                                          ausgeschlossen. ⚠️ Definierte Werte landen IM BUNDLE und sind
@@ -793,7 +836,9 @@ Die **Serie wird nirgends gespeichert** — sie entsteht bei jedem Aufruf neu au
 ```
 supabase/schema.sql                  ✅ Tabellen `profiles` (mit `username`) + `backups`, ZWEI
                                          Zugriffsschichten (Rechte + RLS je Vorgang), Trigger für
-                                         updated_at, Funktion `username_available()`.
+                                         updated_at, Funktionen `username_available()` und
+                                         `delete_own_account()` (31.3: security definer, KEIN Parameter,
+                                         löscht nur auth.uid(), nur für authenticated ausführbar).
                                          Mehrfach ausführbar (SQL Editor).
                                          ⚠️ Die Rechte stehen AUSDRÜCKLICH im SQL und gehen nur an
                                          `authenticated`, nie an `anon`. Damit hängt die Datei nicht
@@ -822,7 +867,9 @@ test/unit/username_rules_test.dart   ✅ 8 Fälle
 lib/core/services/auth_service.dart  ✅ Einzige Stelle für supabase_flutter (27.5). Registrieren,
                                          Anmelden (mit E-Mail), Abmelden, Benutzernamen belegen/laden.
                                          `accountUsernameProvider` (31.1): der Name zum Konto — wer
-                                         ihn schreibt, invalidiert ihn
+                                         ihn schreibt, invalidiert ihn.
+                                         `deleteAccount()` (31.3): deleted · unavailable (Funktion
+                                         fehlt, PGRST202) · failed
                                          Gibt IMMER ein AuthResult zurück statt zu werfen — eine
                                          fehlgeschlagene Anmeldung ist ein erwarteter Verlauf.
                                          ⚠️ Fehler werden über den `code` zugeordnet, NIE über die
@@ -859,12 +906,15 @@ lib/features/auth/presentation/
                                          Seit 31.1: Vorab-Frage „Name frei?" und Nur-Name-Modus
   account_cloud_card.dart            ✅ Rubrik „Konto & Cloud" auf der BESTEHENDEN Konto-Seite,
                                          nicht daneben. Verschwindet ganz ohne Cloud. Ohne
-                                         Benutzernamen: Knopf „Benutzernamen festlegen" (31.1)
+                                         Benutzernamen: Knopf „Benutzernamen festlegen" (31.1).
+                                         „Konto löschen" (31.3): fehlt die Server-Funktion, löscht er
+                                         die Daten, MELDET AB und sagt ehrlich, was bleibt
 test/support/fake_auth_service.dart  ✅ Anmeldung ohne Server (27.5). `signUp` wie der echte Dienst:
                                          ERST Konto, DANN Name. `takenUsernames` und
                                          `availabilityCheckSeesTaken: false` stellen den Wettlauf nach
-test/widget/account_cloud_card_test.dart ✅ 7 Fälle, u. a. „ohne Cloud ist die Rubrik gar nicht da" und
-                                         „ohne Benutzername lässt er sich nachtragen"
+test/widget/account_cloud_card_test.dart ✅ 10 Fälle, u. a. „ohne Cloud ist die Rubrik gar nicht da",
+                                         „ohne Benutzername lässt er sich nachtragen" und drei zu
+                                         „Konto löschen" (Rückfrage/Abbrechen · Funktion fehlt · kein Netz)
 test/widget/auth_sheet_test.dart     ✅ 3 Fälle (31.1): vergebener Name legt KEIN Konto an · Name erst
                                          nach dem Anlegen vergeben → nur noch das Namensfeld,
                                          claimUsername schreibt nach · Namensregeln vor jedem Senden
@@ -950,6 +1000,7 @@ Manifest (siehe Hinweise).
 - **Eine Seite wirklich ansehen:** pushen, den Lauf abwarten, `lukasylilli.github.io/Root-in/` im Browser öffnen. ⚠️ **Nicht sofort nach dem Lauf messen** — GitHub Pages liefert nicht überall gleichzeitig aus (Lehre 36). Für einen Blick mit echten Daten gäbe es `lib/main_seed.dart`; der braucht aber einen Bau von Hand und ist damit vorerst unerreichbar.
 - Jeder Widget-Test, der DB-gestützte Provider berührt, überschreibt `appDatabaseProvider` und `timeServiceProvider` und ruft `disposeAndFlush(tester)` als letzte Zeile. Die früheren Overrides für `notificationServiceProvider` (Phase 28) und `purchaseServiceProvider` (Phase 20) sind entfallen.
 - Tests, die die Home-Seite rendern, dürfen **kein** `pumpAndSettle()` verwenden — die funkelnden Sterne laufen dauerhaft. Stattdessen `tester.pump(const Duration(seconds: 1))`; für einen **Wechsel** auf Home braucht es drei aufeinanderfolgende `pump()` (Tipp → Speichern → Routen-Übergang, siehe `settleNavigation`).
+- ⚠️ **Fehlerzustände nie nur mit `pumpAndSettle` prüfen** (PLAN.md Lehre 40). Riverpod 3 wiederholt fehlgeschlagene Provider von selbst; `pumpAndSettle` spult die Pausen vor und findet am Ende den Knopf, den ein Nutzer erst nach 40 Sekunden sähe. Abgeschaltet ist das in `lib/core/utils/no_retry.dart` — **ein neuer Provider mit eigenem Fehlerzustand bekommt `retry: noAutomaticRetry`**, sonst sieht sein Test etwas anderes als die App.
 - Tests, die die ganze App starten, müssen `onboarding_seen` in den gemockten Prefs setzen — sonst landen sie auf der Erststart-Erklärung.
 - Widgets am unteren Ende einer `ListView`/`GridView` sind im Test-Viewport noch nicht gemountet — erst `tester.scrollUntilVisible(...)`. Bei mehreren verschachtelten Scrollables `find.byType(Scrollable).first` nehmen.
 - **Datenbank-Abfragen mitten im Widget-Test** brauchen `await tester.runAsync(() async { … })`. Drift liefert Stream-Ergebnisse über einen Timer, und im Widget-Test steht die Uhr still — ein blankes `await stream.first` hängt bis zum Timeout (dieselbe Ursache wie bei `disposeAndFlush`). Wo kein Widget-Baum nötig ist, ist ein reines `test(...)` mit `ProviderContainer` der einfachere Weg.
