@@ -590,26 +590,39 @@ Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffe
 - [x] `tool/build_web.sh` ist die **eine** Stelle der Bau-Schalter, und die Automatik ruft genau dieses Skript. Es gibt keinen „Bau von Hand", der davon abweichen könnte.
 - [x] `tool/fetch_web_db_assets.sh` holt `sqlite3.wasm` und `drift_worker.js` **im Lauf** — beide sind bewusst nicht versioniert und fehlen deshalb nie, weil sie jedes Mal frisch kommen.
 
-#### 29.2 `rls_check.sh` erreichbar machen ⬜
-- [ ] **Als GitHub-Action mit `workflow_dispatch`** (von Hand auslösbar, nicht bei jedem Push).
-- [x] **Geprüft, dass es geht:** Das Skript braucht nur `bash`, `curl` und die zwei Werte `SUPABASE_URL` / `SUPABASE_ANON_KEY` — beide liegen bereits als Secrets. Es liest `.env` nur, **falls vorhanden**, und nimmt sonst die Umgebungsvariablen. Es muss also nicht angefasst werden, nur aufgerufen.
-- [ ] ⚠️ **Nicht bei jedem Push:** Der Durchgang legt zwei echte Testkonten an (`@example.com`, RFC 2606). Bei jedem Push wäre das unnötiger Verkehr auf einem Server, der im freien Tarif lebt.
-- [ ] ⚠️ **Nach jeder Änderung an `supabase/schema.sql` auslösen** — das ist der einzige Grund, warum es das Skript gibt. Eine ungeprüfte Zugriffsregel ist eine Hoffnung.
+#### 29.2 `rls_check.sh` erreichbar machen ✅
+- [x] **`.github/workflows/rls-check.yml`** mit `workflow_dispatch` — von Hand auslösbar über *Actions → Server-Zugriffsregeln prüfen → Run workflow*.
+- [x] **Das Skript musste nicht angefasst werden.** Es liest `.env` nur, **falls** vorhanden, und nimmt sonst die Umgebungsvariablen; die kommen aus denselben Secrets wie der Bau. ⚠️ Gegenprobe gemacht, nicht angenommen: in einem leeren Verzeichnis, mit `env -i` und nur den zwei Werten — **13/13**.
+- [x] ⚠️ **Nicht bei jedem Push.** Der Durchgang legt zwei echte Testkonten an (`@example.com`, RFC 2606); der Anlass ist ohnehin ein anderer — **nach jeder Änderung an `supabase/schema.sql`**.
+- [x] ⚠️ **Nur der `anon`-Schlüssel wird durchgereicht**, und das ist der Sinn: Die Prüfung fragt mit denselben Rechten, die jeder Fremde hat. Mit `service_role` liefe sie an allen Regeln vorbei und bewiese das Gegenteil dessen, was sie beweisen soll.
 
-#### 29.3 Ersatz für den Browser-Durchgang ⬜
+#### 29.3 Ersatz für den Browser-Durchgang ✅
+- [x] **`tool/webtest_ci.py`**, eingehängt in `deploy-web.yml` **vor** der Veröffentlichung. Dasselbe WebDriver-Protokoll wie `webtest.py`, nur gegen ChromeDriver (auf `ubuntu-latest` vorhanden), über `urllib` — **keine neue Abhängigkeit**.
+- [x] Geprüft werden 10 Punkte: zeichnet die App · Erststart-Erklärung · Speicher-Hinweis · Merker im Browser-Speicher · Datenbank angelegt · die drei Reiter **mit Inhalt** (nicht nur „der Reiter ist da" — er war auch da, als drei Seiten leer blieben, 26.10).
+- [x] **Die teuer bezahlten Regeln sind mitgenommen:** Zeichenfläche im Schatten-DOM (Lehre 36), an Knöpfen ablesen (32/35), auf Zustände warten (36), beim gescheiterten Start abbrechen (36).
+- [x] ⚠️ **Zwei Wege, die NICHT funktionieren — gemessen, nicht vermutet.** `chrome --headless --screenshot` liefert blankes Grün: Virtuelle Zeit lässt WebAssembly nicht fertig werden. Mit `--run-all-compositor-stages-before-draw` läuft der Aufruf **endlos**, weil eine Flutter-App nie ruhig wird (die Sterne auf der Home-Seite animieren dauerhaft) — nach 10 Minuten abgebrochen. Deshalb ein echter Treiber statt eines Bildschirmfotos.
+- [x] ⚠️ **Er blockiert die Veröffentlichung.** Der erste Einbau lief mit `continue-on-error: true`, weil er vorher nirgends erprobt werden konnte. **Daran fiel auf, dass diese Zeile die Prüfung wertlos macht:** Ein solcher Schritt meldet auch dann „success", wenn er fehlgeschlagen ist — von außen nicht zu unterscheiden, und das Protokoll braucht eine Anmeldung (HTTP 403). Ein Tor, das immer offen steht, ist eine Tür im Feld.
+- [x] **Das Skript sagt seine Diagnose als Arbeitsablauf-Anmerkung** (`::error::`). Anmerkungen sind bei einem öffentlichen Repository **ohne Anmeldung lesbar**, das Protokoll nicht — ohne sie ist ein gescheiterter Lauf von außen stumm.
+- [x] ⚠️ **Gegen den kaputten Stand gehalten — unfreiwillig, aber vollständig** (Lehre 32): Der erste blockierende Lauf war **rot**, mit 6 von 10 Prüfungen. Die Anmerkung nannte den Grund, die Ursache war eine einzige: Der **Speicher-Hinweis** aus 26.8 ist ein modaler Dialog und stand allen Reitern im Weg; beim Übertragen aus `webtest.py` war dieser eine Schritt verloren gegangen. Damit ist bewiesen, dass der Durchgang rot werden **kann** — die Frage, die bei jedem neuen Test offen bleibt.
 
-⚠️ **Der wichtigste offene Punkt des ganzen Projekts.** Ohne ihn merkt niemand, wenn die veröffentlichte Seite gar nicht mehr startet — und der Nutzer verteilt die Adresse an Schüler.
+#### 29.4 Was im Repository nicht mehr gebraucht wird ✅
+- [x] `Root-in.code-workspace` entfernt — VS Code ist gelöscht.
+- [x] `.claude/settings.json` **bleibt**. Sie beschreibt zwar eine Freigabeliste für Claude Code auf einem Rechner, schadet aber nichts, und ob sie in der Cloud greift, ist hier nicht geprüft — eine Datei auf Verdacht zu löschen wäre schlechter als sie stehen zu lassen.
+- [x] ⚠️ **`tool/webtest.py` bleibt.** Es ist nicht mehr ausführbar (macOS), aber die Vorlage, aus der 29.3 entstanden ist — und der Beweis dafür, dass ein einziger übersehener Schritt beim Abschreiben sechs Prüfungen rot färbt.
 
-- [ ] Browser-Prüfung **in der Automatik**, nach dem Bau und **vor** der Veröffentlichung. Auf `ubuntu-latest` steht Chrome bereit; Safari gibt es dort nicht.
-- [ ] ⚠️ **Der Umfang darf klein anfangen, aber nicht null sein.** Die eine Frage, die zählt: **Zeichnet die App überhaupt?** Alles Weitere (Reiter, Anleitung, Konto-Rubrik) ist Zugabe. Ein Durchgang, der nur den Start prüft, hätte 26.10 gefunden — dort blieben drei Seiten leer, aber die App startete; also besser gleich die vier Reiter mitnehmen, wenn es ohne viel Mehraufwand geht.
-- [ ] **Vorlage ist `tool/webtest.py`.** Die Erkenntnisse darin sind nicht browser-spezifisch und dürfen nicht verloren gehen: Semantik-Baum über den Platzhalter einschalten, an **Knöpfen** ablesen statt an Überschriften (Lehre 32/35), auf **Zustände** warten statt auf die Uhr (Lehre 36), Zeichenfläche im **Schatten-DOM** suchen (Lehre 36), beim gescheiterten Start **abbrechen** statt 19 Folgefehler zu melden.
-- [ ] ⚠️ **Gegen den kaputten Stand halten** (Lehre 32) — ein Durchgang, der nie rot war, prüft nichts. Im CI heißt das: einmal absichtlich mit einem kaputten Bau laufen lassen und den roten Lauf im Plan festhalten.
-- [ ] ⚠️ **Nicht anmelden.** Dieselbe Regel wie bisher: Ein Oberflächen-Test, der Konten anlegt, hinterlässt bei jedem Lauf Datenmüll. Dass die Anmeldung trägt, beweist 29.2.
+#### 29.5 Die Datenschutzerklärung veröffentlicht sich selbst ✅
 
-#### 29.4 Was im Repository nicht mehr gebraucht wird ⬜
-- [ ] `Root-in.code-workspace` — VS Code wird gelöscht. Die Datei ist versioniert und schadet nicht; sie **beschreibt aber eine Arbeitsweise, die es nicht mehr gibt**. Entfernen oder als historisch kennzeichnen.
-- [ ] `.claude/settings.json` — die Freigabeliste aus Phase 26.9 gilt für Claude Code auf einem Rechner. In der Cloud greift sie nicht. Nicht schädlich, aber irreführend.
-- [ ] ⚠️ **`tool/webtest.py` NICHT löschen**, bevor 29.3 steht. Es ist die einzige geschriebene Fassung dieser Prüf-Erkenntnisse.
+**Vom Nutzer:** *„schreib privacy-policy in plan und map, damit ich später es online schreiben kann."*
+
+⚠️ **Eine Kopie in PLAN/MAP hätte genau den Fehler wiederholt, der den Gist zweimal veralten ließ** (nach Phase 20 und nach 27.8). Die Ursache war nie Nachlässigkeit, sondern die zweite Kopie: Wer eine Quelle zweimal pflegen muss, pflegt sie irgendwann einmal. Also nicht abschreiben — **den Handgriff abschaffen.**
+
+- [x] **`tool/build_privacy_page.py`** wandelt `store/PRIVACY_POLICY.md` bei **jedem Bau** in `build/web/privacy.html`. Eine Änderung an der Markdown-Datei **ist** damit die Veröffentlichung.
+- [x] Erreichbar unter **`https://lukasylilli.github.io/Root-in/privacy.html`** — dieselbe Adresse wie die App, dieselbe Automatik.
+- [x] **Abhängigkeitsfrei.** Das Dokument benutzt genau sieben Markdown-Elemente (nachgezählt); ein Wandler dafür ist kürzer als die Diskussion über `pip install`. Dieselbe Überlegung wie bei `store/make_feature_graphic.py`.
+- [x] ⚠️ **Die INTERNE NOTIZ am Dateiende wird abgeschnitten**, statt sich darauf zu verlassen, dass ein Browser HTML-Kommentare versteckt — sonst stünde sie im Quelltext der Seite.
+- [x] **Eintrag „Datenschutzerklärung" in den Einstellungen**, in allen drei Sprachen. Eine Erklärung unter einer Adresse, die niemand kennt, erfüllt ihren Zweck nicht — und die App speichert E-Mail-Adressen.
+- [x] `test/unit/privacy_page_test.dart` (4 Fälle) ruft **das echte Skript** auf. ⚠️ Er hat sofort einen Fehler gefunden: **18 mehrzeilige Listenpunkte** verloren ihre Folgezeile, wodurch eine über zwei Zeilen laufende Fettschrift als rohe Sternchen mitten auf der Seite stand.
+- [ ] ⬜ **Was dem Nutzer bleibt:** den alten Gist auf die neue Adresse zeigen lassen oder löschen. Er ist jetzt überflüssig — aber solange er existiert, findet ihn jemand und liest einen veralteten Text.
 
 ---
 
