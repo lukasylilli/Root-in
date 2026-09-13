@@ -2,13 +2,17 @@
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
 >
-> **Stand 2026-08-17.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **205 Tests grün**, 13/13 Zugriffsregeln am Server.
+> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **210 Tests grün**, Browser-Durchgang 10/10 in der Automatik, 13/13 Zugriffsregeln am Server.
 >
 > ⚠️ **Es gibt keinen Entwicklungsrechner mehr** (PLAN.md Phase 29). Alles, was nicht in diesem Repository liegt, ist gelöscht — auch VS Code. **Diese Datei beschreibt damit nicht mehr „was auf dem Rechner liegt", sondern „was das Repository enthält".** Wer etwas sucht, das hier nicht steht, sucht etwas, das es nicht gibt.
 >
 > ⚠️ **Phase 28 hat das Projekt auf Web-only zurückgebaut.** Entfernt: `android/`, `ios/`, `macos/`, `linux/`, `windows/` (153 Dateien), `home_widget_service.dart` samt den neun Startbildschirm-Widgets, `notification_service.dart` und `reminders_page.dart` samt allem, was daran hing (bis hinunter in die Datenbank — Schema 4), das Play-Material unter `store/`. Pakete raus: `flutter_local_notifications`, `timezone`, `flutter_timezone`, `home_widget`, `flutter_file_dialog`. **Die Versionsgeschichte behält alles.**
 >
 > ✅ **Phase 27: Nutzerkonten & Cloud (Supabase).** `supabase/schema.sql`, `core/services/{auth_service, cloud_backup_service, cloud_auto_backup, profile_cloud_sync, username_rules}.dart`, `features/auth/presentation/`, `tool/rls_check.sh`. ⚠️ **Ohne Supabase-Schlüssel im Bau verhält sich die App exakt wie vorher** — keine Anmeldung, keine Rubrik, kein Netzverkehr (`supportsCloudSync`).
+>
+> ✅ **Phase 29: Arbeiten und Prüfen ohne Rechner.** `tool/webtest_ci.py` (echter Chrome, blockiert die Veröffentlichung), `.github/workflows/rls-check.yml` (Server-Prüfung, von Hand), `tool/build_privacy_page.py` → `privacy.html`, `meine/` jetzt im Repository, `Root-in.code-workspace` entfernt.
+>
+> 📄 **Datenschutzerklärung:** Text in `store/PRIVACY_POLICY.md` → bei jedem Bau online unter `https://lukasylilli.github.io/Root-in/privacy.html` → in der App unter *Einstellungen → Datenschutzerklärung*. **Ändern = die Datei auf GitHub bearbeiten**, sonst nichts. Schritt für Schritt im Abschnitt [Datenschutzerklärung](#datenschutzerklärung).
 
 ## Inhaltsverzeichnis
 1. [Legende](#legende)
@@ -18,7 +22,8 @@
 5. [Web-Fassung & Automatik](#web-fassung--automatik)
 6. [Nutzerkonten & Cloud (Supabase)](#nutzerkonten--cloud-supabase)
 7. [Inhalts-Repository (GitHub)](#inhalts-repository-github)
-8. [Hinweise](#hinweise)
+8. [Datenschutzerklärung](#datenschutzerklärung)
+9. [Hinweise](#hinweise)
 
 ## Legende
 - ✅ im Repository vorhanden
@@ -45,9 +50,6 @@ github.com/lukasylilli/Root-in  (öffentlich, Zweig main)
 ├── .metadata                        ⚙️ Von Flutter gepflegt (Projekt-Herkunft, migrierte Plattformen) —
 │                                        nie von Hand ändern. Nennt noch die entfernten Plattformen; das
 │                                        ist folgenlos und wird beim nächsten Flutter-Werkzeuglauf richtig
-├── Root-in.code-workspace           🕰️ VS-Code-Arbeitsbereich — VS Code ist mit Phase 29
-│                                        gelöscht; die Datei beschreibt eine Arbeitsweise, die es
-│                                        nicht mehr gibt (29.4)
 ├── l10n.yaml                        ✅ gen-l10n: ARB in lib/l10n, Ausgabe lib/l10n/gen, Vorlage Deutsch
 ├── assets/icon/app_icon.png         ✅ EINZIGE Quelle des App-Symbols (1024×1024). Favicon und PWA-Symbole
 │                                        entstehen daraus per `dart run flutter_launcher_icons`.
@@ -56,28 +58,29 @@ github.com/lukasylilli/Root-in  (öffentlich, Zweig main)
 ├── lib/                             ✅ App-Quellcode (siehe unten)
 ├── test/                            ✅ Tests (siehe unten)
 ├── store/                           ✅ Begleitende Dokumente — kein Code
-│   ├── PRIVACY_POLICY.md                Datenschutzerklärung DE+EN, aus dem tatsächlichen Verhalten der App
-│   │                                    abgeleitet. **Quelle** der veröffentlichten Gist-Fassung — Änderungen
-│   │                                    müssen dort von Hand nachgezogen werden.
+│   ├── PRIVACY_POLICY.md                ✅ Datenschutzerklärung DE+EN, aus dem tatsächlichen Verhalten der App
+│   │                                    abgeleitet. **EINZIGE Quelle** — bei jedem Bau wird daraus
+│   │                                    `privacy.html` (PLAN.md 29.5, Abschnitt „Datenschutzerklärung"
+│   │                                    unten). Ändern = diese Datei bearbeiten, sonst nichts.
 │   │                                    Stand Phase 28: Web-only. Abschnitte zu Android-Sicherung und
 │   │                                    Benachrichtigungen sind GESTRICHEN, neu ist Punkt 5 „Wo deine
 │   │                                    Daten im Browser liegen" (Website-Daten löschen, Safaris
 │   │                                    Sieben-Tage-Regel, jedes Gerät ein eigener Bestand).
-│   │                                    ⚠️ Der Gist ist noch NICHT nachgezogen
+│   │                                    ⚠️ Die INTERNE NOTIZ am Dateiende landet NICHT auf der Seite
 │   ├── OTHERS_CONTENT.md                Pflege-Anleitung für die Rubrik „موارد دیگر" (Phase 22): wo die
 │   │                                    Dateien liegen, Felder des Manifests, was der Nutzer sieht, wenn
 │   │                                    etwas fehlt, häufige Fehler
 │   └── others_index_beispiel.json       Gültige Vorlage zum Hochladen — ein Test prüft sie mit, damit die
 │                                        Anleitung nicht in die Irre führt
-├── meine/                           ⛔ **NICHT im Repository und mit dem Rechner verschwunden.**
-│                                        Enthielt das Referenzmaterial des Nutzers: 20 Vorlagen-Bilder,
-│                                        die Berg-Animation als React/SVG (Phase 8.6), zwei Design-Specs
-│                                        als JSON (Phase 10.6) und `Logo.jpeg` — die Quelle, aus der
-│                                        `assets/icon/app_icon.png` entstanden ist.
-│                                        ⚠️ Das **Ergebnis** ist versioniert (Symbol, Design-Tokens,
-│                                        die nachgebaute Animation in `ascent_scene_painter.dart`), die
-│                                        **Vorlagen** nicht. Wer das Erscheinungsbild neu ableiten will,
-│                                        hat sie nicht mehr — siehe PLAN.md 28.0
+├── meine/                           ✅ **Referenzmaterial des Nutzers — seit 2026-09-12 im Repository**
+│                                        (auf seine Entscheidung; vorher bewusst ausgeschlossen und damit
+│                                        die letzte Kopie, PLAN.md 28.0). 23 Dateien: 19 Vorlagen-Bilder
+│                                        für Diagramme/Widgets, `Berg-Animation` (React/SVG, Phase 8.6),
+│                                        zwei Design-Specs als JSON (Phase 10.6) und `Logo.jpeg` — die
+│                                        Quelle von `assets/icon/app_icon.png`.
+│                                        ⚠️ Nur Vorlage, kein Code: Die App liest nichts daraus. Das
+│                                        Ergebnis steckt in Symbol, Design-Tokens und
+│                                        `ascent_scene_painter.dart`
 ├── web/                             ✅ **Die App** (PLAN.md Phase 26/28) — seit Phase 28 die einzige
 │   │                                    Plattform des Projekts
 │   ├── index.html                   ✅ Einstiegsseite, Markenfarbe schon vor dem ersten Frame + iOS-Meta-Tags.
@@ -104,7 +107,8 @@ github.com/lukasylilli/Root-in  (öffentlich, Zweig main)
 │                                        geladen, wirken also weiterhin OHNE App-Update. Einzelheiten im
 │                                        Abschnitt „Inhalts-Repository (GitHub)"
 ├── tool/                            ✅ Bau-Skripte (siehe Abschnitt „Web-Fassung & Automatik")
-├── .github/workflows/deploy-web.yml ✅ Push auf main → analyze + test → build_web.sh → GitHub Pages
+├── .github/workflows/deploy-web.yml ✅ Push auf main → analyze + test → build_web.sh → Browser-Durchgang → GitHub Pages
+├── .github/workflows/rls-check.yml  ✅ Server-Zugriffsregeln von außen — NUR von Hand (Actions → Run workflow)
 ├── .env.example                     ✅ Vorlage für --dart-define-from-file (die echte .env ist ausgeschlossen);
 │                                        seit Phase 27.3 mit SUPABASE_URL und SUPABASE_ANON_KEY
 ├── supabase/schema.sql              ✅ Phase 27.4 — Server-Schema + Zugriffsregeln, versioniert
@@ -218,7 +222,8 @@ lib/
 │   │   │                                         obwohl identisch: Ihr Name sagt, wofür die Adresse da
 │   │   │                                         ist. Bis 27.11 zeigte sie auf eine Play-Seite mit
 │   │   │                                         HTTP 404 — jeder geteilte QR-Code lief ins Leere.
-│   │   │                                         `playStoreUrl`/`appPackageName` sind mit Phase 28 weg
+│   │   │                                         `playStoreUrl`/`appPackageName` sind mit Phase 28 weg.
+│   │   │                                         `privacyPolicyUrl` = `webAppUrl` + `privacy.html` (29.5)
 │   │   ├── ad_config.dart                    🕯️ Ad-Unit-IDs + Test-Geräte + Not-Schalter adsDisabledForEveryone
 │   │   └── app_assets.dart                   ✅ Asset-Pfade; AppAssets.homeAnimation = Lottie-Slot (null →
 │   │                                             eingebaute gemalte Animation)
@@ -467,7 +472,8 @@ lib/
 │   │   ├── settings_page.dart                ✅ Darstellungsmodus, Farb-Variante, Animations-Quelle, Sprache;
 │   │   │                                         Links zu Konto/Kategorien, App teilen, Sicherung
 │   │   │                                         exportieren/importieren, Kontakt uns, Rubrik „Root-in Anleitung"
-│   │   │                                         (Einträge kommen aus GuideTopic); 🕯️ Abschnitt „Werbung"
+│   │   │                                         (Einträge kommen aus GuideTopic), „Datenschutzerklärung"
+│   │   │                                         (öffnet privacyPolicyUrl, Phase 29.5); 🕯️ Abschnitt „Werbung"
 │   │   └── remove_ads_tile.dart              🕯️ Kauf-Kachel + „Käufe wiederherstellen" (Phase 14, stillgelegt)
 │   ├── guide/presentation/                   ✅ Rubrik „Root-in Anleitung" — vier Seiten, Inhalt im Repository
 │   │   ├── guide_topic.dart                  ✅ Enum der vier Themen mit Titel, Untertitel, Symbol, Route **und**
@@ -558,11 +564,15 @@ test/
 │   │                                        übersprungener Platzhalter: ohne `main()` meldet flutter test
 │   │                                        die Datei als Ladefehler
 │   ├── app_theme_tokens_test.dart       ✅ 3 Fälle (Tokens je Variante+Helligkeit, heat(), Clamping)
-│   └── no_dart_io_in_lib_test.dart      ✅ 1 Fall (Phase 26.11): kein `dart:io` in lib/, außer in Dateien
-│                                            auf `_io.dart` (die lädt der Web-Bau nie).
-│                                            ⚠️ Prüft QUELLTEXT, nicht Verhalten — und das mit Absicht:
-│                                            Tests laufen auf der Dart-VM, wo `dart:io` funktioniert. Kein
-│                                            Verhaltenstest hätte den Fehler aus 26.10 finden können
+│   ├── no_dart_io_in_lib_test.dart      ✅ 1 Fall (Phase 26.11): kein `dart:io` in lib/, außer in Dateien
+│   │                                        auf `_io.dart` (die lädt der Web-Bau nie).
+│   │                                        ⚠️ Prüft QUELLTEXT, nicht Verhalten — und das mit Absicht:
+│   │                                        Tests laufen auf der Dart-VM, wo `dart:io` funktioniert. Kein
+│   │                                        Verhaltenstest hätte den Fehler aus 26.10 finden können
+│   └── privacy_page_test.dart           ✅ 4 Fälle (Phase 29.5), ruft das ECHTE tool/build_privacy_page.py:
+│                                            tragende Abschnitte stehen auf der Seite · die INTERNE NOTIZ
+│                                            nicht · vollständige eigenständige Seite · Tabellen und
+│                                            Auszeichnungen umgewandelt statt durchgereicht
 ├── widget/
 │   ├── matrix_grid_test.dart        ✅ 2 Fälle (eine Zelle je Tag; fitToWidth passt ein Jahr ohne Überlauf)
 │   ├── progress_ring_test.dart      ✅ 3 Fälle (Prozent, Clamping, centerLabel)
@@ -647,12 +657,21 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        Worker und Bibliothek nicht auseinanderlaufen.
 │                                        ⚠️ `dart run drift_dev make-worker` ist mit drift 2.34.2 /
 │                                        drift_dev 2.34.0 KAPUTT — nicht erneut versuchen
-├── webtest.py                       🕰️ **Nicht mehr ausführbar** — braucht safaridriver, also macOS
-│                                        (PLAN.md 29.3). Bleibt liegen, weil er die einzige geschriebene
-│                                        Fassung dieser Prüf-Erkenntnisse ist und die **Vorlage für den
-│                                        Ersatz in der Automatik**. Bis der steht, öffnet KEIN
-│                                        automatischer Test einen Browser — bei einer Web-App die
-│                                        größte offene Lücke des Projekts (Lehre 39).
+├── webtest_ci.py                    ✅ **Browser-Durchgang in der Automatik** (PLAN.md 29.3): echter
+│                                        Chrome über ChromeDriver, WebDriver-Protokoll über `urllib` —
+│                                        keine Abhängigkeit. Läuft in deploy-web.yml gegen den GERADE
+│                                        gebauten Stand, VOR der Veröffentlichung, und BLOCKIERT sie.
+│                                        10 Punkte: zeichnet · Erststart · Speicher-Hinweis · Merker ·
+│                                        Datenbank · drei Reiter MIT Inhalt.
+│                                        ⚠️ Meldet seine Diagnose als Arbeitsablauf-Anmerkung
+│                                        (`::error::`) — die ist ohne Anmeldung lesbar, das Protokoll nicht
+│                                        ⚠️ Der Speicher-Hinweis ist modal und MUSS weggeklickt werden,
+│                                        sonst ist kein Reiter erreichbar (erster Lauf: 6/10 rot)
+│                                        ⚠️ `chrome --headless --screenshot` taugt NICHT als Ersatz:
+│                                        blankes Bild bzw. endloser Lauf (PLAN.md 29.3)
+├── webtest.py                       🕰️ **Nicht mehr ausführbar** — braucht safaridriver, also macOS.
+│                                        Bleibt als Vorlage, aus der webtest_ci.py entstanden ist, und
+│                                        wegen der Erkenntnisse unten, die für beide gelten.
 │                                        Was er prüfte — **20 Punkte**:
 │                                        Start, Datenerhalt, alle vier Reiter, eine Anleitungs-Seite
 │                                        und die Rubrik „Konto & Cloud". Auch gegen einen lokalen Bau:
@@ -688,22 +707,26 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
 │                                        Flutter-Liste im Desktop-Browser nicht, ohne dass etwas
 │                                        fehlschlägt); Zustände an KNÖPFEN ablesen, nicht an Texten —
 │                                        reine Texte stehen unzuverlässig im Semantik-Baum
-├── rls_check.sh                     ⚠️ Gegenprobe der Server-Zugriffsregeln von AUSSEN (Phase 27.4):
+├── rls_check.sh                     ✅ Gegenprobe der Server-Zugriffsregeln von AUSSEN (Phase 27.4):
 │                                        13 Prüfungen mit zwei echten Testkonten.
-│                                        ⚠️ **Verwaist, aber rettbar** (29.2): Es braucht nur `bash`,
-│                                        `curl` und SUPABASE_URL/SUPABASE_ANON_KEY — beide liegen schon
-│                                        als Secrets. `.env` liest es nur, FALLS vorhanden, sonst nimmt
-│                                        es die Umgebungsvariablen. Es muss also nicht geändert werden,
-│                                        nur als Action aufgerufen
+│                                        Läuft seit 29.2 als Action `rls-check.yml` (von Hand). Braucht
+│                                        nur `bash`, `curl` und SUPABASE_URL/SUPABASE_ANON_KEY aus den
+│                                        Secrets; `.env` liest es nur, FALLS vorhanden
 │                                        ⚠️ Ein `select` im SQL-Editor beweist NICHTS — er läuft mit
 │                                        erhöhten Rechten und umgeht die Regeln. Nur ein Aufruf mit
 │                                        dem öffentlichen Schlüssel prüft, was ein Fremder sieht.
 │                                        ⚠️ Nach JEDER Änderung an supabase/schema.sql erneut laufen
 │                                        lassen — eine ungeprüfte Regel ist eine Hoffnung
-└── build_web.sh                     ✅ **Einzige Stelle der Bau-Schalter**: --no-source-maps, -O4, --csp,
-                                         --base-href, Version aus pubspec.yaml, Baunummer aus
-                                         GITHUB_RUN_NUMBER. Die Automatik ruft DIESES Skript auf —
-                                         zwei Flag-Listen liefen sonst auseinander
+├── build_web.sh                     ✅ **Einzige Stelle der Bau-Schalter**: --no-source-maps, -O4, --csp,
+│                                        --base-href, Version aus pubspec.yaml, Baunummer aus
+│                                        GITHUB_RUN_NUMBER. Die Automatik ruft DIESES Skript auf —
+│                                        zwei Flag-Listen liefen sonst auseinander. Ruft am Ende
+│                                        build_privacy_page.py auf
+└── build_privacy_page.py            ✅ store/PRIVACY_POLICY.md → build/web/privacy.html (PLAN.md 29.5).
+                                         Abhängigkeitsfrei (sieben Markdown-Elemente, nachgezählt).
+                                         ⚠️ Schneidet die INTERNE NOTIZ ab, statt auf den Browser zu
+                                         vertrauen. Ein neues Markdown-Element (Bild, Blockzitat)
+                                         erscheint als Rohtext — privacy_page_test.dart hält die Zusage
 
 .github/workflows/deploy-web.yml     ✅ Push auf main → pub get → analyze → test → build_web.sh →
                                          GitHub Pages. Prüfung VOR Veröffentlichung; base-href aus dem
@@ -718,6 +741,15 @@ tool/                                ✅ Skripte — von Hand UND von der Automa
                                          SUPABASE_ANON_KEY aus den Repository-Secrets durch.
                                          ⚠️ Fehlen sie, baut die Automatik eine Fassung OHNE Konto —
                                          kein Fehler, die App verhält sich dann wie vor Phase 27
+                                         Seit 29.3: Schritt „Browser-Durchgang" (webtest_ci.py) nach dem
+                                         Bau, VOR der Veröffentlichung — ⚠️ blockierend, OHNE
+                                         continue-on-error (mit dieser Zeile meldete er „success" auch
+                                         beim Scheitern). Seit 29.5 liegt privacy.html im selben Artefakt
+
+.github/workflows/rls-check.yml      ✅ Server-Zugriffsregeln prüfen (PLAN.md 29.2) — workflow_dispatch,
+                                         NICHT bei jedem Push (legt echte Testkonten an). Auslösen nach
+                                         jeder Änderung an supabase/schema.sql. Reicht NUR den
+                                         anon-Schlüssel durch — mit service_role bewiese sie nichts
 
 .env.example                         ✅ Vorlage für --dart-define-from-file. Die echte `.env` ist
                                          ausgeschlossen. ⚠️ Definierte Werte landen IM BUNDLE und sind
@@ -871,6 +903,31 @@ github.com/lukasylilli/Root-in  (öffentlich, Branch main)
 Abgerufen wird über `raw.githubusercontent.com` (nicht die API), zwischengespeichert in
 `shared_preferences` → alles bleibt offline lesbar. Der Abruf braucht `INTERNET` im **Haupt**-
 Manifest (siehe Hinweise).
+
+## Datenschutzerklärung
+
+📄 **Wo sie steht und wie man sie ändert** (PLAN.md 29.5). Der Text selbst steht bewusst **nicht** hier — siehe die Warnung unten.
+
+| | |
+|---|---|
+| **Text (einzige Quelle)** | `store/PRIVACY_POLICY.md` — Deutsch und Englisch in einer Datei |
+| **Online** | `https://lukasylilli.github.io/Root-in/privacy.html` |
+| **In der App** | Einstellungen → Datenschutzerklärung (öffnet die Adresse oben) |
+| **Wer die Seite baut** | `tool/build_privacy_page.py`, aufgerufen von `tool/build_web.sh` bei jedem Bau |
+| **Geprüft von** | `test/unit/privacy_page_test.dart` |
+
+**Ändern — alles auf github.com, kein Rechner nötig:**
+1. `github.com/lukasylilli/Root-in/blob/main/store/PRIVACY_POLICY.md` öffnen → Stift-Symbol („Edit this file").
+2. Text ändern und **das Datum („Stand" / „Last updated") in beiden Sprachen mitziehen** → „Commit changes".
+3. Etwa fünf Minuten warten, bis unter *Actions* „Web bauen und veröffentlichen" grün ist — dann steht die neue Fassung online.
+
+⚠️ **Die Seite geht nur zusammen mit einem grünen Bau online.** Fällt ein Test oder der Browser-Durchgang durch, bleibt die alte Fassung stehen. Gewollt: Erklärung und App passen so immer zueinander.
+
+⚠️ **Nicht in PLAN.md oder MAP.md abschreiben.** Der alte Gist war genau so eine zweite Kopie und ist zweimal veraltet. Hier steht nur, **wo** der Text liegt.
+
+⚠️ **Die INTERNE NOTIZ** am Dateiende (HTML-Kommentar `<!-- … -->`) wird beim Bau abgeschnitten und erscheint nicht online — dort ist Platz für Änderungsvermerke.
+
+⬜ **Nutzer:** den alten Gist löschen — `gist.github.com/lukasylilli/673c36972d69819d975ffb82a592cca2`.
 
 ## Hinweise
 - Diese Datei bildet **nur die Struktur** ab (was liegt wo) — Fortschritt und Feature-Details stehen in PLAN.md.

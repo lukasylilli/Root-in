@@ -329,8 +329,10 @@ Phase 28 nicht mehr die Play Console (es gibt keine Store-Veröffentlichung
 mehr), sondern schlicht: Wer die Adresse an Schüler gibt und deren E-Mail
 speichert, schuldet ihnen einen zutreffenden, erreichbaren Text.
 
-⚠️ **Der veröffentlichte Gist aktualisiert sich NICHT von selbst.** Diese
-Fassung muss dort von Hand nachgezogen werden:
+✅ **Seit 2026-09-12 (PLAN.md 29.5) veröffentlicht sich diese Datei selbst:**
+`tool/build_privacy_page.py` macht bei jedem Bau daraus
+https://lukasylilli.github.io/Root-in/privacy.html — diese Notiz wird dabei
+abgeschnitten. Der frühere Gist ist überholt und soll gelöscht werden:
 https://gist.github.com/lukasylilli/673c36972d69819d975ffb82a592cca2
 
 Änderungen 2026-08-17 (Phase 28) — die Fassung wurde auf **Web-only**

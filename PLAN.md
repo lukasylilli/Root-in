@@ -2,7 +2,7 @@
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
 >
-> **Stand 2026-08-17.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **205 Tests grün**, `flutter analyze` sauber, 13/13 Zugriffsregeln am Server.
+> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **210 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 10/10 in der Automatik** (29.3), 13/13 Zugriffsregeln am Server.
 >
 > ⚠️ **Ab dem 2026-08-17 gibt es keinen Entwicklungsrechner mehr.** Der Nutzer löscht alles, was nicht auf GitHub liegt — inklusive VS Code. **Jede weitere Änderung entsteht auf GitHub.** Was das für die Prüfung bedeutet, steht in [Abschnitt 9](#9-arbeitsweise--konventionen) und [Phase 29](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17).
 >
@@ -10,17 +10,21 @@
 >
 > ✅ **[Phase 27 — Nutzerkonten & Cloud (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-)**: freiwilliges Konto, Cloud-Sicherung.
 >
+> ✅ **[Phase 29 — Arbeiten und Prüfen ohne Rechner](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17)**: Server-Prüfung und Browser-Durchgang laufen auf GitHub, `meine/` liegt im Repository, die Datenschutzerklärung veröffentlicht sich selbst.
+>
+> 📄 **Datenschutzerklärung — wo sie steht und wie man sie ändert:** Der Text liegt in **`store/PRIVACY_POLICY.md`** (Deutsch + Englisch). Online steht er unter **`https://lukasylilli.github.io/Root-in/privacy.html`**, in der App unter *Einstellungen → Datenschutzerklärung*. **Ändern = die Datei auf GitHub bearbeiten und speichern** — die Automatik baut die Seite neu und stellt sie mit der App zusammen online. Es gibt keine zweite Kopie, die nachgezogen werden müsste (29.5; Schritt für Schritt in MAP.md, Abschnitt „Datenschutzerklärung").
+>
 > ⬜ **Was noch offen ist — in der Reihenfolge, in der es angegangen gehört:**
 >
 > | # | Offen | Wer | Warum in dieser Reihenfolge |
 > |---|---|---|---|
-> | 1 | **`meine/` sichern — letzte Gelegenheit** (24 Dateien, 1,1 MB, **0 versioniert**) | Nutzer | Nach dem Löschen unwiederbringlich (28.0) |
-> | 2 | **Gist der Datenschutzerklärung nachziehen** | Nutzer | Echte Nutzer, echte E-Mails — Pflicht, nicht Formalie |
-> | 3 | **Durchgang auf einem echten iPhone** (Phase 26) | Nutzer | Die einzige Plattform — und der einzige Prüfstand, der bleibt |
-> | 4 | **`rls_check.sh` als GitHub-Action** (29.2) | Claude | Sonst ist die Server-Prüfung nach dem Löschen unerreichbar |
-> | 5 | **Browser-Prüfung in der Automatik** (29.3) | Claude | `webtest.py` fällt mit dem Mac weg; die Hauptplattform hätte sonst keinen echten Browser-Test |
-> | 6 | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer | Ohne ihn ist die E-Mail gespeichert, aber nutzlos |
-> | 7 | **Ein Konto für Root-in und Vox** ([Phase 30](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte)) | beide | Vom Nutzer für die **letzten** Projektschritte angesagt |
+> | 1 | **Benutzername nachtragen können** (31.1) | Claude | Heute bleibt ein Konto, dessen Name vergeben war, **ohne Namen hängen** — und die App bietet keinen Weg heraus |
+> | 2 | **Browser-Durchgang erweitern** (31.2) | Claude | 10 statt früher 20 Punkte; Konto-Rubrik, Anleitung und `privacy.html` sind ungeprüft |
+> | 3 | **Konto vollständig löschen** (31.3) | Claude, dann Nutzer | Heute nur per Nachricht; der Nutzer spielt danach `schema.sql` einmal ein |
+> | 4 | **Alten Gist löschen** (29.5) | Nutzer | Überflüssig, aber auffindbar — und veraltet |
+> | 5 | **Durchgang auf einem echten iPhone** (Phase 26, 27.9) | Nutzer | Chrome in der Automatik sieht weder Safari noch die abgelegte Fassung |
+> | 6 | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer, dann Claude | Ohne ihn ist die E-Mail gespeichert, aber nutzlos. Der Knopf kommt **erst danach** — ungeprüft gebaut wäre er ein Knopf ins Leere |
+> | 7 | **Ein Konto für Root-in und Vox** ([Phase 30](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte)) | Nutzer beantwortet die Fragen, dann beide | Vom Nutzer für die **letzten** Projektschritte angesagt |
 
 ## Inhaltsverzeichnis
 1. [Vision](#1-vision)
@@ -38,8 +42,9 @@
     - [Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase)](#phase-27--nutzerkonten--cloud-speicher-supabase-) ✅
     - [Phase 28 — Nur noch Web](#phase-28--nur-noch-web--umgesetzt-2026-08-17) ✅
     - [Phase 26 — Web-Fassung: was noch offen ist](#phase-26--web-fassung-was-noch-offen-ist-) 🔄
-    - [Phase 29 — Arbeiten und Prüfen ohne Rechner](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17) 🔄
+    - [Phase 29 — Arbeiten und Prüfen ohne Rechner](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17) ✅
     - [Phase 30 — Ein Konto für Root-in und Vox](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte) ⬜
+    - [Phase 31 — Was ohne den Nutzer noch geht](#phase-31--was-ohne-den-nutzer-noch-geht--beauftragt-2026-09-13) 🔄
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
     - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–39)
 12. [Offene Fragen](#12-offene-fragen)
@@ -182,14 +187,14 @@ Feature-first (Dateien im Einzelnen: MAP.md):
 | Prüfung | Wo | Nach dem Löschen |
 |---|---|---|
 | `flutter analyze` | GitHub-Action, **vor** jeder Veröffentlichung | ✅ bleibt |
-| `flutter test` (205 Fälle) | GitHub-Action, **vor** jeder Veröffentlichung | ✅ bleibt |
+| `flutter test` (210 Fälle) | GitHub-Action, **vor** jeder Veröffentlichung | ✅ bleibt |
 | Bau der Web-Fassung | GitHub-Action | ✅ bleibt |
-| **`tool/rls_check.sh`** — Zugriffsregeln von außen | brauchte `.env` auf dem Mac | ⚠️ **verwaist, aber rettbar** — es braucht nur `curl` und die zwei Secrets, die es schon gibt (29.2) |
-| **`tool/webtest.py`** — echter Browser | braucht safaridriver, also macOS | ⛔ **fällt weg.** Ersatz in 29.3 |
+| **`tool/rls_check.sh`** — Zugriffsregeln von außen | GitHub-Action `rls-check.yml`, **von Hand** auszulösen | ✅ **gerettet** (29.2) — nach jeder Änderung an `schema.sql` auslösen |
+| **Echter Browser** — früher `tool/webtest.py` (Safari, macOS) | `tool/webtest_ci.py` (Chrome) in `deploy-web.yml`, **vor** jeder Veröffentlichung, **blockierend** | ✅ **ersetzt** (29.3). ⚠️ Chrome, nicht Safari |
 | iOS-Simulator | macOS | ⛔ fällt weg |
 | **Echtes iPhone** | beim Nutzer | ✅ **bleibt — und ist damit der einzige verbliebene Blick auf die echte Oberfläche** |
 
-⚠️ **Die Folge, ausgesprochen:** Ohne 29.3 kann niemand mehr feststellen, ob die veröffentlichte Seite überhaupt startet. Alle 205 Tests laufen auf der Dart-VM; **keiner** von ihnen öffnet einen Browser. Genau diese Lücke hat in Phase 26 drei kaputte Hauptseiten durchgelassen (Lehre 31). Sie ist jetzt wieder offen — und diesmal gibt es keinen Mac, der sie schließt.
+✅ **Die Lücke ist seit 29.3 geschlossen** (2026-09-12). Alle Tests laufen auf der Dart-VM und öffnen **keinen** Browser — genau diese Lücke hatte in Phase 26 drei kaputte Hauptseiten durchgelassen (Lehre 31). Jetzt startet vor jeder Veröffentlichung ein echter Chrome die gebaute Seite und tippt durch die Reiter; ein roter Durchgang hält die Veröffentlichung auf. ⚠️ **Was er nicht sieht:** Safari-Eigenheiten und die auf dem Home-Bildschirm abgelegte Fassung (Lehre 34). Dafür bleibt das iPhone des Nutzers.
 
 **Was daraus für jede weitere Änderung folgt:**
 - **Kleine Schritte, ein Thema je Push.** Ein grüner Lauf sagt „übersetzt und Tests grün", nicht „sieht richtig aus". Je kleiner der Schritt, desto leichter ist ein Fehler dem Push zuzuordnen.
@@ -232,8 +237,10 @@ Feature-first (Dateien im Einzelnen: MAP.md):
 | 26.10 → 26.13 Web-Fehler behoben | `dart:io` aus `lib/` verbannt, Web-Symbole aus der einen Quelle, Koordinaten-Versatz der abgelegten Fassung | 08-14/16 |
 | 27 Nutzerkonten & Cloud | Supabase: freiwilliges Konto (E-Mail + Passwort + Benutzername), Cloud-Sicherung im vorhandenen Backup-Format, Profil-Abgleich, Datenschutzerklärung neu · Zugriffsregeln von außen mit echten Konten geprüft | 08-17 |
 | 27.11 Geteilter Link | QR-Code und Share-Text zeigten auf eine Play-Seite mit **HTTP 404**; jetzt auf die Web-Fassung | 08-17 |
+| 28 Nur noch Web | Erinnerungen bis in die Datenbank entfernt (Schema 4), Android/iOS/Desktop und Store-Material gestrichen | 08-17 |
+| 29 Arbeiten ohne Rechner | Server-Prüfung als Action, Browser-Durchgang (Chrome) **blockiert** die Veröffentlichung, `meine/` versioniert, `privacy.html` entsteht bei jedem Bau | 09-12 |
 
-**Stand nach Phase 28: 205 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, 13/13 Zugriffsregeln am Server. ⚠️ Die Zahl ist **kleiner** als die 228 von Phase 27 — mit Erinnerungen und Startbildschirm-Widgets sind auch deren 23 Tests entfallen. Weniger Tests sind hier kein Rückschritt, sondern die Folge von weniger Funktion.
+**Stand nach Phase 29: 210 Tests grün** (+2 bewusst übersprungen), darunter neu `privacy_page_test.dart`. **Stand nach Phase 28: 205 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, 13/13 Zugriffsregeln am Server. ⚠️ Die Zahl ist **kleiner** als die 228 von Phase 27 — mit Erinnerungen und Startbildschirm-Widgets sind auch deren 23 Tests entfallen. Weniger Tests sind hier kein Rückschritt, sondern die Folge von weniger Funktion.
 
 ### 10.2 Festlegungen aus erledigten Phasen, die man noch braucht
 
@@ -243,7 +250,7 @@ Die Langfassungen sind eingedampft; was hier steht, braucht man beim Weiterbauen
 
 **Teilen (19).** Knopf auf Home **und** Konto, beide öffnen `showShareProgressSheet()`. Der Konto-Weg musste bleiben, weil die Anleitung „Lernplanung" ihn wörtlich beschreibt. Die Karte hat eine **feste Breite**; der `Screenshot`-Knoten liegt **innerhalb** der Vorschau-`FittedBox`, sonst wäre das Bild so klein wie die Vorschau. Den Übersicht-Block bekommt sie als **fertiges Widget**, damit `core/` nichts aus `features/` importiert.
 
-**Werbung stillgelegt (20).** Alles auskommentiert, nichts gelöscht; jede Stelle trägt den Marker `PHASE 20 (2026-08-01)`. Wiedereinschalten ist ein `grep`. Der Kaufmerker in `shared_preferences` bleibt unangetastet. ⬜ **Der veröffentlichte Gist der Datenschutzerklärung ist noch nicht nachgezogen** (27.8).
+**Werbung stillgelegt (20).** Alles auskommentiert, nichts gelöscht; jede Stelle trägt den Marker `PHASE 20 (2026-08-01)`. Wiedereinschalten ist ein `grep`. Der Kaufmerker in `shared_preferences` bleibt unangetastet. ✅ Die Datenschutzerklärung veröffentlicht sich seit 29.5 selbst (`privacy.html`); der alte Gist ist nur noch zu löschen.
 
 **Standard-Kategorien (21).** Entstehen beim Erststart in der gewählten Sprache (`ensureDefaultCategories`, nur bei leerer Tabelle); `addMissingCategories` rüstet Bestandsnutzer nach. Sie sind **Nutzerdaten** — nichts im Code schützt sie; das Symbol wird über den **Namen** zugeordnet, wer umbenennt verliert es.
 
@@ -257,12 +264,12 @@ Die Langfassungen sind eingedampft; was hier steht, braucht man beim Weiterbauen
 
 **Web-Fassung (26).** Drift auf WebAssembly (`sqlite3.wasm` + `drift_worker.js`, von `tool/fetch_web_db_assets.sh` geholt). **Die beste Weiche ist keine Weiche** — Sicherung und Bild-Teilen verloren ihren Plattform-Anteil ganz, statt einen Web-Sonderfall zu bekommen; mit Phase 28 ist diese Linie zu Ende gegangen und die Weichen sind ganz weg. Bau-Schalter stehen ausschließlich in `tool/build_web.sh` — die Automatik ruft dasselbe Skript. **Kein `gh-pages`-Zweig**: Pages nimmt das Artefakt direkt entgegen, damit landet das Bauergebnis nie in der Versionsgeschichte.
 
-**Was die vier Web-Fehler waren (26.10–26.13)** — die Ursachen stehen als Lehren 30–34; hier nur das Ergebnis: `dart:io` ist vollständig aus `lib/` verschwunden (`package:http` überall), die Web-Symbole kommen aus derselben Quelle wie die Android-Symbole, und `web/index.html` trägt **kein** `viewport-fit=cover` und `default` statt `black-translucent`. `tool/webtest.py` prüfte seither **20 Punkte** inklusive aller vier Reiter, einer Anleitungs-Seite und der Rubrik „Konto & Cloud" — und wurde am kaputten Stand rot gemessen, bevor er am reparierten grün wurde. ⚠️ **Er braucht macOS und ist ab Phase 29 nicht mehr ausführbar** (Abschnitt 9); die Datei bleibt als Vorlage für den Ersatz in 29.3.
+**Was die vier Web-Fehler waren (26.10–26.13)** — die Ursachen stehen als Lehren 30–34; hier nur das Ergebnis: `dart:io` ist vollständig aus `lib/` verschwunden (`package:http` überall), die Web-Symbole kommen aus derselben Quelle wie die Android-Symbole, und `web/index.html` trägt **kein** `viewport-fit=cover` und `default` statt `black-translucent`. `tool/webtest.py` prüfte seither **20 Punkte** inklusive aller vier Reiter, einer Anleitungs-Seite und der Rubrik „Konto & Cloud" — und wurde am kaputten Stand rot gemessen, bevor er am reparierten grün wurde. ⚠️ **Er braucht macOS und ist ab Phase 29 nicht mehr ausführbar**; sein Ersatz `tool/webtest_ci.py` läuft seit 29.3 in der Automatik.
 
 ---
 
 ### Phase 27 — Nutzerkonten & Cloud-Speicher (Supabase) ✅
-**Code fertig am 2026-08-17.** Offen bleibt beim Nutzer nur noch der veröffentlichte Gist (27.8) und ein eigener SMTP-Dienst (27.2).
+**Code fertig am 2026-08-17.** Offen bleibt beim Nutzer ein eigener SMTP-Dienst (27.2) und der Gerätedurchgang (27.9); was Claude noch nachzieht, steht in [Phase 31](#phase-31--was-ohne-den-nutzer-noch-geht--beauftragt-2026-09-13).
 **Vom Nutzer am 2026-08-16 beauftragt:** *„اطلاعات حساب کاربر اینجا ذخیره بشه — Supabase … اینجوری ی سرور داریم که رایگان و اتوماتیک اطلاعات کاربران رو ذخیره میکنه."* Ein Server, der die Nutzerdaten kostenlos und automatisch aufbewahrt.
 
 #### 27.0 Was diese Phase umkehrt — vor dem ersten Handgriff lesen
@@ -382,7 +389,7 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
   | B nimmt A's Benutzernamen | ✅ abgewiesen (HTTP 409, eindeutiger Index) |
 
 - [x] **`tool/rls_check.sh` bleibt im Projekt** und liest die Zugangsdaten aus `.env`. ⚠️ **Nach jeder Änderung an `schema.sql` erneut laufen lassen** — eine Regel, die man nicht gegengeprüft hat, ist eine Hoffnung. Die zwei Testkonten liegen auf `@example.com` (per RFC 2606 reserviert, dort gibt es niemanden) und dürfen stehen bleiben.
-- [ ] ⚠️ **Offen und nicht zu vergessen:** „Konto löschen" kann der `anon`-Schlüssel nicht auslösen — der Eintrag in `auth.users` braucht erhöhte Rechte (Edge Function). Solange es die nicht gibt, löscht die App nur Daten und meldet ab; der leere Auth-Eintrag bleibt. **Für 27.8 zu klären.**
+- [ ] ⚠️ **Offen und nicht zu vergessen:** „Konto löschen" kann der `anon`-Schlüssel nicht auslösen — der Eintrag in `auth.users` braucht erhöhte Rechte (Edge Function). Solange es die nicht gibt, löscht die App nur Daten und meldet ab; der leere Auth-Eintrag bleibt. **Für 27.8 zu klären.** ➜ Wird in **31.3** gebaut.
 
 #### 27.5 Anmelden in der App *(E-Mail + Passwort + Benutzername)*
 
@@ -405,15 +412,15 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] **Die Übersetzung der Gründe steht in der Oberfläche, nicht im Dienst** (`authIssueText`, `usernameIssueText`). Der Dienst kennt keine Sprache, die Oberfläche keine Server-Codes. Wer das vermischt, braucht `BuildContext` in einem Dienst — und kann ihn nicht mehr testen.
 - [x] **Der Benutzername wird geprüft, BEVOR ein Konto entsteht.** Sonst legte eine ungültige Eingabe erst das Konto an und scheiterte dann am Namen.
 - [x] **`cloudSyncEnabledProvider`** statt eines direkten Zugriffs auf `supportsCloudSync` in der Oberfläche. ⚠️ Ohne ihn wäre die halbe Oberfläche dieser Phase **unprüfbar**: Im Testlauf gibt es keine Schlüssel, also verstecken sich die Widgets grundsätzlich.
-- [ ] ⚠️ **Reihenfolge bei der Registrierung, und was schiefgehen kann:** Erst `signUp(email, password)`, **dann** die Profilzeile mit dem Benutzernamen (die braucht die Kennung, die es erst danach gibt). Ist der Name schon vergeben, existiert das Konto bereits, die Profilzeile aber nicht — **kein kaputter Zustand, aber einer, der behandelt werden muss**: Die Oberfläche fragt nach einem anderen Namen, `claimUsername()` schreibt ihn nach. Das Konto darf dabei **nicht** gelöscht werden; nur der Name fehlt.
-- [ ] **Verfügbarkeit vorab prüfen** über `username_available()` — reine Höflichkeit. ⚠️ **Die Wahrheit ist der eindeutige Index der Datenbank**: Zwischen Frage und Absenden kann ein anderer denselben Namen nehmen. Bei Zweifeln antwortet die Abfrage „frei" — ein Formular, das wegen einer wackligen Verbindung „vergeben" behauptet, hält jemanden von seinem eigenen Namen ab.
+- [ ] ⚠️ **Reihenfolge bei der Registrierung, und was schiefgehen kann:** Erst `signUp(email, password)`, **dann** die Profilzeile mit dem Benutzernamen (die braucht die Kennung, die es erst danach gibt). Ist der Name schon vergeben, existiert das Konto bereits, die Profilzeile aber nicht — **kein kaputter Zustand, aber einer, der behandelt werden muss**: Die Oberfläche fragt nach einem anderen Namen, `claimUsername()` schreibt ihn nach. Das Konto darf dabei **nicht** gelöscht werden; nur der Name fehlt. ➜ **Der Dienst kann es (`claimUsername`), die Oberfläche nie — 31.1.**
+- [ ] **Verfügbarkeit vorab prüfen** über `username_available()` — reine Höflichkeit. ⚠️ **Die Wahrheit ist der eindeutige Index der Datenbank**: Zwischen Frage und Absenden kann ein anderer denselben Namen nehmen. Bei Zweifeln antwortet die Abfrage „frei" — ein Formular, das wegen einer wackligen Verbindung „vergeben" behauptet, hält jemanden von seinem eigenen Namen ab. ➜ Der Dienst hat `isUsernameAvailable`, das Formular fragt nie — 31.1.
 - [ ] **„Passwort vergessen" ist vorgesehen**, funktioniert aber erst mit eigenem SMTP (27.2). ⚠️ Solange es das nicht gibt, darf der Knopf **nicht** dastehen und ins Leere greifen — dieselbe Regel wie bei den Erinnerungen im Browser (26.1).
 - [x] **Rubrik „Konto & Cloud" auf der bestehenden Konto-Seite** (`account_cloud_card.dart`) — **nicht** in einer eigenen Rubrik daneben. ⚠️ Entscheidung des Nutzers und die richtige: Ein Konto ist genau das, worum es auf dieser Seite ohnehin geht; ein zweiter Ort für dasselbe Thema wäre die verbotene Doppelung, und der Nutzer müsste sich merken, welcher der beiden Orte was kann.
 - [x] Zeigt: angemeldet als … · die hinterlegte E-Mail **sichtbar** samt Hinweis (Gegenmaßnahme zum Tippfehler, 27.0b) · Stand der letzten Sicherung · Sichern · Wiederherstellen · Abmelden. **Verschwindet vollständig ohne Cloud.**
 - [x] Texte in **allen drei** ARB-Dateien, `flutter gen-l10n` gelaufen (Lehre 20).
 - [x] **Fehlermeldungen sprachneutral** durchgereicht und erst in der Oberfläche übersetzt.
 - [x] `test/support/fake_auth_service.dart` + `test/widget/account_cloud_card_test.dart` (6 Fälle, darunter **„ohne Cloud ist die Rubrik gar nicht da"**, das Konto ohne Benutzernamen und die persische Fassung). ⚠️ **Kein Test spricht mit dem echten Server.**
-- [ ] „Konto löschen" — hängt an 27.8 (der `anon`-Schlüssel kann `auth.users` nicht löschen).
+- [ ] „Konto löschen" — hängt an 27.8 (der `anon`-Schlüssel kann `auth.users` nicht löschen). ➜ 31.3.
 
 #### 27.6 Profil in der Cloud ✅ *(gebaut 2026-08-17)*
 - [x] **`profile_cloud_sync.dart`** — beim Anmelden abgleichen, bei lokaler Änderung hochladen. Angehängt an dieselbe Listener-Stelle in `app.dart` wie Widget und Tagesstand.
@@ -450,9 +457,9 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] **Punkt 9 (Rechte) neu geschrieben** — der alte Satz „wir speichern nichts, also gibt es nichts herauszugeben" ist mit Konto schlicht falsch. Jetzt: Auskunft/Übertragbarkeit über den vorhandenen Export, Berichtigung in der App, Löschung, Rechtsgrundlage Einwilligung, Aufsichtsbehörde.
 - [x] **Die Erststart-Erklärung sagt es jetzt richtig** (alle drei Sprachen): „Deine Daten bleiben auf diesem Gerät; ein Konto ist freiwillig und legt zusätzlich eine Sicherung an." Der alte Satz behauptete das Gegenteil dessen, was die App seit heute kann.
 - [x] **„Daten auf dem Server löschen"** in der Rubrik „Konto & Cloud" (`deleteServerData()`): löscht Sicherung und Profilzeile, lässt den lokalen Bestand unangetastet. ⚠️ **Das ist bewusst nicht als „Konto löschen" beschriftet** — der Eintrag in `auth.users` bleibt, weil der öffentliche Schlüssel ihn nicht entfernen darf. Die Datenschutzerklärung nennt dafür den Weg über eine Nachricht; sie darf den Knopf **nicht** als vollständige Löschung ausgeben.
-- [ ] ⬜ **Den Gist neu speichern** — er zieht nicht von selbst nach (steht seit Phase 20 offen und ist jetzt **zweifach** veraltet). Muss der Nutzer tun; Quelle ist `store/PRIVACY_POLICY.md`.
-- [ ] ⬜ *(später, nicht blockierend)* Vollständige Kontolöschung über eine Edge Function, damit der Weg nicht über eine Nachricht laufen muss.
-- [ ] Abschnitt 3 dieses Plans und die Datenschutz-Aussage im Onboarding prüfen — dort steht heute wörtlich, dass alles auf dem Gerät bleibt.
+- [x] ~~**Den Gist neu speichern**~~ — **gegenstandslos seit 29.5:** Die Erklärung entsteht bei jedem Bau als `privacy.html`. Dem Nutzer bleibt nur, den alten Gist zu löschen.
+- [ ] ⬜ Vollständige Kontolöschung, damit der Weg nicht über eine Nachricht laufen muss ➜ **31.3** (über eine Datenbank-Funktion statt einer Edge Function, Begründung dort).
+- [x] **Abschnitt 3 und die Datenschutz-Aussage im Onboarding geprüft** (2026-09-13): Abschnitt 3 beschreibt Gerät + freiwillige Kopie; `onboardingWelcomeBody` sagt „Deine Daten bleiben auf diesem Gerät; ein Konto ist freiwillig und legt zusätzlich eine Sicherung an." — beides stimmt.
 
 #### 27.9 Prüfen
 - [x] **Im echten Browser angesehen** (lokaler Bau **mit** Schlüsseln, Safari im Telefon-Format): Die Rubrik „Konto & Cloud" steht oben auf der Konto-Seite, persisch und rechtsläufig, mit dem Knopf „ورود". Bildschirmfoto gemacht — nicht aus grünen Tests geschlossen.
@@ -516,7 +523,7 @@ Nach dem Löschen gibt es **keine zweite Kopie**. Alles, was nicht im Repository
 
 | Was | Lage | Zu tun |
 |---|---|---|
-| **`meine/`** — 20 Screenshots, die Berg-Animations-Vorlage (React/SVG), zwei Design-Specs, `Logo.jpeg` | ⛔ **0 von 24 Dateien versioniert** — bewusst ausgeschlossen (Phase 26) | **Der Nutzer muss diesen Ordner selbst woandershin sichern.** Er wird NICHT ins öffentliche Repository geschoben; es ist sein Material, und die Entscheidung darüber ist seine |
+| **`meine/`** — 19 Vorlagen-Bilder, die Berg-Animations-Vorlage (React/SVG), zwei Design-Specs, `Logo.jpeg` | ✅ **seit 2026-09-12 im Repository** — auf Entscheidung des Nutzers (bis dahin bewusst ausgeschlossen, 0 von 24 Dateien versioniert) | nichts mehr |
 | `.env` (Supabase-Adresse + öffentlicher Schlüssel) | ⛔ nicht versioniert | **Kein Verlust:** Beide Werte liegen als GitHub-Actions-Secrets, und der `anon`-Schlüssel steht ohnehin auslesbar im veröffentlichten Bundle (Lehre 26). Die Automatik baut also weiter |
 | `assets/icon/app_icon.png` (1024×1024) | ✅ versioniert | nichts — das App-Symbol überlebt. `Logo.jpeg` als Ursprung liegt in `meine/` |
 | Signaturschlüssel `~/development/keys/root-in-upload.jks` | ⛔ außerhalb des Projekts | Mit Anweisung 3 **gegenstandslos**. Wer ihn trotzdem behalten will, sichert ihn jetzt; ohne ihn ist eine Play-Veröffentlichung später unmöglich |
@@ -546,7 +553,7 @@ Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffe
 
 #### 28.3 Datenschutzerklärung ✅
 - [x] Erinnerungen und Benachrichtigungen aus dem Text nehmen, Android-/Play-Bezüge streichen
-- [ ] ⬜ ⚠️ **Der Gist bleibt Nutzersache** — er zieht nicht von selbst nach. Neu ist nur: Ab jetzt ist die Quelle so kurz, dass ein Nachziehen ein Kopieren ist
+- [x] ~~**Der Gist bleibt Nutzersache**~~ — mit 29.5 überholt: Die Erklärung veröffentlicht sich selbst; der Gist ist nur noch zu löschen
 
 #### 28.4 Weiterarbeit auf GitHub ✅
 - [x] Alles gepusht, `main` grün (die Automatik läuft `analyze` + `test` **vor** jeder Veröffentlichung).
@@ -563,7 +570,7 @@ Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffe
 ---
 
 ### Phase 26 — Web-Fassung: was noch offen ist 🔄
-**Die einzige Plattform** (Abschnitt 2). Die Fassung ist gebaut und veröffentlicht; zuletzt am 2026-08-17 mit 20/20 im echten Browser geprüft — ⚠️ **ein Stand, der sich seither nicht mehr wiederholen lässt**, weil der Prüfstand mit dem Rechner weggefallen ist (Phase 29).
+**Die einzige Plattform** (Abschnitt 2). Die Fassung ist gebaut und veröffentlicht; zuletzt am 2026-08-17 mit 20/20 in Safari geprüft; **seit 29.3 prüft die Automatik bei jedem Push in Chrome** (10 Punkte, blockierend).
 
 **Der Durchgang auf einem echten iPhone** — er war schon vorher der einzige Test, den weder Safari am Mac noch der Simulator ersetzen konnten (in beiden lässt sich das Ablegen nicht nachstellen, 26.12). ⚠️ **Seit Phase 29 ist er nicht mehr nur der beste, sondern der einzige Blick auf die echte Oberfläche:**
 
@@ -578,7 +585,8 @@ Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffe
 
 ---
 
-### Phase 29 — Arbeiten und Prüfen ohne Rechner 🔄 *(beauftragt 2026-08-17)*
+### Phase 29 — Arbeiten und Prüfen ohne Rechner ✅ *(beauftragt 2026-08-17)*
+**Umgesetzt am 2026-09-12.** Beim Nutzer bleibt nur, den alten Gist zu löschen (29.5).
 
 **Vom Nutzer:** *„هیچ چیزی دیگ از داخل مک و پوشه های محلی برنامه نویسی و یا کد نویسی نمیشه چون در حال پاک کردن هر چیزی هستم که توی گیت هاب نیست. از الان به بعد تمام تغییرات فقط در گیت هاب."* Dazu wird VS Code gelöscht; gearbeitet wird künftig aus der Cloud heraus.
 
@@ -655,6 +663,36 @@ Ein Konto ist bei Supabase eine Zeile in `auth.users`, und die gehört **einem P
 
 ---
 
+### Phase 31 — Was ohne den Nutzer noch geht 🔄 *(beauftragt 2026-09-13)*
+
+**Vom Nutzer:** *„mach alles weiter, laut plan und map bis ende, es bleibt nur was ich tun muss und du kannst nicht."* Dazu der Hinweis, dass auf seinem Rechner nichts mehr liegt — **jede Änderung geht auf GitHub**, geprüft wird von der Automatik.
+
+Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, kein Gerät und keine Entscheidung des Nutzers** brauchen. Alles andere steht in der Tabelle ganz oben und bleibt, wo es ist.
+
+⚠️ **Bewusst NICHT hier: „Passwort vergessen" (27.5).** Der Knopf ließe sich bauen, aber nicht prüfen — ohne SMTP kommt keine Nachricht an, und der Weg zurück in die App (Link aus der E-Mail, neues Passwort setzen) ist genau der Teil, der im Browser schiefgehen kann. **Ein ungeprüfter Knopf ins Leere ist schlechter als keiner** (dieselbe Regel wie 26.1). Er kommt, wenn der Dienst steht.
+
+#### 31.1 Benutzername nachtragen (27.5) ⬜
+- [ ] **Vor der Registrierung fragen, ob der Name frei ist** (`isUsernameAvailable`). Der Dienst kann es seit 27.5 — das Formular hat nie gefragt.
+- [ ] ⚠️ **Scheitert der Name NACH dem Anlegen des Kontos** (jemand war schneller), bleibt das Sheet offen und fragt **nur noch nach dem Namen**; `claimUsername` schreibt ihn nach. Heute steht dann „Name vergeben" im Formular — und ein zweiter Versuch scheitert an „E-Mail schon registriert", weil das Konto ja schon existiert. **Aus diesem Zustand kommt der Nutzer heute nicht heraus.**
+- [ ] **Auf der Konto-Seite einen Namen nachtragen**, solange keiner da ist — „Noch kein Benutzername" steht dort schon, aber ohne Knopf dahinter.
+- [ ] Tests mit `FakeAuthService`.
+
+#### 31.2 Browser-Durchgang erweitern (29.3) ⬜
+- [ ] **Rubrik „Konto & Cloud"** bietet „Anmelden" an — das belegt nebenbei, dass die Supabase-Schlüssel im Bau angekommen sind. ⚠️ Ohne Secrets ist die fehlende Rubrik **richtig**; das muss der Durchgang unterscheiden, wie `webtest.py` es tat.
+- [ ] **Eine Anleitungs-Seite** öffnet sich und zeigt Text — sie lädt aus dem Repository, also über das Netz.
+- [ ] **`privacy.html`** ist erreichbar, enthält beide Sprachfassungen und **nicht** die interne Notiz.
+- [ ] Nicht anmelden — dieselbe Regel wie bisher.
+
+#### 31.3 Konto vollständig löschen (27.4 · 27.8) ⬜
+- [ ] **Datenbank-Funktion `delete_own_account()`** in `schema.sql` statt einer Edge Function. ⚠️ **Die Abweichung gehört begründet:** Eine Edge Function bräuchte eine eigene Bereitstellung (Supabase-CLI plus Zugangs-Token als Secret) — ein zweiter Weg auf den Server neben dem SQL-Editor. Die Funktion geht denselben Weg wie der Rest von `schema.sql` und lässt sich mit `rls_check.sh` von außen prüfen. Sie löscht **ausschließlich** `auth.uid()`; `on delete cascade` räumt Profil und Sicherung mit ab.
+- [ ] **Knopf „Konto löschen"** in „Konto & Cloud", mit einer Rückfrage, die ausspricht, was verschwindet und was bleibt (der Bestand auf dem Gerät).
+- [ ] ⚠️ **Solange die Funktion auf dem Server fehlt, darf der Knopf nicht ins Leere greifen** und nicht mehr behaupten, als geschehen ist.
+- [ ] `rls_check.sh`: ein Wegwerf-Konto löscht sich selbst, danach scheitert seine Anmeldung; ohne Anmeldung ist die Funktion nicht aufrufbar.
+- [ ] Datenschutzerklärung (beide Sprachen): Löschen geht in der App, nicht mehr per Nachricht.
+- [ ] ⬜ **Nutzer:** `supabase/schema.sql` einmal im SQL-Editor ausführen, danach *Actions → Server-Zugriffsregeln prüfen → Run workflow*.
+
+---
+
 ## 11. Entscheidungs-Log & dauerhafte Lehren
 
 ### 11.1 Log (Kurzfassung)
@@ -696,6 +734,11 @@ Ein Konto ist bei Supabase eine Zeile in `auth.users`, und die gehört **einem P
   - ⚠️ **Die eigentliche Folge ist nicht bequemlicher, sondern gefährlicher:** Von drei Prüfständen bleibt einer (`analyze` + `test` in der Automatik), einer verwaist (`rls_check.sh` — rettbar, 29.2), einer fällt weg (`webtest.py`, braucht macOS). **Keiner der 205 Tests öffnet einen Browser.** Genau diese Lücke ließ in Phase 26 drei kaputte Hauptseiten durch (Lehre 31), und sie ist jetzt wieder offen (Lehre 39).
   - **Was bleibt, ist der Nutzer mit seinem iPhone.** Damit wird er vom Auftraggeber zum letzten Prüfstand — das gehört ausgesprochen, weil es die Reihenfolge der offenen Punkte bestimmt.
   - **Neu angesagt: ein gemeinsames Konto für Root-in und Vox** (Phase 30). Festgehalten ist nur, was feststeht; über Vox ist in diesem Projekt nichts dokumentiert, also wird darüber auch nichts behauptet. ⚠️ Aufgeschrieben ist dafür, was „ein Konto" auf der Root-in-Seite **erzwingt** — ein gemeinsames Supabase-Projekt — und dass der günstigste Zeitpunkt **vor** dem ersten echten Nutzer liegt.
+
+- **2026-09-12 (Phase 29 umgesetzt)** — Server-Prüfung als Action (von Hand), Browser-Durchgang in der Automatik, `meine/` auf Wunsch des Nutzers ins Repository, Datenschutzerklärung als `privacy.html` bei jedem Bau.
+  - **Der Browser-Durchgang war zuerst nicht blockierend — und damit wertlos.** `continue-on-error` meldet „success" auch beim Scheitern. Beim Umstellen auf blockierend war der erste Lauf **rot** (6/10): Beim Abschreiben aus `webtest.py` war das Wegklicken des Speicher-Hinweises verloren gegangen. Unfreiwillig, aber genau die Gegenprobe, die Lehre 32 verlangt.
+  - **„Schreib die Datenschutzerklärung in PLAN und MAP" wurde nach seinem Zweck umgesetzt, nicht wörtlich:** Eine weitere Kopie hätte den Fehler wiederholt, an dem der Gist zweimal veraltet ist. Stattdessen **eine** Quelle, die sich selbst veröffentlicht — und PLAN/MAP sagen, **wo** sie steht und **wie** man sie ändert.
+- **2026-09-13 (Phase 31 beauftragt)** — *„mach alles weiter … bis ende."* Gesammelt, was ohne Nutzer geht: Benutzername nachtragen (ein echter Sackgassen-Zustand, beim Durchsehen von 27.5 gefunden — der Dienst konnte es, die Oberfläche nie), Browser-Durchgang erweitern, Konto vollständig löschen. „Passwort vergessen" bewusst **nicht**: ohne SMTP nicht prüfbar.
 
 ### 11.2 Dauerhafte Lehren & Fallstricke
 
@@ -748,9 +791,9 @@ Ein Konto ist bei Supabase eine Zeile in `auth.users`, und die gehört **einem P
 
 - **Zwei Geräte, zwei Datenbestände.** ✅ **Mit Phase 27 halb gelöst, und das ist Absicht:** Wer sich auf beiden anmeldet, kann seinen Bestand übertragen (sichern hier, wiederherstellen dort). Ein **stiller Abgleich** in beide Richtungen ist es nicht. Ein echter Abgleich bräuchte Zeitstempel je Zeile und Grabsteine für Löschungen — eine eigene Phase.
 - ~~**Erinnerungen im Web: bauen oder als Grenze benennen?**~~ ✅ **Entschieden am 2026-08-17: als Grenze benannt.** Der Nutzer: *„یاد آور ها رو کلا حذف کن چون نسخه وب نمیتونه الارم داشته باشه."* Sie sind **entfernt**, nicht ausgeblendet (Phase 28). ⚠️ Wer sie je zurückholen will, holt sich mehr als einen Schalter zurück: Web-Push braucht Service Worker, Push-Anmeldungen je Gerät, Erinnerungszeiten als abfragbare Zeilen **samt Zeitzone** auf dem Server und einen Wecker, der jede Minute nachsieht — und es ginge **nur mit Konto**, das heute freiwillig ist. Die Begründung steht im Docstring von `platform_support.dart`, dort wird sie gelesen.
-- ⚠️ **Wie wird die veröffentlichte Seite künftig geprüft?** Seit dem Wegfall des Rechners öffnet **kein** automatischer Test mehr einen Browser (Abschnitt 9). Der Weg steht in 29.3; bis er gebaut ist, ist „die Seite läuft" eine Annahme und kein Befund.
+- ~~**Wie wird die veröffentlichte Seite künftig geprüft?**~~ ✅ **Seit 29.3 durch einen echten Chrome in der Automatik**, vor jeder Veröffentlichung und blockierend. Offen bleibt, was Chrome nicht sieht: Safari und die abgelegte Fassung — dafür das iPhone des Nutzers.
 - ⚠️ **Ein Konto für Root-in und Vox** — die Anweisung steht, die Voraussetzungen sind offen (Phase 30). Die wichtigste Frage ist nicht technisch, sondern zeitlich: **vor** dem ersten echten Nutzer ist der Umbau billig, danach nicht mehr.
-- **Vollständige Kontolöschung** braucht eine Edge Function (der öffentliche Schlüssel darf `auth.users` nicht anfassen). Heute löscht die App die Server-Daten und meldet ab; die vollständige Löschung läuft über eine Nachricht. Offen, ob das reicht.
+- **Vollständige Kontolöschung** ➜ wird in **31.3** gebaut, über eine Datenbank-Funktion statt einer Edge Function. Bis dahin löscht die App die Server-Daten, und die vollständige Löschung läuft über eine Nachricht.
 - **Sollen neue Beiträge in „موارد دیگر" gemeldet werden?** Möglich wäre ein stiller Vergleich beim App-Start (neue Einträge im `index.json` gegenüber dem gespeicherten Stand) und ein Punkt am Einstellungs-Eintrag.
 - **Die persische Übersetzung ist ein Entwurf** — alle Schlüssel sind gefüllt, gelesen hat sie noch kein Muttersprachler. Korrekturen betreffen nur `lib/l10n/app_fa.arb`.
 - **Farbe je Kategorie?** Heute trägt die Gewohnheit die Farbe. Kategorie-Farben würden Diagramme klarer machen, kosten aber eine DB-Spalte — und damit eine Migration (Abschnitt 9).
