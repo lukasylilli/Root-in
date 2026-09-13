@@ -148,12 +148,14 @@ class _SignedInState extends ConsumerState<_SignedIn> {
     );
   }
 
-  Future<void> _deleteServerData() async {
+  /// „Konto löschen" (PLAN.md 31.3): so vollständig, wie der Server es
+  /// gerade zulässt — und danach genau das sagen, was geschehen ist.
+  Future<void> _deleteAccount() async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.cloudDeleteTitle),
-        content: Text(l10n.cloudDeleteBody),
+        title: Text(l10n.cloudDeleteAccountTitle),
+        content: Text(l10n.cloudDeleteAccountBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -161,25 +163,44 @@ class _SignedInState extends ConsumerState<_SignedIn> {
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(l10n.cloudDeleteConfirm),
+            child: Text(l10n.cloudDeleteAccountConfirm),
           ),
         ],
       ),
     );
     if (confirmed != true || !mounted) return;
 
+    // ⚠️ Alles, was nach dem Löschen noch gebraucht wird, JETZT greifen: Mit
+    // dem Abmelden verschwindet diese Ansicht (die Karte zeigt dann
+    // „abgemeldet"), und danach sind weder `context` noch `ref` benutzbar —
+    // die Rückmeldung an den Nutzer ginge verloren.
+    final messenger = ScaffoldMessenger.of(context);
+    final auth = ref.read(authServiceProvider);
+    final backup = ref.read(cloudBackupServiceProvider);
+    var message = l10n.cloudSyncFailed;
+    final done = l10n.cloudDeleteAccountDone;
+    final partial = l10n.cloudDeleteAccountPartial;
+
     setState(() => _busy = true);
-    final status = await ref
-        .read(cloudBackupServiceProvider)
-        .deleteServerData();
+    switch (await auth.deleteAccount()) {
+      case AccountDeletion.deleted:
+        message = done;
+      case AccountDeletion.unavailable:
+        // Die Funktion fehlt auf dem Server. Dann das, was der öffentliche
+        // Schlüssel darf — und ehrlich sagen, was fehlt.
+        // ⚠️ ABMELDEN gehört dazu: Sonst lädt die automatische Sicherung beim
+        // nächsten Häkchen alles wieder hoch, und das Löschen war umsonst.
+        if (await backup.deleteServerData() == CloudSyncStatus.ok) {
+          await auth.signOut();
+          message = partial;
+        }
+      case AccountDeletion.failed:
+        break;
+    }
+    messenger.showSnackBar(SnackBar(content: Text(message)));
     if (!mounted) return;
     setState(() => _busy = false);
     ref.invalidate(_lastBackupProvider);
-    _say(
-      status == CloudSyncStatus.ok
-          ? l10n.cloudDeleteDone
-          : l10n.cloudSyncFailed,
-    );
   }
 
   @override
@@ -249,9 +270,9 @@ class _SignedInState extends ConsumerState<_SignedIn> {
         // ⚠️ Steht ganz unten und in der Warnfarbe: Es ist der einzige Knopf
         // hier, der etwas unwiderruflich wegnimmt.
         TextButton(
-          onPressed: _busy ? null : _deleteServerData,
+          onPressed: _busy ? null : _deleteAccount,
           style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
-          child: Text(l10n.cloudDeleteData),
+          child: Text(l10n.cloudDeleteAccount),
         ),
       ],
     );

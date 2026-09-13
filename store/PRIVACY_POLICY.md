@@ -6,7 +6,7 @@
 
 **Verantwortlich:** Saleh Aliramezani, Dornbirn, Österreich
 **Kontakt:** alirzsaleh@gmail.com · Telegram: https://t.me/LukasAlmani
-**Stand:** August 2026 (Web-Fassung)
+**Stand:** September 2026 (Web-Fassung)
 
 ### Kurzfassung
 
@@ -83,9 +83,11 @@ werten sie nicht aus.
 bist. Heruntergeladen wird **nur**, wenn du es ausdrücklich verlangst.
 
 **Wie du es wieder loswirst:** In der App unter *Einstellungen → Konto →
-Konto & Cloud* kannst du deine Daten auf dem Server löschen und dich
-abmelden. Eine vollständige Löschung deines Kontos veranlassen wir auf Zuruf
-an alirzsaleh@gmail.com — wir bestätigen sie dir.
+Konto & Cloud → Konto löschen*. Damit verschwinden dein Konto (E-Mail-Adresse
+und Passwort-Hash), dein Benutzername, dein Profil und die Sicherung auf dem
+Server — endgültig. Die Daten auf deinem Gerät bleiben davon unberührt.
+Meldet die App, dass sie das Konto nicht vollständig löschen konnte, schreib
+an alirzsaleh@gmail.com — wir löschen es dann und bestätigen es dir.
 
 ### 4b. Eigener Export
 
@@ -144,8 +146,8 @@ Löschung, Datenübertragbarkeit und Widerspruch. In der Praxis:
 - **Auskunft und Übertragbarkeit:** Der Export in der App liefert dir denselben
   Datenbestand, der auf dem Server liegt — als lesbare JSON-Datei.
 - **Berichtigung:** Name und E-Mail änderst du in der App.
-- **Löschung:** In der App löschst du die Server-Kopie und meldest dich ab;
-  für die vollständige Löschung des Kontos schreib an alirzsaleh@gmail.com.
+- **Löschung:** „Konto löschen" in der App entfernt dein Konto samt
+  Server-Kopie vollständig (Punkt 4).
 - **Rechtsgrundlage** ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) —
   du gibst sie, indem du ein Konto anlegst, und ziehst sie zurück, indem du es
   löschst.
@@ -167,7 +169,7 @@ alirzsaleh@gmail.com · https://t.me/LukasAlmani
 
 **Controller:** Saleh Aliramezani, Dornbirn, Austria
 **Contact:** alirzsaleh@gmail.com · Telegram: https://t.me/LukasAlmani
-**Last updated:** August 2026
+**Last updated:** September 2026
 
 ### Summary
 
@@ -242,8 +244,11 @@ do not look at your habits and do not analyse them.
 It is downloaded **only** when you explicitly ask for it.
 
 **How to get rid of it:** in the app under *Settings → Account → Account &
-cloud* you can delete your server data and sign out. For full deletion of the
-account, write to alirzsaleh@gmail.com — we will confirm it.
+cloud → Delete account*. This removes your account (email address and
+password hash), your username, your profile and the backup on the server — for
+good. The data on your device is untouched. If the app reports that it could
+not delete the account completely, write to alirzsaleh@gmail.com — we will
+delete it and confirm.
 
 ### 4b. Your own export
 
@@ -297,8 +302,8 @@ rectification, erasure, portability and objection. In practice:
 - **Access and portability:** the export in the app gives you the same data
   that sits on the server, as a readable JSON file.
 - **Rectification:** change your name and email in the app.
-- **Erasure:** delete the server copy and sign out in the app; for full
-  deletion of the account, write to alirzsaleh@gmail.com.
+- **Erasure:** "Delete account" in the app removes your account and the
+  server copy completely (section 4).
 - **Legal basis** is your consent (Art. 6(1)(a) GDPR) — given by creating an
   account, withdrawn by deleting it.
 
@@ -334,6 +339,12 @@ speichert, schuldet ihnen einen zutreffenden, erreichbaren Text.
 https://lukasylilli.github.io/Root-in/privacy.html — diese Notiz wird dabei
 abgeschnitten. Der frühere Gist ist überholt und soll gelöscht werden:
 https://gist.github.com/lukasylilli/673c36972d69819d975ffb82a592cca2
+
+Änderungen 2026-09-13 (PLAN.md 31.3):
+- Punkt 4 und 8: Das Konto lässt sich in der App **vollständig** löschen
+  (`delete_own_account()` in `supabase/schema.sql`). Die Nachricht per E-Mail
+  bleibt nur als Weg, falls die App meldet, dass es nicht ganz geklappt hat —
+  etwa solange die Funktion auf dem Server noch nicht eingespielt ist.
 
 Änderungen 2026-08-17 (Phase 28) — die Fassung wurde auf **Web-only**
 umgestellt:

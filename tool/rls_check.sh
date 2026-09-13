@@ -15,10 +15,10 @@
 # ⚠️ Nach jeder Änderung an `supabase/schema.sql` erneut laufen lassen. Eine
 # Regel, die man nicht gegengeprüft hat, ist eine Hoffnung.
 #
-# Das Skript legt zwei Testkonten an (`@example.com` ist per RFC 2606
-# reserviert, es gibt dort niemanden). Sie dürfen stehen bleiben — beim
-# nächsten Lauf meldet es sich einfach an — oder in der Supabase-Oberfläche
-# unter Authentication → Users gelöscht werden.
+# Das Skript legt drei Testkonten an (`@example.com` ist per RFC 2606
+# reserviert, es gibt dort niemanden). A und B dürfen stehen bleiben — beim
+# nächsten Lauf meldet es sich einfach an. C löscht sich am Ende selbst
+# (PLAN.md 31.3) und entsteht beim nächsten Lauf neu.
 set -u
 
 cd "$(dirname "$0")/.."
@@ -130,6 +130,36 @@ F=$(foreign_rows "$IB")
 # --- Eindeutigkeit des Benutzernamens ---------------------------------------
 C=$(req PATCH "/rest/v1/profiles?user_id=eq.$IB" "$TB" "{\"username\":\"testkonto-a\"}")
 [ "$C" -ge 400 ] && check "B kann A's Benutzernamen NICHT übernehmen" 0 "HTTP $C" || check "B kann A's Benutzernamen nicht übernehmen" 1 "HTTP $C — DURCHGELASSEN!"
+
+# --- Konto vollständig löschen (PLAN.md 31.3) --------------------------------
+# Ein Wegwerf-Konto C löscht sich selbst.
+# ⚠️ ZUERST C: Erst wenn feststeht, dass die Funktion auf dem Server existiert,
+# ist „ohne Anmeldung abgewiesen" ein Befund. Fehlt sie, wäre JEDE Abweisung
+# ein 404 — und bewiese nichts (Lehre 32).
+TC=$(login "rootin-test-c@example.com"); IC=$(uid_of)
+[ -n "$TC" ] && check "Wegwerf-Konto C anlegen/anmelden" 0 || check "Wegwerf-Konto C anlegen/anmelden" 1 "$(head -c 140 "$AUTH")"
+if [ -n "$TC" ]; then
+  req POST /rest/v1/profiles "$TC" "{\"user_id\":\"$IC\",\"username\":\"testkonto-c\"}" "resolution=merge-duplicates" >/dev/null
+  C=$(req POST /rest/v1/rpc/delete_own_account "$TC" "{}")
+  if grep -q PGRST202 "$BODY"; then
+    check "delete_own_account() ist auf dem Server eingespielt" 1 "FEHLT — supabase/schema.sql im SQL-Editor ausführen"
+  else
+    [ "$C" -lt 400 ] && check "C löscht sein EIGENES Konto" 0 "HTTP $C" || check "C löscht sein eigenes Konto" 1 "HTTP $C $(head -c 160 "$BODY")"
+
+    curl -s -X POST "$U/auth/v1/token?grant_type=password" -H "apikey: $K" \
+         -H "Content-Type: application/json" \
+         -d "{\"email\":\"rootin-test-c@example.com\",\"password\":\"$PASS\"}" > "$AUTH"
+    GONE=$(python3 -c "import json;print('ja' if not json.load(open('$AUTH')).get('access_token') else 'nein')" 2>/dev/null)
+    [ "$GONE" = "ja" ] && check "Danach scheitert Cs Anmeldung — das Konto ist WIRKLICH weg" 0 || check "Danach scheitert Cs Anmeldung" 1 "Anmeldung klappt noch!"
+
+    C=$(req POST /rest/v1/rpc/delete_own_account "$K" "{}")
+    [ "$C" -ge 400 ] && check "OHNE Anmeldung löscht die Funktion nichts" 0 "HTTP $C" || check "Ohne Anmeldung löscht die Funktion nichts" 1 "HTTP $C — DURCHGELASSEN!"
+
+    req GET "/rest/v1/backups?select=user_id" "$TA" >/dev/null
+    N=$(python3 -c "import json;d=json.load(open('$BODY'));print(len(d) if isinstance(d,list) else '?')" 2>/dev/null)
+    [ "$N" = "1" ] && check "A's Sicherung ist davon UNBERÜHRT" 0 "1 Zeile" || check "A's Sicherung ist davon unberührt" 1 "$N Zeile(n)"
+  fi
+fi
 
 echo
 echo "$OK/$TOTAL bestanden."

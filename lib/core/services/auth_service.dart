@@ -100,6 +100,20 @@ class AuthResult {
   bool get isSuccess => issue == null;
 }
 
+/// Ausgang von [AuthService.deleteAccount] (PLAN.md 31.3).
+enum AccountDeletion {
+  /// Konto, Profil und Sicherung sind vom Server verschwunden; abgemeldet.
+  deleted,
+
+  /// Die Funktion `delete_own_account()` fehlt auf dem Server —
+  /// `supabase/schema.sql` ist seit 31.3 nicht eingespielt. **Nichts** ist
+  /// gelöscht.
+  unavailable,
+
+  /// Kein Netz, keine Anmeldung oder ein anderer Fehler. Nichts gelöscht.
+  failed,
+}
+
 /// Der Dienst. Alle Methoden geben [AuthResult] zurück statt zu werfen —
 /// eine fehlgeschlagene Anmeldung ist ein erwarteter Verlauf, keine Ausnahme.
 ///
@@ -337,6 +351,37 @@ class AuthService {
       // Kein Netz: Der lokale Name steht bereits und ist die Quelle der
       // Wahrheit. Die nächste Änderung schiebt ihn nach.
     }
+  }
+
+  /// Löscht das **eigene Konto vollständig** — den Eintrag in `auth.users`
+  /// und über `on delete cascade` auch Profil und Sicherung (PLAN.md 31.3).
+  /// Danach ist abgemeldet. Der Bestand auf dem Gerät bleibt unberührt.
+  ///
+  /// ⚠️ Hängt an `delete_own_account()` in `supabase/schema.sql`. Fehlt die
+  /// Funktion auf dem Server, kommt [AccountDeletion.unavailable] zurück —
+  /// **nicht** `failed`: Die Oberfläche soll dann tun, was ohne sie geht, und
+  /// sagen, was fehlt, statt „Server nicht erreichbar" zu behaupten.
+  Future<AccountDeletion> deleteAccount() async {
+    final client = _client;
+    if (client == null || client.auth.currentUser == null) {
+      return AccountDeletion.failed;
+    }
+    try {
+      await client.rpc<dynamic>('delete_own_account');
+    } on PostgrestException catch (error) {
+      // PGRST202 = PostgREST kennt keine Funktion dieses Namens.
+      return error.code == 'PGRST202'
+          ? AccountDeletion.unavailable
+          : AccountDeletion.failed;
+    } catch (_) {
+      return AccountDeletion.failed;
+    }
+    // Das Token gehört jetzt zu niemandem mehr; die Sitzung auf dem Gerät
+    // muss trotzdem ausdrücklich verworfen werden. `signOut` verwirft sie
+    // zuerst lokal und nimmt die Absage des Servers („Nutzer gibt es nicht")
+    // hin (gotrue 2.27).
+    await signOut();
+    return AccountDeletion.deleted;
   }
 
   Future<void> signOut() async {

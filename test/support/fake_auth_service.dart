@@ -15,6 +15,7 @@ class FakeAuthService extends AuthService {
     this.issue,
     Set<String>? takenUsernames,
     this.availabilityCheckSeesTaken = true,
+    this.deletionResult = AccountDeletion.deleted,
   }) : _account = signedIn,
        takenUsernames = takenUsernames ?? {};
 
@@ -27,6 +28,9 @@ class FakeAuthService extends AuthService {
   /// `false` stellt den **Wettlauf** nach: Die Vorab-Frage meldet „frei",
   /// beim Schreiben ist der Name dann doch vergeben.
   final bool availabilityCheckSeesTaken;
+
+  /// Was [deleteAccount] meldet (PLAN.md 31.3).
+  final AccountDeletion deletionResult;
 
   AuthAccount? _account;
   final _controller = StreamController<AuthAccount?>.broadcast();
@@ -106,6 +110,16 @@ class FakeAuthService extends AuthService {
   Future<void> saveDisplayName(String name) async {
     calls.add('saveDisplayName:$name');
     remoteDisplayName = name;
+  }
+
+  @override
+  Future<AccountDeletion> deleteAccount() async {
+    calls.add('deleteAccount');
+    if (deletionResult == AccountDeletion.deleted) {
+      // Wie der echte Dienst: Nach dem Löschen ist abgemeldet.
+      await signOut();
+    }
+    return deletionResult;
   }
 
   @override

@@ -517,9 +517,10 @@
   "cloudSyncFailed": "Der Server war nicht erreichbar. Deine Daten auf dem Gerät sind unberührt.",
   "cloudNothingStored": "Auf dem Server liegt noch keine Sicherung.",
   "cloudTooNew": "Die Sicherung stammt aus einer neueren Version von Root-in. Bitte die App aktualisieren.",
-  "cloudDeleteData": "Daten auf dem Server löschen",
-  "cloudDeleteTitle": "Daten auf dem Server löschen?",
-  "cloudDeleteBody": "Die Sicherung und dein Profil auf dem Server werden gelöscht. Die Daten auf diesem Gerät bleiben unberührt. Für die vollständige Löschung deines Kontos schreib uns.",
-  "cloudDeleteConfirm": "Löschen",
-  "cloudDeleteDone": "Die Daten auf dem Server sind gelöscht."
+  "cloudDeleteAccount": "Konto löschen",
+  "cloudDeleteAccountTitle": "Konto löschen?",
+  "cloudDeleteAccountBody": "Dein Konto wird endgültig gelöscht — E-Mail-Adresse, Benutzername, Profil und die Sicherung auf dem Server. Die Daten auf diesem Gerät bleiben unberührt. Das lässt sich nicht rückgängig machen.",
+  "cloudDeleteAccountConfirm": "Endgültig löschen",
+  "cloudDeleteAccountDone": "Dein Konto ist gelöscht. Die Daten auf diesem Gerät sind unberührt.",
+  "cloudDeleteAccountPartial": "Sicherung und Profil auf dem Server sind gelöscht, und du bist abgemeldet. Den Anmelde-Eintrag selbst konnte die App noch nicht entfernen — schreib uns, dann löschen wir ihn."
 }

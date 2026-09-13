@@ -212,15 +212,51 @@ revoke all on function public.username_available(text) from public;
 grant execute on function public.username_available(text) to anon, authenticated;
 
 -- ---------------------------------------------------------------------------
--- 6. Konto löschen
+-- 6. Konto vollständig löschen (PLAN.md 31.3)
 -- ---------------------------------------------------------------------------
--- `on delete cascade` oben räumt Profil und Sicherung ab, sobald der Eintrag
--- in `auth.users` verschwindet. Das Löschen des Kontos selbst kann der
--- anon-Schlüssel NICHT auslösen — dafür braucht es einen Aufruf mit erhöhten
--- Rechten (Edge Function). Solange es den nicht gibt, ist „Konto löschen" in
--- der App ein Löschen der Daten plus Abmelden; der leere Auth-Eintrag bleibt.
--- ⚠️ Das ist für 27.8 zu klären, nicht zu vergessen: Ein Konto, das man nicht
--- loswird, ist ein Datenschutz-Problem.
+-- Löscht das EIGENE Konto: den Eintrag in `auth.users` — und über
+-- `on delete cascade` oben auch Profil und Sicherung. Aufgerufen von
+-- `AuthService.deleteAccount()` in der App.
+--
+-- WARUM EINE FUNKTION UND KEINE EDGE FUNCTION
+-- Der anon-Schlüssel darf `auth.users` nicht anfassen, also braucht es einen
+-- Aufruf mit erhöhten Rechten. Eine Edge Function bräuchte eine eigene
+-- Bereitstellung (Supabase-CLI plus Zugangs-Token als Secret) — ein zweiter
+-- Weg auf den Server neben dem SQL-Editor. Diese Funktion geht denselben Weg
+-- wie der Rest der Datei, und `tool/rls_check.sh` prüft sie von außen.
+--
+-- ⚠️ `security definer` IST HIER DER GANZE PUNKT — UND DIE GANZE GEFAHR.
+-- Die Funktion läuft mit den Rechten ihres Eigentümers, der `auth.users`
+-- löschen darf; der Aufrufer darf das nicht. Deshalb:
+--   - Sie löscht AUSSCHLIESSLICH `auth.uid()`. Es gibt KEINEN Parameter, über
+--     den jemand eine fremde Kennung hineinreichen könnte. Wer hier je einen
+--     hinzufügt, baut „jeder löscht jeden".
+--   - Ohne Anmeldung ist `auth.uid()` leer → sie bricht ab. Zusätzlich ist
+--     die Ausführung für `anon` und `PUBLIC` gar nicht erst freigegeben
+--     (Supabase gibt neuen Funktionen sonst von selbst `anon`-Rechte).
+--   - `set search_path = ''` und voll qualifizierte Namen: Eine security-
+--     definer-Funktion mit offenem Suchpfad lässt sich über ein gleichnamiges
+--     Objekt in einem anderen Schema umlenken.
+--
+-- ⚠️ Ob der Eigentümer in DIESEM Projekt `auth.users` löschen darf, zeigt
+-- erst `tool/rls_check.sh` („C löscht sein EIGENES Konto"). Scheitert das,
+-- meldet die App es dem Nutzer ehrlich und löscht wenigstens die Daten.
+create or replace function public.delete_own_account()
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'nicht angemeldet' using errcode = '42501';
+  end if;
+  delete from auth.users where id = auth.uid();
+end;
+$$;
+
+revoke all on function public.delete_own_account() from public, anon;
+grant execute on function public.delete_own_account() to authenticated;
 
 -- ---------------------------------------------------------------------------
 -- 7. Gegenprobe (PLAN.md 27.4) — nach dem Anwenden ausführen

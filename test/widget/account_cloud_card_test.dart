@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:root_in/core/services/auth_service.dart';
+import 'package:root_in/core/services/cloud_backup_service.dart';
 import 'package:root_in/features/auth/presentation/account_cloud_card.dart';
 
 import '../support/fake_auth_service.dart';
@@ -171,4 +172,135 @@ void main() {
     expect(find.text('حساب و ابر'), findsOneWidget);
     expect(find.text('ورود'), findsOneWidget);
   });
+
+  group('Konto löschen (PLAN.md 31.3)', () {
+    const ali = AuthAccount(
+      id: 'u1',
+      email: 'ali@example.com',
+      username: 'ali',
+    );
+    const doneText =
+        'Dein Konto ist gelöscht. Die Daten auf diesem Gerät sind unberührt.';
+
+    Future<void> openDialog(WidgetTester tester) async {
+      await tester.ensureVisible(find.text('Konto löschen'));
+      await tester.tap(find.text('Konto löschen'));
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> confirm(WidgetTester tester) async {
+      await tester.tap(find.text('Endgültig löschen'));
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+    }
+
+    testWidgets('fragt nach; Abbrechen löscht nichts, Bestätigen löscht und '
+        'meldet ab', (tester) async {
+      final auth = FakeAuthService(signedIn: ali);
+      addTearDown(auth.dispose);
+      await tester.pumpWidget(wrap(auth, cloudEnabled: true));
+      await tester.pump();
+      await tester.pump();
+
+      await openDialog(tester);
+      // Die Rückfrage muss sagen, was BLEIBT — sonst fürchtet jeder um den
+      // Bestand auf seinem Gerät.
+      expect(
+        find.textContaining('Die Daten auf diesem Gerät bleiben unberührt'),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.byType(TextButton),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(auth.calls, isNot(contains('deleteAccount')));
+
+      await openDialog(tester);
+      await confirm(tester);
+
+      expect(auth.calls, containsAllInOrder(['deleteAccount', 'signOut']));
+      expect(find.text('Anmelden'), findsOneWidget);
+      expect(find.text(doneText), findsOneWidget);
+    });
+
+    testWidgets('Funktion fehlt auf dem Server: löscht die Daten, meldet ab '
+        'und sagt, was fehlt', (tester) async {
+      final auth = FakeAuthService(
+        signedIn: ali,
+        deletionResult: AccountDeletion.unavailable,
+      );
+      addTearDown(auth.dispose);
+      late _FakeCloudBackupService backup;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            cloudSyncEnabledProvider.overrideWithValue(true),
+            authServiceProvider.overrideWithValue(auth),
+            cloudBackupServiceProvider.overrideWith(
+              (ref) => backup = _FakeCloudBackupService(ref),
+            ),
+          ],
+          child: localizedApp(
+            const Scaffold(
+              body: SingleChildScrollView(child: AccountCloudCard()),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      await openDialog(tester);
+      await confirm(tester);
+
+      expect(backup.deleted, isTrue);
+      // ⚠️ Ohne Abmelden lüde die automatische Sicherung beim nächsten
+      // Häkchen alles wieder hoch.
+      expect(auth.calls, containsAllInOrder(['deleteAccount', 'signOut']));
+      // Ehrlich: nicht „gelöscht" behaupten, wenn der Anmelde-Eintrag bleibt.
+      expect(find.text(doneText), findsNothing);
+      expect(find.textContaining('schreib uns'), findsOneWidget);
+    });
+
+    testWidgets('Server nicht erreichbar: nichts gelöscht, bleibt angemeldet', (
+      tester,
+    ) async {
+      final auth = FakeAuthService(
+        signedIn: ali,
+        deletionResult: AccountDeletion.failed,
+      );
+      addTearDown(auth.dispose);
+      await tester.pumpWidget(wrap(auth, cloudEnabled: true));
+      await tester.pump();
+      await tester.pump();
+
+      await openDialog(tester);
+      await confirm(tester);
+
+      expect(auth.calls, isNot(contains('signOut')));
+      expect(find.text('Angemeldet als ali'), findsOneWidget);
+      expect(find.textContaining('nicht erreichbar'), findsOneWidget);
+    });
+  });
+}
+
+/// Server-Daten löschen ohne Server — für den Rückfall-Weg aus PLAN.md 31.3.
+class _FakeCloudBackupService extends CloudBackupService {
+  _FakeCloudBackupService(super.ref);
+
+  bool deleted = false;
+
+  @override
+  Future<CloudSyncStatus> deleteServerData() async {
+    deleted = true;
+    return CloudSyncStatus.ok;
+  }
+
+  @override
+  Future<DateTime?> lastBackupAt() async => null;
 }
