@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/repo_content_service.dart';
 import '../../../core/services/settings_service.dart';
+import '../../../core/utils/no_retry.dart';
 import 'guide_topic.dart';
 
 /// Sprachen, in denen es die Anleitungs-Texte im Repository gibt. Meldet die
@@ -37,27 +38,28 @@ final guideLanguageProvider = Provider<String>((ref) {
 ///
 /// Hängt an [guideLanguageProvider] — ein Sprachwechsel in den Einstellungen
 /// lädt die Seite damit von selbst in der neuen Sprache neu.
-final guideDocumentProvider = FutureProvider.family<String?, GuideTopic>((
-  ref,
-  topic,
-) async {
-  final service = ref.watch(repoContentServiceProvider);
-  final language = ref.watch(guideLanguageProvider);
+final guideDocumentProvider = FutureProvider.family<String?, GuideTopic>(
+  (ref, topic) async {
+    final service = ref.watch(repoContentServiceProvider);
+    final language = ref.watch(guideLanguageProvider);
 
-  // Die Nachlade-Meldung kommt aus einem Aufruf, der die Seite überleben kann
-  // (der Nutzer blättert weiter, während geladen wird). Ohne diese Sperre
-  // liefe `invalidateSelf` dann auf einen bereits verworfenen Provider.
-  var disposed = false;
-  ref.onDispose(() => disposed = true);
+    // Die Nachlade-Meldung kommt aus einem Aufruf, der die Seite überleben kann
+    // (der Nutzer blättert weiter, während geladen wird). Ohne diese Sperre
+    // liefe `invalidateSelf` dann auf einen bereits verworfenen Provider.
+    var disposed = false;
+    ref.onDispose(() => disposed = true);
 
-  return service.load(
-    // Der Dateiname hängt an der Sprache: Die Dateien heißen im
-    // Inhalts-Repository je Sprache unterschiedlich (siehe GuideTopic).
-    RepoContentService.guidePath(topic.fileName(language), language),
-    // Der Dienst zeigt erst den gespeicherten Stand und lädt daneben nach;
-    // kam dabei ein **anderer** Text heraus, wird die Seite neu aufgebaut.
-    onUpdated: () {
-      if (!disposed) ref.invalidateSelf();
-    },
-  );
-});
+    return service.load(
+      // Der Dateiname hängt an der Sprache: Die Dateien heißen im
+      // Inhalts-Repository je Sprache unterschiedlich (siehe GuideTopic).
+      RepoContentService.guidePath(topic.fileName(language), language),
+      // Der Dienst zeigt erst den gespeicherten Stand und lädt daneben nach;
+      // kam dabei ein **anderer** Text heraus, wird die Seite neu aufgebaut.
+      onUpdated: () {
+        if (!disposed) ref.invalidateSelf();
+      },
+    );
+  },
+  // ⚠️ Fehlerzustand sofort zeigen — siehe core/utils/no_retry.dart.
+  retry: noAutomaticRetry,
+);

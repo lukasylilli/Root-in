@@ -18,17 +18,16 @@
 # diesen Lauf scheitern.
 #
 # ⚠️ Er VERÖFFENTLICHT NICHTS: kein Pages-Artefakt, kein deploy-Job, keine
-# Secrets. Er läuft von selbst, wenn sich der Durchgang ändert — genau dann
-# ist die Frage „kann er noch rot werden?" offen —, sonst von Hand.
+# Secrets. Er läuft bei JEDEM Push, nicht nur bei Änderungen am Durchgang:
+# Beim ersten Lauf blieb eine Prüfung grün, weil die APP ihren Fehlerzustand
+# erst nach ~40 Sekunden zeigte (Riverpods automatische Wiederholung,
+# PLAN.md 31.2). Die Gegenprobe prüft also nicht nur den Test, sondern auch,
+# dass die App ihre Fehlerzustände zeigt — und die kann jede Änderung brechen.
 name: Browser-Durchgang gegenprüfen
 
 on:
   push:
     branches: [main]
-    paths:
-      - tool/webtest_ci.py
-      - tool/webtest_serve.sh
-      - .github/workflows/webtest-gegenprobe.yml
   workflow_dispatch:
 
 permissions:

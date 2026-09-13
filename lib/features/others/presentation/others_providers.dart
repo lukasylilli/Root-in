@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/repo_content_service.dart';
+import '../../../core/utils/no_retry.dart';
 import '../../guide/presentation/guide_document.dart';
 import '../domain/others_manifest.dart';
 
@@ -37,38 +38,42 @@ final othersLanguageProvider = Provider<String>(
 ///
 /// Wirft [OthersManifestException], wenn die Datei fehlt oder kaputt ist —
 /// die Seite unterscheidet die Gründe und zeigt sie verständlich an.
-final othersManifestProvider = FutureProvider<OthersManifest>((ref) async {
-  final service = ref.watch(repoContentServiceProvider);
-  final language = ref.watch(othersLanguageProvider);
+final othersManifestProvider = FutureProvider<OthersManifest>(
+  (ref) async {
+    final service = ref.watch(repoContentServiceProvider);
+    final language = ref.watch(othersLanguageProvider);
 
-  // Die Nachlade-Meldung kann die Seite überleben (der Nutzer blättert
-  // weiter, während geladen wird). Ohne diese Sperre liefe `invalidateSelf`
-  // auf einen bereits verworfenen Provider.
-  var disposed = false;
-  ref.onDispose(() => disposed = true);
+    // Die Nachlade-Meldung kann die Seite überleben (der Nutzer blättert
+    // weiter, während geladen wird). Ohne diese Sperre liefe `invalidateSelf`
+    // auf einen bereits verworfenen Provider.
+    var disposed = false;
+    ref.onDispose(() => disposed = true);
 
-  final raw = await service.load(
-    othersManifestPath(language),
-    onUpdated: () {
-      if (!disposed) ref.invalidateSelf();
-    },
-  );
-
-  // 404: Die Rubrik gibt es in dieser Sprache (noch) nicht — das ist kein
-  // Fehler, sondern ein leerer Kanal.
-  if (raw == null) return OthersManifest.empty;
-
-  final Object? decoded;
-  try {
-    decoded = jsonDecode(raw);
-  } catch (error) {
-    throw OthersManifestException(
-      OthersManifestError.invalidJson,
-      error.toString(),
+    final raw = await service.load(
+      othersManifestPath(language),
+      onUpdated: () {
+        if (!disposed) ref.invalidateSelf();
+      },
     );
-  }
-  return OthersManifest.fromJson(decoded);
-});
+
+    // 404: Die Rubrik gibt es in dieser Sprache (noch) nicht — das ist kein
+    // Fehler, sondern ein leerer Kanal.
+    if (raw == null) return OthersManifest.empty;
+
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(raw);
+    } catch (error) {
+      throw OthersManifestException(
+        OthersManifestError.invalidJson,
+        error.toString(),
+      );
+    }
+    return OthersManifest.fromJson(decoded);
+  },
+  // ⚠️ Fehlerzustand sofort zeigen — siehe core/utils/no_retry.dart.
+  retry: noAutomaticRetry,
+);
 
 /// Ein einzelner Ordner aus dem Manifest — `null`, wenn es ihn (nicht mehr)
 /// gibt. Der Fall ist real: Die Route bleibt im Verlauf stehen, während der
@@ -84,20 +89,21 @@ final othersFolderProvider = Provider.family<OthersFolder?, String>((ref, id) {
 
 /// Der Markdown-Text eines Eintrags. `null` = die Datei steht zwar im
 /// Manifest, liegt aber (noch) nicht im Repository → „Inhalt folgt".
-final othersEntryProvider = FutureProvider.family<String?, String>((
-  ref,
-  filePath,
-) async {
-  final service = ref.watch(repoContentServiceProvider);
-  final language = ref.watch(othersLanguageProvider);
+final othersEntryProvider = FutureProvider.family<String?, String>(
+  (ref, filePath) async {
+    final service = ref.watch(repoContentServiceProvider);
+    final language = ref.watch(othersLanguageProvider);
 
-  var disposed = false;
-  ref.onDispose(() => disposed = true);
+    var disposed = false;
+    ref.onDispose(() => disposed = true);
 
-  return service.load(
-    othersEntryPath(language, filePath),
-    onUpdated: () {
-      if (!disposed) ref.invalidateSelf();
-    },
-  );
-});
+    return service.load(
+      othersEntryPath(language, filePath),
+      onUpdated: () {
+        if (!disposed) ref.invalidateSelf();
+      },
+    );
+  },
+  // ⚠️ Fehlerzustand sofort zeigen — siehe core/utils/no_retry.dart.
+  retry: noAutomaticRetry,
+);

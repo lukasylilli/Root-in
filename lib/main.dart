@@ -12,6 +12,7 @@ import 'core/l10n/app_language.dart';
 import 'core/services/auth_service.dart';
 import 'core/services/settings_service.dart';
 import 'core/services/web_storage/request_persistent_storage.dart';
+import 'core/utils/no_retry.dart';
 import 'data/repositories/habit_repository.dart';
 import 'l10n/gen/app_localizations.dart';
 
@@ -44,13 +45,15 @@ Future<void> main() async {
   // müssen in der gewählten Sprache stehen, bevor die erste Seite baut (siehe
   // PLAN.md Phase 11.5 und 21.1) — dafür braucht es Provider-Zugriff hier.
   final container = ProviderContainer(
-    overrides: [
-      sharedPreferencesProvider.overrideWithValue(prefs),
-    ],
+    // Keine automatischen Wiederholungen: Eine Seite ohne Netz zeigte sonst
+    // ~40 Sekunden einen Ladekreis statt „Kein Internet" (siehe
+    // `core/utils/no_retry.dart`, PLAN.md 31.2).
+    retry: noAutomaticRetry,
+    overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
   );
-  await container.read(habitRepositoryProvider).ensureDefaultCategories(
-    defaultCategoryNames(l10n),
-  );
+  await container
+      .read(habitRepositoryProvider)
+      .ensureDefaultCategories(defaultCategoryNames(l10n));
 
   // PHASE 20 (2026-08-01): Werbung deaktiviert — zum Wiederaktivieren diesen Block einkommentieren.
   // Werbung/Kauf (siehe PLAN.md Phase 14): Der Notifier liest den gemerkten
@@ -65,9 +68,6 @@ Future<void> main() async {
   // }
 
   runApp(
-    UncontrolledProviderScope(
-      container: container,
-      child: const RootInApp(),
-    ),
+    UncontrolledProviderScope(container: container, child: const RootInApp()),
   );
 }

@@ -128,6 +128,27 @@ void main() {
     expect(find.text('Erneut versuchen'), findsOneWidget);
   });
 
+  testWidgets('⚠️ ohne Netz kommt der Knopf SOFORT — nicht erst nach '
+      'automatischen Wiederholungen (PLAN.md 31.2)', (tester) async {
+    var attempts = 0;
+    await tester.pumpWidget(
+      await _wrap(
+        const OthersFoldersPage(),
+        fetch: (_) {
+          attempts++;
+          throw ClientException('kein Netz');
+        },
+      ),
+    );
+    // ⚠️ Bewusst KEIN pumpAndSettle — es spult Riverpods Wiederholungs-Pausen
+    // in virtueller Zeit vor (siehe `lib/core/utils/no_retry.dart`).
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Erneut versuchen'), findsOneWidget);
+    expect(attempts, 1, reason: 'kein stilles Wiederholen im Hintergrund');
+  });
+
   testWidgets('ein Ordner zeigt seine Beiträge und lädt den Text erst beim '
       'Aufklappen', (tester) async {
     var textCalls = 0;
@@ -203,9 +224,6 @@ void main() {
 
   test('Pfade zeigen in den Sprachordner', () {
     expect(othersManifestPath('fa'), 'others/fa/index.json');
-    expect(
-      othersEntryPath('fa', 'news/start.md'),
-      'others/fa/news/start.md',
-    );
+    expect(othersEntryPath('fa', 'news/start.md'), 'others/fa/news/start.md');
   });
 }

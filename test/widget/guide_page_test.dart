@@ -47,9 +47,7 @@ Future<Widget> _wrapSettings() async {
   final prefs = await SharedPreferences.getInstance();
 
   return ProviderScope(
-    overrides: [
-      sharedPreferencesProvider.overrideWithValue(prefs),
-    ],
+    overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
     child: localizedApp(const SettingsPage()),
   );
 }
@@ -111,10 +109,7 @@ void main() {
     final response = Completer<RepoFetchResult>();
 
     await tester.pumpWidget(
-      await _wrapGuide(
-        GuideTopic.studyPlanning,
-        fetch: (_) => response.future,
-      ),
+      await _wrapGuide(GuideTopic.studyPlanning, fetch: (_) => response.future),
     );
     await tester.pump();
 
@@ -143,6 +138,29 @@ void main() {
     expect(find.text('Kein Internet'), findsOneWidget);
     expect(find.text('Erneut versuchen'), findsOneWidget);
     expect(find.byType(MarkdownBody), findsNothing);
+  });
+
+  testWidgets('⚠️ ohne Netz kommt der Knopf SOFORT — nicht erst nach '
+      'automatischen Wiederholungen (PLAN.md 31.2)', (tester) async {
+    var attempts = 0;
+    await tester.pumpWidget(
+      await _wrapGuide(
+        GuideTopic.studyPlanning,
+        fetch: (_) {
+          attempts++;
+          throw ClientException('kein Netz');
+        },
+      ),
+    );
+    // ⚠️ Bewusst KEIN pumpAndSettle: Es spult die Pausen zwischen Riverpods
+    // Wiederholungen in virtueller Zeit vor — genau deshalb hat der Test
+    // darüber den Fehler nie gesehen. Im Browser stand rund 40 Sekunden lang
+    // nur der Ladekreis; gefunden hat es die Gegenprobe des Browser-Durchgangs.
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Erneut versuchen'), findsOneWidget);
+    expect(attempts, 1, reason: 'kein stilles Wiederholen im Hintergrund');
   });
 
   testWidgets('404 zeigt weiterhin „Inhalt folgt"', (tester) async {
