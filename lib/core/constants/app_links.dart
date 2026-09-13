@@ -1,8 +1,8 @@
 /// Einzige Quelle der öffentlichen Links der App (siehe PLAN.md Phase 19).
 ///
 /// Kein anderer Ort baut eine Adresse zusammen: die Fortschritts-Karte
-/// (QR-Code), der Begleittext des Share-Sheets und „App teilen" in den
-/// Einstellungen lesen alle hier. Ändert sich die Adresse, ändert sie sich an
+/// (ausgeschrieben in der Fußzeile), der Begleittext des Share-Sheets und
+/// „App teilen" in den Einstellungen lesen alle hier. Ändert sich die Adresse, ändert sie sich an
 /// einer Stelle.
 library;
 
@@ -21,6 +21,13 @@ const String webAppUrl = 'https://lukasylilli.github.io/Root-in/';
 /// „nicht gefunden"-Seite, und weil ein geteiltes Bild in Chats liegen bleibt,
 /// war der Schaden still und dauerhaft: Wer einmal auf einer Fehlerseite
 /// landet, probiert es kein zweites Mal und meldet es auch nicht.
+///
+/// ⚠️ **Am 2026-09-13 kam der Nachschlag dazu:** Die Konstante stimmte seit
+/// 27.11, aber auf der Karte stand sie als QR-Code, daneben der Hinweis
+/// „Root-in im Google Play Store". Der richtige Link, unlesbar verpackt und
+/// falsch beschriftet — der Store-Verweis überlebte 27.11 in den
+/// Übersetzungen, wo niemand nach ihm suchte. Seitdem steht die Adresse
+/// ausgeschrieben auf der Karte, und kein Text nennt mehr einen Store.
 ///
 /// Der Name sagt, wofür die Adresse **da** ist, nicht wo sie hinzeigt. Käme je
 /// ein zweiter Zugang dazu, ändert sich genau diese Zeile — und alle drei

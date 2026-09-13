@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../l10n/gen/app_localizations.dart';
 import '../constants/app_links.dart';
@@ -208,49 +207,46 @@ class ShareCard extends StatelessWidget {
     style: AppTextStyles.caption.copyWith(color: tokens.textSecondary),
   );
 
-  /// Fußzeile mit dem Download-Weg. Zwei Wege bewusst nebeneinander: Der
-  /// QR-Code funktioniert im **Bild** (das ist nicht anklickbar), der
-  /// Klartext-Hinweis daneben erklärt, wofür der Code gut ist. Anklickbar
-  /// wird der Link erst im Begleittext des Share-Sheets
-  /// (`core/services/share_service.dart`).
+  /// Fußzeile mit der Adresse der App — **als lesbarer Text**.
+  ///
+  /// ⚠️ Hier stand bis 2026-09-13 ein QR-Code neben dem Hinweis
+  /// „Root-in im Google Play Store". Beides war falsch, und zwar auf die
+  /// stille Art: Die App ist seit Phase 28 eine **Web-Fassung** und war im
+  /// Play Store nie veröffentlicht. Wer den Code scannte, bekam eine
+  /// Store-Suche ohne Treffer; wer den Hinweis las, suchte in einem Laden
+  /// nach etwas, das dort nicht liegt. Der Link selbst
+  /// ([appShareUrl]) war dabei die ganze Zeit richtig — nur wurde er in ein
+  /// Bild gepackt, das ihn nicht preisgibt, und mit einem Text erklärt, der
+  /// woandershin zeigte.
+  ///
+  /// Deshalb jetzt der schlichteste Weg: **die Adresse ausgeschrieben.** Ein
+  /// geteiltes Bild ist nicht anklickbar, aber eine abgetippte oder
+  /// vorgelesene Adresse führt ans Ziel — ein QR-Code, den man falsch
+  /// beschriftet, führt nirgendwohin.
   Widget _footer(AppLocalizations l10n) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        QrImageView(
-          data: appShareUrl,
-          size: 96,
-          padding: EdgeInsets.zero,
-          backgroundColor: tokens.cardBg,
-          // `eyeColor`/`dataModuleColor` statt eines Farbfilters: Der Code
-          // muss auch im dunklen Theme kontrastreich bleiben.
-          eyeStyle: QrEyeStyle(
-            eyeShape: QrEyeShape.square,
-            color: tokens.textPrimary,
-          ),
-          dataModuleStyle: QrDataModuleStyle(
-            dataModuleShape: QrDataModuleShape.square,
-            color: tokens.textPrimary,
+        Text(
+          l10n.shareCardDownloadTitle,
+          style: AppTextStyles.body.copyWith(color: tokens.textPrimary),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        // ⚠️ Die Adresse kommt aus `app_links.dart`, nicht aus den
+        // Übersetzungen: Eine Adresse, die in drei ARB-Dateien steht, ist
+        // dreimal Gelegenheit, sie zu vergessen.
+        Text(
+          appShareUrl,
+          style: AppTextStyles.body.copyWith(
+            color: tokens.accent,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                l10n.shareCardDownloadTitle,
-                style: AppTextStyles.body.copyWith(color: tokens.textPrimary),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                l10n.shareCardDownloadHint,
-                style: AppTextStyles.caption.copyWith(
-                  color: tokens.textSecondary,
-                ),
-              ),
-            ],
-          ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          l10n.shareCardDownloadHint,
+          style: AppTextStyles.caption.copyWith(color: tokens.textSecondary),
         ),
       ],
     );

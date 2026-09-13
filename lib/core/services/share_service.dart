@@ -12,12 +12,16 @@ import '../constants/app_links.dart';
 /// konstruieren.
 ///
 /// Beide Texte tragen [appShareUrl] — **hier** ist er anklickbar, auf dem
-/// geteilten Bild steht derselbe Link als QR-Code
+/// geteilten Bild steht dieselbe Adresse ausgeschrieben
 /// (`core/widgets/share_card.dart`). Das geteilte Bild ist zugleich die
 /// Werbung für die App; ohne Link führt es niemanden irgendwohin.
 ///
+/// ⚠️ Seit 2026-09-13 heißt es in beiden Texten „im Browser öffnen", nicht
+/// mehr „laden"/„get it here". Root-in ist eine Web-Fassung: Wer „laden"
+/// liest, sucht einen Store — und landet bei der App, die dort nie lag.
+///
 /// ⚠️ Seit Phase 27.11 ist das die **Web-Fassung**, nicht die Play-Seite:
-/// Die gab es noch gar nicht, jeder geteilte QR-Code führte auf „nicht
+/// Die gab es noch gar nicht, jeder geteilte Link führte auf „nicht
 /// gefunden". Die Begründung steht bei [appShareUrl].
 class ShareService {
   const ShareService();

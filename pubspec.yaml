@@ -76,11 +76,6 @@ dependencies:
   # google_mobile_ads: ^9.0.0
   # in_app_purchase: ^3.3.0
   flutter_markdown_plus: ^1.0.12
-  # QR-Code des Store-Links auf der Fortschritts-Karte (PLAN.md Phase 19).
-  # Ein geteiltes Bild ist nicht anklickbar — ohne QR bliebe nur eine
-  # abgetippte URL. Reines Dart (nur CustomPainter), kein Platform-Channel,
-  # läuft deshalb auch im Widget-Test und offscreen im Screenshot.
-  qr_flutter: ^4.1.0
   # Nur für die Web-Fassung (PLAN.md Phase 26.1): Im Browser gibt es keine
   # Dateipfade, eine Sicherung lässt sich nur über ein `<input type="file">`
   # einlesen. Genutzt ausschließlich in

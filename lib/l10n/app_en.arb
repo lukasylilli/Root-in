@@ -224,11 +224,11 @@
   "accountAchievements": "Achievements",
   "shareProgress": "Share progress",
   "shareInProgress": "Sharing…",
-  "shareCardDownloadTitle": "Get Root-in",
-  "shareCardDownloadHint": "Scan the QR code — Root-in on Google Play.",
+  "shareCardDownloadTitle": "Open Root-in",
+  "shareCardDownloadHint": "Open it in your browser — no install, no account.",
   "shareOptionsTitle": "What goes on the card?",
   "shareOptionOverview": "Overview of the last 4 weeks",
-  "shareAppText": "I use Root-in to track my habits — check it out: {link}",
+  "shareAppText": "I use Root-in to track my habits — open it in your browser: {link}",
   "@shareAppText": {
     "placeholders": {
       "link": {
@@ -236,7 +236,7 @@
       }
     }
   },
-  "shareProgressText": "My progress in Root-in — get it here: {link}",
+  "shareProgressText": "My progress in Root-in — open it in your browser: {link}",
   "@shareProgressText": {
     "placeholders": {
       "link": {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:root_in/core/constants/app_links.dart';
 import 'package:root_in/core/theme/app_theme_variant.dart';
 import 'package:root_in/core/widgets/matrix_grid.dart';
@@ -113,25 +112,40 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('trägt den geteilten Link als QR-Code (Phase 19/27.11)', (
+  testWidgets('trägt die geteilte Adresse als LESBAREN Text (Phase 19/27.11)', (
     tester,
   ) async {
     await _pumpCard(tester);
 
-    // Ein Bild ist nicht anklickbar — der QR-Code ist der einzige Weg vom
-    // geteilten Bild zur App. Was er kodiert, lässt `QrImageView` nicht
-    // auslesen (das Feld ist privat), deshalb zwei getrennte Prüfungen: dass
-    // er auf der Karte steht, und dass die Quelle die richtige Adresse
-    // liefert.
+    // ⚠️ Hier stand bis 2026-09-13 ein QR-Code, und der Test prüfte nur, DASS
+    // einer da ist — was er kodiert, gibt `QrImageView` nicht preis. Genau
+    // deshalb fiel jahrelang nicht auf, dass der Hinweis daneben in den
+    // Google Play Store schickte, den es für diese App nie gab.
     //
-    // ⚠️ Geprüft wird `appShareUrl`, **nicht** `playStoreUrl`. Genau diese
-    // Verwechslung war der Fehler aus 27.11: Die Karte trug den Play-Link,
-    // obwohl es die Store-Seite nicht gibt — und der Test bestätigte
-    // fleißig, dass die Play-Adresse korrekt gebildet war. Sie war es. Sie
-    // war nur die falsche.
-    expect(find.byType(QrImageView), findsOneWidget);
+    // Ein Bild ist nicht anklickbar. Die ausgeschriebene Adresse ist deshalb
+    // der einzige Weg vom geteilten Bild zur App — und im Gegensatz zum
+    // QR-Code ist sie prüfbar.
+    expect(find.text(appShareUrl), findsOneWidget);
     expect(appShareUrl, webAppUrl);
-    expect(find.text('Root-in laden'), findsOneWidget);
+    expect(find.text('Root-in öffnen'), findsOneWidget);
+  });
+
+  testWidgets('schickt niemanden mehr in einen Store (2026-09-13)', (
+    tester,
+  ) async {
+    await _pumpCard(tester);
+
+    // ⚠️ Ein Test auf eine ABWESENHEIT braucht einen Zeugen, dass überhaupt
+    // etwas gerendert wurde — sonst wird er grün, wenn die Karte leer bleibt.
+    expect(find.text(appShareUrl), findsOneWidget);
+
+    final texte = tester
+        .widgetList<Text>(find.byType(Text))
+        .map((t) => t.data ?? '')
+        .join(' ');
+    expect(texte.toLowerCase(), isNot(contains('play')));
+    expect(texte.toLowerCase(), isNot(contains('store')));
+    expect(texte, isNot(contains('QR')));
   });
 
   testWidgets('rendert den Übersicht-Block ohne Überlauf', (tester) async {
