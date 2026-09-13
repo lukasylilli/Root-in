@@ -76,6 +76,16 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
+      # Kein geheimer Supabase-Schlüssel im ausgelieferten Bundle (PLAN.md
+      # 27.10 / 31.5). Der `service_role`-Schlüssel umgeht jede Zugriffsregel,
+      # und das Bundle ist öffentlich lesbar — landet er dort, darf diese
+      # Fassung NICHT online gehen.
+      # ⚠️ `--expect-anon`, sobald ein Secret hinterlegt ist: Findet die Suche
+      # dann nicht einmal den ERLAUBTEN Schlüssel, ist sie blind, und ihr
+      # „nichts gefunden" bewiese nichts (Lehre 32).
+      - name: Kein geheimer Schlüssel im Bundle
+        run: python3 tool/check_bundle_secrets.py build/web ${{ secrets.SUPABASE_ANON_KEY != '' && '--expect-anon' || '' }}
+
       # Browser-Durchgang gegen den GERADE GEBAUTEN Stand, vor der
       # Veröffentlichung (PLAN.md 29.3).
       #
