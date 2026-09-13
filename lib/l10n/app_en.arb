@@ -433,6 +433,9 @@
     }
   },
   "cloudNoUsernameYet": "No username yet",
+  "cloudSetUsername": "Choose a username",
+  "authPickUsernameBody": "Your account is ready — it only needs a username.",
+  "authSaveUsername": "Save username",
   "cloudEmailHint": "This address is the only way to reset a forgotten password. If it is wrong, change it here.",
   "fieldEmail": "Email",
   "fieldPassword": "Password",

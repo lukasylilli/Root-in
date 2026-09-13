@@ -171,7 +171,9 @@ class AuthService {
     required String password,
   }) async {
     final client = _client;
-    if (client == null) return const AuthResult.failure(AuthIssue.notConfigured);
+    if (client == null) {
+      return const AuthResult.failure(AuthIssue.notConfigured);
+    }
     try {
       final response = await client.auth.signInWithPassword(
         email: email.trim(),
@@ -209,7 +211,9 @@ class AuthService {
     required String username,
   }) async {
     final client = _client;
-    if (client == null) return const AuthResult.failure(AuthIssue.notConfigured);
+    if (client == null) {
+      return const AuthResult.failure(AuthIssue.notConfigured);
+    }
     try {
       final response = await client.auth.signUp(
         email: email.trim(),
@@ -238,7 +242,9 @@ class AuthService {
   /// behandelt und nicht nur vorher zu verhindern versucht.
   Future<AuthResult> claimUsername(String username) async {
     final client = _client;
-    if (client == null) return const AuthResult.failure(AuthIssue.notConfigured);
+    if (client == null) {
+      return const AuthResult.failure(AuthIssue.notConfigured);
+    }
     final user = client.auth.currentUser;
     if (user == null) {
       return const AuthResult.failure(AuthIssue.invalidCredentials);
@@ -358,4 +364,20 @@ final cloudSyncEnabledProvider = Provider<bool>((ref) => supportsCloudSync);
 final authAccountProvider = StreamProvider<AuthAccount?>((ref) {
   final service = ref.watch(authServiceProvider);
   return service.watchAccount();
+});
+
+/// Der Benutzername zum angemeldeten Konto — aus `profiles`, nicht aus der
+/// Sitzung. `null`, solange niemand angemeldet ist oder das Konto keinen hat.
+///
+/// Hängt an [authAccountProvider]: Nach einem Kontowechsel darf nicht der
+/// Name des vorigen Kontos stehen bleiben.
+///
+/// ⚠️ **Wer den Namen schreibt, invalidiert diesen Provider** — das
+/// Anmelde-Sheet tut es nach jedem Erfolg. Die Anmeldung kann sich schon
+/// melden, BEVOR die Profilzeile geschrieben ist; ohne das bliebe nach einer
+/// Registrierung „Noch kein Benutzername" stehen (PLAN.md 31.1).
+final accountUsernameProvider = FutureProvider<String?>((ref) async {
+  final account = ref.watch(authAccountProvider).value;
+  if (account == null) return null;
+  return ref.read(authServiceProvider).loadUsername();
 });

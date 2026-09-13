@@ -10,10 +10,23 @@ import 'package:root_in/core/services/auth_service.dart';
 /// Derselbe Gedanke wie bei `RepoFetcher` (Phase 22) und
 /// `FakeRepoFetcher` (Phase 17).
 class FakeAuthService extends AuthService {
-  FakeAuthService({AuthAccount? signedIn, this.issue}) : _account = signedIn;
+  FakeAuthService({
+    AuthAccount? signedIn,
+    this.issue,
+    Set<String>? takenUsernames,
+    this.availabilityCheckSeesTaken = true,
+  }) : _account = signedIn,
+       takenUsernames = takenUsernames ?? {};
 
   /// Wenn gesetzt, scheitert jeder Vorgang mit diesem Grund.
   final AuthIssue? issue;
+
+  /// Benutzernamen, die „auf dem Server" schon jemandem gehören (PLAN.md 31.1).
+  final Set<String> takenUsernames;
+
+  /// `false` stellt den **Wettlauf** nach: Die Vorab-Frage meldet „frei",
+  /// beim Schreiben ist der Name dann doch vergeben.
+  final bool availabilityCheckSeesTaken;
 
   AuthAccount? _account;
   final _controller = StreamController<AuthAccount?>.broadcast();
@@ -47,6 +60,8 @@ class FakeAuthService extends AuthService {
     return AuthResult.success(_account!);
   }
 
+  /// Wie der echte Dienst: **erst das Konto, dann der Name.** Scheitert der
+  /// Name, bleibt das Konto bestehen — genau der Zustand aus PLAN.md 31.1.
   @override
   Future<AuthResult> signUp({
     required String email,
@@ -55,21 +70,31 @@ class FakeAuthService extends AuthService {
   }) async {
     calls.add('signUp:$email/$username');
     if (issue != null) return AuthResult.failure(issue!);
-    _account = AuthAccount(id: 'u1', email: email, username: username);
+    _account = AuthAccount(id: 'u1', email: email);
     _controller.add(_account);
-    return AuthResult.success(_account!);
+    return claimUsername(username);
   }
 
   @override
   Future<AuthResult> claimUsername(String username) async {
     calls.add('claimUsername:$username');
     if (issue != null) return AuthResult.failure(issue!);
-    _account = _account?.withUsername(username);
+    final account = _account;
+    if (account == null) {
+      return const AuthResult.failure(AuthIssue.invalidCredentials);
+    }
+    if (takenUsernames.contains(username)) {
+      return const AuthResult.failure(AuthIssue.usernameTaken);
+    }
+    _account = account.withUsername(username);
     return AuthResult.success(_account!);
   }
 
   @override
-  Future<bool> isUsernameAvailable(String username) async => issue == null;
+  Future<bool> isUsernameAvailable(String username) async {
+    calls.add('isUsernameAvailable:$username');
+    return !(availabilityCheckSeesTaken && takenUsernames.contains(username));
+  }
 
   @override
   Future<String?> loadUsername() async => _account?.username;

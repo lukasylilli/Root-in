@@ -21,9 +21,7 @@ void main() {
         authServiceProvider.overrideWithValue(auth),
       ],
       child: localizedApp(
-        const Scaffold(
-          body: SingleChildScrollView(child: AccountCloudCard()),
-        ),
+        const Scaffold(body: SingleChildScrollView(child: AccountCloudCard())),
       ),
     );
   }
@@ -72,6 +70,7 @@ void main() {
     expect(find.text('Angemeldet als ali'), findsOneWidget);
     expect(find.text('ali@example.com'), findsOneWidget);
     expect(find.text('Abmelden'), findsOneWidget);
+    expect(find.text('Benutzernamen festlegen'), findsNothing);
   });
 
   testWidgets('angemeldet ohne Benutzername sagt das ausdrücklich', (
@@ -90,7 +89,43 @@ void main() {
     await tester.pump();
 
     expect(find.text('Noch kein Benutzername'), findsOneWidget);
+    expect(find.text('Benutzernamen festlegen'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('ohne Benutzername lässt er sich nachtragen (PLAN.md 31.1)', (
+    tester,
+  ) async {
+    // Vorher stand hier „Noch kein Benutzername" — ohne jeden Weg, das zu
+    // ändern.
+    final auth = FakeAuthService(
+      signedIn: const AuthAccount(id: 'u1', email: 'ali@example.com'),
+    );
+    addTearDown(auth.dispose);
+
+    await tester.pumpWidget(wrap(auth, cloudEnabled: true));
+    await tester.pump();
+    await tester.pump();
+
+    await tester.tap(find.text('Benutzernamen festlegen'));
+    await tester.pumpAndSettle();
+    // Nur der Name — das Konto besteht ja schon.
+    expect(find.widgetWithText(TextField, 'Passwort'), findsNothing);
+
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Benutzername'),
+      'ali',
+    );
+    await tester.tap(find.text('Benutzernamen speichern'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump();
+
+    expect(auth.calls, contains('claimUsername:ali'));
+    // ⚠️ Die Karte muss den neuen Namen zeigen, ohne dass sich das Konto
+    // geändert hätte — dafür invalidiert das Sheet accountUsernameProvider.
+    expect(find.text('Angemeldet als ali'), findsOneWidget);
+    expect(find.text('Benutzernamen festlegen'), findsNothing);
   });
 
   testWidgets('Abmelden ruft den Dienst', (tester) async {

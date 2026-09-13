@@ -2,7 +2,7 @@
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
 >
-> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **210 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 10/10 in der Automatik** (29.3), 13/13 Zugriffsregeln am Server.
+> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **214 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 10/10 in der Automatik** (29.3), 13/13 Zugriffsregeln am Server.
 >
 > ⚠️ **Ab dem 2026-08-17 gibt es keinen Entwicklungsrechner mehr.** Der Nutzer löscht alles, was nicht auf GitHub liegt — inklusive VS Code. **Jede weitere Änderung entsteht auf GitHub.** Was das für die Prüfung bedeutet, steht in [Abschnitt 9](#9-arbeitsweise--konventionen) und [Phase 29](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17).
 >
@@ -18,7 +18,7 @@
 >
 > | # | Offen | Wer | Warum in dieser Reihenfolge |
 > |---|---|---|---|
-> | 1 | **Benutzername nachtragen können** (31.1) | Claude | Heute bleibt ein Konto, dessen Name vergeben war, **ohne Namen hängen** — und die App bietet keinen Weg heraus |
+> | 1 | ~~**Benutzername nachtragen können**~~ ✅ (31.1) | Claude | erledigt 2026-09-13 |
 > | 2 | **Browser-Durchgang erweitern** (31.2) | Claude | 10 statt früher 20 Punkte; Konto-Rubrik, Anleitung und `privacy.html` sind ungeprüft |
 > | 3 | **Konto vollständig löschen** (31.3) | Claude, dann Nutzer | Heute nur per Nachricht; der Nutzer spielt danach `schema.sql` einmal ein |
 > | 4 | **Alten Gist löschen** (29.5) | Nutzer | Überflüssig, aber auffindbar — und veraltet |
@@ -412,8 +412,8 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
 - [x] **Die Übersetzung der Gründe steht in der Oberfläche, nicht im Dienst** (`authIssueText`, `usernameIssueText`). Der Dienst kennt keine Sprache, die Oberfläche keine Server-Codes. Wer das vermischt, braucht `BuildContext` in einem Dienst — und kann ihn nicht mehr testen.
 - [x] **Der Benutzername wird geprüft, BEVOR ein Konto entsteht.** Sonst legte eine ungültige Eingabe erst das Konto an und scheiterte dann am Namen.
 - [x] **`cloudSyncEnabledProvider`** statt eines direkten Zugriffs auf `supportsCloudSync` in der Oberfläche. ⚠️ Ohne ihn wäre die halbe Oberfläche dieser Phase **unprüfbar**: Im Testlauf gibt es keine Schlüssel, also verstecken sich die Widgets grundsätzlich.
-- [ ] ⚠️ **Reihenfolge bei der Registrierung, und was schiefgehen kann:** Erst `signUp(email, password)`, **dann** die Profilzeile mit dem Benutzernamen (die braucht die Kennung, die es erst danach gibt). Ist der Name schon vergeben, existiert das Konto bereits, die Profilzeile aber nicht — **kein kaputter Zustand, aber einer, der behandelt werden muss**: Die Oberfläche fragt nach einem anderen Namen, `claimUsername()` schreibt ihn nach. Das Konto darf dabei **nicht** gelöscht werden; nur der Name fehlt. ➜ **Der Dienst kann es (`claimUsername`), die Oberfläche nie — 31.1.**
-- [ ] **Verfügbarkeit vorab prüfen** über `username_available()` — reine Höflichkeit. ⚠️ **Die Wahrheit ist der eindeutige Index der Datenbank**: Zwischen Frage und Absenden kann ein anderer denselben Namen nehmen. Bei Zweifeln antwortet die Abfrage „frei" — ein Formular, das wegen einer wackligen Verbindung „vergeben" behauptet, hält jemanden von seinem eigenen Namen ab. ➜ Der Dienst hat `isUsernameAvailable`, das Formular fragt nie — 31.1.
+- [x] ⚠️ **Reihenfolge bei der Registrierung, und was schiefgehen kann:** Erst `signUp(email, password)`, **dann** die Profilzeile mit dem Benutzernamen (die braucht die Kennung, die es erst danach gibt). Ist der Name schon vergeben, existiert das Konto bereits, die Profilzeile aber nicht — **kein kaputter Zustand, aber einer, der behandelt werden muss**: Die Oberfläche fragt nach einem anderen Namen, `claimUsername()` schreibt ihn nach. Das Konto darf dabei **nicht** gelöscht werden; nur der Name fehlt. ✅ **Seit 31.1 auch in der Oberfläche.**
+- [x] **Verfügbarkeit vorab prüfen** über `username_available()` — reine Höflichkeit. ⚠️ **Die Wahrheit ist der eindeutige Index der Datenbank**: Zwischen Frage und Absenden kann ein anderer denselben Namen nehmen. Bei Zweifeln antwortet die Abfrage „frei" — ein Formular, das wegen einer wackligen Verbindung „vergeben" behauptet, hält jemanden von seinem eigenen Namen ab. ✅ Seit 31.1 fragt das Formular.
 - [ ] **„Passwort vergessen" ist vorgesehen**, funktioniert aber erst mit eigenem SMTP (27.2). ⚠️ Solange es das nicht gibt, darf der Knopf **nicht** dastehen und ins Leere greifen — dieselbe Regel wie bei den Erinnerungen im Browser (26.1).
 - [x] **Rubrik „Konto & Cloud" auf der bestehenden Konto-Seite** (`account_cloud_card.dart`) — **nicht** in einer eigenen Rubrik daneben. ⚠️ Entscheidung des Nutzers und die richtige: Ein Konto ist genau das, worum es auf dieser Seite ohnehin geht; ein zweiter Ort für dasselbe Thema wäre die verbotene Doppelung, und der Nutzer müsste sich merken, welcher der beiden Orte was kann.
 - [x] Zeigt: angemeldet als … · die hinterlegte E-Mail **sichtbar** samt Hinweis (Gegenmaßnahme zum Tippfehler, 27.0b) · Stand der letzten Sicherung · Sichern · Wiederherstellen · Abmelden. **Verschwindet vollständig ohne Cloud.**
@@ -671,11 +671,13 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 
 ⚠️ **Bewusst NICHT hier: „Passwort vergessen" (27.5).** Der Knopf ließe sich bauen, aber nicht prüfen — ohne SMTP kommt keine Nachricht an, und der Weg zurück in die App (Link aus der E-Mail, neues Passwort setzen) ist genau der Teil, der im Browser schiefgehen kann. **Ein ungeprüfter Knopf ins Leere ist schlechter als keiner** (dieselbe Regel wie 26.1). Er kommt, wenn der Dienst steht.
 
-#### 31.1 Benutzername nachtragen (27.5) ⬜
-- [ ] **Vor der Registrierung fragen, ob der Name frei ist** (`isUsernameAvailable`). Der Dienst kann es seit 27.5 — das Formular hat nie gefragt.
-- [ ] ⚠️ **Scheitert der Name NACH dem Anlegen des Kontos** (jemand war schneller), bleibt das Sheet offen und fragt **nur noch nach dem Namen**; `claimUsername` schreibt ihn nach. Heute steht dann „Name vergeben" im Formular — und ein zweiter Versuch scheitert an „E-Mail schon registriert", weil das Konto ja schon existiert. **Aus diesem Zustand kommt der Nutzer heute nicht heraus.**
-- [ ] **Auf der Konto-Seite einen Namen nachtragen**, solange keiner da ist — „Noch kein Benutzername" steht dort schon, aber ohne Knopf dahinter.
-- [ ] Tests mit `FakeAuthService`.
+#### 31.1 Benutzername nachtragen (27.5) ✅ *(2026-09-13)*
+- [x] **Vor der Registrierung wird gefragt, ob der Name frei ist** (`isUsernameAvailable`, normalisiert). Ist er vergeben, entsteht **gar kein** Konto.
+- [x] ⚠️ **Scheitert der Name NACH dem Anlegen des Kontos** (Wettlauf, oder die Verbindung bricht genau dazwischen ab), schaltet das Sheet in den **Nur-Name-Modus**: E-Mail und Passwort verschwinden, `claimUsername` schreibt den neuen Namen nach. Vorher stand dann „Name vergeben" im Formular — und ein zweiter Versuch scheiterte an „E-Mail schon registriert". **Aus diesem Zustand kam der Nutzer nicht heraus.** Erkannt wird der Fall daran, dass nach dem Fehlschlag **ein Konto angemeldet ist** — nicht am Fehlercode, denn auch „offline" kann genau zwischen Konto und Name auftreten.
+- [x] **Konto-Seite:** Unter „Noch kein Benutzername" steht jetzt „Benutzernamen festlegen" und öffnet dasselbe Sheet im Nur-Name-Modus. Der Knopf erscheint erst **nach** dem Laden — während der Abfrage ist der Name nur unbekannt, nicht fehlend.
+- [x] ⚠️ **Dabei gefunden (aus dem Ablauf abgeleitet, nicht beobachtet):** Die Konto-Seite lud den Namen, sobald sich die Anmeldung meldete — und die kann sich **vor** dem Schreiben der Profilzeile melden. Dann bliebe „Noch kein Benutzername" stehen, obwohl der Name gesetzt ist. Der Provider liegt jetzt als `accountUsernameProvider` in `auth_service.dart`, und das Sheet invalidiert ihn nach jedem Erfolg.
+- [x] Tests: `auth_sheet_test.dart` (3 Fälle, darunter der Wettlauf) und ein neuer Fall in `account_cloud_card_test.dart`. ⚠️ **`FakeAuthService.signUp` legt jetzt wie der echte Dienst erst das Konto, dann den Namen an** — vorher tat er beides in einem Schritt und hätte die Sackgasse nie zeigen können. Ein Fake, der bequemer ist als das Original, testet das Original nicht.
+- [x] ⚠️ **Nebenbei:** `dart format` hat drei lange einzeilige `if … return …;` in `auth_service.dart` umgebrochen und damit drei `curly_braces_in_flow_control_structures`-Hinweise erzeugt. `flutter analyze` wertet auch Hinweise als Fehler — die Automatik wäre rot geworden. Klammern ergänzt, lokal gegengeprüft.
 
 #### 31.2 Browser-Durchgang erweitern (29.3) ⬜
 - [ ] **Rubrik „Konto & Cloud"** bietet „Anmelden" an — das belegt nebenbei, dass die Supabase-Schlüssel im Bau angekommen sind. ⚠️ Ohne Secrets ist die fehlende Rubrik **richtig**; das muss der Durchgang unterscheiden, wie `webtest.py` es tat.

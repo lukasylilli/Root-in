@@ -464,6 +464,9 @@
     }
   },
   "cloudNoUsernameYet": "Noch kein Benutzername",
+  "cloudSetUsername": "Benutzernamen festlegen",
+  "authPickUsernameBody": "Dein Konto steht — es fehlt nur noch ein Benutzername.",
+  "authSaveUsername": "Benutzernamen speichern",
   "cloudEmailHint": "Diese Adresse ist der einzige Weg, ein vergessenes Passwort zurückzusetzen. Stimmt sie nicht, hier ändern.",
   "fieldEmail": "E-Mail",
   "fieldPassword": "Passwort",

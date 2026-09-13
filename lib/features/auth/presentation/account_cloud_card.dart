@@ -91,8 +91,8 @@ class _SignedInState extends ConsumerState<_SignedIn> {
     CloudSyncStatus.tooNew => l10n.cloudTooNew,
     // „Nicht verfügbar" darf hier nicht vorkommen — die Karte ist dann
     // unsichtbar. Käme es doch, ist es kein Fehler des Nutzers.
-    CloudSyncStatus.notAvailable || CloudSyncStatus.failed =>
-      l10n.cloudSyncFailed,
+    CloudSyncStatus.notAvailable ||
+    CloudSyncStatus.failed => l10n.cloudSyncFailed,
   };
 
   Future<void> _backupNow() async {
@@ -190,7 +190,8 @@ class _SignedInState extends ConsumerState<_SignedIn> {
     // getrennt geladen. Solange er fehlt, steht das ausdrücklich da, statt
     // die Zeile leer zu lassen: Ein Konto OHNE Namen ist ein möglicher
     // Zustand (PLAN.md 27.5), kein Anzeigefehler.
-    final username = ref.watch(_usernameProvider).value;
+    final usernameState = ref.watch(accountUsernameProvider);
+    final username = usernameState.value;
     final lastBackup = ref.watch(_lastBackupProvider).value;
 
     return Column(
@@ -202,6 +203,20 @@ class _SignedInState extends ConsumerState<_SignedIn> {
               : l10n.cloudSignedInAs(username),
           style: theme.textTheme.titleMedium,
         ),
+        // Ein Konto ohne Namen braucht einen Weg, ihn nachzutragen — sonst
+        // steht „Noch kein Benutzername" für immer da (PLAN.md 31.1). Erst
+        // NACH dem Laden: Während der Abfrage ist der Name nur unbekannt,
+        // nicht fehlend.
+        if ((username == null || username.isEmpty) &&
+            usernameState.hasValue) ...[
+          const SizedBox(height: AppSpacing.xs),
+          OutlinedButton(
+            onPressed: _busy
+                ? null
+                : () => showAuthSheet(context, usernameOnly: true),
+            child: Text(l10n.cloudSetUsername),
+          ),
+        ],
         const SizedBox(height: AppSpacing.xs),
         Text(widget.account.email, style: theme.textTheme.bodyMedium),
         const SizedBox(height: AppSpacing.xs),
@@ -235,9 +250,7 @@ class _SignedInState extends ConsumerState<_SignedIn> {
         // hier, der etwas unwiderruflich wegnimmt.
         TextButton(
           onPressed: _busy ? null : _deleteServerData,
-          style: TextButton.styleFrom(
-            foregroundColor: theme.colorScheme.error,
-          ),
+          style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
           child: Text(l10n.cloudDeleteData),
         ),
       ],
@@ -253,16 +266,6 @@ String _formatStamp(DateTime utc) {
   String two(int v) => v.toString().padLeft(2, '0');
   return '${two(t.day)}.${two(t.month)}.${t.year} ${two(t.hour)}:${two(t.minute)}';
 }
-
-/// Lädt den Benutzernamen zum angemeldeten Konto.
-///
-/// Hängt bewusst an [authAccountProvider]: Nach einem Kontowechsel darf
-/// nicht der Name des vorigen Kontos stehen bleiben.
-final _usernameProvider = FutureProvider<String?>((ref) async {
-  final account = ref.watch(authAccountProvider).value;
-  if (account == null) return null;
-  return ref.read(authServiceProvider).loadUsername();
-});
 
 /// Zeitpunkt der letzten Sicherung — **vom Server**, nicht von der Geräteuhr.
 ///

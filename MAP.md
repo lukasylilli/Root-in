@@ -2,7 +2,7 @@
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
 >
-> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **210 Tests grün**, Browser-Durchgang 10/10 in der Automatik, 13/13 Zugriffsregeln am Server.
+> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **214 Tests grün**, Browser-Durchgang 10/10 in der Automatik, 13/13 Zugriffsregeln am Server.
 >
 > ⚠️ **Es gibt keinen Entwicklungsrechner mehr** (PLAN.md Phase 29). Alles, was nicht in diesem Repository liegt, ist gelöscht — auch VS Code. **Diese Datei beschreibt damit nicht mehr „was auf dem Rechner liegt", sondern „was das Repository enthält".** Wer etwas sucht, das hier nicht steht, sucht etwas, das es nicht gibt.
 >
@@ -523,11 +523,14 @@ lib/
 │       ├── auth_sheet.dart                       EIN Sheet für Anmelden UND Registrieren (Muster wie
 │       │                                         showShareProgressSheet). Enthält die Übersetzung der
 │       │                                         sprachneutralen Gründe. KEIN „Passwort vergessen" —
-│       │                                         das geht erst mit eigenem SMTP (27.2)
+│       │                                         das geht erst mit eigenem SMTP (27.2).
+│       │                                         Seit 31.1: fragt VOR der Registrierung, ob der Name frei
+│       │                                         ist, und hat einen Nur-Name-Modus (`usernameOnly`) — für
+│       │                                         ein Konto, dessen Name beim Anlegen vergeben war
 │       └── account_cloud_card.dart               Die Rubrik „Konto & Cloud" auf der Konto-Seite.
 │                                                 ⚠️ VERSCHWINDET vollständig, wenn supportsCloudSync
 │                                                 falsch ist — ehrlich abschalten statt Knöpfe ohne
-│                                                 Wirkung — ehrlich abschalten statt still scheitern
+│                                                 Wirkung. Ohne Benutzernamen: Knopf „Benutzernamen festlegen" (31.1)
 ```
 
 ## test/
@@ -818,6 +821,8 @@ lib/core/services/username_rules.dart ✅ Die EINZIGE Stelle, die festlegt, was 
 test/unit/username_rules_test.dart   ✅ 8 Fälle
 lib/core/services/auth_service.dart  ✅ Einzige Stelle für supabase_flutter (27.5). Registrieren,
                                          Anmelden (mit E-Mail), Abmelden, Benutzernamen belegen/laden.
+                                         `accountUsernameProvider` (31.1): der Name zum Konto — wer
+                                         ihn schreibt, invalidiert ihn
                                          Gibt IMMER ein AuthResult zurück statt zu werfen — eine
                                          fehlgeschlagene Anmeldung ist ein erwarteter Verlauf.
                                          ⚠️ Fehler werden über den `code` zugeordnet, NIE über die
@@ -850,11 +855,19 @@ lib/core/services/cloud_auto_backup.dart ✅ Sichert von selbst (27.7), ENTPRELL
 lib/features/auth/presentation/
   auth_sheet.dart                    ✅ EIN Sheet für Anmelden und Registrieren (27.5), Muster wie
                                          showShareProgressSheet. Enthält die Übersetzung der
-                                         sprachneutralen Gründe — der Dienst kennt keine Sprache
+                                         sprachneutralen Gründe — der Dienst kennt keine Sprache.
+                                         Seit 31.1: Vorab-Frage „Name frei?" und Nur-Name-Modus
   account_cloud_card.dart            ✅ Rubrik „Konto & Cloud" auf der BESTEHENDEN Konto-Seite,
-                                         nicht daneben. Verschwindet ganz ohne Cloud
-test/support/fake_auth_service.dart  ✅ Anmeldung ohne Server (27.5)
-test/widget/account_cloud_card_test.dart ✅ 6 Fälle, u. a. „ohne Cloud ist die Rubrik gar nicht da"
+                                         nicht daneben. Verschwindet ganz ohne Cloud. Ohne
+                                         Benutzernamen: Knopf „Benutzernamen festlegen" (31.1)
+test/support/fake_auth_service.dart  ✅ Anmeldung ohne Server (27.5). `signUp` wie der echte Dienst:
+                                         ERST Konto, DANN Name. `takenUsernames` und
+                                         `availabilityCheckSeesTaken: false` stellen den Wettlauf nach
+test/widget/account_cloud_card_test.dart ✅ 7 Fälle, u. a. „ohne Cloud ist die Rubrik gar nicht da" und
+                                         „ohne Benutzername lässt er sich nachtragen"
+test/widget/auth_sheet_test.dart     ✅ 3 Fälle (31.1): vergebener Name legt KEIN Konto an · Name erst
+                                         nach dem Anlegen vergeben → nur noch das Namensfeld,
+                                         claimUsername schreibt nach · Namensregeln vor jedem Senden
 ```
 
 **Registrierung: echte E-Mail + Passwort + Benutzername** (Entscheidung des Nutzers, PLAN.md 27.0b — **geändert am 2026-08-16**, vorher war eine künstliche Adresse aus dem Benutzernamen geplant). E-Mail und Passwort verwaltet Supabase, der Benutzername ist der Name *in* der App. Angemeldet wird mit der **E-Mail**; ob später auch mit dem Benutzernamen, ist offen (es bräuchte eine Edge Function — eine öffentliche Zuordnung Name → Adresse würde fremde E-Mails verraten).

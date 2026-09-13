@@ -250,6 +250,9 @@
     }
   },
   "cloudNoUsernameYet": "هنوز نام کاربری ندارید",
+  "cloudSetUsername": "انتخاب نام کاربری",
+  "authPickUsernameBody": "حساب شما ساخته شده است — فقط نام کاربری کم دارد.",
+  "authSaveUsername": "ذخیرهٔ نام کاربری",
   "cloudEmailHint": "این نشانی تنها راه بازیابی رمز فراموش‌شده است. اگر درست نیست، همین‌جا تغییرش دهید.",
   "fieldEmail": "ایمیل",
   "fieldPassword": "رمز عبور",
