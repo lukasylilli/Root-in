@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:root_in/core/constants/app_links.dart';
 import 'package:root_in/core/services/settings_service.dart';
 import 'package:root_in/core/services/time_service.dart';
 import 'package:root_in/core/widgets/share_card.dart';
@@ -73,8 +73,9 @@ void main() {
 
     expect(find.byType(ShareCard), findsOneWidget);
     expect(find.byType(OverviewBoard), findsNothing);
-    // Der Store-Weg steht auch auf der leeren Karte.
-    expect(find.byType(QrImageView), findsOneWidget);
+    // Der Weg zur App steht auch auf der leeren Karte — seit 2026-09-13 als
+    // ausgeschriebene Adresse statt als QR-Code (share_card.dart).
+    expect(find.text(appShareUrl), findsOneWidget);
     expect(tester.takeException(), isNull);
 
     await disposeAndFlush(tester);
