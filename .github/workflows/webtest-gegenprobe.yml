@@ -1,0 +1,59 @@
+# Gegenprobe des Browser-Durchgangs (PLAN.md 31.2, Lehre 32).
+#
+# Ein Oberflächen-Test, der nie rot war, prüft nichts. Dieser Ablauf baut die
+# App ABSICHTLICH beschädigt und verlangt, dass `tool/webtest_ci.py` GENAU die
+# dafür zuständigen Prüfungen rot meldet — und alle übrigen grün:
+#
+#   Beschädigung                                   muss rot werden
+#   ---------------------------------------------  ---------------------------
+#   ohne Supabase-Schlüssel gebaut, Konto erwartet  „Konto & Cloud bietet
+#                                                   Anmelden an"
+#   raw.githubusercontent.com im Browser gesperrt   Anleitungs-Text geladen ·
+#   (macht `--gegenprobe` selbst)                   kein „Erneut versuchen"
+#   privacy.html vor dem Ausliefern gelöscht        alle drei privacy-Prüfungen
+#
+# Welche Prüfungen das sind, steht an EINER Stelle: `GEGENPROBE_ROT` in
+# `tool/webtest_ci.py`. Bleibt eine davon grün, prüft sie nichts; wird eine
+# andere rot, hat die Beschädigung mehr getroffen als gedacht — beides lässt
+# diesen Lauf scheitern.
+#
+# ⚠️ Er VERÖFFENTLICHT NICHTS: kein Pages-Artefakt, kein deploy-Job, keine
+# Secrets. Er läuft von selbst, wenn sich der Durchgang ändert — genau dann
+# ist die Frage „kann er noch rot werden?" offen —, sonst von Hand.
+name: Browser-Durchgang gegenprüfen
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - tool/webtest_ci.py
+      - tool/webtest_serve.sh
+      - .github/workflows/webtest-gegenprobe.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gegenprobe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Abhängigkeiten holen
+        run: flutter pub get
+
+      # ⚠️ OHNE Supabase-Secrets — mit Absicht. `build_web.sh` baut dann eine
+      # Fassung ohne Konto; `--gegenprobe` erwartet trotzdem eine.
+      - name: Web bauen (ohne Schlüssel)
+        run: ./tool/build_web.sh "/${{ github.event.repository.name }}/"
+
+      - name: Beschädigen und gegenprüfen
+        run: |
+          rm build/web/privacy.html
+          bash tool/webtest_serve.sh "${{ github.event.repository.name }}" --gegenprobe

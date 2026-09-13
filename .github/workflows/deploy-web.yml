@@ -95,18 +95,18 @@ jobs:
       # Feld.
       # ➜ Bleibt so. Wer ihn wieder auf „nicht blockierend" stellt, schaltet
       #   die einzige Browser-Prüfung des Projekts ab, ohne dass es auffällt.
+      #
+      # Ausliefern und Prüfen stehen in `tool/webtest_serve.sh` — dieselbe
+      # Stelle nutzt die Gegenprobe (`webtest-gegenprobe.yml`), die beweist,
+      # dass dieser Durchgang überhaupt rot werden kann (PLAN.md 31.2).
       - name: Browser-Durchgang
-        run: |
-          # Unter demselben Unterpfad ausliefern wie GitHub Pages — sonst
-          # sucht die Seite ihre Dateien eine Ebene zu hoch (Lehre 28).
-          mkdir -p /tmp/serve/"${{ github.event.repository.name }}"
-          cp -R build/web/. /tmp/serve/"${{ github.event.repository.name }}"/
-          python3 -m http.server 8765 --directory /tmp/serve &
-          for i in $(seq 1 20); do
-            curl -sf -o /dev/null "http://localhost:8765/${{ github.event.repository.name }}/" && break
-            sleep 1
-          done
-          python3 tool/webtest_ci.py "http://localhost:8765/${{ github.event.repository.name }}/"
+        run: bash tool/webtest_serve.sh "${{ github.event.repository.name }}"
+        env:
+          # ⚠️ Ist ein Supabase-Schlüssel hinterlegt, MUSS die Rubrik
+          # „Konto & Cloud" erscheinen. Ohne diesen Schalter hielte der
+          # Durchgang eine fehlende Rubrik für „ohne Schlüssel gebaut" — und
+          # eine Änderung, die sie versehentlich versteckt, ginge grün durch.
+          WEBTEST_EXPECT_CLOUD: ${{ secrets.SUPABASE_URL != '' && '1' || '' }}
 
       - uses: actions/configure-pages@v5
 
