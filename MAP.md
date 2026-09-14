@@ -993,6 +993,7 @@ Manifest (siehe Hinweise).
 ⬜ **Nutzer:** den alten Gist löschen — `gist.github.com/lukasylilli/673c36972d69819d975ffb82a592cca2`.
 
 ## Hinweise
+- 🔗 **Root-in wird aus Vox verlinkt — in dieser Richtung und sonst nirgends** (2026-09-15). Vox (`github.com/lukasylilli/vox`, Flutter-Web auf GitHub Pages) öffnet unter *Selbstlernen* eine Karte „Routine", die auf `https://lukasylilli.github.io/Root-in/` zeigt. **In diesem Repository gibt es dafür keine Datei und keinen Code** — Root-in weiß von dem Link nichts. ⚠️ Wer die Adresse von Root-in ändert (Repo umbenennen, eigene Domain), muss `lib/core/constants/app_links.dart` **im Vox-Repo** nachziehen, sonst zeigt die Karte ins Leere. Kein Code-Merge — bewusste Entscheidung, damit Root-in eigenständig nutzbar bleibt (PLAN.md, Kopf).
 - Diese Datei bildet **nur die Struktur** ab (was liegt wo) — Fortschritt und Feature-Details stehen in PLAN.md.
 - Bei jeder neuen Datei/jedem neuen Ordner: hier ergänzen. Bei Löschung/Umbenennung: hier korrigieren.
 - `*.g.dart` sind generiert (`dart run build_runner build`) und werden hier nicht einzeln aufgeführt. ⚠️ **Sie sind versioniert, und das ist seit Phase 29 lebenswichtig:** Die Automatik ruft `build_runner` **nicht** auf. Wer eine Drift-Tabelle oder `database.dart` ändert, ohne die passende `.g.dart` mitzuliefern, bekommt einen roten Lauf — und kann ihn ohne Rechner nur beheben, indem er die generierte Datei von Hand nachzieht.
