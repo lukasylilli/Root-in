@@ -2,7 +2,7 @@
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
 >
-> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **224 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 23/23 in der Automatik** und eine **Gegenprobe bei jedem Push** (31.2), 13/13 Zugriffsregeln am Server (18 Prüfungen, sobald `schema.sql` nach 31.3 eingespielt ist).
+> **Stand 2026-09-15.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **224 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 23/23 in der Automatik** und eine **Gegenprobe bei jedem Push** (31.2), 13/13 Zugriffsregeln am Server (18 Prüfungen, sobald `schema.sql` nach 31.3 eingespielt ist).
 >
 > ⚠️ **Ab dem 2026-08-17 gibt es keinen Entwicklungsrechner mehr.** Der Nutzer löscht alles, was nicht auf GitHub liegt — inklusive VS Code. **Jede weitere Änderung entsteht auf GitHub.** Was das für die Prüfung bedeutet, steht in [Abschnitt 9](#9-arbeitsweise--konventionen) und [Phase 29](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17).
 >
@@ -27,6 +27,8 @@
 > | 5 | **Durchgang auf einem echten iPhone** (Phase 26, 27.9) | Nutzer | Chrome in der Automatik sieht weder Safari noch die abgelegte Fassung |
 > | 6 | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer, dann Claude | Ohne ihn ist die E-Mail gespeichert, aber nutzlos. Der Knopf kommt **erst danach** — ungeprüft gebaut wäre er ein Knopf ins Leere |
 > | 7 | **Ein Konto für Root-in und Vox** ([Phase 30](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte)) | Nutzer beantwortet die Fragen, dann beide | Vom Nutzer für die **letzten** Projektschritte angesagt |
+>
+> 🔗 **2026-09-13/15 — Root-in wird aus Vox verlinkt (nur diese Richtung).** In Vox öffnet die Karte **„Routine"** unter *Selbstlernen* die Adresse `https://lukasylilli.github.io/Root-in/` in einem neuen Tab (`core/constants/app_links.dart` → `rootInUrl`). **Bewusst kein Code-Merge** — Root-in bleibt ein eigenes Repo und eigenständig nutzbar, für alle, die nur die Routine-App brauchen. Für Root-in folgt daraus **keine Änderung**; hier steht es nur, damit die Verbindung auf beiden Seiten dokumentiert ist. ⚠️ Wer die Adresse von Root-in je ändert, muss `app_links.dart` **im Vox-Repo** nachziehen — Root-in weiß nichts von diesem Link.
 
 ## Inhaltsverzeichnis
 1. [Vision](#1-vision)
@@ -643,7 +645,19 @@ Nicht „im Browser ausblenden" (so war es seit 26.1), sondern **weg**. Betroffe
 
 **Vom Nutzer:** *„ثبت اکانت برنامه root-in و ثبت اکانت داخل برنامه vox جوری خواهد بود که هر دو از یک اکانت استفاده کنند! این برای اخرین مراحل پروژه‌است."* — Registrierung in Root-in und Registrierung in **Vox** sollen **dasselbe Konto** benutzen. Ausdrücklich für die **letzten** Schritte des Projekts.
 
-⚠️ **Hier steht bewusst nur, was feststeht.** Über Vox ist in diesem Projekt nichts dokumentiert — weder Technik noch Stand noch Zeitplan. Was unten steht, ist **keine Planung von Vox**, sondern die Aufstellung dessen, was ein gemeinsames Konto **auf der Root-in-Seite** bedeutet, und der Fragen, die vor dem ersten Handgriff beantwortet sein müssen.
+✅ **2026-09-15 — die erste offene Frage ist beantwortet.** Beide Projekte werden seit 2026-09-13 aus **einem** Claude-Projekt betreut; Vox wurde am 2026-09-15 vollständig durchgesehen (Code + Daten, direkt über die GitHub-API). Stand von Vox:
+
+| | Vox (`github.com/lukasylilli/vox`) |
+|---|---|
+| Art | **Flutter-Web-App**, live unter `lukasylilli.github.io/vox/` — wie Root-in: kein Store, keine Installation |
+| Umfang | 253 Dart-Dateien (ohne `*.g.dart`), ~41 400 Zeilen |
+| Datenhaltung | **drift + SQLite-WASM** im Browser (IndexedDB/OPFS) + `shared_preferences` — identisch zu Root-in |
+| Konten | **gar keine.** Kein Supabase, kein `auth_service.dart`, kein Login — Vox ist heute vollständig kontenlos (README: „ohne Konto, ohne Abo") |
+| Automatik | eigener Workflow `deploy-web.yml`: `flutter analyze` + `flutter test` + `flutter build web` → GitHub Pages bei jedem Push auf `main` |
+
+⇒ **Für Phase 30 heißt das: der günstige Fall.** Zweite Flutter-Web-App mit demselben Datenstapel — `auth_service.dart` ist fast unverändert übernehmbar. Aber: **Vox hat noch keinerlei Konto-Oberfläche**; „ein Konto für beide" ist auf der Vox-Seite kein Anschluss, sondern ein Neubau (Registrierung, Anmeldung, Löschen, Datenschutztext). Das ist Aufwand in Vox, nicht in Root-in.
+
+⚠️ **Der Rest dieser Phase ist weiterhin offen.** Was unten steht, ist **keine Planung von Vox**, sondern die Aufstellung dessen, was ein gemeinsames Konto **auf der Root-in-Seite** bedeutet, und der Fragen, die vor dem ersten Handgriff beantwortet sein müssen.
 
 **Was aus „ein Konto" technisch folgt, wenn Root-in bleibt, wie es ist:**
 
@@ -659,7 +673,7 @@ Ein Konto ist bei Supabase eine Zeile in `auth.users`, und die gehört **einem P
 | Der `anon`-Schlüssel | steht im Root-in-Bundle | steht dann in **beiden** Bundles — unverändert kein Geheimnis, aber zwei Wege hinein |
 
 **Fragen, die vor dem ersten Handgriff beantwortet gehören** — sie ändern den Aufwand um Größenordnungen:
-- [ ] **Gibt es Vox schon, und womit ist es gebaut?** Eine zweite Flutter-Web-App kann `auth_service.dart` fast unverändert übernehmen; alles andere braucht eine eigene Anbindung.
+- [x] **Gibt es Vox schon, und womit ist es gebaut?** ✅ beantwortet 2026-09-15 (Tabelle oben): ja — Flutter-Web, drift + SQLite-WASM, GitHub Pages, **ohne jedes Konto**. `auth_service.dart` ist übernehmbar; die Konto-Oberfläche in Vox muss neu gebaut werden.
 - [ ] **Ein Supabase-Projekt für beide, oder zwei getrennte?** Ein Konto für beide **erzwingt** ein gemeinsames Projekt. ⚠️ Der freie Tarif erlaubt **zwei aktive Projekte** — das ist hier kein Engpass, aber die Entscheidung ist trotzdem eine Einbahnstraße: Konten nachträglich zusammenzuführen heißt, Nutzer neu registrieren zu lassen.
 - [ ] **Ein Anzeigename und ein Benutzername für beide** — oder je App eigene? Ein gemeinsamer Name ist einfacher und vermutlich gewollt („derselbe Mensch"), macht aber den Benutzernamen zu einer projektweiten Ressource.
 - [ ] **Was passiert beim Löschen?** Wer in Vox sein Konto löscht, löscht auch seinen Root-in-Zugang. Das gehört in beide Oberflächen **und** in die Datenschutzerklärung.
