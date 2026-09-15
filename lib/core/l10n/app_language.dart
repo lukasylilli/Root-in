@@ -39,9 +39,14 @@ enum AppLanguage {
   };
 }
 
-/// Sprache der ARB-Vorlage — Rückfallebene, wenn das Gerät keine der
-/// unterstützten Sprachen meldet.
-const Locale fallbackLocale = Locale('de');
+/// Rückfallebene, wenn das Gerät keine der unterstützten Sprachen meldet.
+///
+/// **Englisch** (PLAN.md 31.6, Entscheidung des Nutzers 2026-09-16): Wer beim
+/// ersten Öffnen eine Sprache sieht, die er nicht lesen kann, schließt die App.
+/// Englisch verstehen die meisten; Deutsch und Persisch bekommt nur, wessen
+/// Gerät sie meldet. ⚠️ Nicht mit der ARB-Vorlage verwechseln — die bleibt
+/// `app_de.arb` (l10n.yaml) und entscheidet nur, woher fehlende Texte kommen.
+const Locale fallbackLocale = Locale('en');
 
 /// Sprachen, die von rechts nach links laufen. Bislang nur Persisch;
 /// Arabisch, Hebräisch und Urdu stehen gleich mit, damit die Erweiterung

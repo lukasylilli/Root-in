@@ -28,6 +28,8 @@
 > | 6 | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer, dann Claude | Ohne ihn ist die E-Mail gespeichert, aber nutzlos. Der Knopf kommt **erst danach** — ungeprüft gebaut wäre er ein Knopf ins Leere |
 > | 7 | **Ein Konto für Root-in und Vox** ([Phase 30](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte)) | Nutzer beantwortet die Fragen, dann beide | Vom Nutzer für die **letzten** Projektschritte angesagt |
 >
+> 🌐 **2026-09-16 — Startsprache (31.6):** Ohne eigene Wahl folgt Root-in der Gerätesprache; kann die App keine davon, startet sie jetzt auf **Englisch** (vorher Deutsch).
+>
 > 🔗 **2026-09-13/15 — Root-in wird aus Vox verlinkt (nur diese Richtung).** In Vox öffnet die Karte **„Routine"** unter *Selbstlernen* die Adresse `https://lukasylilli.github.io/Root-in/` in einem neuen Tab (`core/constants/app_links.dart` → `rootInUrl`). **Bewusst kein Code-Merge** — Root-in bleibt ein eigenes Repo und eigenständig nutzbar, für alle, die nur die Routine-App brauchen. Für Root-in folgt daraus **keine Änderung**; hier steht es nur, damit die Verbindung auf beiden Seiten dokumentiert ist. ⚠️ Wer die Adresse von Root-in je ändert, muss `app_links.dart` **im Vox-Repo** nachziehen — Root-in weiß nichts von diesem Link.
 
 ## Inhaltsverzeichnis
@@ -741,6 +743,13 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 - [x] `test/unit/bundle_secrets_test.dart` (5 Fälle) ruft das echte Skript: anon grün · `service_role` rot und nicht ausgegeben · `sb_secret_` rot · blinder Suchlauf rot · ohne Erwartung grün.
 - [x] **In der Automatik:** erster Lauf grün, der erlaubte Schlüssel gefunden.
 
+#### 31.6 Startsprache: Englisch als Rückfall ✅ *(2026-09-16)*
+- [x] **Anlass (Nutzer):** Ein englischsprachiger Besucher, der beim ersten Öffnen eine Sprache sieht, die er nicht lesen kann, schließt die App sofort. Regel: **Standard Englisch; Persisch nur, wenn das Gerät Persisch meldet.**
+- [x] **Stand vorher:** Root-in folgte schon der Gerätesprache (`AppLanguage.system` → `resolveLocale`: erste Gerätesprache, die die App kann — de/en/fa). Nur der **Rückfall** für nicht unterstützte Sprachen (z. B. Türkisch) war **Deutsch**.
+- [x] **Geändert:** `fallbackLocale` in `lib/core/l10n/app_language.dart` → `Locale('en')`. Eine Zeile, eine Stelle. Deutsch bekommt weiterhin, wessen Gerät Deutsch meldet — das ist eine unterstützte Sprache, kein Rückfall.
+- [x] ⚠️ **Nicht verwechseln:** Die ARB-**Vorlage** bleibt `app_de.arb` (`l10n.yaml`); sie entscheidet nur, woher ein fehlender Text kommt, nicht die Startsprache.
+- [x] Vox hat dieselbe Regel in seinem eigenen Repo umgesetzt (Vox PLAN.md → L.3a) — **kein gemeinsamer Code**, nur dieselbe Entscheidung.
+
 ---
 
 ## 11. Entscheidungs-Log & dauerhafte Lehren
@@ -757,6 +766,7 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 - **2026-08-07 bis 08-14 (Phase 26)** — Web-Fassung als PWA. **Die Grenze wurde vorab benannt, nicht hinterher:** „niemand soll den Code nachbauen können" ist im Web unerreichbar (Lehre 26), und eine Zusage, die nicht hält, wäre schlimmer als eine klare Absage. **Die beste Weiche ist keine Weiche** — der Web-Auftrag hat den mobilen Code vereinfacht, nicht verkompliziert. **Kein `gh-pages`-Zweig**, ein gemeinsames Bau-Skript. Die Kontrolle vor dem ersten Commit fand zwei Dinge, die mitgegangen wären (`meine/`, `settings.local.json` mit hunderten absoluten Pfaden).
 - **2026-08-14** — 26.10/26.11: vier gemeldete Web-Fehler, **zwei** Ursachen. **Die Meldung war nicht die Beobachtung** — „kein Internetzugang" auf „Heute" hieß in Wahrheit „Seite bleibt leer". Erst messen, dann reparieren. `dart:io` ist im Browser eine Attrappe (Lehre 30); beide Fundstellen hatten einen korrekten `try`-Block, er stand nur **eine Zeile zu spät**. Eine Regel, die kein Verhaltenstest prüfen kann, bekam einen **Quelltext-Test**. Acht bestandene Browser-Prüfungen und trotzdem drei kaputte Seiten (Lehre 31); der erweiterte Durchgang wurde deshalb gegen den **kaputten** Stand gehalten (Lehre 32).
 - **2026-08-16** — 26.12/26.13: „Knöpfe reagieren nicht" — drei plausible Erklärungen der Reihe nach **gemessen und widerlegt**, ohne eine Zeile zu ändern (Lehre 33). Die fehlende Bedingung nannte der Nutzer: **nur in der auf dem Home-Bildschirm abgelegten Fassung**, und man muss ein Stück **über** den Knopf tippen. Damit war es kein toter Knopf, sondern ein Koordinaten-Versatz (Lehre 34). Werkzeug-Gewinn: der iOS-Simulator als Prüfstand für echtes iOS-Safari.
+- **2026-09-16** — 31.6: Rückfallsprache Deutsch → **Englisch** (Nutzerwunsch: Standard Englisch, Persisch nur bei persischem Gerät). Die Gerätesprache hatte Root-in schon beachtet; geändert wurde nur der Rückfall.
 - **2026-08-16 (Phase 27 beauftragt)** — Nutzerdaten sollen auf einem Server liegen (Supabase). Damit fällt die älteste Festlegung des Projekts („kein Backend, keine Nutzerkonten"). Vor dem ersten Handgriff festgehalten, **was daran hängt** (27.0) — insbesondere, dass die Datenschutzerklärung und das Play-Formular keine Nacharbeit sind, sondern eine **Bedingung der Veröffentlichung**.
 
 - **2026-08-17 (Phase 27 gebaut)** — Konto, Cloud-Sicherung, Datenschutz. Tragende Entscheidungen:
