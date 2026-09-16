@@ -773,6 +773,7 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 - **2026-09-16** — Nur Doku, kein Code: In **Vox** ist L.1b umgesetzt (Migrationstest über alle veröffentlichten Datenbank-Fassungen mit drifts `SchemaVerifier`; Fehlertexte roter CI-Schritte als Annotation, lesbar über api.github.com). **Für Root-in keine Änderung.** Beide Ideen passen auch hier, falls Root-in je eine neue Datenbank-Fassung bekommt — dann bewusst übernehmen, nicht nebenbei.
 - **2026-09-16** — Nur Doku, kein Code: In **Vox** sind alle 84 Grammatik-Lektionen live (L.2c/G3–G6). Reine Vox-Inhalte — **für Root-in keine Änderung.**
 - **2026-09-16** — Nur Doku, kein Code: In **Vox** hat jede Grammatik-Lektion jetzt Übungen (G7a, 336 Übungen; Lukas: Übungen kommen vor dem Launch). Reine Vox-Inhalte, nichts wird gespeichert — **für Root-in keine Änderung.**
+- **2026-09-16** — Nur Doku, kein Code: In **Vox** gibt es jetzt einen Grammatik-Niveau-Test A1–C2 (G7b). Ergebnis wird nicht gespeichert — **für Root-in keine Änderung.**
 - **2026-08-16 (Phase 27 beauftragt)** — Nutzerdaten sollen auf einem Server liegen (Supabase). Damit fällt die älteste Festlegung des Projekts („kein Backend, keine Nutzerkonten"). Vor dem ersten Handgriff festgehalten, **was daran hängt** (27.0) — insbesondere, dass die Datenschutzerklärung und das Play-Formular keine Nacharbeit sind, sondern eine **Bedingung der Veröffentlichung**.
 
 - **2026-08-17 (Phase 27 gebaut)** — Konto, Cloud-Sicherung, Datenschutz. Tragende Entscheidungen:
