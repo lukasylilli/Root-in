@@ -774,6 +774,7 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 - **2026-09-16** — Nur Doku, kein Code: In **Vox** sind alle 84 Grammatik-Lektionen live (L.2c/G3–G6). Reine Vox-Inhalte — **für Root-in keine Änderung.**
 - **2026-09-16** — Nur Doku, kein Code: In **Vox** hat jede Grammatik-Lektion jetzt Übungen (G7a, 336 Übungen; Lukas: Übungen kommen vor dem Launch). Reine Vox-Inhalte, nichts wird gespeichert — **für Root-in keine Änderung.**
 - **2026-09-16** — Nur Doku, kein Code: In **Vox** gibt es jetzt einen Grammatik-Niveau-Test A1–C2 (G7b). Ergebnis wird nicht gespeichert — **für Root-in keine Änderung.**
+- **2026-09-16** — Nur Doku, kein Code: In **Vox** entstehen Grammatik-Übungen jetzt auch zufällig aus den Beispielsätzen (G7c). Reine Vox-Inhalte — **für Root-in keine Änderung.** Vorschau: G7e (Niveau-Test-Ergebnis speichern) berührt den Vox-Lernstand; ob die gemeinsame Supabase-Datenbank betroffen ist, wird dort geprüft und hier vermerkt.
 - **2026-08-16 (Phase 27 beauftragt)** — Nutzerdaten sollen auf einem Server liegen (Supabase). Damit fällt die älteste Festlegung des Projekts („kein Backend, keine Nutzerkonten"). Vor dem ersten Handgriff festgehalten, **was daran hängt** (27.0) — insbesondere, dass die Datenschutzerklärung und das Play-Formular keine Nacharbeit sind, sondern eine **Bedingung der Veröffentlichung**.
 
 - **2026-08-17 (Phase 27 gebaut)** — Konto, Cloud-Sicherung, Datenschutz. Tragende Entscheidungen:
