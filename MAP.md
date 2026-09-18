@@ -2,6 +2,18 @@
 
 > Lebendiges Dokument. Wird bei jeder Struktur-Änderung (neue/verschobene/gelöschte Dateien) aktualisiert.
 >
+> 🧭 **Arbeitsweise in jedem neuen Chat (feste Regel von Lukas, 2026-09-18) — nicht entfernen.**
+> Claude hat zwischen Chats kein Gedächtnis; **diese vier Dateien SIND das Gedächtnis des Projekts:**
+> `Root-in/PLAN.md` · `Root-in/MAP.md` · `vox/PLAN.md` · `vox/PROJECT_MAP.md`.
+> **1 — Zu Beginn jedes Chats:** alle vier **frisch von GitHub** lesen (api.github.com, Branch main), nie aus dem Gedächtnis.
+> **2 — Danach:** den ersten offenen Schritt suchen und ohne Rückfrage erledigen.
+> **3 — Am Ende jeder Arbeit (und jedes Chats):** in PLAN und MAP **desselben** Repos einen kurzen Eintrag schreiben —
+> was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
+> **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
+>
+> 🗓️ **Letzte Sitzung:** 2026-09-18 — an Root-in nichts geändert; nur vermerkt, was in Vox passiert ist (L.6: Grammatik-Lektionen
+> aus Lukas' Büchern, Inhalte neu geschrieben). ⏭️ **Nächster Schritt in Root-in:** die offenen Punkte unten — sie brauchen Lukas.
+>
 > **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **224 Tests grün**, Browser-Durchgang 23/23 in der Automatik, Gegenprobe bei jedem Push, 13/13 Zugriffsregeln am Server (18, sobald `schema.sql` nach 31.3 eingespielt ist).
 >
 > ⚠️ **Es gibt keinen Entwicklungsrechner mehr** (PLAN.md Phase 29). Alles, was nicht in diesem Repository liegt, ist gelöscht — auch VS Code. **Diese Datei beschreibt damit nicht mehr „was auf dem Rechner liegt", sondern „was das Repository enthält".** Wer etwas sucht, das hier nicht steht, sucht etwas, das es nicht gibt.

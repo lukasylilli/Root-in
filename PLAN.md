@@ -2,6 +2,18 @@
 
 > Lebendiges Dokument. Wird bei jeder relevanten Änderung am Projekt aktualisiert.
 >
+> 🧭 **Arbeitsweise in jedem neuen Chat (feste Regel von Lukas, 2026-09-18) — nicht entfernen.**
+> Claude hat zwischen Chats kein Gedächtnis; **diese vier Dateien SIND das Gedächtnis des Projekts:**
+> `Root-in/PLAN.md` · `Root-in/MAP.md` · `vox/PLAN.md` · `vox/PROJECT_MAP.md`.
+> **1 — Zu Beginn jedes Chats:** alle vier **frisch von GitHub** lesen (api.github.com, Branch main), nie aus dem Gedächtnis.
+> **2 — Danach:** den ersten offenen Schritt suchen und ohne Rückfrage erledigen.
+> **3 — Am Ende jeder Arbeit (und jedes Chats):** in PLAN und MAP **desselben** Repos einen kurzen Eintrag schreiben —
+> was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
+> **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
+>
+> 🗓️ **Letzte Sitzung:** 2026-09-18 — an Root-in nichts geändert; nur vermerkt, was in Vox passiert ist (L.6: Grammatik-Lektionen
+> aus Lukas' Büchern, Inhalte neu geschrieben). ⏭️ **Nächster Schritt in Root-in:** die offenen Punkte unten — sie brauchen Lukas.
+>
 > **Stand 2026-09-15.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **224 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 23/23 in der Automatik** und eine **Gegenprobe bei jedem Push** (31.2), 13/13 Zugriffsregeln am Server (18 Prüfungen, sobald `schema.sql` nach 31.3 eingespielt ist).
 >
 > ⚠️ **Ab dem 2026-08-17 gibt es keinen Entwicklungsrechner mehr.** Der Nutzer löscht alles, was nicht auf GitHub liegt — inklusive VS Code. **Jede weitere Änderung entsteht auf GitHub.** Was das für die Prüfung bedeutet, steht in [Abschnitt 9](#9-arbeitsweise--konventionen) und [Phase 29](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17).
