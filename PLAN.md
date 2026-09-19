@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-18 — an Root-in nichts geändert; nur vermerkt, was in Vox passiert ist (L.6: Grammatik-Lektionen
+> 🗓️ **Letzte Sitzung:** 2026-09-19 — an Root-in nichts geändert; nur vermerkt: Lukas fragte nach dem Veröffentlichungszeitpunkt von Vox. Weder die Vox- noch die Root-in-Dateien nennen ein Datum. Offen auf der Root-in-Seite (brauchen Lukas): PLAN-Tabelle Nr. 3 (`schema.sql` + „Konto löschen"), 5 (Durchgang auf echtem iPhone), 6 (eigener SMTP), 7 (ein Konto für Root-in und Vox, Phase 30 — Zeitpunkt nicht festgelegt). Details: `vox/PLAN.md` → „Letzte Sitzung".
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-18 — an Root-in nichts geändert; nur vermerkt, was in Vox passiert ist (L.6: Grammatik-Lektionen
 > aus Lukas' Büchern, Inhalte neu geschrieben). ⏭️ **Nächster Schritt in Root-in:** die offenen Punkte unten — sie brauchen Lukas.
 >
 > **Stand 2026-09-15.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **224 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 23/23 in der Automatik** und eine **Gegenprobe bei jedem Push** (31.2), 13/13 Zugriffsregeln am Server (18 Prüfungen, sobald `schema.sql` nach 31.3 eingespielt ist).
