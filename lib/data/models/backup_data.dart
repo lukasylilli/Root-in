@@ -1,4 +1,5 @@
 import '../local/database.dart';
+import 'habit_schedule.dart';
 
 /// Warum eine Sicherungsdatei nicht eingelesen werden konnte.
 ///
@@ -50,7 +51,14 @@ class BackupData {
   /// Format-Version der Sicherung. Wird beim Import geprüft, damit eine
   /// künftige, inkompatible Datei nicht stillschweigend falsch eingelesen
   /// wird.
-  static const int currentVersion = 1;
+  ///
+  /// **2** seit PLAN.md Phase 32: Gewohnheiten tragen einen Wochenplan
+  /// (`scheduleDays`). ⚠️ Der Sprung ist nötig, obwohl Fassung 1 weiter lesbar
+  /// bleibt: Eine **ältere App** kennt das Feld nicht und würde es beim
+  /// Wiederherstellen stillschweigend verlieren — jede Gewohnheit wäre danach
+  /// wieder „jeden Tag". Mit der neuen Nummer lehnt sie die Datei stattdessen
+  /// ab (`tooNew`) und bittet um ein Update.
+  static const int currentVersion = 2;
 
   final int version;
   final DateTime exportedAt;
@@ -84,9 +92,20 @@ class BackupData {
           DateTime.tryParse(json['exportedAt'] as String? ?? '') ??
           DateTime.fromMillisecondsSinceEpoch(0),
       categories: _mapRows(json['categories'], Category.fromJson),
-      habits: _mapRows(json['habits'], Habit.fromJson),
+      habits: _mapRows(json['habits'], _habitFromJson),
       completions: _mapRows(json['completions'], HabitCompletion.fromJson),
     );
+  }
+
+  /// Liest eine Gewohnheit — auch aus einer Sicherung der Fassung 1, die noch
+  /// keinen Wochenplan kennt. Ein fehlendes Feld wird zu „jeden Tag", genau
+  /// das, was solche Gewohnheiten waren. Drifts `fromJson` würfe sonst bei
+  /// jeder alten Sicherung.
+  static Habit _habitFromJson(Map<String, dynamic> json) {
+    return Habit.fromJson({
+      'scheduleDays': HabitSchedule.allDaysMask,
+      ...json,
+    });
   }
 
   static List<T> _mapRows<T>(

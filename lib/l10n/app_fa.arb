@@ -308,5 +308,21 @@
   "cloudDeleteAccountBody": "حساب شما برای همیشه حذف می‌شود — نشانی ایمیل، نام کاربری، نمایه و پشتیبان روی سرور. داده‌های روی این دستگاه دست‌نخورده می‌ماند. این کار برگشت‌پذیر نیست.",
   "cloudDeleteAccountConfirm": "برای همیشه حذف کن",
   "cloudDeleteAccountDone": "حساب شما حذف شد. داده‌های روی این دستگاه دست‌نخورده است.",
-  "cloudDeleteAccountPartial": "پشتیبان و نمایهٔ شما از سرور پاک شد و از حساب خارج شدید. خودِ حساب ورود هنوز از داخل برنامه حذف نشد — به ما پیام دهید تا آن را حذف کنیم."
+  "cloudDeleteAccountPartial": "پشتیبان و نمایهٔ شما از سرور پاک شد و از حساب خارج شدید. خودِ حساب ورود هنوز از داخل برنامه حذف نشد — به ما پیام دهید تا آن را حذف کنیم.",
+  "scheduleTitle": "تکرار",
+  "scheduleModeEveryDay": "هر روز",
+  "scheduleModeSpecificDays": "روزهای مشخص",
+  "scheduleModeCountPerWeek": "چند بار در هفته",
+  "scheduleNeedDay": "حداقل یک روز را انتخاب کنید.",
+  "scheduleDaySeparator": "، ",
+  "scheduleWeekProgress": "{done}/{total} در این هفته",
+  "todayNotScheduled": "برنامه‌ریزی نشده ({count})",
+  "todayNothingDue": "برای این روز چیزی برنامه‌ریزی نشده.",
+  "weekdayShortMonday": "دوشنبه",
+  "weekdayShortTuesday": "سه‌شنبه",
+  "weekdayShortWednesday": "چهارشنبه",
+  "weekdayShortThursday": "پنجشنبه",
+  "weekdayShortFriday": "جمعه",
+  "weekdayShortSaturday": "شنبه",
+  "weekdayShortSunday": "یکشنبه"
 }

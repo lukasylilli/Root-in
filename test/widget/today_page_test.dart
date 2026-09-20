@@ -6,6 +6,7 @@ import 'package:root_in/core/services/settings_service.dart';
 import 'package:root_in/core/services/time_service.dart';
 import 'package:root_in/data/local/database.dart';
 import 'package:root_in/data/models/habit_goal_type.dart';
+import 'package:root_in/data/models/habit_schedule.dart';
 import 'package:root_in/features/today/presentation/today_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -44,6 +45,25 @@ Future<void> _addHabits(AppDatabase db, List<String> names) async {
       ),
     );
   }
+}
+
+/// Legt eine Gewohnheit mit Wochenplan an (PLAN.md Phase 32) — beide Spalten
+/// aus derselben Quelle wie im Repository.
+Future<int> _addScheduled(
+  AppDatabase db,
+  String name,
+  HabitSchedule schedule,
+) {
+  return db.habitDao.addHabit(
+    HabitsCompanion.insert(
+      name: name,
+      colorValue: 0xFF000000,
+      category: const Value('Allgemein'),
+      goalType: HabitGoalType.checkbox,
+      scheduleDays: Value(schedule.dayMask),
+      timesPerWeek: Value(schedule.weeklyTarget),
+    ),
+  );
 }
 
 void main() {
@@ -155,6 +175,127 @@ void main() {
 
       expect(find.text('1/2'), findsOneWidget);
       expect(find.text('50'), findsOneWidget);
+
+      await disposeAndFlush(tester);
+    });
+  });
+
+  // `_today` ist Donnerstag, der 23.07.2026 (Woche: Mo 20. – So 26.).
+  group('Wochenplan (PLAN.md Phase 32)', () {
+    testWidgets(
+      'eine Gewohnheit „nur dienstags" steht donnerstags eingeklappt unter '
+      '„Nicht geplant" und zählt nicht im Ring',
+      (tester) async {
+        final db = createTestDatabase();
+        await _addScheduled(db, 'Laufen', const HabitSchedule.everyDay());
+        await _addScheduled(db, 'Yoga', HabitSchedule.onDays([DateTime.tuesday]));
+
+        await _pumpTodayPage(tester, db);
+
+        // Nur Laufen steht an → 0 von 1, nicht 0 von 2.
+        expect(find.text('0/1'), findsOneWidget);
+        expect(find.text('Laufen'), findsOneWidget);
+        expect(find.text('Yoga'), findsNothing);
+        expect(find.text('Nicht geplant (1)'), findsOneWidget);
+
+        // Aufklappen: Die Gewohnheit ist da, mit ihrem Plan im Untertitel —
+        // erreichbar zum Bearbeiten und Löschen.
+        await tester.tap(find.text('Nicht geplant (1)'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Yoga'), findsOneWidget);
+        expect(find.text('Allgemein · Di'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+
+        await disposeAndFlush(tester);
+      },
+    );
+
+    testWidgets(
+      'außerplanmäßig abhaken rückt die Gewohnheit in die Hauptliste',
+      (tester) async {
+        final db = createTestDatabase();
+        await _addScheduled(db, 'Laufen', const HabitSchedule.everyDay());
+        await _addScheduled(db, 'Yoga', HabitSchedule.onDays([DateTime.tuesday]));
+
+        await _pumpTodayPage(tester, db);
+        await tester.tap(find.text('Nicht geplant (1)'));
+        await tester.pumpAndSettle();
+
+        // Die letzte Checkbox gehört zu Yoga (die Sektion steht unten).
+        await tester.tap(find.byType(Checkbox).last);
+        await tester.pumpAndSettle();
+
+        // Ein gesetztes Häkchen steht immer an: Es zählt jetzt mit (1 von 2),
+        // und die Sektion ist leer und verschwindet.
+        expect(find.text('1/2'), findsOneWidget);
+        expect(find.text('Nicht geplant (1)'), findsNothing);
+        expect(find.text('Yoga'), findsOneWidget);
+        expect(find.byType(Checkbox), findsNWidgets(2));
+        expect(tester.takeException(), isNull);
+
+        await disposeAndFlush(tester);
+      },
+    );
+
+    testWidgets('x-mal pro Woche: ist das Soll voll, ist der Rest der Woche frei', (
+      tester,
+    ) async {
+      final db = createTestDatabase();
+      final id = await _addScheduled(db, 'Lesen', HabitSchedule.countPerWeek(2));
+      await db.habitCompletionDao.setCompleted(id, DateTime(2026, 7, 20));
+      await db.habitCompletionDao.setCompleted(id, DateTime(2026, 7, 21));
+
+      await _pumpTodayPage(tester, db);
+
+      // Montag und Dienstag erledigt → am Donnerstag steht nichts mehr an.
+      expect(find.text('0/0'), findsOneWidget);
+      expect(find.text('Nicht geplant (1)'), findsOneWidget);
+
+      await tester.tap(find.text('Nicht geplant (1)'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Allgemein · 2× pro Woche · 2/2 diese Woche'),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+
+      await disposeAndFlush(tester);
+    });
+
+    testWidgets('x-mal pro Woche: solange das Soll offen ist, steht sie an', (
+      tester,
+    ) async {
+      final db = createTestDatabase();
+      final id = await _addScheduled(db, 'Lesen', HabitSchedule.countPerWeek(2));
+      await db.habitCompletionDao.setCompleted(id, DateTime(2026, 7, 20));
+
+      await _pumpTodayPage(tester, db);
+
+      expect(find.text('0/1'), findsOneWidget);
+      expect(find.text('Nicht geplant (1)'), findsNothing);
+      expect(
+        find.text('Allgemein · 2× pro Woche · 1/2 diese Woche'),
+        findsOneWidget,
+      );
+
+      await disposeAndFlush(tester);
+    });
+
+    testWidgets('steht an diesem Tag nichts an, erklärt es ein Hinweis', (
+      tester,
+    ) async {
+      final db = createTestDatabase();
+      await _addScheduled(db, 'Yoga', HabitSchedule.onDays([DateTime.tuesday]));
+
+      await _pumpTodayPage(tester, db);
+
+      expect(find.text('An diesem Tag steht nichts an.'), findsOneWidget);
+      expect(find.text('Nicht geplant (1)'), findsOneWidget);
+      expect(find.text('0/0'), findsOneWidget);
+      // Kein Absturz durch die leere Hauptliste.
+      expect(tester.takeException(), isNull);
 
       await disposeAndFlush(tester);
     });

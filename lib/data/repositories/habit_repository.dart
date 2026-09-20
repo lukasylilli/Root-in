@@ -16,6 +16,7 @@ import '../models/category_breakdown.dart';
 import '../models/daily_progress.dart';
 import '../models/habit_goal_type.dart';
 import '../models/habit_period_stats.dart';
+import '../models/habit_schedule.dart';
 import '../models/habit_with_day_status.dart';
 import '../models/lifetime_stats.dart';
 import '../models/monthly_breakdown.dart';
@@ -117,7 +118,7 @@ class HabitRepository {
     required String category,
     required HabitGoalType goalType,
     int? targetMinutes,
-    int timesPerWeek = 7,
+    HabitSchedule schedule = const HabitSchedule.everyDay(),
   }) async {
     // Neue Kategorien-Namen (z. B. aus einer Vorlage) automatisch in der
     // Kategorien-Liste registrieren, damit sie in der Kategorien-Verwaltung
@@ -131,7 +132,10 @@ class HabitRepository {
         category: Value(category),
         goalType: goalType,
         targetMinutes: Value(targetMinutes),
-        timesPerWeek: Value(timesPerWeek),
+        // Wochenplan (PLAN.md Phase 32): beide Spalten stammen aus **einer**
+        // Quelle, damit das Wochen-Soll nie vom Plan abweicht.
+        scheduleDays: Value(schedule.dayMask),
+        timesPerWeek: Value(schedule.weeklyTarget),
       ),
     );
   }
@@ -143,6 +147,7 @@ class HabitRepository {
     required String category,
     required HabitGoalType goalType,
     int? targetMinutes,
+    HabitSchedule? schedule,
   }) async {
     await _categoryDao.getOrCreateCategory(category);
     await _habitDao.updateHabit(
@@ -152,6 +157,13 @@ class HabitRepository {
         category: Value(category),
         goalType: Value(goalType),
         targetMinutes: Value(targetMinutes),
+        // `null` = Wochenplan unangetastet lassen (PLAN.md Phase 32).
+        scheduleDays: schedule == null
+            ? const Value.absent()
+            : Value(schedule.dayMask),
+        timesPerWeek: schedule == null
+            ? const Value.absent()
+            : Value(schedule.weeklyTarget),
       ),
     );
   }
@@ -183,19 +195,31 @@ class HabitRepository {
           id: habit.id,
           name: habit.name,
           colorValue: habit.colorValue,
-          streak: await currentStreakForHabit(habit.id, today),
+          streak: await currentStreakForHabit(
+            habit.id,
+            today,
+            schedule: habit.schedule,
+          ),
           doneToday: await _completionDao.isCompleted(habit.id, today),
         ),
     ];
   }
 
-  Future<int> currentStreakForHabit(int habitId, DateTime today) async {
+  Future<int> currentStreakForHabit(
+    int habitId,
+    DateTime today, {
+    HabitSchedule schedule = const HabitSchedule.everyDay(),
+  }) async {
     final completions = await _completionDao.completionsForHabitSince(
       habitId,
       today.subtract(const Duration(days: 120)),
     );
     final dates = completions.map((c) => c.date).toSet();
-    return StreakCalculator.currentStreak(completedDates: dates, today: today);
+    return StreakCalculator.currentStreak(
+      completedDates: dates,
+      today: today,
+      schedule: schedule,
+    );
   }
 }
 
@@ -268,6 +292,14 @@ final completionsForDateProvider =
 /// die es damals noch nicht gab. Die Alternative — nur Gewohnheiten ab ihrem
 /// `createdAt` — würde genau den Fall unmöglich machen, um den es in Phase 24
 /// geht: einen alten Bestand nachtragen.
+///
+/// **Seit Phase 32 trägt jeder Eintrag zusätzlich `isDue`:** Steht die
+/// Gewohnheit an diesem Tag laut Wochenplan an? Die Liste enthält weiterhin
+/// **alle** Gewohnheiten — die Heute-Seite zeigt die nicht fälligen getrennt
+/// (sonst ließe sich eine „nur dienstags"-Gewohnheit mittwochs weder
+/// bearbeiten noch löschen). Für „x-mal pro Woche" braucht die Regel die
+/// Erledigungen der Woche bis [date]; dafür liest der Provider den Bereich
+/// Montag–[date] mit.
 final habitsWithStatusForDateProvider =
     Provider.family<AsyncValue<List<HabitWithDayStatus>>, DateTime>((
       ref,
@@ -275,8 +307,13 @@ final habitsWithStatusForDateProvider =
     ) {
       final habitsAsync = ref.watch(activeHabitsProvider);
       final completionsAsync = ref.watch(completionsForDateProvider(date));
+      final weekAsync = ref.watch(
+        completionsInRangeProvider((start: weekStartOf(date), end: date)),
+      );
 
-      if (habitsAsync.isLoading || completionsAsync.isLoading) {
+      if (habitsAsync.isLoading ||
+          completionsAsync.isLoading ||
+          weekAsync.isLoading) {
         return const AsyncValue.loading();
       }
       if (habitsAsync.hasError) {
@@ -288,18 +325,39 @@ final habitsWithStatusForDateProvider =
           completionsAsync.stackTrace!,
         );
       }
+      if (weekAsync.hasError) {
+        return AsyncValue.error(weekAsync.error!, weekAsync.stackTrace!);
+      }
 
       final habits = habitsAsync.value ?? [];
       final completedIds = (completionsAsync.value ?? [])
           .map((c) => c.habitId)
           .toSet();
 
+      // Erledigungstage der Woche bis [date], je Gewohnheit.
+      final weekDone = <int, Set<DateTime>>{};
+      for (final completion in weekAsync.value ?? const <HabitCompletion>[]) {
+        weekDone
+            .putIfAbsent(completion.habitId, () => <DateTime>{})
+            .add(completion.date);
+      }
+
       return AsyncValue.data([
         for (final habit in habits)
-          HabitWithDayStatus(
-            habit: habit,
-            isDone: completedIds.contains(habit.id),
-          ),
+          () {
+            final isDone = completedIds.contains(habit.id);
+            final doneDates = weekDone[habit.id] ?? const <DateTime>{};
+            return HabitWithDayStatus(
+              habit: habit,
+              isDone: isDone,
+              isDue: habit.schedule.isDueOn(
+                day: date,
+                doneOnDay: isDone,
+                doneDates: doneDates,
+              ),
+              weekDoneCount: doneDates.length,
+            );
+          }(),
       ]);
     });
 
@@ -339,22 +397,83 @@ final dailyCompletionCountProvider =
       return countPerDay;
     });
 
+/// Wie viele aktive Gewohnheiten an jedem Tag des Zeitraums **anstehen**
+/// (PLAN.md Phase 32, `HabitSchedule.isDueOn`). Tage, an denen nichts ansteht,
+/// fehlen in der Karte — sie sind weder „geschafft" noch „verpasst".
+///
+/// Gemeinsame Nenner-Basis für Heatmap-Intensität und Zeitraum-Prozent: Beide
+/// dürfen nicht getrennt zählen, sonst zeigt die Heatmap einen Tag als voll,
+/// den der Prozentwert als halb rechnet.
+final dailyDueCountProvider = Provider.family<Map<DateTime, int>, DateRange>((
+  ref,
+  range,
+) {
+  final habits = ref.watch(activeHabitsProvider).value ?? const <Habit>[];
+  if (habits.isEmpty) return const {};
+
+  final doneByHabit = ref.watch(doneDaysByHabitProvider);
+  final schedules = {for (final habit in habits) habit.id: habit.schedule};
+
+  final dueCount = <DateTime, int>{};
+  final last = dateOnly(range.end);
+  for (
+    var day = dateOnly(range.start);
+    !day.isAfter(last);
+    day = addDays(day, 1)
+  ) {
+    var due = 0;
+    for (final habit in habits) {
+      final done = doneByHabit[habit.id] ?? const <DateTime>{};
+      if (schedules[habit.id]!.isDueOn(
+        day: day,
+        doneOnDay: done.contains(day),
+        doneDates: done,
+      )) {
+        due++;
+      }
+    }
+    if (due > 0) dueCount[day] = due;
+  }
+  return dueCount;
+});
+
 /// Erledigungs-Intensität pro Tag (0..1) im Zeitraum — Datenquelle des
 /// Matrix-Grids auf allen Seiten. Intensität = erledigte Habits am Tag
-/// geteilt durch Anzahl aktiver Habits (vereinfachend: heutige Anzahl,
-/// historische Änderungen der Habit-Liste werden nicht zurückgerechnet).
+/// geteilt durch die Zahl der Habits, die an diesem Tag **anstehen**
+/// ([dailyDueCountProvider]) — bis Phase 32 war der Nenner die heutige Zahl
+/// aller aktiven Habits. (Historische Änderungen der Habit-Liste werden
+/// weiterhin nicht zurückgerechnet.)
 final dailyIntensityProvider = Provider.family<Map<DateTime, double>, DateRange>(
   (ref, range) {
     final countPerDay = ref.watch(dailyCompletionCountProvider(range));
-    final habitCount = ref.watch(activeHabitsProvider).value?.length ?? 0;
-    if (countPerDay.isEmpty || habitCount == 0) return const {};
+    final dueCount = ref.watch(dailyDueCountProvider(range));
+    if (countPerDay.isEmpty || dueCount.isEmpty) return const {};
 
     return {
       for (final entry in countPerDay.entries)
-        entry.key: (entry.value / habitCount).clamp(0.0, 1.0),
+        // Erledigungen an einem Tag, an dem laut Plan nichts ansteht (z. B.
+        // nur archivierte Gewohnheiten) füllen ihn ganz.
+        entry.key: (dueCount[entry.key] ?? 0) == 0
+            ? 1.0
+            : (entry.value / dueCount[entry.key]!).clamp(0.0, 1.0).toDouble(),
     };
   },
 );
+
+/// Alle Erledigungstage je Gewohnheit über die gesamte Lebenszeit — die eine
+/// Basis für Serien ([habitPeriodStatsProvider]) und Wochenplan-Rechnungen
+/// ([dailyDueCountProvider]), damit nicht jede ihre eigene Map baut.
+final doneDaysByHabitProvider = Provider<Map<int, Set<DateTime>>>((ref) {
+  final completions =
+      ref.watch(allCompletionsProvider).value ?? const <HabitCompletion>[];
+  final daysByHabit = <int, Set<DateTime>>{};
+  for (final completion in completions) {
+    daysByHabit
+        .putIfAbsent(completion.habitId, () => <DateTime>{})
+        .add(completion.date);
+  }
+  return daysByHabit;
+});
 
 /// Erledigte Tage je Gewohnheit im Zeitraum — Datenquelle der Habit×Tag-
 /// Matrix auf der Übersicht-Seite (Zeile = Gewohnheit, Spalte = Tag).
@@ -391,14 +510,7 @@ final habitPeriodStatsProvider =
       if (today == null || habits.isEmpty) return const [];
 
       final doneInRange = ref.watch(habitDaysInRangeProvider(range));
-      final allCompletions = ref.watch(allCompletionsProvider).value ?? const [];
-
-      final allDaysByHabit = <int, Set<DateTime>>{};
-      for (final completion in allCompletions) {
-        allDaysByHabit
-            .putIfAbsent(completion.habitId, () => <DateTime>{})
-            .add(completion.date);
-      }
+      final allDaysByHabit = ref.watch(doneDaysByHabitProvider);
 
       final weeks = weeksInRange(range);
 
@@ -422,11 +534,13 @@ final habitPeriodStatsProvider =
             currentStreak: StreakCalculator.currentStreak(
               completedDates: allDays,
               today: today,
+              schedule: habit.schedule,
             ),
             longestStreak: StreakCalculator.longestStreak(
               completedDates: allDays,
               habitStartDate: firstDay,
               today: today,
+              schedule: habit.schedule,
             ),
           ),
         );
@@ -460,19 +574,24 @@ final categoryBreakdownProvider =
 /// Durchschnittlicher Erledigungsgrad über den Zeitraum (0..1) — „wie viel
 /// Prozent des Zeitraums hast du geschafft" (siehe PLAN.md Phase 8.5:
 /// Monats-/Jahres-Fortschritt auf der Fortschritts-Karte). Mittelt die
-/// Tages-Intensitäten aus [dailyIntensityProvider] über **alle** Tage des
-/// Zeitraums, nicht nur über die mit Erledigungen — Tage ohne Aktivität
-/// zählen als 0 und senken den Wert entsprechend.
+/// Tages-Intensitäten aus [dailyIntensityProvider] über **alle Tage, an denen
+/// etwas ansteht** ([dailyDueCountProvider]) — Tage mit fälliger, aber nicht
+/// erledigter Gewohnheit zählen als 0 und senken den Wert entsprechend.
+///
+/// Seit Phase 32 zählen Tage, an denen laut Wochenplan **nichts** ansteht,
+/// nicht mehr mit: Wer nur dienstags eine Gewohnheit hat, wird nicht dafür
+/// bestraft, dass der Mittwoch leer bleibt. Bei Gewohnheiten „jeden Tag" ist
+/// jeder Tag fällig — das Ergebnis ist dort dasselbe wie vorher.
 final rangeProgressPercentProvider = Provider.family<double, DateRange>((
   ref,
   range,
 ) {
   final intensities = ref.watch(dailyIntensityProvider(range));
-  final dayCount = dateOnly(range.end).difference(dateOnly(range.start)).inDays + 1;
-  if (dayCount <= 0) return 0;
+  final dueDays = ref.watch(dailyDueCountProvider(range)).length;
+  if (dueDays == 0) return 0;
 
   final sum = intensities.values.fold<double>(0, (total, v) => total + v);
-  return (sum / dayCount).clamp(0.0, 1.0);
+  return (sum / dueDays).clamp(0.0, 1.0);
 });
 
 /// Erledigungen je Kalendermonat im Zeitraum — Datenquelle der
@@ -503,13 +622,17 @@ final dayProgressProvider = Provider.family<DailyProgress, DateTime>((
   ref,
   date,
 ) {
-  final habitsWithStatus =
-      ref.watch(habitsWithStatusForDateProvider(date)).value ?? const [];
-  final completed = habitsWithStatus.where((h) => h.isDone).length;
+  // Nur, was an diesem Tag laut Wochenplan ansteht (PLAN.md Phase 32) —
+  // sonst wäre ein Dienstag-Habit mittwochs ein „offenes" Ziel, das niemand
+  // erwartet.
+  final due = (ref.watch(habitsWithStatusForDateProvider(date)).value ??
+          const <HabitWithDayStatus>[])
+      .where((h) => h.isDue);
+  final completed = due.where((h) => h.isDone).length;
 
   return DailyProgress(
     completedCount: completed,
-    totalCount: habitsWithStatus.length,
+    totalCount: due.length,
     points: completed * pointsPerCompletion,
   );
 });
@@ -577,6 +700,9 @@ final lifetimeStatsProvider = Provider<LifetimeStats>((ref) {
       completedDates: completedDates,
       habitStartDate: earliestDate,
       today: today,
+      // Tage, an denen keine Gewohnheit ansteht, brechen die Gesamt-Serie
+      // nicht (PLAN.md Phase 32, `requiredDaysOf`).
+      isRequiredDay: requiredDaysOf([for (final h in habits) h.schedule]),
     ),
     categoriesUsed: categoriesUsed,
   );

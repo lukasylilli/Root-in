@@ -7,10 +7,12 @@ import '../../../core/utils/date_utils.dart';
 import '../../../core/widgets/progress_ring.dart';
 import '../../../core/widgets/stat_column.dart';
 import '../../../data/models/daily_progress.dart';
+import '../../../data/models/habit_schedule.dart';
 import '../../../data/models/habit_with_day_status.dart';
 import '../../../data/repositories/habit_repository.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../habits/presentation/habit_form_sheet.dart';
+import '../../habits/presentation/schedule_labels.dart';
 
 /// Die Heute-Seite zeigt seit PLAN.md Phase 24 **einen wählbaren Tag**, nicht
 /// zwingend heute: Ein alter Bestand lässt sich damit nachtragen (der Nutzer
@@ -44,6 +46,18 @@ class TodayPage extends ConsumerWidget {
         error: (error, stack) =>
             Center(child: Text(l10n.errorGeneric('$error'))),
         data: (habits) {
+          // Wochenplan (PLAN.md Phase 32): Was an diesem Tag ansteht, steht
+          // oben; der Rest folgt eingeklappt darunter — **nicht weg**, sonst
+          // ließe sich eine „nur dienstags"-Gewohnheit mittwochs weder
+          // bearbeiten noch löschen.
+          final due = [
+            for (final entry in habits)
+              if (entry.isDue) entry,
+          ];
+          final notDue = [
+            for (final entry in habits)
+              if (!entry.isDue) entry,
+          ];
           return ListView(
             padding: const EdgeInsets.all(AppSpacing.md),
             children: [
@@ -53,9 +67,14 @@ class TodayPage extends ConsumerWidget {
               const SizedBox(height: AppSpacing.md),
               if (habits.isEmpty)
                 const _EmptyState()
-              else
-                for (final entry in habits)
-                  _HabitTile(entry: entry, date: date),
+              else ...[
+                if (due.isEmpty)
+                  const _NothingDueHint()
+                else
+                  for (final entry in due) _HabitTile(entry: entry, date: date),
+                if (notDue.isNotEmpty)
+                  _NotScheduledSection(entries: notDue, date: date),
+              ],
             ],
           );
         },
@@ -194,6 +213,20 @@ class _HabitTile extends ConsumerWidget {
   /// (PLAN.md Phase 24).
   final DateTime? date;
 
+  /// Kategorie — bei einem Wochenplan zusätzlich dessen Kurzform („Di, Do",
+  /// „3× pro Woche · 1/3 diese Woche"). Bei „jeden Tag" bleibt es bei der
+  /// Kategorie, wie vor Phase 32.
+  String _subtitle(BuildContext context) {
+    final schedule = entry.habit.schedule;
+    if (schedule.mode == ScheduleMode.everyDay) return entry.habit.category;
+    final summary = scheduleSummary(
+      AppLocalizations.of(context),
+      schedule,
+      weekDone: entry.weekDoneCount,
+    );
+    return '${entry.habit.category} · $summary';
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
@@ -209,7 +242,7 @@ class _HabitTile extends ConsumerWidget {
                 },
         ),
         title: Text(entry.habit.name),
-        subtitle: Text(entry.habit.category),
+        subtitle: Text(_subtitle(context)),
         trailing: PopupMenuButton<_HabitAction>(
           onSelected: (action) {
             switch (action) {
@@ -243,6 +276,48 @@ class _HabitTile extends ConsumerWidget {
 }
 
 enum _HabitAction { edit, delete }
+
+/// Die Gewohnheiten, die an diesem Tag laut Wochenplan **nicht** anstehen —
+/// eingeklappt, mit Zähler. Sie bleiben bedienbar: bearbeiten, löschen und
+/// bei Bedarf **außerplanmäßig** abhaken (dann rückt der Eintrag in die
+/// Hauptliste, denn ein gesetztes Häkchen steht immer an).
+class _NotScheduledSection extends StatelessWidget {
+  const _NotScheduledSection({required this.entries, required this.date});
+
+  final List<HabitWithDayStatus> entries;
+  final DateTime? date;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return ExpansionTile(
+      // Ohne Rahmen und Innenabstand: Die Karten darin sind dieselben wie in
+      // der Hauptliste und sollen bündig darunter liegen.
+      shape: const Border(),
+      collapsedShape: const Border(),
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: EdgeInsets.zero,
+      title: Text(l10n.todayNotScheduled(entries.length)),
+      children: [
+        for (final entry in entries) _HabitTile(entry: entry, date: date),
+      ],
+    );
+  }
+}
+
+/// Es gibt Gewohnheiten, aber keine steht an diesem Tag an — ein Hinweis
+/// statt einer leeren Fläche über der eingeklappten Liste.
+class _NothingDueHint extends StatelessWidget {
+  const _NothingDueHint();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      child: Center(child: Text(AppLocalizations.of(context).todayNothingDue)),
+    );
+  }
+}
 
 class _EmptyState extends StatelessWidget {
   const _EmptyState();

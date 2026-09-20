@@ -8,8 +8,10 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/text_prompt_dialog.dart';
 import '../../../data/local/database.dart' show Habit;
 import '../../../data/models/habit_goal_type.dart';
+import '../../../data/models/habit_schedule.dart';
 import '../../../data/repositories/habit_repository.dart';
 import '../../../l10n/gen/app_localizations.dart';
+import 'schedule_labels.dart';
 
 /// Sentinel-Wert im Kategorie-Dropdown, der den „Neue Kategorie"-Dialog
 /// öffnet, statt eine bestehende Kategorie auszuwählen.
@@ -35,6 +37,13 @@ class _HabitFormSheetState extends ConsumerState<HabitFormSheet> {
   late int _targetMinutes;
   String? _category;
 
+  // Wochenplan (PLAN.md Phase 32). Die drei Werte bleiben getrennt erhalten,
+  // damit ein Wechsel zwischen den Modi nichts wegwirft: Wer von „bestimmte
+  // Tage" kurz auf „jeden Tag" tippt und zurück, findet seine Tage wieder.
+  late ScheduleMode _scheduleMode;
+  late Set<int> _scheduleDays;
+  late int _timesPerWeek;
+
   bool get _isEditing => widget.existing != null;
 
   @override
@@ -45,6 +54,28 @@ class _HabitFormSheetState extends ConsumerState<HabitFormSheet> {
     _goalType = existing?.goalType ?? HabitGoalType.checkbox;
     _targetMinutes = existing?.targetMinutes ?? 10;
     _category = existing?.category;
+
+    final schedule = existing?.schedule ?? const HabitSchedule.everyDay();
+    _scheduleMode = schedule.mode;
+    _scheduleDays = schedule.mode == ScheduleMode.specificDays
+        ? {...schedule.weekdays}
+        : <int>{};
+    _timesPerWeek = schedule.mode == ScheduleMode.countPerWeek
+        ? schedule.weeklyTarget
+        : 3;
+  }
+
+  /// Der gewählte Wochenplan — `null`, solange er unvollständig ist (bei
+  /// „bestimmte Tage" ist noch kein Tag angetippt).
+  HabitSchedule? get _schedule {
+    switch (_scheduleMode) {
+      case ScheduleMode.everyDay:
+        return const HabitSchedule.everyDay();
+      case ScheduleMode.specificDays:
+        return _scheduleDays.isEmpty ? null : HabitSchedule.onDays(_scheduleDays);
+      case ScheduleMode.countPerWeek:
+        return HabitSchedule.countPerWeek(_timesPerWeek);
+    }
   }
 
   @override
@@ -71,7 +102,8 @@ class _HabitFormSheetState extends ConsumerState<HabitFormSheet> {
   Future<void> _submitCustom() async {
     final name = _nameController.text.trim();
     final category = _category;
-    if (name.isEmpty || category == null) return;
+    final schedule = _schedule;
+    if (name.isEmpty || category == null || schedule == null) return;
 
     final repo = ref.read(habitRepositoryProvider);
     final targetMinutes =
@@ -86,6 +118,7 @@ class _HabitFormSheetState extends ConsumerState<HabitFormSheet> {
         category: category,
         goalType: _goalType,
         targetMinutes: targetMinutes,
+        schedule: schedule,
       );
     } else {
       habitId = await repo.addHabit(
@@ -95,6 +128,7 @@ class _HabitFormSheetState extends ConsumerState<HabitFormSheet> {
         category: category,
         goalType: _goalType,
         targetMinutes: targetMinutes,
+        schedule: schedule,
       );
     }
     if (mounted) Navigator.of(context).pop();
@@ -262,9 +296,84 @@ class _HabitFormSheetState extends ConsumerState<HabitFormSheet> {
               ),
             ],
             const SizedBox(height: AppSpacing.md),
+            Text(
+              l10n.scheduleTitle,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            // Wrap statt SegmentedButton: Drei Modi mit langen Namen (auf
+            // Persisch noch länger) passen auf einem schmalen Telefon nicht
+            // nebeneinander — ein Wrap bricht um, ein SegmentedButton schneidet
+            // ab.
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                for (final mode in ScheduleMode.values)
+                  ChoiceChip(
+                    label: Text(scheduleModeLabel(l10n, mode)),
+                    selected: _scheduleMode == mode,
+                    onSelected: (_) => setState(() => _scheduleMode = mode),
+                  ),
+              ],
+            ),
+            if (_scheduleMode == ScheduleMode.specificDays) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  for (var weekday = DateTime.monday;
+                      weekday <= DateTime.sunday;
+                      weekday++)
+                    FilterChip(
+                      label: Text(weekdayShortLabel(l10n, weekday)),
+                      selected: _scheduleDays.contains(weekday),
+                      onSelected: (selected) => setState(() {
+                        if (selected) {
+                          _scheduleDays.add(weekday);
+                        } else {
+                          _scheduleDays.remove(weekday);
+                        }
+                      }),
+                    ),
+                ],
+              ),
+              if (_scheduleDays.isEmpty) ...[
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  l10n.scheduleNeedDay,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+            ],
+            if (_scheduleMode == ScheduleMode.countPerWeek) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Row(
+                children: [
+                  Text(l10n.overviewGoalPerWeek(_timesPerWeek)),
+                  Expanded(
+                    // 1–6: Sieben Mal pro Woche wäre „jeden Tag" — dafür gibt
+                    // es den eigenen Modus.
+                    child: Slider(
+                      value: _timesPerWeek.toDouble(),
+                      min: 1,
+                      max: 6,
+                      divisions: 5,
+                      label: '$_timesPerWeek',
+                      onChanged: (value) =>
+                          setState(() => _timesPerWeek = value.round()),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: AppSpacing.md),
             AppButton(
               label: _isEditing ? l10n.actionSave : l10n.actionAdd,
-              onPressed: _submitCustom,
+              // Unvollständiger Plan (bei „bestimmte Tage" noch kein Tag) →
+              // Knopf aus; der Grund steht in Rot direkt darüber.
+              onPressed: _schedule == null ? null : _submitCustom,
             ),
             if (_isEditing) ...[
               const SizedBox(height: AppSpacing.sm),

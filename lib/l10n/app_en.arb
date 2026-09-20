@@ -491,5 +491,38 @@
   "cloudDeleteAccountBody": "Your account will be deleted for good — email address, username, profile and the backup on the server. The data on this device is untouched. This cannot be undone.",
   "cloudDeleteAccountConfirm": "Delete for good",
   "cloudDeleteAccountDone": "Your account has been deleted. The data on this device is untouched.",
-  "cloudDeleteAccountPartial": "Your backup and profile on the server have been deleted and you are signed out. The app could not remove the sign-in record itself yet — write to us and we will delete it."
+  "cloudDeleteAccountPartial": "Your backup and profile on the server have been deleted and you are signed out. The app could not remove the sign-in record itself yet — write to us and we will delete it.",
+  "scheduleTitle": "Repeat",
+  "scheduleModeEveryDay": "Every day",
+  "scheduleModeSpecificDays": "Specific days",
+  "scheduleModeCountPerWeek": "Times per week",
+  "scheduleNeedDay": "Pick at least one day.",
+  "scheduleDaySeparator": ", ",
+  "scheduleWeekProgress": "{done}/{total} this week",
+  "@scheduleWeekProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "todayNotScheduled": "Not scheduled ({count})",
+  "@todayNotScheduled": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayNothingDue": "Nothing scheduled for this day.",
+  "weekdayShortMonday": "Mon",
+  "weekdayShortTuesday": "Tue",
+  "weekdayShortWednesday": "Wed",
+  "weekdayShortThursday": "Thu",
+  "weekdayShortFriday": "Fri",
+  "weekdayShortSaturday": "Sat",
+  "weekdayShortSunday": "Sun"
 }

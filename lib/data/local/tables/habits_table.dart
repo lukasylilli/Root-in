@@ -14,11 +14,23 @@ class Habits extends Table {
   /// Nur relevant bei [HabitGoalType.duration], z. B. 10 oder 60 (Minuten).
   IntColumn get targetMinutes => integer().nullable()();
 
-  /// Wie oft pro Woche die Gewohnheit ansteht (1–7). Zusätzlich zur
-  /// Frequenz gilt die generelle Frei-Tag-Regel bei der Streak-Berechnung.
+  /// Wochen-Soll (1–7) — **in jedem Modus des Wochenplans** (siehe
+  /// `HabitSchedule`, PLAN.md Phase 32): bei „jeden Tag" 7, bei festen Tagen
+  /// deren Anzahl, bei „x-mal pro Woche" das x. Die Statistik rechnet damit
+  /// `Soll = timesPerWeek × Wochen`. Zusätzlich gilt die Frei-Tag-Regel bei
+  /// der Streak-Berechnung.
   IntColumn get timesPerWeek => integer().withDefault(const Constant(7))();
 
   DateTimeColumn get startDate => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
+
+  /// Wochentags-Maske des Wochenplans (PLAN.md Phase 32): Bit 0 = Montag …
+  /// Bit 6 = Sonntag, 127 = jeden Tag. Zusammen mit [timesPerWeek] ergibt sich
+  /// der Modus — siehe `HabitSchedule.fromColumns`.
+  ///
+  /// ⚠️ Bewusst als **letzte** Spalte: `onUpgrade` legt sie mit `addColumn` an,
+  /// und die hängt ans Ende. So stimmt die Spaltenreihenfolge einer migrierten
+  /// Datenbank mit der einer frisch angelegten überein.
+  IntColumn get scheduleDays => integer().withDefault(const Constant(127))();
 }

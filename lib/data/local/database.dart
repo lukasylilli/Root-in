@@ -47,7 +47,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -91,7 +91,21 @@ class AppDatabase extends _$AppDatabase {
         // (`habitId`). Eine Migration, die Gewohnheiten neu anlegt, statt
         // sie zu behalten, würde den ganzen Verlauf von seiner Gewohnheit
         // trennen — genau das prüft `database_migration_test.dart`.
-        await m.alterTable(TableMigration(habits));
+        //
+        // ⚠️ Seit Phase 32 kennt die Tabelle eine Spalte mehr
+        // (`scheduleDays`). `alterTable` baut nach dem **aktuellen** Schema
+        // und liest sonst jede Spalte aus der alten Tabelle — die neue gibt es
+        // dort aber nicht. `newColumns` sagt das ausdrücklich; sie bekommt
+        // ihren Standardwert („jeden Tag"). Dieser Zweig liefert damit schon
+        // den Stand von Schema 5.
+        await m.alterTable(
+          TableMigration(habits, newColumns: [habits.scheduleDays]),
+        );
+      } else if (from < 5) {
+        // Phase 32: Wochenplan. Bestehende Gewohnheiten bekommen den Standard
+        // 127 = jeden Tag — genau das, was sie bisher waren. Nichts wird
+        // umgebaut, deshalb bleiben alle IDs unangetastet.
+        await m.addColumn(habits, habits.scheduleDays);
       }
     },
   );

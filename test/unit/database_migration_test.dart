@@ -45,14 +45,18 @@ void main() {
     return raw;
   }
 
-  /// Baut [raw] auf Schema [version] zurück (1, 2 oder 3) und trägt einen
+  /// Baut [raw] auf Schema [version] zurück (1, 2, 3 oder 4) und trägt einen
   /// Bestand ein, wie ihn eine App dieser Fassung hinterlassen hätte.
+  ///
+  /// ⚠️ Seit Phase 32 (Schema 5) fällt **zuerst** die Wochenplan-Spalte weg:
+  /// Sie ist die jüngste und kein älteres Schema kannte sie.
   ///
   /// ⚠️ Seit Phase 28 geht der Rückbau der Erinnerungs-Spalten **andersherum**
   /// als früher: Phase 7 hatte sie gebracht, Phase 28 hat sie wieder
   /// entfernt. Das aktuelle Schema kennt sie also nicht mehr — für einen
   /// echten Schema-3-Bestand müssen sie hier **angelegt** werden.
   void downgradeTo(Database raw, int version) {
+    raw.execute('ALTER TABLE habits DROP COLUMN schedule_days;');
     if (version == 3) {
       raw.execute(
         'ALTER TABLE habits ADD COLUMN reminder_enabled '
@@ -101,11 +105,15 @@ void main() {
     expect(lesen.category, 'Sprachenlernen');
     expect(lesen.goalType, HabitGoalType.checkbox);
     expect(lesen.timesPerWeek, 7);
+    // Wochenplan (Phase 32): Bestand aus jedem älteren Schema wird „jeden Tag"
+    // (127) — genau das, was die Gewohnheiten bis dahin waren.
+    expect(lesen.scheduleDays, 127);
     expect(lesen.archived, isFalse);
 
     final laufen = habits.firstWhere((h) => h.id == 42);
     expect(laufen.name, 'Laufen');
     expect(laufen.targetMinutes, 30);
+    expect(laufen.scheduleDays, 127);
     // Archivierte Gewohnheiten dürfen nicht unter den Tisch fallen — an
     // ihnen hängen die Erledigungen vergangener Wochen.
     expect(laufen.archived, isTrue);
@@ -194,6 +202,35 @@ void main() {
           .toList();
       expect(spalten, isNot(contains('reminder_enabled')));
       expect(spalten, isNot(contains('reminder_minute_of_day')));
+      // ⚠️ Der Neubau der Tabelle (`alterTable`) muss die Wochenplan-Spalte
+      // mitbringen, obwohl der alte Bestand sie nicht hatte — sonst fehlte
+      // sie nach dem Sprung 3 → 5 ganz.
+      expect(spalten, contains('schedule_days'));
+    },
+  );
+
+  test(
+    'Schema 4 → aktuell: die Wochenplan-Spalte kommt mit „jeden Tag"',
+    () async {
+      // Phase 32. Hier greift `addColumn` (kein Tabellen-Neubau): Die Zeilen
+      // bleiben unberührt, die neue Spalte bekommt ihren Standardwert.
+      final raw = await freshCurrentSchema();
+      downgradeTo(raw, 4);
+      seedOldData(raw);
+
+      final db = reopen(raw);
+      addTearDown(db.close);
+
+      await expectDataSurvived(db);
+
+      final spalten = raw
+          .select('PRAGMA table_info(habits);')
+          .map((row) => row['name'] as String)
+          .toList();
+      expect(spalten, contains('schedule_days'));
+      // Als letzte Spalte, wie in einer frisch angelegten Datenbank.
+      expect(spalten.last, 'schedule_days');
+      expect(raw.select('PRAGMA user_version;').first.values.first, 5);
     },
   );
 
@@ -207,7 +244,7 @@ void main() {
     addTearDown(db.close);
 
     await expectDataSurvived(db);
-    expect(raw.select('PRAGMA user_version;').first.values.first, 4);
+    expect(raw.select('PRAGMA user_version;').first.values.first, 5);
   });
 
   test('schemaVersion und onUpgrade-Zweige passen zusammen', () {
@@ -220,7 +257,7 @@ void main() {
 
     expect(
       db.schemaVersion,
-      4,
+      5,
       reason:
           'schemaVersion wurde erhöht. Ergänze in database.dart einen '
           'onUpgrade-Zweig, erweitere die Tests oben um das neue Schema und '

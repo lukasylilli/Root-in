@@ -522,5 +522,38 @@
   "cloudDeleteAccountBody": "Dein Konto wird endgültig gelöscht — E-Mail-Adresse, Benutzername, Profil und die Sicherung auf dem Server. Die Daten auf diesem Gerät bleiben unberührt. Das lässt sich nicht rückgängig machen.",
   "cloudDeleteAccountConfirm": "Endgültig löschen",
   "cloudDeleteAccountDone": "Dein Konto ist gelöscht. Die Daten auf diesem Gerät sind unberührt.",
-  "cloudDeleteAccountPartial": "Sicherung und Profil auf dem Server sind gelöscht, und du bist abgemeldet. Den Anmelde-Eintrag selbst konnte die App noch nicht entfernen — schreib uns, dann löschen wir ihn."
+  "cloudDeleteAccountPartial": "Sicherung und Profil auf dem Server sind gelöscht, und du bist abgemeldet. Den Anmelde-Eintrag selbst konnte die App noch nicht entfernen — schreib uns, dann löschen wir ihn.",
+  "scheduleTitle": "Wiederholung",
+  "scheduleModeEveryDay": "Jeden Tag",
+  "scheduleModeSpecificDays": "Bestimmte Tage",
+  "scheduleModeCountPerWeek": "Anzahl pro Woche",
+  "scheduleNeedDay": "Wähle mindestens einen Tag.",
+  "scheduleDaySeparator": ", ",
+  "scheduleWeekProgress": "{done}/{total} diese Woche",
+  "@scheduleWeekProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "todayNotScheduled": "Nicht geplant ({count})",
+  "@todayNotScheduled": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayNothingDue": "An diesem Tag steht nichts an.",
+  "weekdayShortMonday": "Mo",
+  "weekdayShortTuesday": "Di",
+  "weekdayShortWednesday": "Mi",
+  "weekdayShortThursday": "Do",
+  "weekdayShortFriday": "Fr",
+  "weekdayShortSaturday": "Sa",
+  "weekdayShortSunday": "So"
 }

@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/services/settings_service.dart';
 import 'core/utils/date_utils.dart';
 import 'data/models/habit_goal_type.dart';
+import 'data/models/habit_schedule.dart';
 import 'data/repositories/habit_repository.dart';
 import 'main.dart' as app;
 
@@ -170,7 +171,11 @@ Future<void> _seed(ProviderContainer container, SharedPreferences prefs) async {
       category: seed.category,
       goalType: seed.goal,
       targetMinutes: seed.minutes,
-      timesPerWeek: seed.weekdays.isEmpty ? 7 : seed.weekdays.length,
+      // Wochenplan (PLAN.md Phase 32): `weekdays` **ist** der Plan — Tage und
+      // Wochen-Soll folgen daraus, es gibt kein zweites Feld.
+      schedule: seed.weekdays.isEmpty
+          ? const HabitSchedule.everyDay()
+          : HabitSchedule.onDays(seed.weekdays),
     );
 
     for (var back = days; back >= 0; back--) {
