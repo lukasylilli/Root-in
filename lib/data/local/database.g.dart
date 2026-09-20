@@ -136,6 +136,18 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _scheduleDaysMeta = const VerificationMeta(
+    'scheduleDays',
+  );
+  @override
+  late final GeneratedColumn<int> scheduleDays = GeneratedColumn<int>(
+    'schedule_days',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(127),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -149,6 +161,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     startDate,
     createdAt,
     archived,
+    scheduleDays,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -229,6 +242,15 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         archived.isAcceptableOrUnknown(data['archived']!, _archivedMeta),
       );
     }
+    if (data.containsKey('schedule_days')) {
+      context.handle(
+        _scheduleDaysMeta,
+        scheduleDays.isAcceptableOrUnknown(
+          data['schedule_days']!,
+          _scheduleDaysMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -284,6 +306,10 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         DriftSqlType.bool,
         data['${effectivePrefix}archived'],
       )!,
+      scheduleDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}schedule_days'],
+      )!,
     );
   }
 
@@ -307,12 +333,24 @@ class Habit extends DataClass implements Insertable<Habit> {
   /// Nur relevant bei [HabitGoalType.duration], z. B. 10 oder 60 (Minuten).
   final int? targetMinutes;
 
-  /// Wie oft pro Woche die Gewohnheit ansteht (1–7). Zusätzlich zur
-  /// Frequenz gilt die generelle Frei-Tag-Regel bei der Streak-Berechnung.
+  /// Wochen-Soll (1–7) — **in jedem Modus des Wochenplans** (siehe
+  /// `HabitSchedule`, PLAN.md Phase 32): bei „jeden Tag" 7, bei festen Tagen
+  /// deren Anzahl, bei „x-mal pro Woche" das x. Die Statistik rechnet damit
+  /// `Soll = timesPerWeek × Wochen`. Zusätzlich gilt die Frei-Tag-Regel bei
+  /// der Streak-Berechnung.
   final int timesPerWeek;
   final DateTime startDate;
   final DateTime createdAt;
   final bool archived;
+
+  /// Wochentags-Maske des Wochenplans (PLAN.md Phase 32): Bit 0 = Montag …
+  /// Bit 6 = Sonntag, 127 = jeden Tag. Zusammen mit [timesPerWeek] ergibt sich
+  /// der Modus — siehe `HabitSchedule.fromColumns`.
+  ///
+  /// ⚠️ Bewusst als **letzte** Spalte: `onUpgrade` legt sie mit `addColumn` an,
+  /// und die hängt ans Ende. So stimmt die Spaltenreihenfolge einer migrierten
+  /// Datenbank mit der einer frisch angelegten überein.
+  final int scheduleDays;
   const Habit({
     required this.id,
     required this.name,
@@ -325,6 +363,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     required this.startDate,
     required this.createdAt,
     required this.archived,
+    required this.scheduleDays,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -346,6 +385,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     map['start_date'] = Variable<DateTime>(startDate);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['archived'] = Variable<bool>(archived);
+    map['schedule_days'] = Variable<int>(scheduleDays);
     return map;
   }
 
@@ -364,6 +404,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       startDate: Value(startDate),
       createdAt: Value(createdAt),
       archived: Value(archived),
+      scheduleDays: Value(scheduleDays),
     );
   }
 
@@ -386,6 +427,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       startDate: serializer.fromJson<DateTime>(json['startDate']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       archived: serializer.fromJson<bool>(json['archived']),
+      scheduleDays: serializer.fromJson<int>(json['scheduleDays']),
     );
   }
   @override
@@ -405,6 +447,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       'startDate': serializer.toJson<DateTime>(startDate),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'archived': serializer.toJson<bool>(archived),
+      'scheduleDays': serializer.toJson<int>(scheduleDays),
     };
   }
 
@@ -420,6 +463,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     DateTime? startDate,
     DateTime? createdAt,
     bool? archived,
+    int? scheduleDays,
   }) => Habit(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -434,6 +478,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     startDate: startDate ?? this.startDate,
     createdAt: createdAt ?? this.createdAt,
     archived: archived ?? this.archived,
+    scheduleDays: scheduleDays ?? this.scheduleDays,
   );
   Habit copyWithCompanion(HabitsCompanion data) {
     return Habit(
@@ -454,6 +499,9 @@ class Habit extends DataClass implements Insertable<Habit> {
       startDate: data.startDate.present ? data.startDate.value : this.startDate,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       archived: data.archived.present ? data.archived.value : this.archived,
+      scheduleDays: data.scheduleDays.present
+          ? data.scheduleDays.value
+          : this.scheduleDays,
     );
   }
 
@@ -470,7 +518,8 @@ class Habit extends DataClass implements Insertable<Habit> {
           ..write('timesPerWeek: $timesPerWeek, ')
           ..write('startDate: $startDate, ')
           ..write('createdAt: $createdAt, ')
-          ..write('archived: $archived')
+          ..write('archived: $archived, ')
+          ..write('scheduleDays: $scheduleDays')
           ..write(')'))
         .toString();
   }
@@ -488,6 +537,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     startDate,
     createdAt,
     archived,
+    scheduleDays,
   );
   @override
   bool operator ==(Object other) =>
@@ -503,7 +553,8 @@ class Habit extends DataClass implements Insertable<Habit> {
           other.timesPerWeek == this.timesPerWeek &&
           other.startDate == this.startDate &&
           other.createdAt == this.createdAt &&
-          other.archived == this.archived);
+          other.archived == this.archived &&
+          other.scheduleDays == this.scheduleDays);
 }
 
 class HabitsCompanion extends UpdateCompanion<Habit> {
@@ -518,6 +569,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<DateTime> startDate;
   final Value<DateTime> createdAt;
   final Value<bool> archived;
+  final Value<int> scheduleDays;
   const HabitsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -530,6 +582,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.startDate = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.archived = const Value.absent(),
+    this.scheduleDays = const Value.absent(),
   });
   HabitsCompanion.insert({
     this.id = const Value.absent(),
@@ -543,6 +596,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.startDate = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.archived = const Value.absent(),
+    this.scheduleDays = const Value.absent(),
   }) : name = Value(name),
        colorValue = Value(colorValue),
        goalType = Value(goalType);
@@ -558,6 +612,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<DateTime>? startDate,
     Expression<DateTime>? createdAt,
     Expression<bool>? archived,
+    Expression<int>? scheduleDays,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -571,6 +626,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       if (startDate != null) 'start_date': startDate,
       if (createdAt != null) 'created_at': createdAt,
       if (archived != null) 'archived': archived,
+      if (scheduleDays != null) 'schedule_days': scheduleDays,
     });
   }
 
@@ -586,6 +642,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<DateTime>? startDate,
     Value<DateTime>? createdAt,
     Value<bool>? archived,
+    Value<int>? scheduleDays,
   }) {
     return HabitsCompanion(
       id: id ?? this.id,
@@ -599,6 +656,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       startDate: startDate ?? this.startDate,
       createdAt: createdAt ?? this.createdAt,
       archived: archived ?? this.archived,
+      scheduleDays: scheduleDays ?? this.scheduleDays,
     );
   }
 
@@ -640,6 +698,9 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     if (archived.present) {
       map['archived'] = Variable<bool>(archived.value);
     }
+    if (scheduleDays.present) {
+      map['schedule_days'] = Variable<int>(scheduleDays.value);
+    }
     return map;
   }
 
@@ -656,7 +717,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
           ..write('timesPerWeek: $timesPerWeek, ')
           ..write('startDate: $startDate, ')
           ..write('createdAt: $createdAt, ')
-          ..write('archived: $archived')
+          ..write('archived: $archived, ')
+          ..write('scheduleDays: $scheduleDays')
           ..write(')'))
         .toString();
   }
@@ -1260,6 +1322,7 @@ typedef $$HabitsTableCreateCompanionBuilder =
       Value<DateTime> startDate,
       Value<DateTime> createdAt,
       Value<bool> archived,
+      Value<int> scheduleDays,
     });
 typedef $$HabitsTableUpdateCompanionBuilder =
     HabitsCompanion Function({
@@ -1274,6 +1337,7 @@ typedef $$HabitsTableUpdateCompanionBuilder =
       Value<DateTime> startDate,
       Value<DateTime> createdAt,
       Value<bool> archived,
+      Value<int> scheduleDays,
     });
 
 final class $$HabitsTableReferences
@@ -1366,6 +1430,11 @@ class $$HabitsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get scheduleDays => $composableBuilder(
+    column: $table.scheduleDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> habitCompletionsRefs(
     Expression<bool> Function($$HabitCompletionsTableFilterComposer f) f,
   ) {
@@ -1455,6 +1524,11 @@ class $$HabitsTableOrderingComposer
     column: $table.archived,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get scheduleDays => $composableBuilder(
+    column: $table.scheduleDays,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$HabitsTableAnnotationComposer
@@ -1504,6 +1578,11 @@ class $$HabitsTableAnnotationComposer
 
   GeneratedColumn<bool> get archived =>
       $composableBuilder(column: $table.archived, builder: (column) => column);
+
+  GeneratedColumn<int> get scheduleDays => $composableBuilder(
+    column: $table.scheduleDays,
+    builder: (column) => column,
+  );
 
   Expression<T> habitCompletionsRefs<T extends Object>(
     Expression<T> Function($$HabitCompletionsTableAnnotationComposer a) f,
@@ -1570,6 +1649,7 @@ class $$HabitsTableTableManager
                 Value<DateTime> startDate = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
+                Value<int> scheduleDays = const Value.absent(),
               }) => HabitsCompanion(
                 id: id,
                 name: name,
@@ -1582,6 +1662,7 @@ class $$HabitsTableTableManager
                 startDate: startDate,
                 createdAt: createdAt,
                 archived: archived,
+                scheduleDays: scheduleDays,
               ),
           createCompanionCallback:
               ({
@@ -1596,6 +1677,7 @@ class $$HabitsTableTableManager
                 Value<DateTime> startDate = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
+                Value<int> scheduleDays = const Value.absent(),
               }) => HabitsCompanion.insert(
                 id: id,
                 name: name,
@@ -1608,6 +1690,7 @@ class $$HabitsTableTableManager
                 startDate: startDate,
                 createdAt: createdAt,
                 archived: archived,
+                scheduleDays: scheduleDays,
               ),
           withReferenceMapper: (p0) => p0
               .map(
