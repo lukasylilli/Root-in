@@ -11,7 +11,13 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-19 — an Root-in nichts geändert; nur vermerkt: Lukas fragte nach dem Veröffentlichungszeitpunkt von Vox. Weder die Vox- noch die Root-in-Dateien nennen ein Datum. Offen auf der Root-in-Seite (brauchen Lukas): PLAN-Tabelle Nr. 3 (`schema.sql` + „Konto löschen"), 5 (Durchgang auf echtem iPhone), 6 (eigener SMTP), 7 (ein Konto für Root-in und Vox, Phase 30 — Zeitpunkt nicht festgelegt). Details: `vox/PLAN.md` → „Letzte Sitzung".
+> 🗓️ **Letzte Sitzung:** 2026-09-20 — an Root-in **nichts geändert**; nur vermerkt, was in Vox passiert ist und Root-in berührt: Vox hat jetzt eine Profil-Seite
+> mit **Passwort ändern, E-Mail ändern, „Passwort vergessen" und „auf allen Geräten abmelden"**. ⚠️ `auth.users` ist geteilt — **jede Änderung von Passwort oder E-Mail in Vox gilt
+> auch in Root-in** (Vox sagt das dem Nutzer). Umgekehrt gibt es in Root-in **keine** „Passwort vergessen"-Seite; die Mail-Links von Vox führen auf `lukasylilli.github.io/vox/`
+> — dafür muss diese Adresse in Supabase → Redirect URLs stehen, sonst landet der Link auf der Site URL (mutmaßlich Root-in, das den Wiederherstellungs-Link nicht behandelt).
+> Vox schreibt weiterhin **nur** in `vox_backups`, nie in `profiles`/`backups`. „Konto löschen" bleibt in Vox aus (L.1d, Entscheidung für beide Apps).
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-19 — an Root-in nichts geändert; nur vermerkt: Lukas fragte nach dem Veröffentlichungszeitpunkt von Vox. Weder die Vox- noch die Root-in-Dateien nennen ein Datum. Offen auf der Root-in-Seite (brauchen Lukas): PLAN-Tabelle Nr. 3 (`schema.sql` + „Konto löschen"), 5 (Durchgang auf echtem iPhone), 6 (eigener SMTP), 7 (ein Konto für Root-in und Vox, Phase 30 — Zeitpunkt nicht festgelegt). Details: `vox/PLAN.md` → „Letzte Sitzung".
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-18 — an Root-in nichts geändert; nur vermerkt, was in Vox passiert ist (L.6: Grammatik-Lektionen
 > aus Lukas' Büchern, Inhalte neu geschrieben). ⏭️ **Nächster Schritt in Root-in:** die offenen Punkte unten — sie brauchen Lukas.

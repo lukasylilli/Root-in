@@ -11,7 +11,10 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-19 — an Root-in nichts geändert; nur vermerkt: Lukas fragte nach dem Veröffentlichungszeitpunkt von Vox. Weder die Vox- noch die Root-in-Dateien nennen ein Datum. Offen auf der Root-in-Seite (brauchen Lukas): PLAN-Tabelle Nr. 3 (`schema.sql` + „Konto löschen"), 5 (Durchgang auf echtem iPhone), 6 (eigener SMTP), 7 (ein Konto für Root-in und Vox, Phase 30 — Zeitpunkt nicht festgelegt). Details: `vox/PLAN.md` → „Letzte Sitzung".
+> 🗓️ **Letzte Sitzung:** 2026-09-20 — an Root-in **nichts geändert**. Vermerk für den Abschnitt „Nutzerkonten & Cloud": Vox ändert über seine Profil-Seite Passwort/E-Mail
+> desselben `auth.users`-Eintrags (gilt in beiden Apps) und schickt Mail-Links auf `lukasylilli.github.io/vox/`; Root-in behandelt kein `passwordRecovery`-Ereignis. Vox berührt weiter nur `vox_backups`.
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-19 — an Root-in nichts geändert; nur vermerkt: Lukas fragte nach dem Veröffentlichungszeitpunkt von Vox. Weder die Vox- noch die Root-in-Dateien nennen ein Datum. Offen auf der Root-in-Seite (brauchen Lukas): PLAN-Tabelle Nr. 3 (`schema.sql` + „Konto löschen"), 5 (Durchgang auf echtem iPhone), 6 (eigener SMTP), 7 (ein Konto für Root-in und Vox, Phase 30 — Zeitpunkt nicht festgelegt). Details: `vox/PLAN.md` → „Letzte Sitzung".
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-18 — an Root-in nichts geändert; nur vermerkt, was in Vox passiert ist (L.6: Grammatik-Lektionen
 > aus Lukas' Büchern, Inhalte neu geschrieben). ⏭️ **Nächster Schritt in Root-in:** die offenen Punkte unten — sie brauchen Lukas.
