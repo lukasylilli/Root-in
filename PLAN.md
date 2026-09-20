@@ -11,7 +11,7 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-20 — **Wochenplan für Gewohnheiten ist fertig und auf `main`** ([Phase 32](#phase-32--wochenplan-für-gewohnheiten--umgesetzt-2026-09-20)): jede Gewohnheit ist *jeden Tag*, *nur an bestimmten Wochentagen* (z. B. Di + Do) oder *x-mal pro Woche an beliebigen Tagen*. Bestehende Gewohnheiten bleiben „jeden Tag". Schema 4 → 5, Sicherungsformat 1 → 2 (alte Dateien bleiben lesbar). Geprüft in der Automatik: `flutter analyze` ohne Befund, **279 Tests grün**. ⏭️ **Nächster Schritt:** Lukas sieht sich die neue Oberfläche auf dem iPhone an (Tabelle oben, Nr. 8) — Tests belegen die Logik, nicht das Aussehen. Vox unverändert (nur ein Vermerk in `vox/PLAN.md` und `vox/PROJECT_MAP.md`).
+> 🗓️ **Letzte Sitzung:** 2026-09-20 — **Wochenplan für Gewohnheiten ist fertig und auf `main`** ([Phase 32](#phase-32--wochenplan-für-gewohnheiten--umgesetzt-2026-09-20)): jede Gewohnheit ist *jeden Tag*, *nur an bestimmten Wochentagen* (z. B. Di + Do) oder *x-mal pro Woche an beliebigen Tagen*. Bestehende Gewohnheiten bleiben „jeden Tag". Schema 4 → 5, Sicherungsformat 1 → 2 (alte Dateien bleiben lesbar). Geprüft in der Automatik: `flutter analyze` ohne Befund, **279 Tests grün**. ✅ **Lukas hat die Oberfläche angesehen: „ظاهرش هم خوبه", Phase 32 gilt als abgeschlossen** (Tabelle oben, Nr. 8). ⏭️ **Nächster Schritt in Root-in:** die übrigen offenen Punkte oben — sie brauchen Lukas. Vox unverändert (nur ein Vermerk in `vox/PLAN.md` und `vox/PROJECT_MAP.md`).
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-20 — an Root-in **nichts geändert**; nur vermerkt, was in Vox passiert ist und Root-in berührt: Vox hat jetzt eine Profil-Seite
 > mit **Passwort ändern, E-Mail ändern, „Passwort vergessen" und „auf allen Geräten abmelden"**. ⚠️ `auth.users` ist geteilt — **jede Änderung von Passwort oder E-Mail in Vox gilt
@@ -49,7 +49,7 @@
 > | 5 | **Durchgang auf einem echten iPhone** (Phase 26, 27.9) | Nutzer | Chrome in der Automatik sieht weder Safari noch die abgelegte Fassung |
 > | 6 | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer, dann Claude | Ohne ihn ist die E-Mail gespeichert, aber nutzlos. Der Knopf kommt **erst danach** — ungeprüft gebaut wäre er ein Knopf ins Leere |
 > | 7 | **Ein Konto für Root-in und Vox** ([Phase 30](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte)) | Nutzer beantwortet die Fragen, dann beide | Vom Nutzer für die **letzten** Projektschritte angesagt |
-> | 8 | **Wochenplan (Phase 32) auf dem iPhone ansehen:** Gewohnheit anlegen mit „Bestimmte Tage" und „x-mal pro Woche", Heute-Seite an einem nicht geplanten Tag öffnen | **Nutzer** | Logik ist durch Tests belegt, das **Aussehen** nicht — der Browser-Durchgang berührt das Formular nicht |
+> | 8 | ~~**Wochenplan (Phase 32) auf dem iPhone ansehen:** Gewohnheit anlegen mit „Bestimmte Tage" und „x-mal pro Woche", Heute-Seite an einem nicht geplanten Tag öffnen | **Nutzer** | Logik ist durch Tests belegt, das **Aussehen** nicht — der Browser-Durchgang berührt das Formular nicht~~ ✅ Lukas hat es gesehen, 2026-09-20: Aussehen gut |
 >
 > 🌐 **2026-09-16 — Startsprache (31.6):** Ohne eigene Wahl folgt Root-in der Gerätesprache; kann die App keine davon, startet sie jetzt auf **Englisch** (vorher Deutsch).
 >
@@ -803,7 +803,7 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 - [x] **Tests:** 224 → **279** grün (+2 übersprungen). Neu/erweitert: `habit_schedule_test` (22 Fälle), `schedule_progress_test` (8), `streak_calculator_test` (5 → 17), `backup_data_test` (5 → 7), `database_migration_test` (5 → 6), `habit_form_sheet_test` (1 → 5), `today_page_test` (6 → 11).
 - [x] **Generierter Drift-Code ohne Rechner** (Lehre 42): `build_runner` lief in einer **Nebenzweig-Automatik** (`wochenplan`), die den Code auf den Zweig zurückschrieb und `analyze`/`test` als lesbare Berichte ablegte. **Ergebnis:** `analyze` ohne Befund, alle Tests grün. Die Automatik wurde **vor dem Zusammenführen wieder gelöscht** und gehört nicht nach `main`; sie steht in der Geschichte des Zweigs (Commit `7aeba3d`, Datei `.github/workflows/wochenplan-ci.yml`).
 - [x] Zusammengeführt **ohne Squash**, damit diese Geschichte erhalten bleibt.
-- [ ] ⬜ **Nicht belegt:** das **Aussehen** von Formular und „Nicht geplant"-Abschnitt. Der Browser-Durchgang (23 Prüfungen) tippt weder das Formular noch einen nicht geplanten Tag an. → Nutzer, Tabelle oben Nr. 8.
+- [x] **Aussehen** von Formular und „Nicht geplant"-Abschnitt: vom Nutzer angesehen und für gut befunden (2026-09-20). Der Browser-Durchgang (23 Prüfungen) tippt sie weiterhin nicht an — die Abnahme kam von Hand.
 
 ---
 
