@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-20 — an Root-in **nichts geändert**. Vermerk für den Abschnitt „Nutzerkonten & Cloud": Vox ändert über seine Profil-Seite Passwort/E-Mail
+> 🗓️ **Letzte Sitzung:** 2026-09-20 — **Wochenplan für Gewohnheiten** (PLAN.md Phase 32) auf `main`: neue Dateien `lib/data/models/habit_schedule.dart`, `lib/features/habits/presentation/schedule_labels.dart`, `test/unit/habit_schedule_test.dart`, `test/unit/schedule_progress_test.dart`; geändert u. a. Tabelle `habits` (Spalte `scheduleDays`), `database.dart` (Schema 5), `backup_data.dart` (Fassung 2), `streak_calculator.dart`, `habit_repository.dart`, Heute-Seite, Formular, drei ARB-Dateien (297 Schlüssel je Datei). Die temporäre Nebenzweig-Automatik `wochenplan-ci.yml` und `ci-report/` sind **nicht** auf `main` (siehe „Wochenplan der Gewohnheiten" unten). Vox unverändert.
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-20 — an Root-in **nichts geändert**. Vermerk für den Abschnitt „Nutzerkonten & Cloud": Vox ändert über seine Profil-Seite Passwort/E-Mail
 > desselben `auth.users`-Eintrags (gilt in beiden Apps) und schickt Mail-Links auf `lukasylilli.github.io/vox/`; Root-in behandelt kein `passwordRecovery`-Ereignis. Vox berührt weiter nur `vox_backups`.
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-19 — an Root-in nichts geändert; nur vermerkt: Lukas fragte nach dem Veröffentlichungszeitpunkt von Vox. Weder die Vox- noch die Root-in-Dateien nennen ein Datum. Offen auf der Root-in-Seite (brauchen Lukas): PLAN-Tabelle Nr. 3 (`schema.sql` + „Konto löschen"), 5 (Durchgang auf echtem iPhone), 6 (eigener SMTP), 7 (ein Konto für Root-in und Vox, Phase 30 — Zeitpunkt nicht festgelegt). Details: `vox/PLAN.md` → „Letzte Sitzung".
@@ -19,7 +21,7 @@
 > 🗓️ **Vorherige Sitzung:** 2026-09-18 — an Root-in nichts geändert; nur vermerkt, was in Vox passiert ist (L.6: Grammatik-Lektionen
 > aus Lukas' Büchern, Inhalte neu geschrieben). ⏭️ **Nächster Schritt in Root-in:** die offenen Punkte unten — sie brauchen Lukas.
 >
-> **Stand 2026-09-13.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **224 Tests grün**, Browser-Durchgang 23/23 in der Automatik, Gegenprobe bei jedem Push, 13/13 Zugriffsregeln am Server (18, sobald `schema.sql` nach 31.3 eingespielt ist).
+> **Stand 2026-09-20.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`. **279 Tests grün**, Browser-Durchgang 23/23 in der Automatik, Gegenprobe bei jedem Push, 13/13 Zugriffsregeln am Server (18, sobald `schema.sql` nach 31.3 eingespielt ist).
 >
 > ⚠️ **Es gibt keinen Entwicklungsrechner mehr** (PLAN.md Phase 29). Alles, was nicht in diesem Repository liegt, ist gelöscht — auch VS Code. **Diese Datei beschreibt damit nicht mehr „was auf dem Rechner liegt", sondern „was das Repository enthält".** Wer etwas sucht, das hier nicht steht, sucht etwas, das es nicht gibt.
 >
@@ -42,7 +44,8 @@
 6. [Nutzerkonten & Cloud (Supabase)](#nutzerkonten--cloud-supabase)
 7. [Inhalts-Repository (GitHub)](#inhalts-repository-github)
 8. [Datenschutzerklärung](#datenschutzerklärung)
-9. [Hinweise](#hinweise)
+9. [Wochenplan der Gewohnheiten (Phase 32)](#wochenplan-der-gewohnheiten-phase-32)
+10. [Hinweise](#hinweise)
 
 ## Legende
 - ✅ im Repository vorhanden
@@ -252,7 +255,8 @@ lib/
 │   │                                             eingebaute gemalte Animation)
 │   ├── utils/
 │   │   ├── date_utils.dart                   ✅ dateOnly, addDays (DST-sicher), weekStartOf
-│   │   ├── streak_calculator.dart            ✅ Reine Streak-Logik inkl. 1-Frei-Tag/Woche (unit-getestet)
+│   │   ├── streak_calculator.dart            ✅ Reine Streak-Logik inkl. 1-Frei-Tag/Woche (unit-getestet).
+│   │   │                                         Phase 32: kennt Wochenpläne (feste Tage, x-mal pro Woche)
 │   │   ├── achievement_evaluator.dart        ✅ Reine Freischalt-Logik (unit-getestet)
 │   │   ├── no_retry.dart                     ✅ noAutomaticRetry (PLAN.md 31.2b) — schaltet Riverpods
 │   │   │                                         automatische Wiederholung ab. Ohne sie zeigte eine Seite
@@ -407,8 +411,9 @@ lib/
 ├── data/
 │   ├── local/
 │   │   ├── database.dart                     ✅ AppDatabase (Drift) + appDatabaseProvider; forTesting(executor);
-│   │   │                                         schemaVersion 3, onCreate (nur Tabellen — Kategorien legt der
-│   │   │                                         App-Start sprachabhängig an), onUpgrade 1→2 / 2→3
+│   │   │                                         schemaVersion 5, onCreate (nur Tabellen — Kategorien legt der
+│   │   │                                         App-Start sprachabhängig an), onUpgrade 1→2 / 2→3 / 3→4 / 4→5
+│   │   │                                         (Phase 32: Spalte `scheduleDays`; der 3→4-Zweig braucht dafür `newColumns`)
 │   │   ├── database.g.dart                   ⚙️ build_runner
 │   │   ├── tables/{habits,habit_completions,categories}_table.dart ✅ Habits,
 │   │   │                                         HabitCompletions (unique habitId+date), Categories (name unique).
@@ -427,9 +432,14 @@ lib/
 │   │                                             schreibt ihn per replaceAll in EINER Transaktion zurück
 │   ├── models/
 │   │   ├── habit_goal_type.dart              ✅ Enum: checkbox vs. duration
+│   │   ├── habit_schedule.dart               ✅ **Wochenplan** einer Gewohnheit (Phase 32): `ScheduleMode` (jeden Tag /
+│   │   │                                         bestimmte Tage / x-mal pro Woche) + `HabitSchedule` — reines Dart,
+│   │   │                                         Regel „steht an diesem Tag an?" (`isDueOn`), liest den Modus aus den
+│   │   │                                         Spalten `scheduleDays` + `timesPerWeek` (`fromColumns`)
 │   │   ├── habit_with_day_status.dart        ✅ Habit + Status **an einem bestimmten Tag** (View-Model).
 │   │   │                                         Hieß bis Phase 24 habit_with_today_status.dart — seit die
-│   │   │                                         Heute-Seite jedes Datum zeigen kann, wäre „today" falsch
+│   │   │                                         Heute-Seite jedes Datum zeigen kann, wäre „today" falsch.
+│   │   │                                         Phase 32: trägt zusätzlich `isDue` (steht an diesem Tag laut Plan an?)
 │   │   ├── daily_progress.dart               ✅ Prozent/Punkte für den Tageskontext (+ `empty` für den Zustand,
 │   │   │                                         solange das Datum noch lädt)
 │   │   ├── category_breakdown.dart           ✅ Erledigungen je Kategorie
@@ -441,7 +451,8 @@ lib/
 │   │   │                                         Datenquelle der Übersicht-Seite (und ab Phase 19 der Karte)
 │   │   └── backup_data.dart                  ✅ Inhalt einer Sicherung + toJson/fromJson (ohne Datei-/Plattform-
 │   │                                             Zugriff → ohne Emulator testbar); wirft BackupFormatException
-│   │                                             mit Grund-Code statt Text → sprachneutral
+│   │                                             mit Grund-Code statt Text → sprachneutral.
+│   │                                             Phase 32: Fassung **2** (Wochenplan); Fassung 1 bleibt lesbar
 │   └── repositories/
 │       └── habit_repository.dart             ✅ Einzige Zugriffsschicht + alle Riverpod-Provider.
 │                                                 **Phase 24:** selectedDateOverrideProvider (null = heute) →
@@ -469,7 +480,8 @@ lib/
 │   │   └── ascent_source.dart                ✅ Wählbare Kennzahl der Animation (heute/Woche/Monat/Jahr)
 │   ├── today/presentation/today_page.dart    ✅ **Datumszeile** (Pfeile, Datumsauswahl, zurück auf heute —
 │   │                                             Zukunft gesperrt, Phase 24), Tagesring-Kopf, Liste, Abhaken,
-│   │                                             „+"-FAB, Menü Bearbeiten/Löschen
+│   │                                             „+"-FAB, Menü Bearbeiten/Löschen. Phase 32: anstehende Gewohnheiten
+│   │                                             oben, übrige im aufklappbaren Abschnitt „Nicht geplant"
 │   ├── view/
 │   │   ├── presentation/
 │   │   │   ├── view_page.dart                ✅ Tab-Container (Woche/Übersicht/Monat/Jahr; overviewTabIndex für
@@ -495,7 +507,9 @@ lib/
 │   │   └── year/year_tab.dart                ✅ Letzte 52 Wochen (pageId „year", einzige Seite mit Monatsübersicht)
 │   ├── habits/presentation/habit_form_sheet.dart ✅ Bottom Sheet für Anlegen **und** Bearbeiten (ein Formular):
 │   │                                             Vorlage/eigene Gewohnheit, Kategorie-Dropdown mit „+ Neue
-│   │                                             Kategorie", Löschen
+│   │                                             Kategorie", Löschen. Phase 32: Wochenplan (Modus, Tage, x-mal)
+│   ├── habits/presentation/schedule_labels.dart ✅ Beschriftungen des Wochenplans — die **eine** Stelle für
+│   │                                             Wochentags-Namen (Formular und Heute-Seite, Phase 32)
 │   ├── settings/presentation/
 │   │   ├── settings_page.dart                ✅ Darstellungsmodus, Farb-Variante, Animations-Quelle, Sprache;
 │   │   │                                         Links zu Konto/Kategorien, App teilen, Sicherung
@@ -571,7 +585,11 @@ test/
 │                                        schlägt durch, Erststart zeigt die Erklärung, „Überspringen" → Home +
 │                                        Merker, „Weiter" blättert durch. ACHTUNG: setzt onboarding_seen explizit
 ├── unit/
-│   ├── streak_calculator_test.dart      ✅ 5 Fälle (Serie, Frei-Tag, Bruch, heute offen, längste Serie)
+│   ├── streak_calculator_test.dart      ✅ 17 Fälle (Serie, Frei-Tag, Bruch, heute offen, längste Serie; Phase 32: feste Tage,
+│   │                                        x-mal pro Woche, gemeinsame Serie mit `isRequiredDay`)
+│   ├── habit_schedule_test.dart         ✅ 22 Fälle (Phase 32): Modi, Bitmaske, `fromColumns`, `isDueOn`, Randfälle
+│   ├── schedule_progress_test.dart      ✅ 8 Fälle (Phase 32): Nenner von Heatmap/Prozent, gespeicherte Spalten,
+│   │                                        Serien am Repository
 │   ├── repo_content_service_test.dart   ✅ 8 Fälle (laden+ablegen, Offline, Fehler ohne Speicher, 404, genau EINE
 │   │                                        Änderungs-Meldung [Endlosschleifen-Regression], getrennte Sprachen;
 │   │                                        Phase 22: Übernahme des alten Zwischenspeicher-Schlüssels, und dass
@@ -582,7 +600,7 @@ test/
 │   │                                        (stabil bei Gleichstand), fehlendes `order`, leerer Ordner, vier
 │   │                                        Fehlerformen mit Grund-Code — und „das mitgelieferte Beispiel ist
 │   │                                        gültig", damit store/others_index_beispiel.json nie verrottet
-│   ├── database_migration_test.dart     ✅ 4 Fälle (Phase 25): Schema 1 und 2 hochziehen, Bestand bleibt MIT
+│   ├── database_migration_test.dart     ✅ 6 Fälle (Phase 25; Phase 32: Schema 4 → 5, Standard „jeden Tag"): Schema 1 und 2 hochziehen, Bestand bleibt MIT
 │   │                                        denselben IDs · aktuelles Schema öffnet ohne Migration · eine
 │   │                                        Bremse, die bei erhöhter schemaVersion rot wird
 │   ├── category_dao_test.dart           ✅ 8 Fälle (anlegen ohne Duplikat, Umbenennen kaskadiert, Löschen
@@ -590,7 +608,7 @@ test/
 │   │                                        sieben an, zweiter Start nichts, Sprachwechsel nichts,
 │   │                                        Nachrüsten ergänzt nur Fehlendes)
 │   ├── dashboard_layout_test.dart       ✅ 4 Fälle (Standard, toggle, reorder, überlebt neuen Container)
-│   ├── backup_data_test.dart            ✅ 5 Fälle (verlustfreie Runde, neuere Version/Fremd-JSON/beschädigt
+│   ├── backup_data_test.dart            ✅ 7 Fälle (Phase 32: Fassung 2, alte Fassung 1 lesbar; verlustfreie Runde, neuere Version/Fremd-JSON/beschädigt
 │   │                                        abgelehnt — geprüft wird der Grund-Code, fehlende Listen als leer)
 │   ├── backup_restore_test.dart         ✅ 2 Fälle (replaceAll erhält habitId-Verweise, archivierte dabei)
 │   ├── remove_ads_test.dart             🕯️ 8 Fälle (Phase 14), stillgelegt — plus EIN aktiver, mit `skip:`
@@ -613,7 +631,7 @@ test/
 ├── widget/
 │   ├── matrix_grid_test.dart        ✅ 2 Fälle (eine Zelle je Tag; fitToWidth passt ein Jahr ohne Überlauf)
 │   ├── progress_ring_test.dart      ✅ 3 Fälle (Prozent, Clamping, centerLabel)
-│   ├── today_page_test.dart         ✅ 6 Fälle: Kopfbereich (Ring-Prozent, Punkte, Erledigt-Zähler, Liste) +
+│   ├── today_page_test.dart         ✅ 11 Fälle (Phase 32: „Nicht geplant", x-mal pro Woche); davon 6: Kopfbereich (Ring-Prozent, Punkte, Erledigt-Zähler, Liste) +
 │   │                                     5 Randfälle aus Phase 13 — leerer Bestand (keine Division durch
 │   │                                     null im Ring), alles erledigt = 100 %, sehr langer Name ohne
 │   │                                     Überlauf, 20 Gewohnheiten bleiben scrollbar, Abhaken schlägt
@@ -653,7 +671,7 @@ test/
 │   ├── remove_ads_tile_test.dart    🕯️ 2 Fälle (Phase 14), stillgelegt — mit demselben Platzhalter wie oben
 │   ├── account_page_test.dart       ✅ 3 Fälle (Profil/Statistik/Achievements, Name persistiert, Teilen öffnet)
 │   ├── categories_page_test.dart    ✅ Kategorie anlegen, umbenennen, löschen
-│   ├── habit_form_sheet_test.dart   ✅ 1 Fall (Bearbeiten-Modus zeigt die Werte und kann löschen)
+│   ├── habit_form_sheet_test.dart   ✅ 5 Fälle (Bearbeiten-Modus zeigt die Werte und kann löschen; Phase 32: Wochenplan wählen, speichern, wieder anzeigen)
 │   ├── share_card_test.dart         ✅ 6 Fälle (heute/Monat/Jahr; Kopfzeile mit Name+Datum, Punkte/Streak/
 │   │                                     Achievements; Grid ohne Überlauf; QR + Store-Link; Übersicht-Block
 │   │                                     ohne Überlauf bei fester Breite; ohne Block bleibt sie schmal)
@@ -1010,13 +1028,29 @@ Manifest (siehe Hinweise).
 
 ⬜ **Nutzer:** den alten Gist löschen — `gist.github.com/lukasylilli/673c36972d69819d975ffb82a592cca2`.
 
+## Wochenplan der Gewohnheiten (Phase 32)
+
+Details und Regeln: **PLAN.md Phase 32**. Hier nur, **wo was liegt**:
+
+| Was | Wo |
+|---|---|
+| Modell + Regel „steht an?" | `lib/data/models/habit_schedule.dart` |
+| Speicher (Spalten) | Tabelle `habits`: **`scheduleDays`** (neu, Bitmaske Mo = Bit 0, 127 = jeden Tag) + **`timesPerWeek`** (Wochen-Soll in jedem Modus) |
+| Migration | `lib/data/local/database.dart`, Schema 5 (`onUpgrade` 4 → 5; Zweig 3 → 4 mit `newColumns`) |
+| Sicherung | `lib/data/models/backup_data.dart`, Fassung 2 (Fassung 1 lesbar, ältere App lehnt 2 ab) |
+| Serien | `lib/core/utils/streak_calculator.dart` |
+| „Steht an?" je Tag, Nenner für Heatmap/Prozent | `lib/data/repositories/habit_repository.dart` (`isDue`, `dailyDueCountProvider`, `doneDaysByHabitProvider`) |
+| Heute-Seite / Formular / Tagesnamen | `today_page.dart` · `habit_form_sheet.dart` · `schedule_labels.dart` |
+
+⚠️ **Wie der generierte Drift-Code entstand (ohne Rechner):** `build_runner` lief in einer **temporären Automatik auf dem Nebenzweig `wochenplan`** (`.github/workflows/wochenplan-ci.yml`, Commit `7aeba3d`), die `database.g.dart` zurückschrieb und `analyze`/`test` als Berichte unter `ci-report/` ablegte. Beides ist **nicht** auf `main`. Wer wieder eine Spalte ändert, kann dieselbe Datei aus der Geschichte holen (PLAN.md Lehre 42) — statt `database.g.dart` von Hand nachzuziehen.
+
 ## Hinweise
 - 🔗 **Root-in wird aus Vox verlinkt — in dieser Richtung und sonst nirgends** (2026-09-15). Vox (`github.com/lukasylilli/vox`, Flutter-Web auf GitHub Pages) öffnet unter *Selbstlernen* eine Karte „Routine", die auf `https://lukasylilli.github.io/Root-in/` zeigt. **In diesem Repository gibt es dafür keine Datei und keinen Code** — Root-in weiß von dem Link nichts. ⚠️ Wer die Adresse von Root-in ändert (Repo umbenennen, eigene Domain), muss `lib/core/constants/app_links.dart` **im Vox-Repo** nachziehen, sonst zeigt die Karte ins Leere. Kein Code-Merge — bewusste Entscheidung, damit Root-in eigenständig nutzbar bleibt (PLAN.md, Kopf).
 - 🔒 **Gemeinsames Supabase-Projekt mit Vox (Stand 2026-09-16):** Vox hat eigene Tabellen (`vox_backups`, Datei `supabase/vox_tables.sql` im **Vox**-Repo) und fasst `profiles`/`backups` von Root-in nie an. Vox-Änderungen an seiner Nutzlast (zuletzt S.6, Fassung 3) und an seinen Wortdaten (V.2 Wortindex, L.1a id-Wächter, L.1b Migrationstest, L.2c Grammatik-Lektionen, G7a Grammatik-Übungen, G7b Niveau-Test, G7c Beispiel-Übungen) brauchen hier **keine** Anpassung; `version` in der Hülle zählt je App getrennt.
 - 🌐 **Startsprache (PLAN.md 31.6, 2026-09-16):** Ohne eigene Wahl gilt die erste Gerätesprache, die Root-in kann (de/en/fa); sonst **Englisch** — `fallbackLocale` in `lib/core/l10n/app_language.dart`. ⚠️ Das ist nicht die ARB-Vorlage (`app_de.arb`, `l10n.yaml`) — die bestimmt nur, woher fehlende Texte kommen.
 - Diese Datei bildet **nur die Struktur** ab (was liegt wo) — Fortschritt und Feature-Details stehen in PLAN.md.
 - Bei jeder neuen Datei/jedem neuen Ordner: hier ergänzen. Bei Löschung/Umbenennung: hier korrigieren.
-- `*.g.dart` sind generiert (`dart run build_runner build`) und werden hier nicht einzeln aufgeführt. ⚠️ **Sie sind versioniert, und das ist seit Phase 29 lebenswichtig:** Die Automatik ruft `build_runner` **nicht** auf. Wer eine Drift-Tabelle oder `database.dart` ändert, ohne die passende `.g.dart` mitzuliefern, bekommt einen roten Lauf — und kann ihn ohne Rechner nur beheben, indem er die generierte Datei von Hand nachzieht.
+- `*.g.dart` sind generiert (`dart run build_runner build`) und werden hier nicht einzeln aufgeführt. ⚠️ **Sie sind versioniert, und das ist seit Phase 29 lebenswichtig:** Die Automatik ruft `build_runner` **nicht** auf. Wer eine Drift-Tabelle oder `database.dart` ändert, ohne die passende `.g.dart` mitzuliefern, bekommt einen roten Lauf — und kann ihn ohne Rechner nur beheben, indem er die generierte Datei von Hand nachzieht — **oder** (seit Phase 32) indem er `build_runner` in einer temporären Nebenzweig-Automatik laufen lässt (siehe „Wochenplan der Gewohnheiten", PLAN.md Lehre 42).
 - ⚠️ **Es gibt keine Kommandozeile mehr** (PLAN.md Phase 29). `flutter analyze`, `flutter test`, `flutter build web` und `tool/build_web.sh` laufen **nur noch in der Automatik**, bei jedem Push auf `main`. Wer eine Änderung prüfen will, pusht sie und liest den Lauf. ⚠️ Das heißt auch: **`flutter gen-l10n` und `build_runner` laufen niemand mehr von Hand.** `gen-l10n` startet beim Bau von selbst; **`build_runner` NICHT** — wer `database.dart` oder eine Tabelle ändert, muss `database.g.dart` mitliefern, sonst bricht der Bau (siehe unten).
 - **Eine Seite wirklich ansehen:** pushen, den Lauf abwarten, `lukasylilli.github.io/Root-in/` im Browser öffnen. ⚠️ **Nicht sofort nach dem Lauf messen** — GitHub Pages liefert nicht überall gleichzeitig aus (Lehre 36). Für einen Blick mit echten Daten gäbe es `lib/main_seed.dart`; der braucht aber einen Bau von Hand und ist damit vorerst unerreichbar.
 - Jeder Widget-Test, der DB-gestützte Provider berührt, überschreibt `appDatabaseProvider` und `timeServiceProvider` und ruft `disposeAndFlush(tester)` als letzte Zeile. Die früheren Overrides für `notificationServiceProvider` (Phase 28) und `purchaseServiceProvider` (Phase 20) sind entfallen.

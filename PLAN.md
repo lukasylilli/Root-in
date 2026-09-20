@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-20 — an Root-in **nichts geändert**; nur vermerkt, was in Vox passiert ist und Root-in berührt: Vox hat jetzt eine Profil-Seite
+> 🗓️ **Letzte Sitzung:** 2026-09-20 — **Wochenplan für Gewohnheiten ist fertig und auf `main`** ([Phase 32](#phase-32--wochenplan-für-gewohnheiten--umgesetzt-2026-09-20)): jede Gewohnheit ist *jeden Tag*, *nur an bestimmten Wochentagen* (z. B. Di + Do) oder *x-mal pro Woche an beliebigen Tagen*. Bestehende Gewohnheiten bleiben „jeden Tag". Schema 4 → 5, Sicherungsformat 1 → 2 (alte Dateien bleiben lesbar). Geprüft in der Automatik: `flutter analyze` ohne Befund, **279 Tests grün**. ⏭️ **Nächster Schritt:** Lukas sieht sich die neue Oberfläche auf dem iPhone an (Tabelle oben, Nr. 8) — Tests belegen die Logik, nicht das Aussehen. Vox unverändert (nur ein Vermerk in `vox/PLAN.md` und `vox/PROJECT_MAP.md`).
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-20 — an Root-in **nichts geändert**; nur vermerkt, was in Vox passiert ist und Root-in berührt: Vox hat jetzt eine Profil-Seite
 > mit **Passwort ändern, E-Mail ändern, „Passwort vergessen" und „auf allen Geräten abmelden"**. ⚠️ `auth.users` ist geteilt — **jede Änderung von Passwort oder E-Mail in Vox gilt
 > auch in Root-in** (Vox sagt das dem Nutzer). Umgekehrt gibt es in Root-in **keine** „Passwort vergessen"-Seite; die Mail-Links von Vox führen auf `lukasylilli.github.io/vox/`
 > — dafür muss diese Adresse in Supabase → Redirect URLs stehen, sonst landet der Link auf der Site URL (mutmaßlich Root-in, das den Wiederherstellungs-Link nicht behandelt).
@@ -22,7 +24,7 @@
 > 🗓️ **Vorherige Sitzung:** 2026-09-18 — an Root-in nichts geändert; nur vermerkt, was in Vox passiert ist (L.6: Grammatik-Lektionen
 > aus Lukas' Büchern, Inhalte neu geschrieben). ⏭️ **Nächster Schritt in Root-in:** die offenen Punkte unten — sie brauchen Lukas.
 >
-> **Stand 2026-09-15.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **224 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 23/23 in der Automatik** und eine **Gegenprobe bei jedem Push** (31.2), 13/13 Zugriffsregeln am Server (18 Prüfungen, sobald `schema.sql` nach 31.3 eingespielt ist).
+> **Stand 2026-09-20.** **Root-in ist eine Web-App** — live unter `lukasylilli.github.io/Root-in/`, ohne Store, ohne Installation. **279 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, **Browser-Durchgang 23/23 in der Automatik** und eine **Gegenprobe bei jedem Push** (31.2), 13/13 Zugriffsregeln am Server (18 Prüfungen, sobald `schema.sql` nach 31.3 eingespielt ist).
 >
 > ⚠️ **Ab dem 2026-08-17 gibt es keinen Entwicklungsrechner mehr.** Der Nutzer löscht alles, was nicht auf GitHub liegt — inklusive VS Code. **Jede weitere Änderung entsteht auf GitHub.** Was das für die Prüfung bedeutet, steht in [Abschnitt 9](#9-arbeitsweise--konventionen) und [Phase 29](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17).
 >
@@ -47,6 +49,7 @@
 > | 5 | **Durchgang auf einem echten iPhone** (Phase 26, 27.9) | Nutzer | Chrome in der Automatik sieht weder Safari noch die abgelegte Fassung |
 > | 6 | Eigener SMTP-Dienst → Passwort-Zurücksetzen (27.2) | Nutzer, dann Claude | Ohne ihn ist die E-Mail gespeichert, aber nutzlos. Der Knopf kommt **erst danach** — ungeprüft gebaut wäre er ein Knopf ins Leere |
 > | 7 | **Ein Konto für Root-in und Vox** ([Phase 30](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte)) | Nutzer beantwortet die Fragen, dann beide | Vom Nutzer für die **letzten** Projektschritte angesagt |
+> | 8 | **Wochenplan (Phase 32) auf dem iPhone ansehen:** Gewohnheit anlegen mit „Bestimmte Tage" und „x-mal pro Woche", Heute-Seite an einem nicht geplanten Tag öffnen | **Nutzer** | Logik ist durch Tests belegt, das **Aussehen** nicht — der Browser-Durchgang berührt das Formular nicht |
 >
 > 🌐 **2026-09-16 — Startsprache (31.6):** Ohne eigene Wahl folgt Root-in der Gerätesprache; kann die App keine davon, startet sie jetzt auf **Englisch** (vorher Deutsch).
 >
@@ -71,6 +74,7 @@
     - [Phase 29 — Arbeiten und Prüfen ohne Rechner](#phase-29--arbeiten-und-prüfen-ohne-rechner--beauftragt-2026-08-17) ✅
     - [Phase 30 — Ein Konto für Root-in und Vox](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte) ⬜
     - [Phase 31 — Was ohne den Nutzer noch geht](#phase-31--was-ohne-den-nutzer-noch-geht--beauftragt-2026-09-13) ✅
+    - [Phase 32 — Wochenplan für Gewohnheiten](#phase-32--wochenplan-für-gewohnheiten--umgesetzt-2026-09-20) ✅
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
     - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–41)
 12. [Offene Fragen](#12-offene-fragen)
@@ -146,7 +150,7 @@ Lokale Datenbank: Drift (SQLite, im Browser über WebAssembly); Key-Value: `shar
 
 **5.1 Home** — Berg-Fortschritts-Animation (Kennzahl wählbar), Prozent & Punkte, individualisierbares Widget-Dashboard, Knopf „Fortschritt teilen".
 
-**5.2 Heute** — Tagesring-Kopf, **wählbares Datum** (Pfeile, Auswahl, zurück auf heute; Zukunft gesperrt), Liste der Gewohnheiten mit Abhaken/Minuten, „+"-Button, Menü Bearbeiten/Löschen.
+**5.2 Heute** — Tagesring-Kopf, **wählbares Datum** (Pfeile, Auswahl, zurück auf heute; Zukunft gesperrt), Liste der Gewohnheiten mit Abhaken/Minuten, „+"-Button, Menü Bearbeiten/Löschen. **Seit Phase 32:** oben stehen die Gewohnheiten, die an diesem Tag anstehen; die übrigen liegen in einem aufklappbaren Abschnitt „Nicht geplant" (bearbeiten, löschen und außerplanmäßig abhaken bleiben möglich).
 
 **5.3 View** (Tabs Woche / Übersicht / Monat / Jahr) — Woche/Monat/Jahr je ein individualisierbares Dashboard; **Übersicht** = die letzten vier Kalenderwochen als **eine** quer liegende Bühne mit festem Raster, Vollbild-Knopf, Querformat-Sperre.
 
@@ -178,7 +182,7 @@ Beim Erststart in der gewählten Sprache angelegt, danach **Nutzerdaten**: frei 
 
 ## 7. Kern-Konzepte
 
-**Punkte & Prozent** — jede Seite zeigt Fortschritt in beidem. **Matrix-Grid** — wiederverwendbare Heatmap (Zellen = Tage, Intensität = Erledigungsgrad). **Diagramme** — Typ-Diagramm je Kategorie + Fortschritts-Trend, via `chart_card.dart`. **Streak** — aktuelle + längste Serie, 1 Tag pro Woche darf ausgelassen werden. **Achievements** — 11 vordefinierte. **Teilen** — App teilen (Text + Adresse) und Fortschritt teilen (Bild mit fester Breite, Übersicht-Block, QR-Code). **Die geteilte Adresse** — `core/constants/app_links.dart` ist die einzige Quelle. **Home-Animation** — Berg-Aufstieg, über `AppAssets.homeAnimation` gegen ein Lottie-Asset tauschbar. **Kategorien** — jede Gewohnheit gehört zu genau einer; die Liste verwaltet der Nutzer.
+**Punkte & Prozent** — jede Seite zeigt Fortschritt in beidem. **Matrix-Grid** — wiederverwendbare Heatmap (Zellen = Tage, Intensität = Erledigungsgrad). **Diagramme** — Typ-Diagramm je Kategorie + Fortschritts-Trend, via `chart_card.dart`. **Streak** — aktuelle + längste Serie, 1 Tag pro Woche darf ausgelassen werden (bei Wochenplänen siehe Phase 32). **Wochenplan** — jede Gewohnheit steht *jeden Tag*, an *bestimmten Wochentagen* oder *x-mal pro Woche* an (Phase 32). **Achievements** — 11 vordefinierte. **Teilen** — App teilen (Text + Adresse) und Fortschritt teilen (Bild mit fester Breite, Übersicht-Block, QR-Code). **Die geteilte Adresse** — `core/constants/app_links.dart` ist die einzige Quelle. **Home-Animation** — Berg-Aufstieg, über `AppAssets.homeAnimation` gegen ein Lottie-Asset tauschbar. **Kategorien** — jede Gewohnheit gehört zu genau einer; die Liste verwaltet der Nutzer.
 
 ## 8. Architektur-Prinzip
 Feature-first (Dateien im Einzelnen: MAP.md):
@@ -268,8 +272,9 @@ Feature-first (Dateien im Einzelnen: MAP.md):
 | 28 Nur noch Web | Erinnerungen bis in die Datenbank entfernt (Schema 4), Android/iOS/Desktop und Store-Material gestrichen | 08-17 |
 | 29 Arbeiten ohne Rechner | Server-Prüfung als Action, Browser-Durchgang (Chrome) **blockiert** die Veröffentlichung, `meine/` versioniert, `privacy.html` entsteht bei jedem Bau | 09-12 |
 | 31 Was ohne Nutzer geht | Benutzername nachtragen · Browser-Durchgang 23 Punkte + **Gegenprobe** (fand 40 s Ladekreis statt „Kein Internet") · Konto vollständig löschen · Automatik auf Node 24 · kein geheimer Schlüssel im Bundle | 09-13 |
+| 32 Wochenplan | Gewohnheiten: jeden Tag · bestimmte Wochentage · x-mal pro Woche. Schema 5, Sicherung Fassung 2, Serien/Heatmap/Prozent kennen den Plan, Heute-Seite mit „Nicht geplant" | 09-20 |
 
-**Stand nach Phase 31: 224 Tests grün** (+2 bewusst übersprungen). **Stand nach Phase 29: 210 Tests grün** (+2 bewusst übersprungen), darunter neu `privacy_page_test.dart`. **Stand nach Phase 28: 205 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, 13/13 Zugriffsregeln am Server. ⚠️ Die Zahl ist **kleiner** als die 228 von Phase 27 — mit Erinnerungen und Startbildschirm-Widgets sind auch deren 23 Tests entfallen. Weniger Tests sind hier kein Rückschritt, sondern die Folge von weniger Funktion.
+**Stand nach Phase 32: 279 Tests grün** (+2 bewusst übersprungen), `flutter analyze` ohne Befund. **Stand nach Phase 31: 224 Tests grün** (+2 bewusst übersprungen). **Stand nach Phase 29: 210 Tests grün** (+2 bewusst übersprungen), darunter neu `privacy_page_test.dart`. **Stand nach Phase 28: 205 Tests grün** (+2 bewusst übersprungen), `flutter analyze` sauber, 13/13 Zugriffsregeln am Server. ⚠️ Die Zahl ist **kleiner** als die 228 von Phase 27 — mit Erinnerungen und Startbildschirm-Widgets sind auch deren 23 Tests entfallen. Weniger Tests sind hier kein Rückschritt, sondern die Folge von weniger Funktion.
 
 ### 10.2 Festlegungen aus erledigten Phasen, die man noch braucht
 
@@ -770,6 +775,36 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 - [x] ⚠️ **Nicht verwechseln:** Die ARB-**Vorlage** bleibt `app_de.arb` (`l10n.yaml`); sie entscheidet nur, woher ein fehlender Text kommt, nicht die Startsprache.
 - [x] Vox hat dieselbe Regel in seinem eigenen Repo umgesetzt (Vox PLAN.md → L.3a) — **kein gemeinsamer Code**, nur dieselbe Entscheidung.
 
+### Phase 32 — Wochenplan für Gewohnheiten ✅ *(umgesetzt 2026-09-20)*
+**Anlass (Lukas, Frage zur Routine-App):** Eine Gewohnheit steht bisher **jeden Tag** an — was man anlegt, wiederholt sich morgen. Gewünscht: eine Gewohnheit **nur dienstags**; eine **dienstags und donnerstags**; eine **an drei Tagen pro Woche, egal welche**. **Nur Root-in** — Vox bleibt unberührt (eigenes Repo, kein gemeinsamer Code).
+
+#### 32.1 Das Modell ✅
+- [x] Drei Modi (`ScheduleMode` in `lib/data/models/habit_schedule.dart`): **jeden Tag** · **bestimmte Tage** (Mo = 1 … So = 7) · **x-mal pro Woche** (1–6, beliebige Tage). Sieben Tage oder „7-mal" ergeben immer „jeden Tag" — es gibt nur **eine** Schreibweise dafür.
+- [x] **Gespeichert in zwei Spalten der Tabelle `habits`, kein zweites Format:** die **neue** Spalte `scheduleDays` (Bitmaske, Montag = Bit 0 … Sonntag = Bit 6, `127` = alle Tage, Standard 127) und die **schon vorhandene, bisher ungenutzte** `timesPerWeek`. `timesPerWeek` ist in **jedem** Modus das Wochen-Soll (7 / Anzahl der Tage / x). Der Modus wird aus beiden Spalten **abgelesen** (`HabitSchedule.fromColumns`) — ein dritter Wert, der auseinanderlaufen könnte, existiert nicht. Die Statistik (`Soll = timesPerWeek × Wochen`) musste dadurch nichts über Wochenpläne lernen.
+- [x] ⚠️ **Bestandsdaten:** Die Produktions-App hat `timesPerWeek` nie anders als mit dem Standard 7 geschrieben (nur der Entwickler-Einstieg `main_seed.dart` setzte andere Werte und gibt seine Wochentage jetzt als Plan weiter). Alle bestehenden Gewohnheiten werden deshalb „jeden Tag" — genau das, was sie waren.
+- [x] **Migration Schema 4 → 5** (`database.dart`): `addColumn(habits, habits.scheduleDays)`. ⚠️ Der ältere Zweig 3 → 4 baut die Tabelle mit `alterTable` neu und musste `newColumns: [habits.scheduleDays]` bekommen — `alterTable` liest sonst jede Spalte des **aktuellen** Schemas aus der alten Tabelle, die neue gibt es dort nicht (Lehre 43). Migrations-Test erweitert (Schema 4 → 5, IDs bleiben, Standard „jeden Tag").
+
+#### 32.2 Regeln, die in der App gelten ✅
+- [x] **Heute-Seite:** `HabitWithDayStatus.isDue` sagt, ob die Gewohnheit an **diesem** Tag ansteht. Anstehende stehen oben; die übrigen in einem aufklappbaren Abschnitt **„Nicht geplant"** — sonst ließe sich eine „nur dienstags"-Gewohnheit mittwochs weder bearbeiten noch löschen. Wer eine nicht geplante Gewohnheit trotzdem abhakt, behält das Häkchen (**ein Häkchen verschwindet nie**). Der Untertitel zeigt den Plan (Tage bzw. „x-mal pro Woche").
+- [x] **x-mal pro Woche:** Die Gewohnheit steht **jeden Tag an, bis das Wochen-Soll erreicht ist**; danach ist der Rest der Woche frei. Die Heute-Seite liest dafür die Erledigungen der Woche (Montag bis zum angezeigten Tag).
+- [x] **Tagesring, Prozent und Heatmap** zählen nur, was **an dem Tag ansteht** (`dailyDueCountProvider` — die *eine* Nenner-Basis für Heatmap und Zeitraum-Prozent, damit beide nie auseinanderlaufen). Ein Tag, an dem nichts ansteht, ist weder „geschafft" noch „verpasst". Bei „jeden Tag" ist das Ergebnis **identisch mit vorher**.
+- [x] **Serien** (`StreakCalculator`): *jeden Tag* unverändert (ein Frei-Tag pro Woche). *Bestimmte Tage:* nur die gewählten Tage sind Termine, ein Tag ohne Termin ist **neutral**; die Frei-Tag-Regel gilt erst ab **4 Terminen pro Woche** (`minDaysForFreeDay`) — bei einem Termin pro Woche wäre die Serie sonst unbrechbar. *x-mal pro Woche:* die Serie läuft über **Wochen**; erreichtes Soll setzt fort, eine verfehlte Woche beendet sie, die **laufende Woche bricht nie**. Die gemeinsame Gesamt-Serie über alle Gewohnheiten nimmt Tage, an denen **nichts** ansteht, aus der Rechnung (`isRequiredDay`).
+- [x] ⚠️ **Der Plan gilt für den gesamten Verlauf.** Ändert jemand ihn, wird die Vergangenheit nach dem neuen Plan gelesen. Eine Planhistorie gibt es nicht (Abschnitt 12).
+
+#### 32.3 Sicherung ✅
+- [x] **`BackupData.currentVersion` 1 → 2.** Fassung 1 bleibt lesbar; ein fehlendes `scheduleDays` wird zu „jeden Tag" (`_habitFromJson`). Der Sprung ist nötig, weil eine **ältere App** das neue Feld beim Wiederherstellen stillschweigend verlöre — mit der neuen Nummer lehnt sie die Datei stattdessen ab (`tooNew`) und bittet um ein Update.
+- [x] Cloud: `cloud_backup_service.dart` schreibt `schema_version` = 2; die Server-Tabelle hat dafür **keine** Beschränkung (`supabase/schema.sql` geprüft) — `schema.sql` blieb unverändert.
+
+#### 32.4 Oberfläche und Texte ✅
+- [x] **Formular** (`habit_form_sheet.dart`): Modus-Auswahl, Wochentags-Chips (mindestens ein Tag), Zähler 1–6. **Ein** Ort für Tagesnamen: `schedule_labels.dart` (`weekdayShortLabel`) — Formular und Heute-Seite nehmen dieselbe Funktion; auf Persisch der volle Name, weil die Ein-Buchstaben-Kürzel dort und im Deutschen mehrdeutig sind.
+- [x] **16 neue ARB-Schlüssel in allen drei Sprachen** (281 → **297** je Datei), `app_de.arb` bleibt Vorlage.
+
+#### 32.5 Prüfung ✅ *(und was sie nicht belegt)*
+- [x] **Tests:** 224 → **279** grün (+2 übersprungen). Neu/erweitert: `habit_schedule_test` (22 Fälle), `schedule_progress_test` (8), `streak_calculator_test` (5 → 17), `backup_data_test` (5 → 7), `database_migration_test` (5 → 6), `habit_form_sheet_test` (1 → 5), `today_page_test` (6 → 11).
+- [x] **Generierter Drift-Code ohne Rechner** (Lehre 42): `build_runner` lief in einer **Nebenzweig-Automatik** (`wochenplan`), die den Code auf den Zweig zurückschrieb und `analyze`/`test` als lesbare Berichte ablegte. **Ergebnis:** `analyze` ohne Befund, alle Tests grün. Die Automatik wurde **vor dem Zusammenführen wieder gelöscht** und gehört nicht nach `main`; sie steht in der Geschichte des Zweigs (Commit `7aeba3d`, Datei `.github/workflows/wochenplan-ci.yml`).
+- [x] Zusammengeführt **ohne Squash**, damit diese Geschichte erhalten bleibt.
+- [ ] ⬜ **Nicht belegt:** das **Aussehen** von Formular und „Nicht geplant"-Abschnitt. Der Browser-Durchgang (23 Prüfungen) tippt weder das Formular noch einen nicht geplanten Tag an. → Nutzer, Tabelle oben Nr. 8.
+
 ---
 
 ## 11. Entscheidungs-Log & dauerhafte Lehren
@@ -834,6 +869,10 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
   - **Zweimal stand im Plan, was der Code nicht tat:** „löscht die Daten und meldet ab" (der alte Knopf meldete nicht ab) und „10 Prüfungen" (es waren 11). Beides fiel beim Bauen auf, nicht beim Lesen — noch ein Grund, Zusagen in Tests zu halten statt in Prosa (Lehre 35).
   - **`FakeAuthService.signUp` war bequemer als das Original** — Konto und Name in einem Schritt — und hätte die Sackgasse aus 31.1 nie zeigen können. Ein Fake, der bequemer ist als das Original, testet das Original nicht.
   - **„Im Bundle nach ihm suchen" stand seit Phase 27 als Gegenmaßnahme im Plan — und niemand suchte.** Jetzt sucht die Automatik, mit Zeugen: Findet sie nicht einmal den erlaubten Schlüssel, ist sie blind und wird rot (31.5).
+- **2026-09-20 (Phase 32 umgesetzt)** — Wochenplan für Gewohnheiten (Frage von Lukas zur Routine-App), nur Root-in.
+  - **Vorhandene Spalte weiterverwendet statt zweites Format:** `timesPerWeek` war seit Langem da und ungenutzt; sie bleibt das Wochen-Soll in jedem Modus, nur `scheduleDays` kam neu dazu (32.1). Dadurch blieb die Statistik unangetastet.
+  - **Ein erster Anlauf blieb unbrauchbar:** Die Prüfschritte liefen mit `continue-on-error`, und das Lesen des Berichts scheiterte an `sh` statt `bash`. „Grün" bewies deshalb nichts (dieselbe Falle wie in Phase 29). Erst der zweite Lauf mit lesbaren Berichten lieferte echte Ergebnisse (Lehre 42).
+  - **Bewusst nicht direkt auf `main`:** Weil generierter Drift-Code im Repository liegt und jeder Push auf `main` veröffentlicht, entstand die Arbeit auf einem Zweig und wurde erst nach grünem `analyze` und `test` zusammengeführt.
 
 ### 11.2 Dauerhafte Lehren & Fallstricke
 
@@ -885,6 +924,9 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 40. **Eine Bibliothek kann einen Fehlerzustand verstecken — und `pumpAndSettle` versteckt, dass sie es tut.** Mit Riverpod 3 kam still eine automatische Wiederholung fehlgeschlagener Provider dazu: bis zu zehn Versuche, rund 40 Sekunden „lädt" statt „Fehler". Jede Seite mit „Kein Internet" und „Erneut versuchen" zeigte offline stattdessen einen Ladekreis — und alle Widget-Tests blieben grün, weil `pumpAndSettle` die Pausen in virtueller Zeit vorspult und am Ende den Knopf findet. Zwei Regeln daraus: **(a)** Ein Test für einen Fehlerzustand wartet **eine kurze, feste Zeit** und zählt die Versuche — nicht „bis Ruhe ist". **(b)** Nach einem großen Versionssprung einer Kern-Bibliothek nicht nur „baut, Tests grün" prüfen, sondern ihr **neues Standardverhalten** nachlesen. Abgeschaltet an einer Stelle: `lib/core/utils/no_retry.dart`; ein neuer Provider mit eigenem Fehlerzustand bekommt `retry: noAutomaticRetry`.
 
 41. **Eine Gegenprobe prüft nicht nur den Test, sondern auch die App.** Die Gegenprobe des Browser-Durchgangs (31.2) sollte belegen, dass sechs neue Prüfungen rot werden können. Eine blieb grün — und der Grund lag nicht im Test, sondern in der App (Lehre 40). Deshalb läuft sie bei **jedem** Push, nicht nur bei Änderungen am Test: Ob die App ihren Fehlerzustand noch zeigt, kann jede Code-Änderung neu in Frage stellen. ⚠️ **Und die Form zählt:** Sie ist nur grün, wenn **genau** die erwarteten Prüfungen rot sind. „Irgendetwas ist rot" hätte den Fund verschluckt — fünf von sechs sehen aus wie Erfolg.
+42. **Generierter Code ohne Rechner: auf einem Zweig erzeugen lassen, nicht von Hand nachziehen — und nur echten Ergebnissen glauben.** Die Automatik auf `main` ruft `build_runner` nicht auf (siehe MAP „Hinweise"). Für Phase 32 lief `build_runner` deshalb in einer **temporären Automatik auf einem Nebenzweig**, die den Code zurückschrieb und `analyze`/`test` als Datei unter `ci-report/` ablegte (Protokolle brauchen eine Anmeldung, Dateien im Repository nicht). Drei Fallen, alle erlebt: (1) `continue-on-error` macht jeden Schritt „grün" — das Ergebnis muss in den Bericht, nicht in die Farbe; (2) der Lese-Befehl muss `bash` sein, `sh` scheitert an Bash-Syntax; (3) die Datei `.github/workflows/…` zu pushen braucht einen Token **mit Workflow-Recht**. Die temporäre Automatik und `ci-report/` werden **vor** dem Zusammenführen gelöscht — sie veröffentlicht nichts und gehört nie nach `main`.
+
+43. **`alterTable` liest jede Spalte des aktuellen Schemas aus der alten Tabelle.** Wer eine Spalte hinzufügt, muss den **älteren** Migrationszweig, der die Tabelle mit `TableMigration` neu baut, mit `newColumns: [...]` versehen — sonst scheitert schon der Sprung von Schema 3 auf 4, obwohl der neue Zweig 4 → 5 richtig ist. Neue Spalten außerdem **ans Ende** der Tabelle stellen: `addColumn` hängt an, und so stimmt die Spaltenreihenfolge einer migrierten mit der einer frischen Datenbank überein.
 
 ## 12. Offene Fragen
 
@@ -893,6 +935,7 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 - ~~**Wie wird die veröffentlichte Seite künftig geprüft?**~~ ✅ **Seit 29.3 durch einen echten Chrome in der Automatik**, vor jeder Veröffentlichung und blockierend — seit 31.2 mit einer Gegenprobe bei jedem Push. Offen bleibt, was Chrome nicht sieht: Safari und die abgelegte Fassung — dafür das iPhone des Nutzers.
 - ⚠️ **Ein Konto für Root-in und Vox** — die Anweisung steht, die Voraussetzungen sind offen (Phase 30). Die wichtigste Frage ist nicht technisch, sondern zeitlich: **vor** dem ersten echten Nutzer ist der Umbau billig, danach nicht mehr.
 - ~~**Vollständige Kontolöschung**~~ ✅ **In 31.3 gebaut** (Datenbank-Funktion statt Edge Function). Offen bleibt nur, dass der Nutzer `schema.sql` einspielt.
+- **Planhistorie für Wochenpläne?** Der Wochenplan gilt heute für den **gesamten Verlauf** (32.2): Wer eine Gewohnheit von „jeden Tag" auf „nur dienstags" umstellt, sieht auch die Vergangenheit nach dem neuen Plan. Eine Historie bräuchte eine eigene Tabelle mit Gültigkeitsbeginn je Plan — eine Migration und eine Entscheidung des Nutzers, ob sich das lohnt.
 - **Sollen neue Beiträge in „موارد دیگر" gemeldet werden?** Möglich wäre ein stiller Vergleich beim App-Start (neue Einträge im `index.json` gegenüber dem gespeicherten Stand) und ein Punkt am Einstellungs-Eintrag.
 - **Die persische Übersetzung ist ein Entwurf** — alle Schlüssel sind gefüllt, gelesen hat sie noch kein Muttersprachler. Korrekturen betreffen nur `lib/l10n/app_fa.arb`.
 - **Farbe je Kategorie?** Heute trägt die Gewohnheit die Farbe. Kategorie-Farben würden Diagramme klarer machen, kosten aber eine DB-Spalte — und damit eine Migration (Abschnitt 9).
