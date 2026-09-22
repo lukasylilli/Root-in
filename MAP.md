@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-22 — nur Text: `lib/l10n/app_{de,en,fa}.arb` (`cloudDeleteAccountBody` nennt Vox) und `store/PRIVACY_POLICY.md` 4a (de+en). Grund: Vox L.1d — „Konto löschen" gilt für beide Apps (geteiltes `auth.users`, cascade).
+> 🗓️ **Letzte Sitzung:** 2026-09-22 (später) — an Root-in **nichts geändert**. Vermerk, weil das Supabase-Projekt geteilt ist: Vox löst den „Passwort vergessen"-Link jetzt über `token_hash` ein (`verifyOTP`, statt PKCE-`?code=`, der im anderen Browser scheiterte). Dafür ändert Lukas die **projektweite** Mailvorlage **Reset Password** auf `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=recovery`. Root-in verschickt keine Reset-Mails ⇒ keine Wirkung hier; **wer Root-in je „Passwort vergessen" gibt, muss denselben Link einlösen.**
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-22 — nur Text: `lib/l10n/app_{de,en,fa}.arb` (`cloudDeleteAccountBody` nennt Vox) und `store/PRIVACY_POLICY.md` 4a (de+en). Grund: Vox L.1d — „Konto löschen" gilt für beide Apps (geteiltes `auth.users`, cascade).
 > ⚠️ `supabase/schema.sql` §6 `delete_own_account()` ist jetzt **zeichengleich** in `vox/supabase/vox_tables.sql` §5 — Änderung immer in beiden.
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-20 — **Wochenplan für Gewohnheiten** (PLAN.md Phase 32) auf `main`: neue Dateien `lib/data/models/habit_schedule.dart`, `lib/features/habits/presentation/schedule_labels.dart`, `test/unit/habit_schedule_test.dart`, `test/unit/schedule_progress_test.dart`; geändert u. a. Tabelle `habits` (Spalte `scheduleDays`), `database.dart` (Schema 5), `backup_data.dart` (Fassung 2), `streak_calculator.dart`, `habit_repository.dart`, Heute-Seite, Formular, drei ARB-Dateien (297 Schlüssel je Datei). Die temporäre Nebenzweig-Automatik `wochenplan-ci.yml` und `ci-report/` sind **nicht** auf `main` (siehe „Wochenplan der Gewohnheiten" unten). Vox unverändert. Oberfläche vom Nutzer abgenommen (2026-09-20).

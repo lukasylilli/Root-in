@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-22 — **L.1d entschieden (Lukas): „Konto löschen" gilt für beide Apps.** Vox hat jetzt denselben Knopf (`AuthService.deleteAccount()` → `delete_own_account()`).
+> 🗓️ **Letzte Sitzung:** 2026-09-22 (später) — an Root-in **nichts geändert**. Vermerk, weil das Supabase-Projekt geteilt ist: Vox löst den „Passwort vergessen"-Link jetzt über `token_hash` ein (`verifyOTP`, statt PKCE-`?code=`, der im anderen Browser scheiterte). Dafür ändert Lukas die **projektweite** Mailvorlage **Reset Password** auf `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=recovery`. Root-in verschickt keine Reset-Mails ⇒ keine Wirkung hier; **wer Root-in je „Passwort vergessen" gibt, muss denselben Link einlösen.**
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-22 — **L.1d entschieden (Lukas): „Konto löschen" gilt für beide Apps.** Vox hat jetzt denselben Knopf (`AuthService.deleteAccount()` → `delete_own_account()`).
 > Da `auth.users` geteilt ist, verschwinden per `on delete cascade` immer **beide** Sicherungen (`backups`/`profiles` hier, `vox_backups` in Vox) — egal, in welcher App gelöscht wird.
 > **In Root-in geändert (nur Text, kein Code):** `cloudDeleteAccountBody` in `lib/l10n/app_{de,en,fa}.arb` nennt jetzt Vox; `store/PRIVACY_POLICY.md` Abschnitt 4a (de + en) ebenso. **Warum:** Wer in Root-in löscht, verlor die Vox-Sicherung bisher ohne Hinweis.
 > ⚠️ `delete_own_account()` steht jetzt **zeichengleich** auch in Vox' `supabase/vox_tables.sql` §5 (wie `touch_updated_at()`) — **Änderung immer in BEIDEN Dateien** (`schema.sql` §6 hier). ⏭️ Offene Punkte unverändert: brauchen Lukas.
