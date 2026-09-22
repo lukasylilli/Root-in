@@ -11,7 +11,12 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-20 — **Wochenplan für Gewohnheiten ist fertig und auf `main`** ([Phase 32](#phase-32--wochenplan-für-gewohnheiten--umgesetzt-2026-09-20)): jede Gewohnheit ist *jeden Tag*, *nur an bestimmten Wochentagen* (z. B. Di + Do) oder *x-mal pro Woche an beliebigen Tagen*. Bestehende Gewohnheiten bleiben „jeden Tag". Schema 4 → 5, Sicherungsformat 1 → 2 (alte Dateien bleiben lesbar). Geprüft in der Automatik: `flutter analyze` ohne Befund, **279 Tests grün**. ✅ **Lukas hat die Oberfläche angesehen: „ظاهرش هم خوبه", Phase 32 gilt als abgeschlossen** (Tabelle oben, Nr. 8). ⏭️ **Nächster Schritt in Root-in:** die übrigen offenen Punkte oben — sie brauchen Lukas. Vox unverändert (nur ein Vermerk in `vox/PLAN.md` und `vox/PROJECT_MAP.md`).
+> 🗓️ **Letzte Sitzung:** 2026-09-22 — **L.1d entschieden (Lukas): „Konto löschen" gilt für beide Apps.** Vox hat jetzt denselben Knopf (`AuthService.deleteAccount()` → `delete_own_account()`).
+> Da `auth.users` geteilt ist, verschwinden per `on delete cascade` immer **beide** Sicherungen (`backups`/`profiles` hier, `vox_backups` in Vox) — egal, in welcher App gelöscht wird.
+> **In Root-in geändert (nur Text, kein Code):** `cloudDeleteAccountBody` in `lib/l10n/app_{de,en,fa}.arb` nennt jetzt Vox; `store/PRIVACY_POLICY.md` Abschnitt 4a (de + en) ebenso. **Warum:** Wer in Root-in löscht, verlor die Vox-Sicherung bisher ohne Hinweis.
+> ⚠️ `delete_own_account()` steht jetzt **zeichengleich** auch in Vox' `supabase/vox_tables.sql` §5 (wie `touch_updated_at()`) — **Änderung immer in BEIDEN Dateien** (`schema.sql` §6 hier). ⏭️ Offene Punkte unverändert: brauchen Lukas.
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-20 — **Wochenplan für Gewohnheiten ist fertig und auf `main`** ([Phase 32](#phase-32--wochenplan-für-gewohnheiten--umgesetzt-2026-09-20)): jede Gewohnheit ist *jeden Tag*, *nur an bestimmten Wochentagen* (z. B. Di + Do) oder *x-mal pro Woche an beliebigen Tagen*. Bestehende Gewohnheiten bleiben „jeden Tag". Schema 4 → 5, Sicherungsformat 1 → 2 (alte Dateien bleiben lesbar). Geprüft in der Automatik: `flutter analyze` ohne Befund, **279 Tests grün**. ✅ **Lukas hat die Oberfläche angesehen: „ظاهرش هم خوبه", Phase 32 gilt als abgeschlossen** (Tabelle oben, Nr. 8). ⏭️ **Nächster Schritt in Root-in:** die übrigen offenen Punkte oben — sie brauchen Lukas. Vox unverändert (nur ein Vermerk in `vox/PLAN.md` und `vox/PROJECT_MAP.md`).
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-20 — an Root-in **nichts geändert**; nur vermerkt, was in Vox passiert ist und Root-in berührt: Vox hat jetzt eine Profil-Seite
 > mit **Passwort ändern, E-Mail ändern, „Passwort vergessen" und „auf allen Geräten abmelden"**. ⚠️ `auth.users` ist geteilt — **jede Änderung von Passwort oder E-Mail in Vox gilt
@@ -423,7 +428,7 @@ Diese Phase beginnt nicht bei null; drei Dinge aus Phase 26 sind genau dafür ge
   | B nimmt A's Benutzernamen | ✅ abgewiesen (HTTP 409, eindeutiger Index) |
 
 - [x] **`tool/rls_check.sh` bleibt im Projekt** und liest die Zugangsdaten aus `.env`. ⚠️ **Nach jeder Änderung an `schema.sql` erneut laufen lassen** — eine Regel, die man nicht gegengeprüft hat, ist eine Hoffnung. Die zwei Testkonten liegen auf `@example.com` (per RFC 2606 reserviert, dort gibt es niemanden) und dürfen stehen bleiben.
-- [x] ⚠️ **Offen und nicht zu vergessen:** „Konto löschen" kann der `anon`-Schlüssel nicht auslösen — der Eintrag in `auth.users` braucht erhöhte Rechte (Edge Function). Solange es die nicht gibt, löscht die App nur Daten und meldet ab; der leere Auth-Eintrag bleibt. **Für 27.8 zu klären.** ✅ **In 31.3 gebaut** (`delete_own_account()`) — wirksam, sobald `schema.sql` eingespielt ist.
+- [x] ⚠️ **Offen und nicht zu vergessen:** „Konto löschen" kann der `anon`-Schlüssel nicht auslösen — der Eintrag in `auth.users` braucht erhöhte Rechte (Edge Function). Solange es die nicht gibt, löscht die App nur Daten und meldet ab; der leere Auth-Eintrag bleibt. **Für 27.8 zu klären.** ✅ **In 31.3 gebaut** (`delete_own_account()`) — wirksam, sobald `schema.sql` eingespielt ist. **2026-09-22 (Vox L.1d):** Vox ruft dieselbe Funktion auf; sie steht zeichengleich auch in `vox/supabase/vox_tables.sql` §5. Dialogtext + Datenschutz nennen Vox.
 
 #### 27.5 Anmelden in der App *(E-Mail + Passwort + Benutzername)*
 

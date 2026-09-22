@@ -519,7 +519,7 @@
   "cloudTooNew": "Die Sicherung stammt aus einer neueren Version von Root-in. Bitte die App aktualisieren.",
   "cloudDeleteAccount": "Konto löschen",
   "cloudDeleteAccountTitle": "Konto löschen?",
-  "cloudDeleteAccountBody": "Dein Konto wird endgültig gelöscht — E-Mail-Adresse, Benutzername, Profil und die Sicherung auf dem Server. Die Daten auf diesem Gerät bleiben unberührt. Das lässt sich nicht rückgängig machen.",
+  "cloudDeleteAccountBody": "Dein Konto wird endgültig gelöscht — E-Mail-Adresse, Benutzername, Profil und die Sicherung auf dem Server. Das Konto ist mit VOX geteilt: Hast du dich dort mit derselben Adresse angemeldet, verschwindet auch die VOX-Sicherung. Die Daten auf diesem Gerät bleiben unberührt. Das lässt sich nicht rückgängig machen.",
   "cloudDeleteAccountConfirm": "Endgültig löschen",
   "cloudDeleteAccountDone": "Dein Konto ist gelöscht. Die Daten auf diesem Gerät sind unberührt.",
   "cloudDeleteAccountPartial": "Sicherung und Profil auf dem Server sind gelöscht, und du bist abgemeldet. Den Anmelde-Eintrag selbst konnte die App noch nicht entfernen — schreib uns, dann löschen wir ihn.",

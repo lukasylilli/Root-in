@@ -85,7 +85,9 @@ bist. Heruntergeladen wird **nur**, wenn du es ausdrücklich verlangst.
 **Wie du es wieder loswirst:** In der App unter *Einstellungen → Konto →
 Konto & Cloud → Konto löschen*. Damit verschwinden dein Konto (E-Mail-Adresse
 und Passwort-Hash), dein Benutzername, dein Profil und die Sicherung auf dem
-Server — endgültig. Die Daten auf deinem Gerät bleiben davon unberührt.
+Server — endgültig. Dasselbe Konto gilt auch in der Lern-App VOX
+(`lukasylilli.github.io/vox/`); hast du dich dort angemeldet, verschwindet
+deren Sicherung mit. Die Daten auf deinem Gerät bleiben davon unberührt.
 Meldet die App, dass sie das Konto nicht vollständig löschen konnte, schreib
 an alirzsaleh@gmail.com — wir löschen es dann und bestätigen es dir.
 
@@ -246,7 +248,9 @@ It is downloaded **only** when you explicitly ask for it.
 **How to get rid of it:** in the app under *Settings → Account → Account &
 cloud → Delete account*. This removes your account (email address and
 password hash), your username, your profile and the backup on the server — for
-good. The data on your device is untouched. If the app reports that it could
+good. The same account also works in the learning app VOX
+(`lukasylilli.github.io/vox/`); if you signed in there, its backup is removed
+too. The data on your device is untouched. If the app reports that it could
 not delete the account completely, write to alirzsaleh@gmail.com — we will
 delete it and confirm.
 

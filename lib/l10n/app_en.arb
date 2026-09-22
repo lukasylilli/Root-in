@@ -488,7 +488,7 @@
   "cloudTooNew": "The backup comes from a newer version of Root-in. Please update the app.",
   "cloudDeleteAccount": "Delete account",
   "cloudDeleteAccountTitle": "Delete account?",
-  "cloudDeleteAccountBody": "Your account will be deleted for good — email address, username, profile and the backup on the server. The data on this device is untouched. This cannot be undone.",
+  "cloudDeleteAccountBody": "Your account will be deleted for good — email address, username, profile and the backup on the server. The account is shared with VOX: if you signed in there with the same address, the VOX backup is deleted too. The data on this device is untouched. This cannot be undone.",
   "cloudDeleteAccountConfirm": "Delete for good",
   "cloudDeleteAccountDone": "Your account has been deleted. The data on this device is untouched.",
   "cloudDeleteAccountPartial": "Your backup and profile on the server have been deleted and you are signed out. The app could not remove the sign-in record itself yet — write to us and we will delete it.",
