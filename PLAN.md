@@ -11,6 +11,8 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
+> 🗓️ **Letzte Sitzung:** 2026-09-23 — an Root-in **nichts geändert**. Vermerk (geteiltes Supabase-Projekt `uayaomoxxzzbjquxbcpu`): Management-API-Zugang funktioniert ✅, aber `PATCH /config/auth` für die Vorlage „Reset Password" ⇒ **400** (Free-Tier + Standard-E-Mail-Anbieter: Vorlagen auch per API gesperrt). Auf dem Server wurde nichts verändert. Root-in hat kein „Passwort vergessen" ⇒ kein Einfluss. Nächster Schritt liegt in vox/PLAN.md (Entscheidung Lukas).
+>
 > 🗓️ **Letzte Sitzung:** 2026-09-22 (später) — an Root-in **nichts geändert**. Vermerk, weil das Supabase-Projekt geteilt ist: Vox löst den „Passwort vergessen"-Link jetzt über `token_hash` ein (`verifyOTP`, statt PKCE-`?code=`, der im anderen Browser scheiterte). Dafür ändert Lukas die **projektweite** Mailvorlage **Reset Password** auf `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=recovery`. Root-in verschickt keine Reset-Mails ⇒ keine Wirkung hier; **wer Root-in je „Passwort vergessen" gibt, muss denselben Link einlösen.**
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-22 — **L.1d entschieden (Lukas): „Konto löschen" gilt für beide Apps.** Vox hat jetzt denselben Knopf (`AuthService.deleteAccount()` → `delete_own_account()`).
