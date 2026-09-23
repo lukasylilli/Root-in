@@ -117,9 +117,6 @@ github.com/lukasylilli/Root-in  (öffentlich, Zweig main)
 ├── web/                             ✅ **Die App** (PLAN.md Phase 26/28) — seit Phase 28 die einzige
 │   │                                    Plattform des Projekts
 │   ├── index.html                   ✅ Einstiegsseite, Markenfarbe schon vor dem ersten Frame + iOS-Meta-Tags.
-│   ├── locale_guard.js              ✅ (2026-09-23) Läuft vor flutter_bootstrap.js: bereinigt ungültige Browsersprachen
-│   │                                    (z. B. "en-US@posix"), sonst Absturz der Flutter-Engine beim Start (Intl.Locale).
-│   │                                    Gültige Sprachen bleiben unberührt. Gleiche Datei in vox/web/.
 │   │                                    ⚠️ Safari liest fürs Ablegen apple-mobile-web-app-*, NICHT
 │   │                                    manifest.json — ohne sie öffnet die Verknüpfung eine Browser-Seite
 │   │                                    mit Adressleiste statt einer App.
@@ -127,6 +124,9 @@ github.com/lukasylilli/Root-in  (öffentlich, Zweig main)
 │   │                                    beides zieht die Seite unter die Statusleiste, und Flutter wertet
 │   │                                    im Web die Schutzabstände nicht aus → Bild und Berührung liegen
 │   │                                    auseinander. Nicht „zur Verschönerung" zurückdrehen (Lehre 34)
+│   ├── locale_guard.js              ✅ (2026-09-23) Läuft vor flutter_bootstrap.js: bereinigt ungültige Browsersprachen
+│   │                                    (z. B. "en-US@posix"), sonst Absturz der Flutter-Engine beim Start (Intl.Locale).
+│   │                                    Gültige Sprachen bleiben unberührt. Gleiche Datei in vox/web/.
 │   ├── manifest.json                ✅ PWA-Manifest (Root-in, Markengrün #2E7D5B, Symbole)
 │   ├── sqlite3.wasm                 ⚙️ NICHT versioniert — tool/fetch_web_db_assets.sh holt sie. Ohne diese
 │   │                                    Datei wirft driftDatabase() im Browser, die App startet gar nicht
