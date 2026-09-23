@@ -72,6 +72,9 @@
   </style>
 </head>
 <body>
+  <!-- Muss VOR flutter_bootstrap.js laufen: bereinigt ungültige Browsersprachen
+       (z. B. "en-US@posix"), an denen die Flutter-Engine sonst beim Start abstürzt. -->
+  <script src="locale_guard.js"></script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
