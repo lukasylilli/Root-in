@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-23 (Runde 13) — an Root-in **nichts geändert**. Vermerk: Lukas hat bestätigt, dass der Vox-Passwort-Link jetzt in jedem Browser funktioniert ✅. `vox/PLAN.md` und `vox/PROJECT_MAP.md` wurden auf Wunsch von Lukas gekürzt (erledigte Aufgaben 1–2 Zeilen, Inhaltsverzeichnis neu); Volltext dort: `git show afad3ab`.
+> 🗓️ **Letzte Sitzung:** 2026-09-24 — an Root-in **keine Datei geändert** (nur PLAN-Vermerk). Neue Schlussphase in `vox/PLAN.md` → „🌍 فاز Z“: Telegram-Bot ⇒ Google-Werbung ⇒ Android/iOS; ob Root-in mitzieht, entscheidet Lukas später.
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-23 (Runde 13) — an Root-in **nichts geändert**. Vermerk: Lukas hat bestätigt, dass der Vox-Passwort-Link jetzt in jedem Browser funktioniert ✅. `vox/PLAN.md` und `vox/PROJECT_MAP.md` wurden auf Wunsch von Lukas gekürzt (erledigte Aufgaben 1–2 Zeilen, Inhaltsverzeichnis neu); Volltext dort: `git show afad3ab`.
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-23 (später) — an Root-in **kein Code geändert**. Vermerk, weil das Supabase-Projekt `uayaomoxxzzbjquxbcpu` geteilt ist: (1) **Redirect URLs** um `https://lukasylilli.github.io/vox/?link=passwort` ergänzt (Management API); die Einträge `…/vox/` und `…/Root-in/` sind unverändert. (2) Vox fordert „Passwort vergessen" jetzt **implizit** an (eigener kurzlebiger Client) — der Link gilt in jedem Browser; die Mailvorlage bleibt Standard (im Gratis-Tarif gesperrt). Root-in hat kein „Passwort vergessen" ⇒ kein Einfluss. Ein Passwort, das jemand über Vox neu setzt, gilt auch hier (geteiltes `auth.users`). Details: vox/PLAN.md (Runde ۱۲).
 >
