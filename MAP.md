@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-25 — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 100 neue Wortkarten angelegt (Runden 68–77, Archiv jetzt 436; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
+> 🗓️ **Letzte Sitzung:** 2026-09-25 (später) — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 50 weitere Wortkarten angelegt (Runden 95–99, arrogant … auditiv, Archiv jetzt 596; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-25 — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 100 neue Wortkarten angelegt (Runden 68–77, Archiv jetzt 436; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-24 — an Root-in **keine Datei geändert** (nur PLAN-Vermerk). Neue Schlussphase in `vox/PLAN.md` → „🌍 فاز Z“: Telegram-Bot ⇒ Google-Werbung ⇒ Android/iOS; ob Root-in mitzieht, entscheidet Lukas später.
 >
