@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-24 — an Root-in **keine Datei geändert** (nur PLAN-Vermerk). Neue Schlussphase in `vox/PLAN.md` → „🌍 فاز Z“: Telegram-Bot ⇒ Google-Werbung ⇒ Android/iOS; ob Root-in mitzieht, entscheidet Lukas später.
+> 🗓️ **Letzte Sitzung:** 2026-09-25 — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 50 neue Wortkarten angelegt (Runden 68–72, Archiv jetzt 386; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-24 — an Root-in **keine Datei geändert** (nur PLAN-Vermerk). Neue Schlussphase in `vox/PLAN.md` → „🌍 فاز Z“: Telegram-Bot ⇒ Google-Werbung ⇒ Android/iOS; ob Root-in mitzieht, entscheidet Lukas später.
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-23 (Runde 13) — an Root-in **nichts geändert**. Vermerk: Lukas hat bestätigt, dass der Vox-Passwort-Link jetzt in jedem Browser funktioniert ✅. `vox/PLAN.md` und `vox/PROJECT_MAP.md` wurden auf Wunsch von Lukas gekürzt (erledigte Aufgaben 1–2 Zeilen, Inhaltsverzeichnis neu); Volltext dort: `git show afad3ab`.
 >
