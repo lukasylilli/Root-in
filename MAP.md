@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-26 — PLAN 31.7 (Nutzermeldung „Seite bleibt grau"): **neu** `lib/core/widgets/app_error_view.dart`, `lib/core/services/page_reload/` (3 Dateien), `test/widget/app_error_view_test.dart`; **geändert** `lib/main.dart` (ruft `installAppErrorView()`), `web/index.html` (`translate="no"` + `notranslate`-Meta).
+> 🗓️ **Letzte Sitzung:** 2026-09-26 (später) — PLAN 31.8: **neu** `lib/core/services/prefs_namespace/` (4 Dateien), `test/unit/legacy_preference_ownership_test.dart`; **geändert** `lib/main.dart`, `lib/main_seed.dart` (beide `openRootInPreferences()`), `tool/webtest_ci.py` + `tool/webtest.py` (Prüfung `root_in.onboarding_seen`).
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-26 — PLAN 31.7 (Nutzermeldung „Seite bleibt grau"): **neu** `lib/core/widgets/app_error_view.dart`, `lib/core/services/page_reload/` (3 Dateien), `test/widget/app_error_view_test.dart`; **geändert** `lib/main.dart` (ruft `installAppErrorView()`), `web/index.html` (`translate="no"` + `notranslate`-Meta).
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-25 (später) — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 50 weitere Wortkarten angelegt (Runden 95–99, arrogant … auditiv, Archiv jetzt 596; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
 >
@@ -184,7 +186,7 @@ github.com/lukasylilli/Root-in  (öffentlich, Zweig main)
 
 ```
 lib/
-├── main.dart                                 ✅ Einstiegspunkt: Fehlerseite anmelden (31.7), SharedPreferences, Bitte um dauerhaften
+├── main.dart                                 ✅ Einstiegspunkt: Fehlerseite anmelden (31.7), SharedPreferences über openRootInPreferences() (31.8), Bitte um dauerhaften
 │                                                 Browser-Speicher, Supabase-Start (nur mit Schlüsseln),
 │                                                 Standard-Kategorien in der gespeicherten Sprache, dann
 │                                                 UncontrolledProviderScope (expliziter ProviderContainer,
@@ -348,6 +350,14 @@ lib/
 │   │   │   └── pick_text_file_web.dart           Browser: <input type="file"> + FileReader.
 │   │   │                                         ⚠️ `oncancel` ist Pflicht: Bricht der Nutzer ab, feuert
 │   │   │                                         `onchange` NIE — das Future bliebe für immer offen
+│   │   ├── prefs_namespace/                  ✅ (31.8) Eigene Vorsilbe `root_in.` im Browser-Speicher — Vox liegt auf
+│   │   │   │                                     derselben Herkunft (theme_mode dort Zahl, hier Text ⇒ Absturz).
+│   │   │   │                                     ⚠️ Nie getInstance() direkt, immer openRootInPreferences()
+│   │   │   ├── root_in_preferences.dart             openRootInPreferences(): Übernahme, setPrefix, getInstance (einmal)
+│   │   │   ├── legacy_preference_ownership.dart     isRootInLegacyEntry(name, raw): Name UND Art des Werts
+│   │   │   ├── legacy_preferences_migration.dart    Weiche (bedingter Export)
+│   │   │   ├── …_io.dart                            Nicht-Web: tut nichts
+│   │   │   └── …_web.dart                           flutter.<name> → root_in.<name>, alten Eintrag entfernen
 │   │   ├── page_reload/                      ✅ (31.7) reloadPage() für den Knopf der Fehlerseite. Bauart wie web_storage/
 │   │   │   ├── reload_page.dart                     Weiche (bedingter Export)
 │   │   │   ├── reload_page_io.dart                  Nicht-Web: tut nichts (nur die Dart-VM im Test)
@@ -637,6 +647,7 @@ test/
 │   │                                        blockiert/gelingt inkl. Anzahl; Phase 21: Erststart legt genau
 │   │                                        sieben an, zweiter Start nichts, Sprachwechsel nichts,
 │   │                                        Nachrüsten ergänzt nur Fehlendes)
+│   ├── legacy_preference_ownership_test.dart ✅ 3 Fälle (31.8): eigene Werte, Vox' theme_mode = 2 bleibt, fremde/kaputte Werte
 │   ├── dashboard_layout_test.dart       ✅ 4 Fälle (Standard, toggle, reorder, überlebt neuen Container)
 │   ├── backup_data_test.dart            ✅ 7 Fälle (Phase 32: Fassung 2, alte Fassung 1 lesbar; verlustfreie Runde, neuere Version/Fremd-JSON/beschädigt
 │   │                                        abgelehnt — geprüft wird der Grund-Code, fehlende Listen als leer)

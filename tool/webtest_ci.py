@@ -418,7 +418,7 @@ def main():
 
         storage = js("return Object.keys(localStorage).join(',');")
         check("Einstellungen landen im Browser-Speicher",
-              "onboarding_seen" in storage, storage)
+              "root_in.onboarding_seen" in storage, storage)
 
         databases = js("""
           if (!indexedDB.databases) return 'unbekannt';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
 import 'core/constants/default_categories.dart';
@@ -10,6 +9,7 @@ import 'core/l10n/app_language.dart';
 // import 'core/services/ads_service.dart';
 // import 'core/services/purchase_service.dart';
 import 'core/services/auth_service.dart';
+import 'core/services/prefs_namespace/root_in_preferences.dart';
 import 'core/services/settings_service.dart';
 import 'core/services/web_storage/request_persistent_storage.dart';
 import 'core/utils/no_retry.dart';
@@ -23,7 +23,9 @@ Future<void> main() async {
   // Statt einer stummen grauen Fläche eine Fehlerseite mit Erklärung und
   // „Neu laden" (PLAN.md 31.7). Nur in der veröffentlichten Fassung.
   installAppErrorView();
-  final prefs = await SharedPreferences.getInstance();
+  // Eigener Namensraum im Browser-Speicher (PLAN.md 31.8): Vox liegt auf
+  // derselben Herkunft und benutzt teils dieselben Schlüssel.
+  final prefs = await openRootInPreferences();
 
   // Die gespeicherte Sprache wird schon vor dem ersten Frame gebraucht: die
   // Standard-Kategorien einer frischen Installation entstehen in ihr.

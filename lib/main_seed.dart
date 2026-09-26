@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/services/prefs_namespace/root_in_preferences.dart';
 import 'core/services/settings_service.dart';
 import 'core/utils/date_utils.dart';
 import 'data/models/habit_goal_type.dart';
@@ -37,7 +38,8 @@ import 'main.dart' as app;
 /// Duplikate der Startlogik (siehe PLAN.md Abschnitt 9, „Puzzling"/DRY).
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final prefs = await SharedPreferences.getInstance();
+  // Derselbe Namensraum wie in main() (PLAN.md 31.8).
+  final prefs = await openRootInPreferences();
 
   final container = ProviderContainer(
     overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
