@@ -13,11 +13,16 @@ import 'core/services/auth_service.dart';
 import 'core/services/settings_service.dart';
 import 'core/services/web_storage/request_persistent_storage.dart';
 import 'core/utils/no_retry.dart';
+import 'core/widgets/app_error_view.dart';
 import 'data/repositories/habit_repository.dart';
 import 'l10n/gen/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Statt einer stummen grauen Fläche eine Fehlerseite mit Erklärung und
+  // „Neu laden" (PLAN.md 31.7). Nur in der veröffentlichten Fassung.
+  installAppErrorView();
   final prefs = await SharedPreferences.getInstance();
 
   // Die gespeicherte Sprache wird schon vor dem ersten Frame gebraucht: die

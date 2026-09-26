@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" translate="no">
 <head>
   <!--
     Wird beim Bauen durch `flutter build web --base-href /<repo>/` ersetzt.
@@ -12,6 +12,14 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <!--
+    Keine maschinelle Übersetzung durch den Browser (PLAN.md 31.7). Root-in
+    hat einen eigenen Sprachschalter (DE/EN/FA). Chrome bietet wegen
+    `lang="de"` Persisch-Nutzern an, die Seite zu übersetzen — und macht dann
+    z. B. aus dem Namen „Root-in" den Titel „ریشه در". So gemeldet
+    2026-09-26 von einem Nutzer, dessen Seite dabei grau blieb.
+  -->
+  <meta name="google" content="notranslate">
   <meta name="description" content="Gewohnheiten und Routinen aufbauen und verfolgen — mit Schwerpunkt Sprachenlernen.">
   <!--
     ⚠️ OHNE `viewport-fit=cover` — bewusst, seit PLAN.md 26.13. Zusammen mit

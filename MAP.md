@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-25 (später) — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 50 weitere Wortkarten angelegt (Runden 95–99, arrogant … auditiv, Archiv jetzt 596; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
+> 🗓️ **Letzte Sitzung:** 2026-09-26 — PLAN 31.7 (Nutzermeldung „Seite bleibt grau"): **neu** `lib/core/widgets/app_error_view.dart`, `lib/core/services/page_reload/` (3 Dateien), `test/widget/app_error_view_test.dart`; **geändert** `lib/main.dart` (ruft `installAppErrorView()`), `web/index.html` (`translate="no"` + `notranslate`-Meta).
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-25 (später) — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 50 weitere Wortkarten angelegt (Runden 95–99, arrogant … auditiv, Archiv jetzt 596; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-25 — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 100 neue Wortkarten angelegt (Runden 68–77, Archiv jetzt 436; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
 >
@@ -123,6 +125,7 @@ github.com/lukasylilli/Root-in  (öffentlich, Zweig main)
 ├── web/                             ✅ **Die App** (PLAN.md Phase 26/28) — seit Phase 28 die einzige
 │   │                                    Plattform des Projekts
 │   ├── index.html                   ✅ Einstiegsseite, Markenfarbe schon vor dem ersten Frame + iOS-Meta-Tags.
+│   │                                    Seit 31.7: `translate="no"` + `notranslate` — keine Browser-Übersetzung
 │   │                                    ⚠️ Safari liest fürs Ablegen apple-mobile-web-app-*, NICHT
 │   │                                    manifest.json — ohne sie öffnet die Verknüpfung eine Browser-Seite
 │   │                                    mit Adressleiste statt einer App.
@@ -181,7 +184,7 @@ github.com/lukasylilli/Root-in  (öffentlich, Zweig main)
 
 ```
 lib/
-├── main.dart                                 ✅ Einstiegspunkt: SharedPreferences, Bitte um dauerhaften
+├── main.dart                                 ✅ Einstiegspunkt: Fehlerseite anmelden (31.7), SharedPreferences, Bitte um dauerhaften
 │                                                 Browser-Speicher, Supabase-Start (nur mit Schlüsseln),
 │                                                 Standard-Kategorien in der gespeicherten Sprache, dann
 │                                                 UncontrolledProviderScope (expliziter ProviderContainer,
@@ -345,6 +348,10 @@ lib/
 │   │   │   └── pick_text_file_web.dart           Browser: <input type="file"> + FileReader.
 │   │   │                                         ⚠️ `oncancel` ist Pflicht: Bricht der Nutzer ab, feuert
 │   │   │                                         `onchange` NIE — das Future bliebe für immer offen
+│   │   ├── page_reload/                      ✅ (31.7) reloadPage() für den Knopf der Fehlerseite. Bauart wie web_storage/
+│   │   │   ├── reload_page.dart                     Weiche (bedingter Export)
+│   │   │   ├── reload_page_io.dart                  Nicht-Web: tut nichts (nur die Dart-VM im Test)
+│   │   │   └── reload_page_web.dart                 Browser: window.location.reload()
 │   │   ├── web_storage/                      ✅ Bittet den Browser, den Speicher DAUERHAFT zu behalten
 │   │   │   │                                     (Phase 26.8). Dieselbe Bauart wie file_pick/.
 │   │   │   │                                     ⚠️ Eine Bitte, keine Garantie — der Browser entscheidet
@@ -376,6 +383,9 @@ lib/
 │       │                                         UND „موارد دیگر" nutzen sie — zwei Stylesheets wären zwei
 │       │                                         Stellen für jeden Design-Wechsel
 │       ├── app_button.dart                   ✅ Einzige Button-Komponente der App
+│       ├── app_error_view.dart               ✅ (31.7) Fehlerseite statt grauer Fläche (nur Release): 3 Sprachen,
+│       │                                         Fehlertext, „Neu laden". ⚠️ Nutzt nichts aus der App (kein Theme,
+│       │                                         keine l10n, kein Material); kleine Flächen ⇒ schlichtes ErrorWidget
 │       ├── web_storage_hint.dart             ✅ maybeShowWebStorageHint(...) — einmaliger Dialog NUR im
 │       │                                         Browser (Phase 26.8): warum Root-in auf den Home-Bildschirm
 │       │                                         gehört und warum die Sicherung hier wichtiger ist.
@@ -649,6 +659,7 @@ test/
 │                                            ausgegeben · sb_secret_ rot · blinder Suchlauf rot · ohne
 │                                            Erwartung grün
 ├── widget/
+│   ├── app_error_view_test.dart     ✅ 2 Fälle (31.7): volle Fläche mit Text + Knopf; kleine Fläche ⇒ ErrorWidget
 │   ├── matrix_grid_test.dart        ✅ 2 Fälle (eine Zelle je Tag; fitToWidth passt ein Jahr ohne Überlauf)
 │   ├── progress_ring_test.dart      ✅ 3 Fälle (Prozent, Clamping, centerLabel)
 │   ├── today_page_test.dart         ✅ 11 Fälle (Phase 32: „Nicht geplant", x-mal pro Woche); davon 6: Kopfbereich (Ring-Prozent, Punkte, Erledigt-Zähler, Liste) +
