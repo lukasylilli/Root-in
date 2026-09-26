@@ -5,11 +5,18 @@ import '../../../core/constants/app_assets.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import 'ascent_scene_painter.dart';
+import 'ascent_scene_palette.dart';
 
 /// Berg-Aufstieg als Fortschritts-Metapher auf der Home-Seite (siehe
-/// PLAN.md Phase 8/8.6, Vorlage `meine/Berg-Animation`): Die Figur steigt
-/// den Serpentinen-Pfad hinauf, Sterne verblassen und die Sonne geht auf,
-/// je weiter der Fortschritt ist.
+/// PLAN.md Phase 8/8.6; Aussehen seit Phase 33 nach der Nutzer-Vorlage
+/// `mountain_progress_ios.html`): Eine Linie füllt sich vom Fuß des gläsernen
+/// Bergs bis zum Gipfel, ein Glas-Pin zeigt die aktuelle Stelle, erreichte
+/// Camps leuchten, bei 100 % wird alles grün und der Gipfel funkelt.
+///
+/// ⚠️ Nur das Aussehen stammt aus der Vorlage. **Was** gezeigt wird, bleibt
+/// unverändert: [percent] kommt aus der in den Einstellungen gewählten
+/// Kennzahl (`ascentSourceProvider`, siehe `home_page.dart`), die Camps aus
+/// [campFractions], die Statuszeile aus denselben Texten wie zuvor.
 ///
 /// Steht in [AppAssets.homeAnimation] ein Lottie-Pfad, wird stattdessen
 /// dieses Asset gerendert — der Slot bleibt für ein späteres Nutzer-Asset
@@ -32,26 +39,51 @@ class HomeProgressAnimation extends StatefulWidget {
 
   static const double _height = 260;
 
+  /// Eckenradius der Karte (Vorlage: `.list`, 26 px).
+  static const double _radius = 26;
+
   @override
   State<HomeProgressAnimation> createState() => _HomeProgressAnimationState();
 }
 
 class _HomeProgressAnimationState extends State<HomeProgressAnimation>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _twinkleController;
+  /// Dauer, mit der der Pin weich zur neuen Stelle wandert.
+  static const Duration _travel = Duration(milliseconds: 900);
+
+  /// Das Funkeln wartet, bis der Pin oben ist (900 ms), und läuft dann
+  /// 1,1 s wie in der Vorlage — zusammen 2 s, davon ab 45 % das Funkeln.
+  static const Duration _sparkTotal = Duration(milliseconds: 2000);
+  static const Interval _sparkWindow = Interval(0.45, 1);
+
+  late final AnimationController _spark;
+
+  bool _isSummit(double percent) =>
+      percent.clamp(0.0, 1.0) >= AscentScenePainter.summit;
 
   @override
   void initState() {
     super.initState();
-    _twinkleController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
+    // Läuft nur einmal beim Erreichen des Gipfels, nie dauerhaft.
+    _spark = AnimationController(vsync: this, duration: _sparkTotal);
+    if (_isSummit(widget.percent)) _spark.forward();
+  }
+
+  @override
+  void didUpdateWidget(HomeProgressAnimation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final wasSummit = _isSummit(oldWidget.percent);
+    final isSummit = _isSummit(widget.percent);
+    if (isSummit && !wasSummit) {
+      _spark.forward(from: 0);
+    } else if (!isSummit && wasSummit) {
+      _spark.value = 0;
+    }
   }
 
   @override
   void dispose() {
-    _twinkleController.dispose();
+    _spark.dispose();
     super.dispose();
   }
 
@@ -59,22 +91,44 @@ class _HomeProgressAnimationState extends State<HomeProgressAnimation>
   Widget build(BuildContext context) {
     final asset = AppAssets.homeAnimation;
     final clamped = widget.percent.clamp(0.0, 1.0);
+    final palette = AscentScenePalette.of(Theme.of(context).brightness);
+    final radius = BorderRadius.circular(HomeProgressAnimation._radius);
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
-    return Card(
-      margin: EdgeInsets.zero,
-      // Ohne Clipping ragt die gemalte Szene über die abgerundeten
-      // Karten-Ecken hinaus (Card clippt standardmäßig nicht).
-      clipBehavior: Clip.antiAlias,
-      child: SizedBox(
-        height: HomeProgressAnimation._height,
-        width: double.infinity,
-        child: asset == null
-            ? _AscentScene(
-                percent: clamped,
-                sourceLabel: widget.sourceLabel,
-                twinkle: _twinkleController,
-              )
-            : Lottie.asset(asset, fit: BoxFit.contain),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        boxShadow: [
+          BoxShadow(
+            color: palette.shadow,
+            blurRadius: 30,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: CustomPaint(
+          foregroundPainter: _GlassRimPainter(
+            color: palette.glassRim,
+            radius: HomeProgressAnimation._radius,
+          ),
+          child: SizedBox(
+            height: HomeProgressAnimation._height,
+            width: double.infinity,
+            child: asset == null
+                ? _AscentScene(
+                    percent: clamped,
+                    sourceLabel: widget.sourceLabel,
+                    palette: palette,
+                    spark: _spark,
+                    sparkWindow: _sparkWindow,
+                    travel: reduceMotion ? Duration.zero : _travel,
+                    reduceMotion: reduceMotion,
+                  )
+                : Lottie.asset(asset, fit: BoxFit.contain),
+          ),
+        ),
       ),
     );
   }
@@ -84,43 +138,64 @@ class _AscentScene extends StatelessWidget {
   const _AscentScene({
     required this.percent,
     required this.sourceLabel,
-    required this.twinkle,
+    required this.palette,
+    required this.spark,
+    required this.sparkWindow,
+    required this.travel,
+    required this.reduceMotion,
   });
 
   final double percent;
   final String sourceLabel;
-  final Animation<double> twinkle;
+  final AscentScenePalette palette;
+  final Animation<double> spark;
+  final Interval sparkWindow;
+  final Duration travel;
+  final bool reduceMotion;
 
   @override
   Widget build(BuildContext context) {
+    // Die Vorlage ist für Rechts-nach-links gebaut; bei Links-nach-rechts
+    // wird die Szene gespiegelt, damit der Aufstieg in Leserichtung läuft.
+    // Der Gipfel liegt dann immer auf der Endseite, die Statuszeile oben auf
+    // der Startseite — sie überdecken sich nie.
+    final mirrored = Directionality.of(context) == TextDirection.ltr;
+
     return TweenAnimationBuilder<double>(
-      // Bei Fortschritts-Änderung wandert die Figur weich den Pfad hinauf,
+      // Bei Fortschritts-Änderung wandert der Pin weich den Pfad hinauf,
       // statt zu springen.
       tween: Tween<double>(end: percent),
-      duration: const Duration(milliseconds: 900),
+      duration: travel,
       curve: Curves.easeOutCubic,
       builder: (context, value, child) {
         return Stack(
           fit: StackFit.expand,
           children: [
             AnimatedBuilder(
-              animation: twinkle,
+              animation: spark,
               builder: (context, _) => CustomPaint(
                 painter: AscentScenePainter(
                   progress: value,
-                  twinkle: twinkle.value,
                   campFractions: HomeProgressAnimation.campFractions,
+                  palette: palette,
+                  mirrored: mirrored,
+                  spark: reduceMotion
+                      ? (percent >= AscentScenePainter.summit ? 1.0 : 0.0)
+                      : sparkWindow.transform(spark.value),
                 ),
               ),
             ),
-            // Breite begrenzt: sonst läuft die Statuszeile quer über die
-            // Szene und kollidiert mit den Camp-Beschriftungen. 170 px, damit
+            // Breite begrenzt: rechts davon beginnt der Berg. 170 px, damit
             // auch die dreistellige „100 %"-Anzeige noch hineinpasst.
-            Positioned(
+            PositionedDirectional(
               top: AppSpacing.md,
-              left: AppSpacing.md,
+              start: AppSpacing.md + AppSpacing.xs,
               width: 170,
-              child: _Hud(percent: value, sourceLabel: sourceLabel),
+              child: _Hud(
+                percent: value,
+                sourceLabel: sourceLabel,
+                palette: palette,
+              ),
             ),
           ],
         );
@@ -130,18 +205,24 @@ class _AscentScene extends StatelessWidget {
 }
 
 class _Hud extends StatelessWidget {
-  const _Hud({required this.percent, required this.sourceLabel});
+  const _Hud({
+    required this.percent,
+    required this.sourceLabel,
+    required this.palette,
+  });
 
   final double percent;
   final String sourceLabel;
+  final AscentScenePalette palette;
 
   @override
   Widget build(BuildContext context) {
     final rounded = (percent * 100).round();
-    final summit = percent >= 0.999;
+    final summit = percent >= AscentScenePainter.summit;
     final nextCamp = HomeProgressAnimation.campFractions
         .where((fraction) => fraction > percent + 0.0001)
         .firstOrNull;
+    const tabular = [FontFeature.tabularFigures()];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,21 +235,21 @@ class _Hud extends StatelessWidget {
           children: [
             Text(
               '$rounded',
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: palette.label,
                 fontSize: 44,
                 height: 1,
-                fontWeight: FontWeight.bold,
-                shadows: [Shadow(blurRadius: 12, color: Colors.black54)],
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.9,
+                fontFeatures: tabular,
               ),
             ),
-            const Text(
+            Text(
               '%',
               style: TextStyle(
-                color: Colors.white70,
+                color: palette.secondaryLabel,
                 fontSize: 20,
-                fontWeight: FontWeight.w600,
-                shadows: [Shadow(blurRadius: 12, color: Colors.black54)],
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],
@@ -183,22 +264,60 @@ class _Hud extends StatelessWidget {
                   ((nextCamp - percent) * 100).round(),
                   (nextCamp * 100).round(),
                 ),
-          style: const TextStyle(
-            color: Color(0xFFD6DEF3),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            shadows: [Shadow(blurRadius: 8, color: Colors.black54)],
+          style: TextStyle(
+            color: summit ? palette.complete : palette.label,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            fontFeatures: tabular,
           ),
         ),
+        const SizedBox(height: 2),
         Text(
           sourceLabel,
-          style: const TextStyle(
-            color: Color(0xFF9FB0D6),
-            fontSize: 11,
-            shadows: [Shadow(blurRadius: 8, color: Colors.black54)],
+          style: TextStyle(
+            color: palette.secondaryLabel,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
     );
   }
+}
+
+/// Feine Lichtkante des Glases rund um die Karte (Vorlage: `.glass::before`,
+/// Verlauf unter 160° — oben und unten hell, in der Mitte durchsichtig).
+class _GlassRimPainter extends CustomPainter {
+  const _GlassRimPainter({required this.color, required this.radius});
+
+  final Color color;
+  final double radius;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.isEmpty) return;
+    final rect = (Offset.zero & size).deflate(0.5);
+    final faded = color.withValues(alpha: color.a * 0.8);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect, Radius.circular(radius - 0.5)),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1
+        ..shader = LinearGradient(
+          begin: const Alignment(-0.342, -0.94),
+          end: const Alignment(0.342, 0.94),
+          colors: [
+            faded,
+            faded.withValues(alpha: 0),
+            faded.withValues(alpha: 0),
+            faded,
+          ],
+          stops: const [0, 0.38, 0.62, 1],
+        ).createShader(rect),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_GlassRimPainter oldDelegate) =>
+      oldDelegate.color != color || oldDelegate.radius != radius;
 }

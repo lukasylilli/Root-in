@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-26 (Wortrunden vox) — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 200 weitere Wortkarten angelegt (Runden 144–163, buchhalterisch … diskretionär, Archiv jetzt 1226; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
+> 🗓️ **Letzte Sitzung:** 2026-09-26 (abends) — PLAN Phase 33 (neues Aussehen der Berg-Animation, nur Darstellung): **neu** `lib/features/home/presentation/ascent_scene_palette.dart` (einzige Quelle der Szenen-Farben, hell/dunkel); **neu geschrieben** `ascent_scene_painter.dart`; **geändert** `home_progress_animation.dart` und `test/widget/home_progress_animation_test.dart` (4 → 10 Fälle). Unverändert: `home_page.dart`, `ascent_source.dart`, Einstellungen, ARB-Texte.
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-26 (Wortrunden vox) — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 200 weitere Wortkarten angelegt (Runden 144–163, buchhalterisch … diskretionär, Archiv jetzt 1226; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-26 (später) — PLAN 31.8: **neu** `lib/core/services/prefs_namespace/` (4 Dateien), `test/unit/legacy_preference_ownership_test.dart`; **geändert** `lib/main.dart`, `lib/main_seed.dart` (beide `openRootInPreferences()`), `tool/webtest_ci.py` + `tool/webtest.py` (Prüfung `root_in.onboarding_seen`).
 >
@@ -515,10 +517,13 @@ lib/
 │   │   ├── home_page.dart                    ✅ Berg-Animation + Fortschritts-Header + Knopf „Fortschritt
 │   │   │                                         teilen" (Phase 19, ruft showShareProgressSheet) + Dashboard
 │   │   │                                         (16 Wochen, pageId „home")
-│   │   ├── home_progress_animation.dart      ✅ Karte + HUD (Prozent, „Noch X % bis Camp Y %"), weicher Übergang;
-│   │   │                                         rendert Lottie, sobald AppAssets.homeAnimation gesetzt ist
-│   │   ├── ascent_scene_painter.dart         ✅ Malt die Szene nach Nutzer-Vorlage (Himmel, Sterne, Sonne,
-│   │   │                                         Bergketten, Serpentinen-Pfad, Camps in Prozent, Figur, Fahne)
+│   │   ├── home_progress_animation.dart      ✅ Glas-Karte + HUD (Prozent, „Noch X % bis Camp Y %"), weicher
+│   │   │                                         Übergang, einmaliges Gipfel-Funkeln (Phase 33); rendert Lottie,
+│   │   │                                         sobald AppAssets.homeAnimation gesetzt ist
+│   │   ├── ascent_scene_painter.dart         ✅ Malt die Szene nach `mountain_progress_ios.html` (Phase 33):
+│   │   │                                         gläserner Berg, Pfad + Linie, Glas-Perlen/-Pin, Funkeln;
+│   │   │                                         RTL wie Vorlage, LTR gespiegelt
+│   │   ├── ascent_scene_palette.dart         ✅ Einzige Quelle der Szenen-Farben, hell/dunkel (Phase 33)
 │   │   └── ascent_source.dart                ✅ Wählbare Kennzahl der Animation (heute/Woche/Monat/Jahr)
 │   ├── today/presentation/today_page.dart    ✅ **Datumszeile** (Pfeile, Datumsauswahl, zurück auf heute —
 │   │                                             Zukunft gesperrt, Phase 24), Tagesring-Kopf, Liste, Abhaken,
@@ -724,7 +729,9 @@ test/
 │   ├── persian_ui_test.dart         ✅ 5 Fälle (Oberfläche persisch + Directionality.rtl, Sprachauswahl selbst
 │   │                                     persisch, persische Standard-Kategorien, Schlüssel-Stichprobe quer
 │   │                                     durch die App, fa als unterstützte Locale) — Phase 18
-│   ├── home_progress_animation_test.dart ✅ 4 Fälle (Prozent + Quelle, Gipfel bei 100 %, nächstes Camp, Clamping)
+│   ├── home_progress_animation_test.dart ✅ 10 Fälle (Prozent + Quelle, Gipfel bei 100 %, nächstes Camp,
+│   │                                     Clamping, Funkeln kommt zur Ruhe, Wechsel auf/unter den Gipfel,
+│   │                                     RTL, Paletten × gespiegelt, sparkFrame, Palette je Modus) — Phase 33
 │   ├── dashboard_section_test.dart  ✅ Anpassen-Modus: hinzufügen, entfernen, beides persistiert
 │   └── web_storage_hint_test.dart   ✅ 4 Fälle (Phase 26.8). ⚠️ Laufen auf der Dart-VM, also NIE im
 │                                        Browser — prüfbar ist deshalb, dass der Hinweis dort NICHT
@@ -1095,10 +1102,11 @@ Details und Regeln: **PLAN.md Phase 32**. Hier nur, **wo was liegt**:
 - Diese Datei bildet **nur die Struktur** ab (was liegt wo) — Fortschritt und Feature-Details stehen in PLAN.md.
 - Bei jeder neuen Datei/jedem neuen Ordner: hier ergänzen. Bei Löschung/Umbenennung: hier korrigieren.
 - `*.g.dart` sind generiert (`dart run build_runner build`) und werden hier nicht einzeln aufgeführt. ⚠️ **Sie sind versioniert, und das ist seit Phase 29 lebenswichtig:** Die Automatik ruft `build_runner` **nicht** auf. Wer eine Drift-Tabelle oder `database.dart` ändert, ohne die passende `.g.dart` mitzuliefern, bekommt einen roten Lauf — und kann ihn ohne Rechner nur beheben, indem er die generierte Datei von Hand nachzieht — **oder** (seit Phase 32) indem er `build_runner` in einer temporären Nebenzweig-Automatik laufen lässt (siehe „Wochenplan der Gewohnheiten", PLAN.md Lehre 42).
+- 🔧 **Seit 2026-09-26 kann Claude Flutter selbst laden** (PLAN.md Lehre 44): `flutter analyze`, `flutter test`, `./tool/build_web.sh` laufen dann **vor** dem Push; `analysis_options.yaml`, `android/local.properties`, `pubspec.lock` verändert `pub get` dabei — nie mitcommitten. Die Automatik bleibt verbindlich.
 - ⚠️ **Es gibt keine Kommandozeile mehr** (PLAN.md Phase 29). `flutter analyze`, `flutter test`, `flutter build web` und `tool/build_web.sh` laufen **nur noch in der Automatik**, bei jedem Push auf `main`. Wer eine Änderung prüfen will, pusht sie und liest den Lauf. ⚠️ Das heißt auch: **`flutter gen-l10n` und `build_runner` laufen niemand mehr von Hand.** `gen-l10n` startet beim Bau von selbst; **`build_runner` NICHT** — wer `database.dart` oder eine Tabelle ändert, muss `database.g.dart` mitliefern, sonst bricht der Bau (siehe unten).
 - **Eine Seite wirklich ansehen:** pushen, den Lauf abwarten, `lukasylilli.github.io/Root-in/` im Browser öffnen. ⚠️ **Nicht sofort nach dem Lauf messen** — GitHub Pages liefert nicht überall gleichzeitig aus (Lehre 36). Für einen Blick mit echten Daten gäbe es `lib/main_seed.dart`; der braucht aber einen Bau von Hand und ist damit vorerst unerreichbar.
 - Jeder Widget-Test, der DB-gestützte Provider berührt, überschreibt `appDatabaseProvider` und `timeServiceProvider` und ruft `disposeAndFlush(tester)` als letzte Zeile. Die früheren Overrides für `notificationServiceProvider` (Phase 28) und `purchaseServiceProvider` (Phase 20) sind entfallen.
-- Tests, die die Home-Seite rendern, dürfen **kein** `pumpAndSettle()` verwenden — die funkelnden Sterne laufen dauerhaft. Stattdessen `tester.pump(const Duration(seconds: 1))`; für einen **Wechsel** auf Home braucht es drei aufeinanderfolgende `pump()` (Tipp → Speichern → Routen-Übergang, siehe `settleNavigation`).
+- Tests, die die Home-Seite rendern, benutzen `pump(duration)` statt `pumpAndSettle()` — früher wegen der dauerhaft funkelnden Sterne; seit Phase 33 gibt es keine Dauer-Animation mehr (nur ein einmaliges Gipfel-Funkeln, 2 s), die Regel bleibt als sichere Gewohnheit (PLAN.md Lehre 10). Also `tester.pump(const Duration(seconds: 1))`; für einen **Wechsel** auf Home braucht es drei aufeinanderfolgende `pump()` (Tipp → Speichern → Routen-Übergang, siehe `settleNavigation`).
 - ⚠️ **Fehlerzustände nie nur mit `pumpAndSettle` prüfen** (PLAN.md Lehre 40). Riverpod 3 wiederholt fehlgeschlagene Provider von selbst; `pumpAndSettle` spult die Pausen vor und findet am Ende den Knopf, den ein Nutzer erst nach 40 Sekunden sähe. Abgeschaltet ist das in `lib/core/utils/no_retry.dart` — **ein neuer Provider mit eigenem Fehlerzustand bekommt `retry: noAutomaticRetry`**, sonst sieht sein Test etwas anderes als die App.
 - Tests, die die ganze App starten, müssen `onboarding_seen` in den gemockten Prefs setzen — sonst landen sie auf der Erststart-Erklärung.
 - Widgets am unteren Ende einer `ListView`/`GridView` sind im Test-Viewport noch nicht gemountet — erst `tester.scrollUntilVisible(...)`. Bei mehreren verschachtelten Scrollables `find.byType(Scrollable).first` nehmen.

@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-26 (Wortrunden vox) — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 200 weitere Wortkarten angelegt (Runden 144–163, buchhalterisch … diskretionär, Archiv jetzt 1226; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
+> 🗓️ **Letzte Sitzung:** 2026-09-26 (abends) — **Berg-Animation der Home-Seite hat ein neues Aussehen** ([Phase 33](#phase-33--neues-aussehen-der-berg-animation--2026-09-26)) nach der Nutzer-Vorlage `mountain_progress_ios.html` (gläserner Berg, blaue Linie, Glas-Perlen und -Pin, bei 100 % grün mit Gipfel-Funkeln; hell/dunkel; RTL wie die Vorlage, LTR gespiegelt). **Nur das Aussehen** — Kennzahl-Wahl in den Einstellungen (`ascentSourceProvider`), Datenquelle, Camps 20–100 % und alle Texte unverändert. Dateien: `lib/features/home/presentation/{ascent_scene_painter,ascent_scene_palette (neu),home_progress_animation}.dart`, Test `test/widget/home_progress_animation_test.dart`. **Lokal geprüft** (neu möglich, Lehre 44): `flutter analyze` ohne Befund, **290 Tests grün**, `tool/build_web.sh` baut, Home im echten Chromium angesehen. ⏭️ Offene Punkte unverändert: brauchen Lukas.
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-26 (Wortrunden vox) — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 200 weitere Wortkarten angelegt (Runden 144–163, buchhalterisch … diskretionär, Archiv jetzt 1226; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-26 (später) — **Ursache der grauen Seite gefunden und behoben** ([31.8](#318-eigener-namensraum-im-browser-speicher--2026-09-26)). Die neue Fehlerseite (31.7) zeigte beim Nutzer: `TypeError: 2: type 'int' is not a subtype of type 'String?'`. **Grund:** Root-in und Vox liegen auf derselben Herkunft `lukasylilli.github.io` und teilten sich deshalb den Browser-Speicher; beide benutzen den Schlüssel `theme_mode` — Vox als Zahl (`2` = dunkel), Root-in als Text. Wer Vox auf dunkel stellt, bei dem stürzte Root-in ab (und umgekehrt Vox). **Behoben:** Root-in speichert jetzt unter eigener Vorsilbe `root_in.` (`lib/core/services/prefs_namespace/`), alte eigene Einträge werden einmalig übernommen, fremde (Vox' `theme_mode = 2`) bleiben unberührt. Test `test/unit/legacy_preference_ownership_test.dart`, Browser-Durchgang prüft `root_in.onboarding_seen`. ⏭️ Nutzer: Seite neu laden. Vox braucht dieselbe Absicherung (vox/PLAN.md).
 >
@@ -104,8 +106,9 @@
     - [Phase 30 — Ein Konto für Root-in und Vox](#phase-30--ein-konto-für-root-in-und-vox--beauftragt-2026-08-17-für-die-letzten-projektschritte) ⬜
     - [Phase 31 — Was ohne den Nutzer noch geht](#phase-31--was-ohne-den-nutzer-noch-geht--beauftragt-2026-09-13) ✅
     - [Phase 32 — Wochenplan für Gewohnheiten](#phase-32--wochenplan-für-gewohnheiten--umgesetzt-2026-09-20) ✅
+    - [Phase 33 — Neues Aussehen der Berg-Animation](#phase-33--neues-aussehen-der-berg-animation--2026-09-26) ✅
 11. [Entscheidungs-Log & dauerhafte Lehren](#11-entscheidungs-log--dauerhafte-lehren)
-    - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–41)
+    - 11.1 [Log (Kurzfassung)](#111-log-kurzfassung) · 11.2 [Dauerhafte Lehren & Fallstricke](#112-dauerhafte-lehren--fallstricke) (1–44)
 12. [Offene Fragen](#12-offene-fragen)
 
 ## 1. Vision
@@ -852,6 +855,15 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 - [x] Zusammengeführt **ohne Squash**, damit diese Geschichte erhalten bleibt.
 - [x] **Aussehen** von Formular und „Nicht geplant"-Abschnitt: vom Nutzer angesehen und für gut befunden (2026-09-20). Der Browser-Durchgang (23 Prüfungen) tippt sie weiterhin nicht an — die Abnahme kam von Hand.
 
+### Phase 33 — Neues Aussehen der Berg-Animation ✅ *(2026-09-26)*
+**Auftrag (Lukas):** Die Fortschritts-Szene auf der Home-Seite soll aussehen wie seine Vorlage `mountain_progress_ios.html` (iOS-„Liquid Glass"). ⚠️ **Ausdrücklich nur das Aussehen:** Was die Szene zeigt, woher der Wert kommt und die Wahl in den Einstellungen bleiben, wie sie sind — viele Nutzer benutzen die App gerade.
+- [x] **Unverändert (geprüft):** `home_page.dart` (Wert aus `todayProgressProvider` bzw. `rangeProgressPercentProvider`, Quelle `ascentSourceProvider` aus den Einstellungen), `ascent_source.dart`, `settings_service.dart`, Schnittstelle `HomeProgressAnimation(percent, sourceLabel)`, `campFractions` (20/40/60/80/100 %), alle ARB-Texte, der Lottie-Slot `AppAssets.homeAnimation`. Keine Daten, kein Speicher, keine Einstellung angefasst.
+- [x] **`ascent_scene_palette.dart` (neu):** einzige Quelle der Szenen-Farben, je hell/dunkel 1:1 aus den CSS-Variablen der Vorlage (`--bg`, `--blob-*`, `--peak-*`, `--rim`, `--trail`, `--warm-top`, `--glass-*`, `--blue`, `--green`). Folgt dem Darstellungsmodus der App (`Theme.of(context).brightness`).
+- [x] **`ascent_scene_painter.dart` (neu geschrieben):** Farbflecken-Hintergrund, gläserner Berg mit Lichtkante und innerer Kante, warmer Schein wächst mit dem Fortschritt, gedämpfter Pfad + blaue Linie mit Schein, Glas-Perlen an den Camps unter 100 % (erreicht = gefüllt), Glas-Pin an der aktuellen Stelle, bei 100 % alles grün und Funkeln auf dem Gipfel (Keyframes der Vorlage, `sparkFrame`). Geometrie im Feld 0..100 wie die Vorlage (`preserveAspectRatio="none"`), Linien/Perlen/Pin in echten Pixeln. **RTL = Vorlage, LTR gespiegelt** (Aufstieg in Leserichtung; Statuszeile oben auf der Startseite, Gipfel auf der Endseite — keine Überdeckung).
+- [x] **`home_progress_animation.dart`:** Karte mit 26 px Radius, Schatten und Glas-Lichtkante; Statuszeile gleicher Inhalt, neue Farben (bei 100 % grün). **Keine Dauer-Animation mehr** (Sterne entfallen): das Funkeln läuft einmal beim Erreichen des Gipfels (wartet 900 ms auf den Pin, dann 1,1 s). „Bewegung reduzieren" des Systems wird beachtet. Die Figur, Sterne, Sonne und Camp-Beschriftungen der alten Szene entfallen — Vorlage.
+- [x] **Nicht übernommen, bewusst:** Schieberegler und „Neu starten"-Knopf der Vorlage — dort nur zum Vorführen; in der App kommt der Wert aus den Gewohnheiten.
+- [x] **Tests:** `home_progress_animation_test.dart` 4 → 10 (u. a. RTL, Wechsel auf/unter den Gipfel, alle Paletten × gespiegelt × Fortschritt, Funkeln kommt zur Ruhe). Gesamt **290 grün**. Lehre 10 gilt nicht mehr zwingend (siehe dort).
+
 ---
 
 ## 11. Entscheidungs-Log & dauerhafte Lehren
@@ -922,6 +934,7 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
   - **Vorhandene Spalte weiterverwendet statt zweites Format:** `timesPerWeek` war seit Langem da und ungenutzt; sie bleibt das Wochen-Soll in jedem Modus, nur `scheduleDays` kam neu dazu (32.1). Dadurch blieb die Statistik unangetastet.
   - **Ein erster Anlauf blieb unbrauchbar:** Die Prüfschritte liefen mit `continue-on-error`, und das Lesen des Berichts scheiterte an `sh` statt `bash`. „Grün" bewies deshalb nichts (dieselbe Falle wie in Phase 29). Erst der zweite Lauf mit lesbaren Berichten lieferte echte Ergebnisse (Lehre 42).
   - **Bewusst nicht direkt auf `main`:** Weil generierter Drift-Code im Repository liegt und jeder Push auf `main` veröffentlicht, entstand die Arbeit auf einem Zweig und wurde erst nach grünem `analyze` und `test` zusammengeführt.
+- **2026-09-26 (Phase 33)** — Neues Aussehen der Berg-Animation nach Nutzer-Vorlage; nur Darstellung, Daten und Einstellungen unverändert. Erstmals `flutter analyze`/`test`/`build web` **vor** dem Push in Claudes Umgebung (Lehre 44).
 
 ### 11.2 Dauerhafte Lehren & Fallstricke
 
@@ -936,7 +949,7 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 7. 🕰️ **ARGB-Farben passen nicht in einen Android-`Int`.** Werte über `Int.MAX_VALUE` landen als `Long` → `ClassCastException` in Kotlin. Immer `.toSigned(32)` schreiben.
 8. **Der Gerätelauf findet, was Tests nicht finden:** verfügbarer Platz, Drehung, Theme-Wechsel, Überläufe, fehlendes Clipping. Ein Render-Test beweist Geometrie — nicht Benutzbarkeit.
 9. **Drift-Details:** `uniqueKeys` auf (habitId, date) nötig; Teil-Updates mit `.write()` statt `.replace()`; Tests gegen eine In-Memory-DB (`test/support/test_database.dart`) plus `disposeAndFlush(tester)`, sonst „Timer is still pending".
-10. **`pumpAndSettle()` ist auf der Home-Seite verboten** — die funkelnden Sterne laufen dauerhaft. Stattdessen `pump(duration)`; für Routenwechsel drei aufeinanderfolgende `pump()`.
+10. **`pumpAndSettle()` war auf der Home-Seite verboten** — die funkelnden Sterne liefen dauerhaft. Seit Phase 33 (2026-09-26) gibt es keine Dauer-Animation mehr (das Gipfel-Funkeln läuft einmal, 2 s); die bestehenden Tests bleiben trotzdem bei `pump(duration)` bzw. drei aufeinanderfolgenden `pump()` für Routenwechsel. ⚠️ Wer auf der Home-Seite wieder etwas Dauerhaftes animiert, macht `pumpAndSettle()` dort erneut unbrauchbar.
 11. **Nutzerdaten werden nicht mitübersetzt.** Namen von Gewohnheiten und Kategorien speichern den Text der Sprache zum Zeitpunkt des Anlegens; ein späterer Sprachwechsel lässt sie unangetastet.
 12. **Play-Formalitäten:** Screenshots höchstens 2:1; In-App-Produkte erst anlegbar, wenn ein Bundle mit Billing in einem Track liegt; `com.example.*` wird abgelehnt; Signaturschlüssel-Verlust = keine Updates mehr.
 13. **`file_picker` ist eine Sackgasse** (verlangt `win32 ^5`, `share_plus 13` will `^6`; ein Override bricht `flutter test`). Genutzt wird `flutter_file_dialog` (nur Android/iOS — genau die Zielplattformen).
@@ -976,6 +989,7 @@ Diese Phase sammelt die offenen Punkte aus früheren Phasen, die **kein Konto, k
 42. **Generierter Code ohne Rechner: auf einem Zweig erzeugen lassen, nicht von Hand nachziehen — und nur echten Ergebnissen glauben.** Die Automatik auf `main` ruft `build_runner` nicht auf (siehe MAP „Hinweise"). Für Phase 32 lief `build_runner` deshalb in einer **temporären Automatik auf einem Nebenzweig**, die den Code zurückschrieb und `analyze`/`test` als Datei unter `ci-report/` ablegte (Protokolle brauchen eine Anmeldung, Dateien im Repository nicht). Drei Fallen, alle erlebt: (1) `continue-on-error` macht jeden Schritt „grün" — das Ergebnis muss in den Bericht, nicht in die Farbe; (2) der Lese-Befehl muss `bash` sein, `sh` scheitert an Bash-Syntax; (3) die Datei `.github/workflows/…` zu pushen braucht einen Token **mit Workflow-Recht**. Die temporäre Automatik und `ci-report/` werden **vor** dem Zusammenführen gelöscht — sie veröffentlicht nichts und gehört nie nach `main`.
 
 43. **`alterTable` liest jede Spalte des aktuellen Schemas aus der alten Tabelle.** Wer eine Spalte hinzufügt, muss den **älteren** Migrationszweig, der die Tabelle mit `TableMigration` neu baut, mit `newColumns: [...]` versehen — sonst scheitert schon der Sprung von Schema 3 auf 4, obwohl der neue Zweig 4 → 5 richtig ist. Neue Spalten außerdem **ans Ende** der Tabelle stellen: `addColumn` hängt an, und so stimmt die Spaltenreihenfolge einer migrierten mit der einer frischen Datenbank überein.
+44. **Flutter läuft jetzt auch in Claudes Umgebung (2026-09-26).** `storage.googleapis.com` ist erreichbar: `flutter_linux_<version>-stable.tar.xz` (≈ 1,5 GB) nach `/tmp` laden, entpacken, `PATH=/tmp/flutter/bin:$PATH` — dann laufen `flutter analyze`, `flutter test` und `./tool/build_web.sh` **vor** dem Push. Zum Ansehen: `build/web` unter `/Root-in/` mit `python3 -m http.server` ausliefern und mit Playwright-Chromium fotografieren (Speicher-Hinweis und Einführung vorher per `localStorage` `flutter.root_in.*` bzw. Klick überspringen). ⚠️ `flutter pub get` verändert dabei `analysis_options.yaml`, `android/local.properties` und `pubspec.lock` — **nie mitcommitten**, nur die eigenen Dateien `git add`en. Die Automatik bleibt die verbindliche Prüfung.
 
 ## 12. Offene Fragen
 
