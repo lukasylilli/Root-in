@@ -13,6 +13,8 @@
 >
 > 🗓️ **Letzte Sitzung:** 2026-09-26 (abends) — **Berg-Animation der Home-Seite hat ein neues Aussehen** ([Phase 33](#phase-33--neues-aussehen-der-berg-animation--2026-09-26)) nach der Nutzer-Vorlage `mountain_progress_ios.html` (gläserner Berg, blaue Linie, Glas-Perlen und -Pin, bei 100 % grün mit Gipfel-Funkeln; hell/dunkel; RTL wie die Vorlage, LTR gespiegelt). **Nur das Aussehen** — Kennzahl-Wahl in den Einstellungen (`ascentSourceProvider`), Datenquelle, Camps 20–100 % und alle Texte unverändert. Dateien: `lib/features/home/presentation/{ascent_scene_painter,ascent_scene_palette (neu),home_progress_animation}.dart`, Test `test/widget/home_progress_animation_test.dart`. **Lokal geprüft** (neu möglich, Lehre 44): `flutter analyze` ohne Befund, **290 Tests grün**, `tool/build_web.sh` baut, Home im echten Chromium angesehen. ⏭️ Offene Punkte unverändert: brauchen Lukas.
 >
+> 🗓️ **Vorherige Sitzung:** 2026-09-26 (Wortrunden vox 184–193) — an Root-in **nichts geändert**; in `vox` 100 weitere Wortkarten (einundzwanzigste … enttäuscht, Archiv 1526).
+>
 > 🗓️ **Vorherige Sitzung:** 2026-09-26 (Wortrunden vox 174–183) — an Root-in **nichts geändert**; in `vox` 100 weitere Wortkarten (dunstig … einunddreißigste, Archiv 1426).
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-26 (Wortrunden vox 164–173) — an Root-in **nichts geändert**; in `vox` 100 weitere Wortkarten (diskriminierend … dunkelrot, Archiv 1326).
