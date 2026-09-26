@@ -13,6 +13,8 @@
 >
 > 🗓️ **Letzte Sitzung:** 2026-09-26 (abends) — PLAN Phase 33 (neues Aussehen der Berg-Animation, nur Darstellung): **neu** `lib/features/home/presentation/ascent_scene_palette.dart` (einzige Quelle der Szenen-Farben, hell/dunkel); **neu geschrieben** `ascent_scene_painter.dart`; **geändert** `home_progress_animation.dart` und `test/widget/home_progress_animation_test.dart` (4 → 10 Fälle). Unverändert: `home_page.dart`, `ascent_source.dart`, Einstellungen, ARB-Texte.
 >
+> 🗓️ **Vorherige Sitzung:** 2026-09-26 (Wortrunden vox 164–173) — an Root-in **nichts geändert**; in `vox` 100 weitere Wortkarten (diskriminierend … dunkelrot, Archiv 1326).
+>
 > 🗓️ **Vorherige Sitzung:** 2026-09-26 (Wortrunden vox) — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 200 weitere Wortkarten angelegt (Runden 144–163, buchhalterisch … diskretionär, Archiv jetzt 1226; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-26 (später) — PLAN 31.8: **neu** `lib/core/services/prefs_namespace/` (4 Dateien), `test/unit/legacy_preference_ownership_test.dart`; **geändert** `lib/main.dart`, `lib/main_seed.dart` (beide `openRootInPreferences()`), `tool/webtest_ci.py` + `tool/webtest.py` (Prüfung `root_in.onboarding_seen`).
