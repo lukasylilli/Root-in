@@ -11,7 +11,9 @@
 > was, warum, in welcher Datei/Phase — und die Zeile „Letzte Sitzung / nächster Schritt" unten aktualisieren.
 > **Was nicht in PLAN und MAP steht, existiert für den nächsten Chat nicht.** Inhaltsverzeichnis und Hinweise bleiben erhalten.
 >
-> 🗓️ **Letzte Sitzung:** 2026-09-26 (später) — PLAN 31.8: **neu** `lib/core/services/prefs_namespace/` (4 Dateien), `test/unit/legacy_preference_ownership_test.dart`; **geändert** `lib/main.dart`, `lib/main_seed.dart` (beide `openRootInPreferences()`), `tool/webtest_ci.py` + `tool/webtest.py` (Prüfung `root_in.onboarding_seen`).
+> 🗓️ **Letzte Sitzung:** 2026-09-26 (Wortrunden vox) — an Root-in **nichts geändert**. Vermerk: in `vox` wurden 200 weitere Wortkarten angelegt (Runden 144–163, buchhalterisch … diskretionär, Archiv jetzt 1226; nur `assets/vocab/`, Wortliste, `tool/naechste_woerter.dart`, PLAN/MAP). Keine Berührung mit Root-in oder dem geteilten Supabase-Projekt.
+>
+> 🗓️ **Vorherige Sitzung:** 2026-09-26 (später) — PLAN 31.8: **neu** `lib/core/services/prefs_namespace/` (4 Dateien), `test/unit/legacy_preference_ownership_test.dart`; **geändert** `lib/main.dart`, `lib/main_seed.dart` (beide `openRootInPreferences()`), `tool/webtest_ci.py` + `tool/webtest.py` (Prüfung `root_in.onboarding_seen`).
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-26 — PLAN 31.7 (Nutzermeldung „Seite bleibt grau"): **neu** `lib/core/widgets/app_error_view.dart`, `lib/core/services/page_reload/` (3 Dateien), `test/widget/app_error_view_test.dart`; **geändert** `lib/main.dart` (ruft `installAppErrorView()`), `web/index.html` (`translate="no"` + `notranslate`-Meta).
 >
