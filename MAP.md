@@ -13,6 +13,8 @@
 >
 > 🗓️ **Letzte Sitzung:** 2026-09-26 (abends) — PLAN Phase 33 (neues Aussehen der Berg-Animation, nur Darstellung): **neu** `lib/features/home/presentation/ascent_scene_palette.dart` (einzige Quelle der Szenen-Farben, hell/dunkel); **neu geschrieben** `ascent_scene_painter.dart`; **geändert** `home_progress_animation.dart` und `test/widget/home_progress_animation_test.dart` (4 → 10 Fälle). Unverändert: `home_page.dart`, `ascent_source.dart`, Einstellungen, ARB-Texte.
 >
+> 🗓️ **Vorherige Sitzung:** 2026-09-27 (Wortrunden vox 394–402) — an Root-in **nichts geändert**; in `vox` 90 weitere Wortkarten (mittelhochdeutsch … mundgerecht, Archiv 3615).
+>
 > 🗓️ **Vorherige Sitzung:** 2026-09-27 (Wortrunden vox 384–393) — an Root-in **nichts geändert**; in `vox` 100 weitere Wortkarten (medium … mittelgriechisch, Archiv 3525).
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-27 (Wortrunden vox 375–383) — an Root-in **nichts geändert**; in `vox` 90 weitere Wortkarten (mäzenatisch … mediterran, Archiv 3425).
