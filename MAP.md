@@ -13,6 +13,8 @@
 >
 > 🗓️ **Letzte Sitzung:** 2026-09-26 (abends) — PLAN Phase 33 (neues Aussehen der Berg-Animation, nur Darstellung): **neu** `lib/features/home/presentation/ascent_scene_palette.dart` (einzige Quelle der Szenen-Farben, hell/dunkel); **neu geschrieben** `ascent_scene_painter.dart`; **geändert** `home_progress_animation.dart` und `test/widget/home_progress_animation_test.dart` (4 → 10 Fälle). Unverändert: `home_page.dart`, `ascent_source.dart`, Einstellungen, ARB-Texte.
 >
+> 🗓️ **Vorherige Sitzung:** 2026-09-27 (Wortrunden vox 429–434) — an Root-in **nichts geändert**; in `vox` 60 weitere Wortkarten (ordoliberal … paramilitärisch, Archiv 3935).
+>
 > 🗓️ **Vorherige Sitzung:** 2026-09-27 (Wortrunden vox 421–428) — an Root-in **nichts geändert**; in `vox` 80 weitere Wortkarten (obersächsisch … ordnungspolitisch, Archiv 3875).
 >
 > 🗓️ **Vorherige Sitzung:** 2026-09-27 (Wortrunden vox 415–420) — an Root-in **nichts geändert**; in `vox` 60 weitere Wortkarten (niederländisch … oberösterreichisch, Archiv 3795).
