@@ -13,6 +13,8 @@
 >
 > 🗓️ **Letzte Sitzung:** 2026-09-26 (abends) — PLAN Phase 33 (neues Aussehen der Berg-Animation, nur Darstellung): **neu** `lib/features/home/presentation/ascent_scene_palette.dart` (einzige Quelle der Szenen-Farben, hell/dunkel); **neu geschrieben** `ascent_scene_painter.dart`; **geändert** `home_progress_animation.dart` und `test/widget/home_progress_animation_test.dart` (4 → 10 Fälle). Unverändert: `home_page.dart`, `ascent_source.dart`, Einstellungen, ARB-Texte.
 >
+> 🗓️ **Vorherige Sitzung:** 2026-10-11 (Fortsetzung 7) — an Root-in **nichts geändert**; in `vox` 30 weitere Verbkarten (Runden 569–571, herunterkommen … hinausfinden, Archiv 6688).
+>
 > 🗓️ **Vorherige Sitzung:** 2026-10-11 (Fortsetzung 6) — an Root-in **nichts geändert**; in `vox` 30 weitere Verbkarten (Runden 566–568, herleihen … herunterhelfen, Archiv 6658).
 >
 > 🗓️ **Vorherige Sitzung:** 2026-10-11 (Fortsetzung 5) — an Root-in **nichts geändert**; in `vox` 20 weitere Verbkarten (Runden 564–565, hereinbekommen … herlaufen, Archiv 6628).
